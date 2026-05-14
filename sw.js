@@ -1,13 +1,9 @@
-const CACHE = 'body-soul-v3';
-const FILES = [
-  './body-soul-app.html',
-  './manifest.json',
-  './logo.png'
-];
+const CACHE = 'body-soul-v4';
+const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())
+    caches.open(CACHE).then(c => c.addAll(STATIC)).then(() => self.skipWaiting())
   );
 });
 
@@ -20,6 +16,22 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+
+  // HTML: always fetch from network, cache only as offline fallback
+  if (e.request.destination === 'document' || url.pathname.endsWith('.html')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(r => {
+          caches.open(CACHE).then(c => c.put(e.request, r.clone()));
+          return r;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Other assets (logo, manifest): cache first
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request))
   );
