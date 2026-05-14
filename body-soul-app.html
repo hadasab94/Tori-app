@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#B85C3C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="גוף ונפש">
+<link rel="apple-touch-icon" href="./icon-192.svg">
+<title>גוף ונפש 🌱</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #FBF4E8; --card: #FFFDF7;
+  --terra: #B85C3C; --terra-l: #F2D4C8;
+  --sage: #5A8A5E; --sage-l: #C8E3C8;
+  --gold: #C4841A; --gold-l: #FAE3B0;
+  --sky: #4A7FA0; --sky-l: #C5DCF0;
+  --text: #3A2515; --text2: #7A5E4A; --text3: #B09880;
+  --border: rgba(58,37,21,0.10); --border2: rgba(58,37,21,0.18);
+  --radius: 14px;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica Neue',sans-serif; color: var(--text); min-height: 100vh; direction: rtl; max-width: 480px; margin: 0 auto; }
+
+/* HEADER */
+.header { background: var(--card); border-bottom: 1px solid var(--border); padding: 14px 18px 10px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 200; }
+.app-name { font-size: 19px; font-weight: 800; color: var(--terra); letter-spacing: -0.3px; }
+.app-subtitle { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.streak-pill { background: var(--gold-l); border: 1.5px solid #D4942A; border-radius: 20px; padding: 5px 13px; font-size: 13px; font-weight: 700; color: #8A5A00; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: transform 0.15s; }
+.streak-pill:active { transform: scale(0.95); }
+
+/* BOTTOM NAV */
+.bottom-nav { position: fixed; bottom: 0; right: 50%; transform: translateX(50%); width: 100%; max-width: 480px; background: var(--card); border-top: 1px solid var(--border); display: flex; padding: 8px 0 12px; z-index: 200; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 4px 0; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+.nav-icon { font-size: 23px; line-height: 1; transition: transform 0.2s; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--text3); }
+.nav-item.active .nav-label { color: var(--terra); }
+.nav-item.active .nav-icon { transform: scale(1.15); }
+
+/* VIEWS */
+.view { display: none; padding: 14px 14px 100px; animation: fadeIn 0.25s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* PROGRESS */
+.progress-wrap { margin: 0 0 14px; background: var(--card); border-radius: var(--radius); padding: 12px 14px; border: 1px solid var(--border); }
+.progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.progress-label { font-size: 12px; font-weight: 600; color: var(--text2); }
+.progress-pct { font-size: 12px; font-weight: 700; color: var(--terra); }
+.progress-track { height: 9px; background: var(--border); border-radius: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--sage), var(--terra)); transition: width 0.6s cubic-bezier(0.34,1.4,0.64,1); }
+.day-message { font-size: 12px; color: var(--text2); text-align: center; margin-top: 7px; line-height: 1.5; min-height: 18px; }
+
+/* SECTION TITLE */
+.sec { font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: 0.6px; margin: 14px 0 7px; }
+
+/* TASK GRID */
+.task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.task-card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 13px 12px 11px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; -webkit-tap-highlight-color: transparent; user-select: none; }
+.task-card:active { transform: scale(0.96); }
+.task-card.done { background: var(--sage-l); border-color: var(--sage); }
+.task-card.done .t-name { color: var(--sage); }
+.check-badge { position: absolute; top: 7px; left: 7px; width: 20px; height: 20px; border-radius: 50%; background: var(--sage); color: white; font-size: 11px; display: none; align-items: center; justify-content: center; font-weight: 700; }
+.task-card.done .check-badge { display: flex; }
+.t-icon { font-size: 28px; display: block; margin-bottom: 5px; line-height: 1.2; }
+.t-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.t-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* WATER */
+.water-card { grid-column: span 2; display: flex; gap: 14px; align-items: center; padding: 13px 14px; }
+.water-info { min-width: 60px; }
+.water-label { font-size: 10px; font-weight: 600; color: var(--text2); }
+.water-num { font-size: 22px; font-weight: 800; color: var(--sky); line-height: 1.1; margin-top: 1px; }
+.drops-grid { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+.drop-btn { width: 28px; height: 32px; cursor: pointer; font-size: 22px; line-height: 32px; text-align: center; transition: transform 0.15s; -webkit-tap-highlight-color: transparent; user-select: none; filter: grayscale(1) opacity(0.3); }
+.drop-btn.filled { filter: none; transform: scale(1.08); animation: dropIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes dropIn { 0% { transform: scale(0.5); } 100% { transform: scale(1.08); } }
+
+/* EXERCISE */
+.exercise-wrap { grid-column: span 2; }
+.exercise-card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s, background 0.2s; }
+.exercise-card.done { background: var(--sage-l); border-color: var(--sage); }
+.exercise-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px 10px; cursor: pointer; }
+.ex-icon-name { display: flex; align-items: center; gap: 9px; }
+.ex-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.ex-sub { font-size: 10px; color: var(--text3); }
+.mode-toggle { display: flex; background: var(--bg); border-radius: 18px; padding: 3px; gap: 2px; border: 1px solid var(--border); flex-shrink: 0; }
+.mode-btn { padding: 4px 9px; border-radius: 14px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text2); border: none; font-family: inherit; white-space: nowrap; }
+.mode-btn.on { background: var(--terra); color: white; }
+.ex-options { padding: 0 10px 12px; display: flex; flex-direction: column; gap: 7px; }
+.ex-opt { display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; background: var(--bg); border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--text); border: 1.5px solid transparent; transition: all 0.2s; line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+.ex-opt span { flex-shrink: 0; font-size: 20px; margin-top: 1px; }
+.ex-opt:hover { background: var(--terra-l); }
+.ex-opt.chosen { background: var(--sage-l); border-color: var(--sage); color: var(--sage); font-weight: 600; }
+
+/* CELEBRATION */
+.celebration { background: linear-gradient(135deg,#FFF3D0,#FFE8D8); border: 2px solid var(--gold); border-radius: 18px; padding: 18px; text-align: center; margin-bottom: 14px; display: none; animation: celebIn 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes celebIn { 0% { transform:scale(0.85); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+.celebration.show { display: block; }
+.celeb-emoji { font-size: 44px; display: block; margin-bottom: 6px; }
+.celeb-title { font-size: 16px; font-weight: 800; color: var(--terra); }
+.celeb-sub { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+
+/* JOURNEY */
+.journey-hero { text-align: center; padding: 20px 0 14px; }
+.char-emoji { font-size: 72px; display: block; animation: charFloat 3s ease-in-out infinite; line-height: 1.1; }
+@keyframes charFloat { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-10px) rotate(2deg); } }
+.journey-streak { font-size: 28px; font-weight: 800; color: var(--terra); margin: 8px 0 3px; }
+.journey-msg { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.path-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 18px 14px 14px; margin-bottom: 12px; }
+.path-label { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 16px; }
+.milestones-row { position: relative; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 10px; }
+.m-track { position: absolute; bottom: 22px; left: 10px; right: 10px; height: 5px; background: var(--border); border-radius: 3px; }
+.m-fill { height: 100%; background: linear-gradient(90deg, var(--gold-l), var(--gold)); border-radius: 3px; transition: width 1s cubic-bezier(0.34,1.2,0.64,1); }
+.milestone { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.m-dot { width: 36px; height: 36px; border-radius: 50%; background: var(--bg); border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.4s; }
+.m-dot.reached { background: var(--gold-l); border-color: var(--gold); }
+.m-dot.current { background: var(--terra); border-color: var(--terra); box-shadow: 0 0 0 5px var(--terra-l); transform: scale(1.25); }
+.m-lbl { font-size: 9px; color: var(--text3); font-weight: 600; white-space: nowrap; }
+
+/* HABIT SCIENCE CARD */
+.habit-card { background: linear-gradient(135deg, var(--sky-l), #EBF5FF); border: 1px solid rgba(74,127,160,0.3); border-radius: 18px; padding: 16px; margin-bottom: 12px; }
+.habit-title { font-size: 13px; font-weight: 700; color: var(--sky); margin-bottom: 6px; }
+.habit-body { font-size: 12px; color: #3A5F78; line-height: 1.7; }
+.habit-bar-wrap { margin-top: 10px; }
+.habit-bar-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--sky); font-weight: 600; margin-bottom: 4px; }
+.habit-track { height: 7px; background: rgba(74,127,160,0.2); border-radius: 4px; overflow: hidden; }
+.habit-fill { height: 100%; background: var(--sky); border-radius: 4px; transition: width 1.2s ease; }
+
+/* ACHIEVEMENTS */
+.achiev-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.achiev-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 6px; text-align: center; opacity: 0.3; filter: grayscale(0.9); transition: all 0.4s; }
+.achiev-card.got { opacity: 1; filter: none; background: var(--gold-l); border-color: var(--gold); animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes popIn { 0% { transform:scale(0.7); } 100% { transform:scale(1); } }
+.achiev-emoji { font-size: 26px; display: block; margin-bottom: 3px; }
+.achiev-name { font-size: 10px; color: var(--text2); font-weight: 600; line-height: 1.3; }
+
+/* FACT OVERLAY — slides down from top like a notification */
+.fact-overlay { position: fixed; inset: 0; background: rgba(30,15,5,0.52); z-index: 900; display: flex; align-items: flex-start; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.fact-overlay.open { opacity: 1; pointer-events: all; }
+.fact-notif { background: var(--card); border-radius: 0 0 24px 24px; padding: 20px 18px 22px; width: 100%; max-width: 480px; transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1); box-shadow: 0 8px 32px rgba(30,15,5,0.2); }
+.fact-overlay.open .fact-notif { transform: translateY(0); }
+.fact-notif-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.fact-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--sky-l); color: var(--sky); border-radius: 18px; padding: 4px 12px; font-size: 12px; font-weight: 700; }
+.fact-close { width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--bg); color: var(--text2); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.fact-close:hover { background: var(--terra-l); }
+.fact-notif-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 9px; line-height: 1.3; }
+.fact-notif-body { font-size: 13px; color: var(--text2); line-height: 1.8; }
+.fact-notif-footer { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.fact-src { font-size: 10px; color: var(--text3); font-style: italic; }
+.fact-day-pill { font-size: 10px; color: var(--sky); font-weight: 700; background: var(--sky-l); border-radius: 10px; padding: 2px 8px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%) translateY(30px); background: #2E1A0E; color: #FDF4E3; padding: 11px 20px; border-radius: 28px; font-size: 14px; font-weight: 600; transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s; z-index: 500; text-align: center; max-width: 320px; width: calc(100% - 40px); opacity: 0; pointer-events: none; direction: rtl; line-height: 1.4; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+/* AUTH SCREEN */
+.auth-screen { position:fixed; inset:0; background:var(--bg); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; transition:opacity 0.4s; }
+.auth-card { background:var(--card); border-radius:24px; padding:32px 24px 28px; width:100%; max-width:400px; box-shadow:0 8px 40px rgba(58,37,21,0.13); text-align:center; border:1px solid var(--border); }
+.auth-logo { font-size:64px; display:block; margin-bottom:8px; animation:charFloat 3s ease-in-out infinite; line-height:1.1; }
+.auth-app-name { font-size:28px; font-weight:800; color:var(--terra); margin-bottom:3px; }
+.auth-tagline { font-size:13px; color:var(--text2); margin-bottom:26px; }
+.auth-form-title { font-size:14px; color:var(--text2); margin-bottom:16px; line-height:1.6; }
+.auth-hello { font-size:22px; font-weight:700; color:var(--text); margin-bottom:18px; }
+.auth-input { width:100%; padding:13px 16px; border:1.5px solid var(--border2); border-radius:12px; font-size:15px; font-family:inherit; background:var(--bg); color:var(--text); margin-bottom:10px; text-align:right; direction:rtl; transition:border-color 0.2s; display:block; }
+.auth-input:focus { outline:none; border-color:var(--terra); }
+.auth-btn { width:100%; padding:14px; background:var(--terra); color:white; border:none; border-radius:14px; font-size:16px; font-weight:700; font-family:inherit; cursor:pointer; transition:transform 0.15s,opacity 0.15s; margin-top:6px; }
+.auth-btn:active { transform:scale(0.97); opacity:0.9; }
+.auth-error { color:#C0392B; font-size:13px; margin-top:12px; min-height:20px; line-height:1.4; }
+.auth-reset { background:none; border:none; color:var(--text3); font-size:12px; cursor:pointer; margin-top:12px; font-family:inherit; padding:4px; text-decoration:underline; display:block; width:100%; }
+</style>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+</script>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <span class="auth-logo">🌱</span>
+    <div class="auth-app-name">גוף ונפש</div>
+    <div class="auth-tagline">מסע ההחלמה היומי שלך</div>
+
+    <div id="auth-register">
+      <div class="auth-form-title">ברוכה הבאה! 🌸<br>בואי ניצור את הפרופיל שלך</div>
+      <input type="text" id="reg-name" class="auth-input" placeholder="השם שלך" autocomplete="name">
+      <input type="password" id="reg-pass" class="auth-input" placeholder="סיסמה (לפחות 4 תווים)" autocomplete="new-password">
+      <input type="password" id="reg-pass2" class="auth-input" placeholder="אימות סיסמה" autocomplete="new-password">
+      <button class="auth-btn" onclick="doRegister()">בואי נתחיל 🌱</button>
+    </div>
+
+    <div id="auth-login" style="display:none">
+      <div class="auth-hello" id="auth-hello">שלום! 👋</div>
+      <input type="password" id="login-pass" class="auth-input" placeholder="סיסמה" autocomplete="current-password">
+      <button class="auth-btn" onclick="doLogin()">כניסה</button>
+      <button class="auth-reset" onclick="showReset()">שכחתי סיסמה</button>
+    </div>
+
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<h1 class="sr-only">גוף ונפש - אפליקציית החלמה יומית</h1>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="app-name">🌱 גוף ונפש</div>
+    <div class="app-subtitle" id="hdr-date">טוען...</div>
+  </div>
+  <div class="streak-pill" onclick="switchView('journey')">🔥 <span id="hdr-streak">0</span> ימים</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- FACT OVERLAY — notification drawer from top -->
+<div class="fact-overlay" id="fact-overlay" onclick="closeFact(event)">
+  <div class="fact-notif" id="fact-notif">
+    <div class="fact-notif-header">
+      <div class="fact-badge">💡 הידעת?</div>
+      <button class="fact-close" onclick="closeFact(null)" aria-label="סגור">✕</button>
+    </div>
+    <div class="fact-notif-title" id="fn-title"></div>
+    <div class="fact-notif-body" id="fn-body"></div>
+    <div class="fact-notif-footer">
+      <div class="fact-src" id="fn-src"></div>
+      <div class="fact-day-pill" id="fn-day"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TODAY VIEW -->
+<div class="view active" id="view-today">
+  <div class="celebration" id="celebration">
+    <span class="celeb-emoji">🎉</span>
+    <div class="celeb-title">יום מדהים! השלמת את כל המשימות!</div>
+    <div class="celeb-sub">הגוף שלך מרגיש אותך, וזה משנה הכל 💛</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-row">
+      <span class="progress-label" id="prog-label">0/9 משימות</span>
+      <span class="progress-pct" id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="day-message" id="day-msg"></div>
+  </div>
+
+  <div class="sec">💧 מים</div>
+  <div class="task-grid">
+    <div class="task-card water-card" id="water-card">
+      <div class="water-info">
+        <div class="water-label">כוסות</div>
+        <div class="water-num" id="water-num">0/8</div>
+        <div style="font-size:9px;color:var(--text3);margin-top:1px">מטרה: 6-8</div>
+      </div>
+      <div class="drops-grid" id="drops-grid"></div>
+    </div>
+  </div>
+
+  <div class="sec">🍽️ ארוחות</div>
+  <div class="task-grid">
+    <div class="task-card" id="tc-breakfast" onclick="toggleTask('breakfast')"><div class="check-badge">✓</div><span class="t-icon">🍳</span><div class="t-name">ארוחת בוקר</div><div class="t-sub">הדלק הראשוני</div></div>
+    <div class="task-card" id="tc-lunch" onclick="toggleTask('lunch')"><div class="check-badge">✓</div><span class="t-icon">🥗</span><div class="t-name">ארוחת צהריים</div><div class="t-sub">להמשיך לתדלק</div></div>
+    <div class="task-card" id="tc-dinner" onclick="toggleTask('dinner')"><div class="check-badge">✓</div><span class="t-icon">🍲</span><div class="t-name">ארוחת ערב</div><div class="t-sub">לסגור את היום</div></div>
+  </div>
+
+  <div class="sec">🌿 טיפול עצמי</div>
+  <div class="task-grid">
+    <div class="task-card" id="tc-shower" onclick="toggleTask('shower')"><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
+    <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
+    <div class="task-card" id="tc-outside" onclick="toggleTask('outside')"><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
+    <div class="task-card" id="tc-sleep" onclick="toggleTask('sleep')"><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">שנת לילה</div><div class="t-sub">לישון טוב הלילה</div></div>
+  </div>
+
+  <div class="sec" id="ex-sec-title">💪 פעילות גופנית</div>
+  <div class="task-grid">
+    <div class="exercise-wrap">
+      <div class="exercise-card" id="exercise-card">
+        <div class="exercise-head" onclick="toggleExBox()">
+          <div class="ex-icon-name">
+            <span style="font-size:26px" id="ex-icon">💪</span>
+            <div>
+              <div class="ex-title" id="ex-title">בחרי פעילות להיום</div>
+              <div class="ex-sub" id="ex-sub">לחצי כאן לסגור / לפתוח</div>
+            </div>
+          </div>
+          <div class="mode-toggle">
+            <button class="mode-btn on" id="btn-easy" onclick="event.stopPropagation(); setMode('easy')">קל 🌸</button>
+            <button class="mode-btn" id="btn-hard" onclick="event.stopPropagation(); setMode('hard')">יש כוחות 💪</button>
+          </div>
+        </div>
+        <!-- OPEN BY DEFAULT -->
+        <div id="ex-box" style="overflow:hidden; max-height:400px; transition:max-height 0.4s ease;">
+          <div class="ex-options" id="ex-opts-easy">
+            <div class="ex-opt" id="eopt-walk10" onclick="chooseEx('walk10','easy')"><span>🚶‍♀️</span> הליכה קלה 10 דקות — בכל קצב שנוח לך</div>
+            <div class="ex-opt" id="eopt-stretch" onclick="chooseEx('stretch','easy')"><span>🧘‍♀️</span> 5 מתיחות פשוטות בעמידה</div>
+            <div class="ex-opt" id="eopt-breathmove" onclick="chooseEx('breathmove','easy')"><span>🌊</span> 3 נשימות עמוקות + תנועת ידיים</div>
+          </div>
+          <div class="ex-options" id="ex-opts-hard" style="display:none">
+            <div class="ex-opt" id="eopt-walk30" onclick="chooseEx('walk30','hard')"><span>🏃‍♀️</span> הליכה 20-30 דקות בקצב נוח</div>
+            <div class="ex-opt" id="eopt-yoga" onclick="chooseEx('yoga','hard')"><span>🧘</span> יוגה קלה ביוטיוב — 15 דקות</div>
+            <div class="ex-opt" id="eopt-dance" onclick="chooseEx('dance','hard')"><span>💃</span> ריקוד חופשי בבית — שיר אחד שאוהבת</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY VIEW -->
+<div class="view" id="view-journey">
+  <div class="journey-hero">
+    <span class="char-emoji" id="j-char">🌱</span>
+    <div class="journey-streak"><span id="j-streak">0</span> ימים ברצף 🔥</div>
+    <div class="journey-msg" id="j-msg">כל יום שבו טיפלת בעצמך הוא ניצחון 💙</div>
+  </div>
+
+  <div class="path-card">
+    <div class="path-label">המסע שלך 🗺️</div>
+    <div class="milestones-row" id="milestones-row">
+      <div class="m-track"><div class="m-fill" id="m-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- HABIT SCIENCE -->
+  <div class="habit-card">
+    <div class="habit-title" id="habit-title">🧠 מה קורה במוח שלך?</div>
+    <div class="habit-body" id="habit-body">כל יום שבו את/ה מטפל/ת בעצמך, המוח בונה מסלול עצבי חדש. ככל שחוזרים יותר, כך הנתיב מתחזק — וההתנהגות הופכת מ"מאמץ" ל"אוטומטי".</div>
+    <div class="habit-bar-wrap">
+      <div class="habit-bar-label"><span>חוזק ההרגל</span><span id="habit-pct-lbl">0%</span></div>
+      <div class="habit-track"><div class="habit-fill" id="habit-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="sec">⭐ הישגים</div>
+  <div class="achiev-grid" id="achiev-grid"></div>
+
+  <div class="path-card" style="margin-top:14px">
+    <div class="path-label">📊 סטטיסטיקה</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <div style="background:var(--terra-l);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:var(--terra)" id="stat-streak">0</div>
+        <div style="font-size:11px;color:var(--text2)">סטרייק נוכחי</div>
+      </div>
+      <div style="background:var(--gold-l);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:var(--gold)" id="stat-best">0</div>
+        <div style="font-size:11px;color:var(--text2)">הסטרייק הטוב ביותר</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" aria-label="ניווט ראשי">
+  <div class="nav-item active" id="nav-today" onclick="switchView('today')">
+    <div class="nav-icon">📋</div><div class="nav-label">היום</div>
+  </div>
+  <div class="nav-item" id="nav-journey" onclick="switchView('journey')">
+    <div class="nav-icon">🌿</div><div class="nav-label">המסע</div>
+  </div>
+  <div class="nav-item" id="nav-facts" onclick="openFact()">
+    <div class="nav-icon">💡</div><div class="nav-label">הידעת?</div>
+  </div>
+</nav>
+
+<script>
+const TASK_IDS = ['breakfast','lunch','dinner','shower','breathing','outside','sleep'];
+
+const TASK_MSGS = {
+  breakfast: ['🍳 ארוחת בוקר! הלבלב שלך הרים לך כוסית 🥂','🌅 קפצת על ארוחת הבוקר! מוח שבע = יום הרבה יותר טוב','☕ הגוף שלך ממש אסיר תודה עכשיו — ביצה או קוואקר, לא משנה!'],
+  lunch:     ['🥗 ארוחת צהריים! הסוכר בדם: "סוף סוף! חשבתי שנשכחת ממני" 😌','✅ צהריים הושלם! מערכת העצבים הרגיעה את עצמה בדיוק עכשיו','🌿 תידלוק מוצלח! כן, אכילה זה ממש מדע שפשוט עובד'],
+  dinner:    ['🍲 ארוחת ערב! סגרת את היום בצורה הכי טובה שיש','🌙 שלוש ארוחות! הגוף שלך ישן הלילה עם חיוך 😊','💛 טיפלת בעצמך עד סוף היום — זה לא מובן מאליו בכלל'],
+  shower:    ['🚿 מקלחת! כעת את/ה רשמית רענן/ת יותר מאתמול 😄','🌸 מקלחת = שינוי שמצב הישרדות למצב ביטחון. מדע ממש!','✨ חמים + ניקיון = הנוסחה הפשוטה שהגוף אוהב מאז תמיד'],
+  breathing: ['🌬️ עצרת לנשום! מערכת העצבים שלך בדיוק עשתה לעצמה קפה 😌','🧘 עשית רגע שקט! זה לא עצלנות — זה מדע. הפאראסימפטטי חוגג!','💙 נשימה עמוקה = מסר לגוף: "אנחנו בטוחים עכשיו". כל הכבוד!'],
+  outside:   ['🌤️ יצאת החוצה! השמש אפילו לא ידעה שהיא מרפאה אותך עכשיו','🚶 אוויר צח! הריאות, הנפש, ומערכת העצבים מציאות הסכמה פה','🌳 10 דקות בחוץ = שעה של מצב רוח טוב יותר. לא בדיחה, זה מחקר'],
+  sleep:     ['🌙 רשמת שינה! המוח שלך ישלח לך חלומות עיבוד הלילה — בחינם!','😴 שינה טובה = ההחלמה הכי יעילה שיש, בלי לעשות שום דבר','⭐ בשינה המוח מעבד טראומה. ממש. את/ה מחלים גם תוך כדי שינה!'],
+};
+
+const ENCOURAGEMENTS = [
+  '🌟 כל כך טוב! הגוף שלך מודה לך מכל תא ותא!',
+  '💛 עוד אחת! את/ה בונה משהו אמיתי כאן, לבנה לבנה',
+  '🌿 המוח שלך ממש עכשיו מחזק נתיב עצבי חדש — כי עשית את זה!',
+  '😄 הגוף שלך: "סוף סוף! ידעתי שתחזור/י אליי!"',
+  '💪 רגע — את/ה עושה דברים! זה לא פשוט. זה אומץ ממש.',
+  '🌸 קטן? לא. הגוף שלך מרגיש כל פעולה שאת/ה עושה בשבילו.',
+  '🧠 מחקרית: כל חזרה מחזקת את ההרגל ב-~3%. עשית אחת! 📈',
+  '✨ בכל פעם שאת/ה עושה את זה, ההחלמה מהירה יותר. לא בדיחה.',
+  '🎯 כן! זה בדיוק הצעד הנכון. פשוט ומדויק, בלי גרנדיוזיות.',
+  '🌈 אפשר? כן. עושים? כן. כל הכבוד לגוף וגם לראש!',
+];
+
+const FACTS = [
+  { title:'ויסות גופני — הבסיס של הכל', body:'מחקרים מראים שוויסות גופני הוא הצעד הראשון בהחלמה מטראומה מורכבת. הגוף זוכר טראומה, ולכן זקוק לתחושת ביטחון פיזית לפני שהנפש יכולה להחלים לעומק. כל פעולה שמרגיעה את הגוף — היא גם מרפאה את הנפש.', src:'van der Kolk, The Body Keeps the Score (2014)' },
+  { title:'מים ומערכת העצבים', body:'כשגופנו מיובש, מערכת העצבים עוברת לכוננות גבוהה יותר ונעשית רגישה יותר לטריגרים. שתיית מים מסייעת ישירות להפחתת תגובת הלחץ. כוס מים היא גם אקט פשוט של "אני מטפל/ת בעצמי".', src:'מחקרים בנוירוביולוגיה של סטרס' },
+  { title:'ארוחות סדירות — ויסות מבפנים', body:'ארוחות סדירות מווסתות רמות סוכר בדם, מה שמפחית משמעותית חרדה ותגובות טריגר. רמת סוכר נמוכה מגבירה עצבנות ורגישות — ואכילה סדירה היא ממש טיפול רגשי שגופי.', src:'Neuroscience & Biobehavioral Reviews' },
+  { title:'תנועה משחררת טראומה', body:'תנועה גופנית, אפילו 10 דקות קלות, משחררת GABA ואנדורפינים שמסייעים למוח לצאת ממצב איום. הגוף צריך לחוש שהוא בתנועה — כי טראומה "קופאת" אותו, ותנועה מפשירה אותו.', src:'Levine, Waking the Tiger (1997)' },
+  { title:'C-PTSD שונה מ-PTSD', body:'פוסט טראומה מורכבת מתפתחת מחשיפה ממושכת וחוזרת, לרוב בגיל צעיר. היא שונה מ-PTSD ולכן ההחלמה ממנה היא תהליך עמוק ואיטי יותר — וזה לא חולשה. זו מורכבות אמיתית שדורשת גישה מיוחדת.', src:'Herman, Trauma and Recovery (1992)' },
+  { title:'אור שמש ויציאה לחוץ', body:'חשיפה לאור יום, אפילו 10-15 דקות, מגבירה סרוטונין ומסדירה את מקצב הגוף. יציאה לחוץ מפעילה גם מערכות חושיות שעוזרות להישאר ב"כאן ועכשיו" — כלי מפתח בהחלמה.', src:'Journal of Affective Disorders' },
+  { title:'שינה — הרופאה הנסתרת', body:'בשינה, המוח מעבד ומשנה חוויות טראומטיות — זהו תהליך ביולוגי ממשי. שינה מספקת היא אחת הפעולות היעילות ביותר עבור ההחלמה. בשינה את/ה מחלים בלי לעשות כלום.', src:'Walker, Why We Sleep (2017)' },
+  { title:'לחזור לגוף — בהדרגה', body:'ניתוק מהגוף אחרי טראומה הוא מנגנון הגנה מובן לחלוטין. ניתן ללמוד מחדש לחוש אותו — בהדרגה ובעדינות. כל מגע קטן עם הגוף, כמו להרגיש את כפות הרגליים ברצפה, בונה גשר חדש.', src:'Ogden, Trauma and the Body (2006)' },
+  { title:'ימים קשים הם חלק מהדרך', body:'ההחלמה מ-C-PTSD אינה קו ישר — היא גלית. ימים קשים, ריגרסיות ותחושות כבדות הם חלק נורמלי מהתהליך. כל פעם שקמת מחדש — עשית משהו שדורש אומץ עצום.', src:'Judith Herman, Trauma and Recovery' },
+  { title:'נשימה — שנייה אחת שמשנה', body:'נשימה עמוקה ומודעת מפעילה את המערכת הפאראסימפטטית — זו שאחראית על מנוחה והחלמה. אפילו נשימה עמוקה אחת ביום מצטברת לשינוי ממשי בוויסות מערכת העצבים לאורך זמן.', src:'Siegel, The Mindful Brain (2007)' },
+  { title:'טיפול עצמי = טיפול ממש', body:'כל יום שבו טיפלת בגוף שלך, שלחת לו מסר: "אני כאן, אתה בטוח." לאורך זמן, המוח לומד לאמין בו. טיפול עצמי יומי הוא לא פינוק — הוא חלק מהחלמה מוכחת מחקרית.', src:'Porges, Polyvagal Theory (2011)' },
+  { title:'הגוף — בן ברית, לא אויב', body:'אחרי טראומה, הגוף יכול להרגיש כמו מקור של כאב. המחקר מראה שבניית קשר רחום עם הגוף — ולא מלחמה בו — היא אחת מאבני היסוד של ההחלמה מ-C-PTSD.', src:'Fisher, Healing the Fragmented Selves (2017)' },
+];
+
+const HABIT_SCIENCE = [
+  { title:'🧠 יום ראשון — הניצן מתעורר', body:'כל יום שבו טיפלת בעצמך, המוח מתחיל לסלול מסלול עצבי חדש. בהתחלה המאמץ מורגש — כי הנתיב עדיין צר וחדש. אבל הוא נבנה. בכל יום, לאט לאט.' },
+  { title:'🌿 3 ימים — הנתיב מתחיל', body:'3 ימים ברצף! הנוירונים שלך מתחילים לדבר ביניהם בקלות רבה יותר. המדע קורא לזה "Long-term Potentiation" — חיבורים עצביים שמתחזקים עם כל חזרה.' },
+  { title:'🌸 שבוע — ההרגל מקבל שם', body:'שבוע שלם! אחרי 7 ימים רצופים, המוח מתחיל לקטלג פעולה כ"הרגל" ולא כ"החלטה". זה אומר שהיא הופכת קלה יותר בהדרגה — אוטומטית יותר.' },
+  { title:'🌺 שבועיים — הגוף זוכר', body:'שבועיים! המיאלין — חומר שמבודד מסלולים עצביים — מצפה את הנתיב הזה. במילים פשוטות: הגוף שלך "זוכר" שהוא עושה את זה, ומצפה לזה.' },
+  { title:'🌳 3 שבועות — שינוי מבני', body:'3 שבועות! מחקרים מראים שינויים מבניים ניתנים למדידה במוח. ההרגל שלך הוא כבר לא רק החלטה — הוא חלק ממי שאת/ה.' },
+  { title:'🌟 חודש — הרגל חדש הושלם', body:'חודש שלם! לפי המחקר, ב-30-66 יום של חזרה, הרגל הופך אוטומטי לחלוטין. המאמץ מתכווץ, הגוף מצפה לפעולה. בנית משהו אמיתי ועמוק.' },
+];
+
+const MILESTONES = [
+  {days:1,emoji:'🌱',label:'יום 1'}, {days:3,emoji:'🌿',label:'3 ימים'},
+  {days:7,emoji:'🌸',label:'שבוע'}, {days:14,emoji:'🌺',label:'2 שב׳'},
+  {days:21,emoji:'🌳',label:'3 שב׳'}, {days:30,emoji:'🌟',label:'חודש!'},
+];
+
+const ACHIEVEMENTS = [
+  {emoji:'🌱',name:'יום ראשון',days:1}, {emoji:'🌿',name:'3 ימים ברצף',days:3},
+  {emoji:'🌸',name:'שבוע שלם!',days:7}, {emoji:'🌺',name:'שבועיים מלאים',days:14},
+  {emoji:'🌳',name:'3 שבועות!',days:21}, {emoji:'🌟',name:'חודש שלם! 🎉',days:30},
+];
+
+// STATE
+let s = { todayKey:getTodayKey(), tasks:{}, water:0, exMode:'easy', exChosen:{easy:null,hard:null}, exBoxOpen:true, streak:0, bestStreak:0 };
+
+// STORAGE
+const store = {
+  async get(k) { try { if(window.storage){const r=await window.storage.get(k);return r?r.value:null;} } catch(e){} try{return localStorage.getItem(k);}catch(e){return null;} },
+  async set(k,v) { try { if(window.storage){await window.storage.set(k,v);return;} } catch(e){} try{localStorage.setItem(k,v);}catch(e){} }
+};
+
+// HELPERS
+function getTodayKey() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function pad(n) { return String(n).padStart(2,'0'); }
+function getDateKey(off) { const d=new Date(); d.setDate(d.getDate()+off); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function isExerciseDay() { const d=new Date(); return Math.floor((d-new Date(d.getFullYear(),0,0))/86400000)%2===0; }
+function getHebrewDate() { const wk=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'],mo=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'],d=new Date(); return `יום ${wk[d.getDay()]}, ${d.getDate()} ${mo[d.getMonth()]}`; }
+function getDOY() { const d=new Date(); return Math.floor((d-new Date(d.getFullYear(),0,0))/86400000); }
+function pickRandom(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+function countDone() { let n=TASK_IDS.filter(t=>s.tasks[t]).length; if(s.water>=6)n++; if(s.exChosen.easy||s.exChosen.hard)n++; return n; }
+function totalTasks() { return TASK_IDS.length+2; }
+function dayQualifies(cnt) { return cnt>=totalTasks()-2; }
+
+// TASK TOGGLE
+function toggleTask(id) {
+  s.tasks[id]=!s.tasks[id];
+  document.getElementById('tc-'+id).classList.toggle('done',!!s.tasks[id]);
+  if(s.tasks[id]) showToast(pickRandom(TASK_MSGS[id]||ENCOURAGEMENTS));
+  updateProgress(); saveDay();
+}
+
+// WATER
+function renderDrops() {
+  const g=document.getElementById('drops-grid'); g.innerHTML='';
+  for(let i=0;i<8;i++){const d=document.createElement('div');d.className='drop-btn'+(i<s.water?' filled':'');d.textContent='💧';const idx=i;d.onclick=()=>tapDrop(idx);g.appendChild(d);}
+  document.getElementById('water-num').textContent=s.water+'/8';
+  const wc=document.getElementById('water-card');
+  if(s.water>=6){wc.classList.add('done');wc.style.borderColor='var(--sky)';wc.style.background='var(--sky-l)';}
+  else{wc.classList.remove('done');wc.style.borderColor='';wc.style.background='';}
+}
+function tapDrop(idx) {
+  const prev=s.water; s.water=(idx<s.water)?idx:idx+1; renderDrops();
+  if(s.water===6&&prev<6) showToast('💧 6 כוסות! הכליות שלך כרגע עושות מסיבה 🎉');
+  else if(s.water===8&&prev<8) showToast('💧 8 כוסות שלמות! מערכת העצבים שלך אוהבת אותך כי הצפת אותה — במים 💙');
+  updateProgress(); saveDay();
+}
+
+// EXERCISE
+function setMode(mode) {
+  s.exMode=mode;
+  document.getElementById('btn-easy').classList.toggle('on',mode==='easy');
+  document.getElementById('btn-hard').classList.toggle('on',mode==='hard');
+  document.getElementById('ex-opts-easy').style.display=mode==='easy'?'flex':'none';
+  document.getElementById('ex-opts-hard').style.display=mode==='hard'?'flex':'none';
+}
+function toggleExBox() { s.exBoxOpen=!s.exBoxOpen; document.getElementById('ex-box').style.maxHeight=s.exBoxOpen?'400px':'0'; }
+function chooseEx(id,mode) {
+  // Toggle off if already chosen
+  if(s.exChosen[mode]===id){ s.exChosen[mode]=null; document.getElementById('eopt-'+id).classList.remove('chosen'); }
+  else { s.exChosen[mode]=id; document.querySelectorAll('#ex-opts-'+mode+' .ex-opt').forEach(el=>el.classList.remove('chosen')); document.getElementById('eopt-'+id).classList.add('chosen'); showToast('💃 כן!! הגוף שלך הרגיש שזז. הנוירונים חוגגים עכשיו 🎊'); }
+  const anyDone=s.exChosen.easy||s.exChosen.hard;
+  const bothDone=s.exChosen.easy&&s.exChosen.hard;
+  document.getElementById('exercise-card').classList.toggle('done',!!anyDone);
+  if(bothDone){ document.getElementById('ex-title').textContent='שתי פעילויות! סופר-גיבור/ה 🌟'; document.getElementById('ex-icon').textContent='🌟'; }
+  else if(anyDone){ document.getElementById('ex-title').textContent='פעילות הושלמה! 💪'; document.getElementById('ex-icon').textContent='✅'; }
+  else { document.getElementById('ex-title').textContent='בחרי פעילות להיום'; document.getElementById('ex-icon').textContent='💪'; }
+  document.getElementById('ex-sub').textContent=bothDone?'עשית קל וגם יותר — מדהים! 💚':anyDone?'תנועה היא תרופה ממש 💚':'לחצי כאן לסגור / לפתוח';
+  updateProgress(); saveDay();
+}
+
+// PROGRESS
+function updateProgress() {
+  const done=countDone(), total=totalTasks(), pct=Math.round(done/total*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=`${done}/${total} משימות`;
+  document.getElementById('prog-pct').textContent=`${pct}%`;
+  let msg='';
+  if(pct===0) msg='כל צעד קטן שאת/ה עושה היום חשוב 💙';
+  else if(pct<25) msg='התחלת! המוח שלך מציין את זה ☑️';
+  else if(pct<55) msg='כבר חצי דרך! בכנות — זה מרשים 🌿';
+  else if(pct<85) msg='כמעט שם! רק עוד קצת — הגוף כבר מרגיש 🌸';
+  else if(pct<100) msg='כמעט מושלם! עוד צעד קטן ✨';
+  else msg='🎉 יום מלא! הגוף והנפש שלך מודים לך!';
+  document.getElementById('day-msg').textContent=msg;
+  if(dayQualifies(done)) document.getElementById('celebration').classList.add('show');
+  else document.getElementById('celebration').classList.remove('show');
+  updateJourney();
+}
+
+// JOURNEY
+function getCharEmoji(st) { if(st>=30)return'🌟'; if(st>=21)return'🌳'; if(st>=14)return'🌺'; if(st>=7)return'🌸'; if(st>=3)return'🌿'; return'🌱'; }
+function getStreakMsg(st) {
+  if(st===0) return 'כל יום שבו טיפלת בעצמך הוא ניצחון 💙';
+  if(st<3)   return 'התחלת את המסע! יום אחד בכל פעם 🌱';
+  if(st<7)   return '3 ימים! את/ה בונה משהו אמיתי 🌿';
+  if(st<14)  return 'שבוע שלם! הגוף שלך מרגיש את ההבדל 🌸';
+  if(st<21)  return 'שבועיים! ההרגל מתחזק. המוח שלך שם לב 🌺';
+  if(st<30)  return '3 שבועות! המוח שלך בנה נתיב חדש ממש 🌳';
+  return 'חודש שלם! ההרגל הפך חלק ממך. אדיר 🌟';
+}
+function getHabitCard(st) {
+  if(st>=30) return HABIT_SCIENCE[5]; if(st>=21) return HABIT_SCIENCE[4];
+  if(st>=14) return HABIT_SCIENCE[3]; if(st>=7)  return HABIT_SCIENCE[2];
+  if(st>=3)  return HABIT_SCIENCE[1]; return HABIT_SCIENCE[0];
+}
+function updateJourney() {
+  document.getElementById('hdr-streak').textContent=s.streak;
+  document.getElementById('j-streak').textContent=s.streak;
+  document.getElementById('j-char').textContent=getCharEmoji(s.streak);
+  document.getElementById('j-msg').textContent=getStreakMsg(s.streak);
+  document.getElementById('stat-streak').textContent=s.streak;
+  document.getElementById('stat-best').textContent=s.bestStreak;
+  const hc=getHabitCard(s.streak);
+  document.getElementById('habit-title').textContent=hc.title;
+  document.getElementById('habit-body').textContent=hc.body;
+  const hp=Math.min(Math.round(s.streak/66*100),100);
+  document.getElementById('habit-fill').style.width=hp+'%';
+  document.getElementById('habit-pct-lbl').textContent=hp+'%';
+  renderMilestones(); renderAchievements();
+}
+function renderMilestones() {
+  const row=document.getElementById('milestones-row');
+  const track=row.querySelector('.m-track'); row.innerHTML=''; row.appendChild(track);
+  document.getElementById('m-fill').style.width=Math.min(s.streak/30*100,100)+'%';
+  MILESTONES.forEach((m,i)=>{
+    const reached=s.streak>=m.days, isCur=reached&&(i===MILESTONES.length-1||s.streak<MILESTONES[i+1].days);
+    const div=document.createElement('div'); div.className='milestone';
+    div.innerHTML=`<div class="m-dot ${reached?'reached':''} ${isCur?'current':''}">${m.emoji}</div><div class="m-lbl">${m.label}</div>`;
+    row.appendChild(div);
+  });
+}
+function renderAchievements() {
+  const grid=document.getElementById('achiev-grid'); grid.innerHTML='';
+  ACHIEVEMENTS.forEach(a=>{
+    const div=document.createElement('div'); div.className='achiev-card'+(s.streak>=a.days?' got':'');
+    div.innerHTML=`<span class="achiev-emoji">${a.emoji}</span><div class="achiev-name">${a.name}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+// FACT OVERLAY
+function openFact() {
+  const idx=getDOY()%FACTS.length, f=FACTS[idx];
+  document.getElementById('fn-title').textContent=f.title;
+  document.getElementById('fn-body').textContent=f.body;
+  document.getElementById('fn-src').textContent='מקור: '+f.src;
+  document.getElementById('fn-day').textContent=`עובדה ${idx+1}/${FACTS.length}`;
+  document.getElementById('fact-overlay').classList.add('open');
+  document.getElementById('nav-facts').classList.add('active');
+}
+function closeFact(e) {
+  if(e&&e.target!==document.getElementById('fact-overlay'))return;
+  document.getElementById('fact-overlay').classList.remove('open');
+  document.getElementById('nav-facts').classList.remove('active');
+}
+
+// TOAST
+let toastTimer;
+function showToast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),3800);
+}
+
+// NAV
+function switchView(v) {
+  document.getElementById('fact-overlay').classList.remove('open');
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.getElementById('nav-'+v).classList.add('active');
+  if(v==='journey') updateJourney();
+}
+
+// SAVE / LOAD
+async function saveDay() {
+  await store.set('day:'+s.todayKey, JSON.stringify({tasks:s.tasks,water:s.water,exChosen:s.exChosen,exMode:s.exMode}));
+  await recalcStreak(); updateJourney();
+}
+async function loadDay() {
+  try {
+    const raw=await store.get('day:'+s.todayKey);
+    if(raw){
+      const d=JSON.parse(raw);
+      s.tasks=d.tasks||{};
+      s.water=d.water||0;
+      s.exMode=d.exMode||'easy';
+      // backwards compat: old format was a string
+      if(d.exChosen && typeof d.exChosen==='object') s.exChosen=d.exChosen;
+      else if(d.exChosen && typeof d.exChosen==='string') s.exChosen={easy:d.exChosen,hard:null};
+      else s.exChosen={easy:null,hard:null};
+    }
+  } catch(e) {}
+}
+async function loadStreak() {
+  try { const raw=await store.get('streak:main'); if(raw){const d=JSON.parse(raw);s.streak=d.streak||0;s.bestStreak=d.best||0;} } catch(e) {}
+}
+async function recalcStreak() {
+  if(!dayQualifies(countDone())) return;
+  let sd=null;
+  try{const raw=await store.get('streak:main');if(raw)sd=JSON.parse(raw);}catch(e){}
+  if(!sd){if(s.streak>0)return;sd={streak:0,best:0,lastDay:null,lastCounted:null};}
+  if(sd.lastCounted===s.todayKey) return;
+  const yest=getDateKey(-1);
+  if(sd.lastDay===yest) sd.streak++;
+  else if(sd.lastDay!==s.todayKey) sd.streak=1;
+  sd.lastDay=s.todayKey; sd.lastCounted=s.todayKey;
+  if(sd.streak>sd.best) sd.best=sd.streak;
+  s.streak=sd.streak; s.bestStreak=sd.best;
+  await store.set('streak:main',JSON.stringify(sd));
+}
+
+// RENDER FROM STATE
+function renderFromState() {
+  TASK_IDS.forEach(id=>{const c=document.getElementById('tc-'+id);if(c)c.classList.toggle('done',!!s.tasks[id]);});
+  renderDrops(); setMode(s.exMode);
+  const anyDone=s.exChosen.easy||s.exChosen.hard;
+  const bothDone=s.exChosen.easy&&s.exChosen.hard;
+  if(s.exChosen.easy){ const el=document.getElementById('eopt-'+s.exChosen.easy); if(el)el.classList.add('chosen'); }
+  if(s.exChosen.hard){ const el=document.getElementById('eopt-'+s.exChosen.hard); if(el)el.classList.add('chosen'); }
+  if(anyDone){
+    document.getElementById('exercise-card').classList.add('done');
+    document.getElementById('ex-title').textContent=bothDone?'שתי פעילויות! סופר-גיבור/ה 🌟':'פעילות הושלמה! 💪';
+    document.getElementById('ex-sub').textContent=bothDone?'עשית קל וגם יותר — מדהים! 💚':'תנועה היא תרופה ממש 💚';
+    document.getElementById('ex-icon').textContent=bothDone?'🌟':'✅';
+  }
+  document.getElementById('ex-sec-title').textContent=isExerciseDay()?'💪 פעילות גופנית (היום!)':'💪 פעילות גופנית (יום מנוחה — רשות!)';
+  updateProgress();
+}
+
+// AUTH
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function initAuth() {
+  // Check for saved session (valid 30 days)
+  try {
+    const sessRaw = await store.get('user:session');
+    if (sessRaw) {
+      const sess = JSON.parse(sessRaw);
+      if (sess.expiry > Date.now()) {
+        const userRaw = await store.get('user:profile');
+        if (userRaw) {
+          const u = JSON.parse(userRaw);
+          document.getElementById('hdr-date').textContent = `שלום, ${u.name}! | ${getHebrewDate()}`;
+          document.getElementById('auth-screen').style.display = 'none';
+          return;
+        }
+      }
+    }
+  } catch(e) {}
+  // No valid session — show auth screen
+  const raw = await store.get('user:profile');
+  if (raw) {
+    const u = JSON.parse(raw);
+    document.getElementById('auth-register').style.display = 'none';
+    document.getElementById('auth-login').style.display = '';
+    document.getElementById('auth-hello').textContent = `שלום, ${u.name}! 👋`;
+    setTimeout(() => document.getElementById('login-pass').focus(), 150);
+  }
+  // Setup Enter-key navigation
+  document.getElementById('reg-name').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('reg-pass').focus(); });
+  document.getElementById('reg-pass').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('reg-pass2').focus(); });
+  document.getElementById('reg-pass2').addEventListener('keydown', e => { if(e.key==='Enter') doRegister(); });
+  document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+}
+async function saveSession() {
+  await store.set('user:session', JSON.stringify({ expiry: Date.now() + 30*24*60*60*1000 }));
+}
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  const err = document.getElementById('auth-error');
+  if (!name) { err.textContent = 'בבקשה הכניסי את שמך'; return; }
+  if (pass.length < 4) { err.textContent = 'הסיסמה חייבת להכיל לפחות 4 תווים'; return; }
+  if (pass !== pass2) { err.textContent = 'הסיסמאות לא תואמות — נסי שוב'; return; }
+  err.textContent = '';
+  const hash = await sha256(pass);
+  await store.set('user:profile', JSON.stringify({ name, password: hash }));
+  await saveSession();
+  hideAuthAndGreet(name, true);
+}
+async function doLogin() {
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('auth-error');
+  if (!pass) { err.textContent = 'בבקשה הכניסי סיסמה'; return; }
+  const raw = await store.get('user:profile');
+  if (!raw) { err.textContent = 'שגיאה: לא נמצא פרופיל'; return; }
+  const u = JSON.parse(raw);
+  const hash = await sha256(pass);
+  if (hash !== u.password) { err.textContent = 'סיסמה שגויה — נסי שוב 💙'; return; }
+  await saveSession();
+  hideAuthAndGreet(u.name, false);
+}
+function hideAuthAndGreet(name, isNew) {
+  const el = document.getElementById('auth-screen');
+  el.style.opacity = '0';
+  setTimeout(() => { el.style.display = 'none'; }, 400);
+  document.getElementById('hdr-date').textContent = `שלום, ${name}! | ${getHebrewDate()}`;
+  setTimeout(() => showToast(isNew
+    ? `ברוכה הבאה, ${name}! 🌱 כל יום הוא התחלה חדשה`
+    : `שלום, ${name}! 🌸 כיף לראות אותך שוב`), 500);
+}
+function showReset() {
+  if (confirm('איפוס הסיסמה ימחק את כל הנתונים שלך — סטרייק, ימים, הכל.\n\nהאם להמשיך?')) {
+    localStorage.clear();
+    window.location.reload();
+  }
+}
+
+// INIT
+async function init() {
+  await loadDay(); await loadStreak();
+  renderFromState(); renderMilestones(); renderAchievements(); updateJourney();
+  await initAuth();
+}
+init();
+</script>
+</body>
+</html>

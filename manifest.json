@@ -1,0 +1,26 @@
+{
+  "name": "גוף ונפש",
+  "short_name": "גוף ונפש",
+  "description": "מסע ההחלמה היומי שלך",
+  "start_url": "./body-soul-app.html",
+  "display": "standalone",
+  "background_color": "#FBF4E8",
+  "theme_color": "#B85C3C",
+  "lang": "he",
+  "dir": "rtl",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
