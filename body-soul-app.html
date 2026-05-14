@@ -7,9 +7,9 @@
 <meta name="theme-color" content="#B85C3C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="גוף ונפש">
+<meta name="apple-mobile-web-app-title" content="תורי">
 <link rel="apple-touch-icon" href="./icon-192.svg">
-<title>גוף ונפש 🌱</title>
+<title>תורי 🌱</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -158,6 +158,25 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
+/* CUSTOM TASKS */
+.add-task-card { border-style: dashed !important; background: transparent !important; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80px; opacity: 0.55; transition: opacity 0.2s; }
+.add-task-card:active { opacity: 1; }
+.custom-del { position: absolute; top: 5px; right: 5px; width: 20px; height: 20px; border-radius: 50%; background: rgba(184,92,60,0.12); border: none; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--terra); padding: 0; line-height: 1; -webkit-tap-highlight-color: transparent; }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(30,15,5,0.5); z-index: 800; display: flex; align-items: flex-end; justify-content: center; }
+.modal-card { background: var(--card); border-radius: 24px 24px 0 0; padding: 24px 20px 36px; width: 100%; max-width: 480px; animation: slideUp 0.3s cubic-bezier(0.34,1.2,0.64,1); }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 14px; }
+.emoji-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.emoji-opt { width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg); font-size: 21px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+.emoji-opt.picked { border-color: var(--terra); background: var(--terra-l); transform: scale(1.15); }
+.modal-input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border2); border-radius: 12px; font-size: 15px; font-family: inherit; background: var(--bg); color: var(--text); direction: rtl; text-align: right; margin-bottom: 14px; display: block; }
+.modal-input:focus { outline: none; border-color: var(--terra); }
+.modal-btns { display: flex; gap: 10px; }
+.modal-btn-main { flex: 1; padding: 12px; background: var(--terra); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; }
+.modal-btn-cancel { padding: 12px 16px; background: var(--bg); color: var(--text2); border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; font-family: inherit; cursor: pointer; }
+
 /* AUTH SCREEN */
 .auth-screen { position:fixed; inset:0; background:var(--bg); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; transition:opacity 0.4s; }
 .auth-card { background:var(--card); border-radius:24px; padding:32px 24px 28px; width:100%; max-width:400px; box-shadow:0 8px 40px rgba(58,37,21,0.13); text-align:center; border:1px solid var(--border); }
@@ -185,7 +204,7 @@ if('serviceWorker' in navigator){
 <div id="auth-screen" class="auth-screen">
   <div class="auth-card">
     <span class="auth-logo">🌱</span>
-    <div class="auth-app-name">גוף ונפש</div>
+    <div class="auth-app-name">תורי</div>
     <div class="auth-tagline">מסע ההחלמה היומי שלך</div>
 
     <div id="auth-register">
@@ -207,12 +226,12 @@ if('serviceWorker' in navigator){
   </div>
 </div>
 
-<h1 class="sr-only">גוף ונפש - אפליקציית החלמה יומית</h1>
+<h1 class="sr-only">תורי - מסע ההחלמה היומי שלך</h1>
 
 <!-- HEADER -->
 <div class="header">
   <div>
-    <div class="app-name">🌱 גוף ונפש</div>
+    <div class="app-name">🌱 תורי</div>
     <div class="app-subtitle" id="hdr-date">טוען...</div>
   </div>
   <div class="streak-pill" onclick="switchView('journey')">🔥 <span id="hdr-streak">0</span> ימים</div>
@@ -312,6 +331,22 @@ if('serviceWorker' in navigator){
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="sec" id="custom-sec" style="display:none">✨ משימות אישיות</div>
+  <div class="task-grid" id="custom-grid"></div>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div id="add-task-modal" class="modal-overlay" style="display:none" onclick="closeAddTask(event)">
+  <div class="modal-card">
+    <div class="modal-title">✨ משימה חדשה</div>
+    <div class="emoji-row" id="emoji-row"></div>
+    <input type="text" id="task-name-input" class="modal-input" placeholder="שם המשימה (למשל: לקחת תרופה)" maxlength="35">
+    <div class="modal-btns">
+      <button class="modal-btn-main" onclick="saveNewTask()">הוסיפי ✓</button>
+      <button class="modal-btn-cancel" onclick="closeAddTask()">ביטול</button>
     </div>
   </div>
 </div>
@@ -658,8 +693,88 @@ function renderFromState() {
     document.getElementById('ex-icon').textContent=bothDone?'🌟':'✅';
   }
   document.getElementById('ex-sec-title').textContent=isExerciseDay()?'💪 פעילות גופנית (היום!)':'💪 פעילות גופנית (יום מנוחה — רשות!)';
+  renderCustomTasks();
   updateProgress();
 }
+
+// CUSTOM TASKS
+const EMOJI_OPTIONS = ['💊','🧘','📖','🎨','🎵','🌿','☕','📝','🛁','🧹','🛒','📞','🐶','❤️','🌸','⭐','🏃','🌙'];
+let customTasks = [];
+let pickedEmoji = '⭐';
+
+async function loadCustomTasks() {
+  try { const raw = await store.get('custom:tasks'); if(raw) customTasks = JSON.parse(raw); } catch(e) {}
+}
+async function saveCustomTasks() {
+  await store.set('custom:tasks', JSON.stringify(customTasks));
+}
+function renderCustomTasks() {
+  const grid = document.getElementById('custom-grid');
+  const sec  = document.getElementById('custom-sec');
+  grid.innerHTML = '';
+  sec.style.display = customTasks.length > 0 ? '' : 'none';
+  customTasks.forEach(t => {
+    const done = !!s.tasks['c:'+t.id];
+    const card = document.createElement('div');
+    card.className = 'task-card' + (done ? ' done' : '');
+    card.id = 'ctc-' + t.id;
+    card.onclick = () => toggleCustomTask(t.id);
+    card.innerHTML = `<div class="check-badge">✓</div><button class="custom-del" onclick="event.stopPropagation();deleteCustomTask('${t.id}')" aria-label="מחקי">✕</button><span class="t-icon">${t.emoji}</span><div class="t-name">${t.name}</div>`;
+    grid.appendChild(card);
+  });
+  const addCard = document.createElement('div');
+  addCard.className = 'task-card add-task-card';
+  addCard.onclick = openAddTask;
+  addCard.innerHTML = `<span class="t-icon" style="font-size:30px">➕</span><div class="t-name" style="font-size:12px">הוסיפי משימה</div>`;
+  grid.appendChild(addCard);
+}
+function toggleCustomTask(id) {
+  const key = 'c:'+id;
+  s.tasks[key] = !s.tasks[key];
+  const card = document.getElementById('ctc-'+id);
+  if(card) card.classList.toggle('done', !!s.tasks[key]);
+  if(s.tasks[key]) { const t = customTasks.find(x=>x.id===id); showToast(`${t?t.emoji:'✨'} כל הכבוד! עוד משימה הושלמה 💙`); }
+  saveDay();
+}
+async function deleteCustomTask(id) {
+  if(!confirm('למחוק את המשימה הזו?')) return;
+  customTasks = customTasks.filter(t=>t.id!==id);
+  delete s.tasks['c:'+id];
+  await saveCustomTasks();
+  renderCustomTasks();
+  saveDay();
+}
+function openAddTask() {
+  pickedEmoji = '⭐';
+  document.getElementById('task-name-input').value = '';
+  const row = document.getElementById('emoji-row');
+  row.innerHTML = '';
+  EMOJI_OPTIONS.forEach(em => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-opt' + (em===pickedEmoji?' picked':'');
+    btn.textContent = em;
+    btn.onclick = () => { pickedEmoji=em; document.querySelectorAll('.emoji-opt').forEach(b=>b.classList.remove('picked')); btn.classList.add('picked'); };
+    row.appendChild(btn);
+  });
+  document.getElementById('add-task-modal').style.display = 'flex';
+  setTimeout(()=>document.getElementById('task-name-input').focus(), 150);
+}
+function closeAddTask(e) {
+  if(e && e.target!==document.getElementById('add-task-modal')) return;
+  document.getElementById('add-task-modal').style.display = 'none';
+}
+async function saveNewTask() {
+  const name = document.getElementById('task-name-input').value.trim();
+  if(!name) { document.getElementById('task-name-input').focus(); return; }
+  const id = Date.now().toString(36);
+  customTasks.push({id, name, emoji: pickedEmoji});
+  await saveCustomTasks();
+  document.getElementById('add-task-modal').style.display = 'none';
+  document.getElementById('custom-sec').style.display = '';
+  renderCustomTasks();
+  showToast(`${pickedEmoji} "${name}" נוספה! 🌱`);
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeAddTask(); });
 
 // AUTH
 async function sha256(str) {
@@ -745,8 +860,10 @@ function showReset() {
 
 // INIT
 async function init() {
+  await loadCustomTasks();
   await loadDay(); await loadStreak();
   renderFromState(); renderMilestones(); renderAchievements(); updateJourney();
+  document.getElementById('task-name-input').addEventListener('keydown', e=>{ if(e.key==='Enter') saveNewTask(); });
   await initAuth();
 }
 init();
