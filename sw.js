@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v1';
+const CACHE = 'body-soul-v3';
 const FILES = [
   './body-soul-app.html',
   './manifest.json',
