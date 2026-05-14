@@ -2,8 +2,7 @@ const CACHE = 'body-soul-v1';
 const FILES = [
   './body-soul-app.html',
   './manifest.json',
-  './icon-192.svg',
-  './icon-512.svg'
+  './logo.png'
 ];
 
 self.addEventListener('install', e => {

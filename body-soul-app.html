@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="תורי">
-<link rel="apple-touch-icon" href="./icon-192.svg">
+<link rel="apple-touch-icon" href="./logo.png">
 <title>תורי 🌱</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -180,8 +180,8 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 /* AUTH SCREEN */
 .auth-screen { position:fixed; inset:0; background:var(--bg); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; transition:opacity 0.4s; }
 .auth-card { background:var(--card); border-radius:24px; padding:32px 24px 28px; width:100%; max-width:400px; box-shadow:0 8px 40px rgba(58,37,21,0.13); text-align:center; border:1px solid var(--border); }
-.auth-logo { font-size:64px; display:block; margin-bottom:8px; animation:charFloat 3s ease-in-out infinite; line-height:1.1; }
-.auth-app-name { font-size:28px; font-weight:800; color:var(--terra); margin-bottom:3px; }
+.auth-logo { width:160px; height:160px; object-fit:contain; display:block; margin:0 auto 4px; animation:charFloat 3s ease-in-out infinite; }
+.auth-app-name { font-size:28px; font-weight:800; color:var(--terra); margin-bottom:3px; display:none; }
 .auth-tagline { font-size:13px; color:var(--text2); margin-bottom:26px; }
 .auth-form-title { font-size:14px; color:var(--text2); margin-bottom:16px; line-height:1.6; }
 .auth-hello { font-size:22px; font-weight:700; color:var(--text); margin-bottom:18px; }
@@ -203,8 +203,7 @@ if('serviceWorker' in navigator){
 <!-- AUTH SCREEN -->
 <div id="auth-screen" class="auth-screen">
   <div class="auth-card">
-    <span class="auth-logo">🌱</span>
-    <div class="auth-app-name">תורי</div>
+    <img src="./logo.png" class="auth-logo" alt="תורי">
     <div class="auth-tagline">מסע ההחלמה היומי שלך</div>
 
     <div id="auth-register">
