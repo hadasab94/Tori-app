@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v5';
+const CACHE = 'body-soul-v6';
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
