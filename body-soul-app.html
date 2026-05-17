@@ -31,6 +31,16 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .app-subtitle { font-size: 11px; color: var(--text2); margin-top: 1px; }
 .streak-pill { background: var(--gold-l); border: 1.5px solid #D4942A; border-radius: 20px; padding: 5px 13px; font-size: 13px; font-weight: 700; color: #8A5A00; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: transform 0.15s; }
 .streak-pill:active { transform: scale(0.95); }
+.compassion-btn { background: #EDE0FF; border: 1.5px solid #9B72CF; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: #6B4C9A; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: transform 0.15s; font-family: inherit; white-space: nowrap; }
+.compassion-btn:active { transform: scale(0.95); }
+.compassion-btn.active { background: #9B72CF; color: white; border-color: #6B4C9A; }
+.comp-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
+.comp-modal-overlay.open { display: flex; }
+.comp-modal { background: white; border-radius: 20px; padding: 24px 20px 20px; max-width: 380px; width: 100%; text-align: center; }
+.comp-modal-title { font-size: 18px; font-weight: 800; color: #6B4C9A; margin-bottom: 12px; }
+.comp-modal-body { font-size: 13px; color: #555; line-height: 1.7; margin-bottom: 20px; }
+.comp-modal-confirm { background: #9B72CF; color: white; border: none; border-radius: 12px; padding: 11px 20px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; width: 100%; margin-bottom: 8px; }
+.comp-modal-cancel { background: transparent; color: #999; border: none; font-size: 13px; cursor: pointer; font-family: inherit; padding: 4px; }
 
 /* BOTTOM NAV */
 .bottom-nav { position: fixed; bottom: 0; right: 50%; transform: translateX(50%); width: 100%; max-width: 480px; background: var(--card); border-top: 1px solid var(--border); display: flex; padding: 8px 0 12px; z-index: 200; }
@@ -165,8 +175,8 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 /* ===== BOT CHAT ===== */
 #view-bot { padding: 0 !important; }
 .view.active#view-bot { display: flex !important; flex-direction: column; height: calc(100vh - 110px); }
-.bot-hdr { background: #128C7E; color: white; padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.bot-av { width: 36px; height: 36px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.bot-hdr { background: #6B4C9A; color: white; padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.bot-av { width: 36px; height: 36px; border-radius: 50%; background: #9B72CF; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
 .bot-inf { flex: 1; }
 .bot-nm { font-weight: 700; font-size: 14px; }
 .bot-st { font-size: 10px; opacity: 0.85; }
@@ -176,7 +186,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .chat-area { flex: 1; overflow-y: auto; padding: 10px 10px 6px; background: #ECE5DD; display: flex; flex-direction: column; gap: 7px; }
 .cmsg { max-width: 80%; padding: 7px 11px 4px; border-radius: 8px; font-size: 13px; line-height: 1.5; word-break: break-word; }
 .cmsg-bot { background: white; align-self: flex-start; border-radius: 0 8px 8px 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
-.cmsg-user { background: #DCF8C6; align-self: flex-end; border-radius: 8px 0 8px 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
+.cmsg-user { background: #EDE0FF; align-self: flex-end; border-radius: 8px 0 8px 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
 .cmsg-time { font-size: 9px; color: #999; text-align: left; margin-top: 3px; }
 .typing-ind { display: flex; gap: 4px; align-items: center; padding: 9px 13px; background: white; border-radius: 0 8px 8px 8px; align-self: flex-start; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
 .td { width: 7px; height: 7px; border-radius: 50%; background: #aaa; animation: tdB 1.2s infinite; }
@@ -184,26 +194,26 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .td:nth-child(3) { animation-delay: 0.4s; }
 @keyframes tdB { 0%,60%,100%{transform:translateY(0);} 30%{transform:translateY(-5px);} }
 .qr-wrap { display: flex; flex-wrap: wrap; gap: 5px; padding: 7px 10px; background: #ECE5DD; flex-shrink: 0; border-top: 1px solid rgba(0,0,0,0.06); }
-.qrb { background: white; border: 1px solid #25D366; color: #128C7E; border-radius: 14px; padding: 5px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
-.qrb:hover, .qrb:active { background: #25D366; color: white; }
+.qrb { background: white; border: 1px solid #9B72CF; color: #6B4C9A; border-radius: 14px; padding: 5px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+.qrb:hover, .qrb:active { background: #9B72CF; color: white; }
 .chat-inp-row { display: flex; gap: 7px; padding: 7px 10px; background: #F0F0F0; flex-shrink: 0; align-items: center; border-top: 1px solid #ddd; }
 .chat-inp { flex: 1; border: none; border-radius: 18px; padding: 8px 13px; font-size: 13px; font-family: inherit; background: white; outline: none; direction: rtl; }
-.chat-snd { width: 36px; height: 36px; border-radius: 50%; background: #25D366; border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.chat-snd:hover { background: #20B858; }
+.chat-snd { width: 36px; height: 36px; border-radius: 50%; background: #9B72CF; border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.chat-snd:hover { background: #7B5BAF; }
 /* ONBOARDING */
 .ob-ov { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 850; display: none; align-items: center; justify-content: center; padding: 16px; }
 .ob-ov.open { display: flex; }
 .ob-card { background: white; border-radius: 20px; padding: 22px 20px; width: 100%; max-width: 440px; max-height: 85vh; overflow-y: auto; }
-.ob-title { font-size: 17px; font-weight: 800; color: #128C7E; margin-bottom: 4px; }
+.ob-title { font-size: 17px; font-weight: 800; color: #6B4C9A; margin-bottom: 4px; }
 .ob-sub { font-size: 12px; color: #666; line-height: 1.6; margin-bottom: 16px; }
 .ob-step { font-size: 10px; color: #aaa; margin-bottom: 10px; }
 .ob-q { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 9px; line-height: 1.4; }
 .ob-inp { width: 100%; border: 1.5px solid #ddd; border-radius: 10px; padding: 9px 12px; font-size: 13px; font-family: inherit; direction: rtl; outline: none; transition: border-color 0.2s; margin-bottom: 4px; }
-.ob-inp:focus { border-color: #25D366; }
+.ob-inp:focus { border-color: #9B72CF; }
 .ob-opts { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
 .ob-opt { border: 1.5px solid #ddd; border-radius: 14px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; background: white; color: #444; transition: all 0.15s; }
-.ob-opt.on { border-color: #25D366; background: #E8F5E9; color: #128C7E; font-weight: 700; }
-.ob-nxt { background: #25D366; color: white; border: none; border-radius: 12px; padding: 11px; width: 100%; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 14px; }
+.ob-opt.on { border-color: #9B72CF; background: #F3ECFF; color: #6B4C9A; font-weight: 700; }
+.ob-nxt { background: #9B72CF; color: white; border: none; border-radius: 12px; padding: 11px; width: 100%; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 14px; }
 .sys-prompt-wrap { padding: 12px; }
 .sys-prompt-card { background: #1a1a2e; color: #a8d8a8; border-radius: 12px; padding: 14px; font-size: 10px; line-height: 1.7; font-family: monospace; white-space: pre-wrap; overflow-x: auto; direction: ltr; }
 
@@ -291,7 +301,10 @@ if('serviceWorker' in navigator){
     <div class="app-name">🌱 תורי</div>
     <div class="app-subtitle" id="hdr-date">טוען...</div>
   </div>
-  <div class="streak-pill" onclick="switchView('journey')">🔥 <span id="hdr-streak">0</span> ימים</div>
+  <div style="display:flex;align-items:center;gap:6px">
+    <button class="compassion-btn" id="comp-btn" onclick="openCompassionModal()">🫶 <span id="comp-label">יום חמלה</span></button>
+    <div class="streak-pill" onclick="switchView('journey')">🔥 <span id="hdr-streak">0</span> ימים</div>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -464,6 +477,7 @@ if('serviceWorker' in navigator){
       <button class="mpill" id="pill-quiet" onclick="botToggleQuiet()">🤫 שקט</button>
       <button class="mpill" id="pill-comp" onclick="botToggleCompassion()">🫶 חמלה</button>
       <button class="mpill" onclick="showSystemPrompt()">⚙️</button>
+      <button class="mpill" onclick="clearBotChat()">🗑 נקה</button>
     </div>
   </div>
   <div class="chat-area" id="chat-area"></div>
@@ -481,6 +495,16 @@ if('serviceWorker' in navigator){
   </div>
 </div>
 
+<!-- COMPASSION DAY MODAL -->
+<div class="comp-modal-overlay" id="comp-overlay">
+  <div class="comp-modal">
+    <div class="comp-modal-title">🫶 יום חמלה</div>
+    <div class="comp-modal-body">יום חמלה מקפיא את הסטרייק שלך — הוא לא נשבר ולא עולה.<br><br>אפשר להפעיל עד 7 ימים ברצף. אחרי שבוע — הסטרייק מתאפס.</div>
+    <button class="comp-modal-confirm" onclick="activateCompassionDay()">הפעילי יום חמלה 🫶</button>
+    <button class="comp-modal-cancel" onclick="closeCompassionModal()">ביטול</button>
+  </div>
+</div>
+
 <!-- ONBOARDING -->
 <div class="ob-ov" id="ob-ov">
   <div class="ob-card">
@@ -495,7 +519,7 @@ if('serviceWorker' in navigator){
 <div class="ob-ov" id="sp-ov">
   <div class="ob-card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div style="font-size:14px;font-weight:800;color:#128C7E">⚙️ System Prompt לבוט</div>
+      <div style="font-size:14px;font-weight:800;color:#6B4C9A">⚙️ System Prompt לבוט</div>
       <button onclick="document.getElementById('sp-ov').classList.remove('open')" style="border:none;background:var(--bg);border-radius:8px;padding:4px 10px;cursor:pointer;font-family:inherit">סגור</button>
     </div>
     <div class="sys-prompt-card" id="sp-content"></div>
@@ -523,26 +547,94 @@ if('serviceWorker' in navigator){
 const TASK_IDS = ['breakfast','lunch','dinner','shower','breathing','outside','sleep'];
 
 const TASK_MSGS = {
-  breakfast: ['🍳 ארוחת בוקר! הלבלב שלך הרים לך כוסית 🥂','🌅 קפצת על ארוחת הבוקר! מוח שבע = יום הרבה יותר טוב','☕ הגוף שלך ממש אסיר תודה עכשיו — ביצה או קוואקר, לא משנה!'],
-  lunch:     ['🥗 ארוחת צהריים! הסוכר בדם: "סוף סוף! חשבתי שנשכחת ממני" 😌','✅ צהריים הושלם! מערכת העצבים הרגיעה את עצמה בדיוק עכשיו','🌿 תידלוק מוצלח! כן, אכילה זה ממש מדע שפשוט עובד'],
-  dinner:    ['🍲 ארוחת ערב! סגרת את היום בצורה הכי טובה שיש','🌙 שלוש ארוחות! הגוף שלך ישן הלילה עם חיוך 😊','💛 טיפלת בעצמך עד סוף היום — זה לא מובן מאליו בכלל'],
-  shower:    ['🚿 מקלחת! כעת את/ה רשמית רענן/ת יותר מאתמול 😄','🌸 מקלחת = שינוי שמצב הישרדות למצב ביטחון. מדע ממש!','✨ חמים + ניקיון = הנוסחה הפשוטה שהגוף אוהב מאז תמיד'],
-  breathing: ['🌬️ עצרת לנשום! מערכת העצבים שלך בדיוק עשתה לעצמה קפה 😌','🧘 עשית רגע שקט! זה לא עצלנות — זה מדע. הפאראסימפטטי חוגג!','💙 נשימה עמוקה = מסר לגוף: "אנחנו בטוחים עכשיו". כל הכבוד!'],
-  outside:   ['🌤️ יצאת החוצה! השמש אפילו לא ידעה שהיא מרפאה אותך עכשיו','🚶 אוויר צח! הריאות, הנפש, ומערכת העצבים מציאות הסכמה פה','🌳 10 דקות בחוץ = שעה של מצב רוח טוב יותר. לא בדיחה, זה מחקר'],
-  sleep:     ['🌙 רשמת שינה! המוח שלך ישלח לך חלומות עיבוד הלילה — בחינם!','😴 שינה טובה = ההחלמה הכי יעילה שיש, בלי לעשות שום דבר','⭐ בשינה המוח מעבד טראומה. ממש. את/ה מחלים גם תוך כדי שינה!'],
+  breakfast: [
+    'הלבלב שלך הרים לך כוסית. ארוחת בוקר — נרשם! 🍳',
+    'מוח שבע = יום הרבה יותר טוב. ביצה, קוואקר, יוגורט — לא משנה. ✔',
+    'הגוף שלך אסיר תודה על זה. ממש. 🌅',
+    'ארוחת בוקר סגורה! הסוכר בדם מסודר, מערכת העצבים קצת יותר שקטה. 🌿',
+    'ניצחון שקט של הבוקר — גוף שקיבל דלק להתחיל. 💛',
+    'הגוף ידע שתיזכרי בו. הוא מודה לך. 🌸',
+    'בוקר עם אוכל = בוקר שמתחיל מקרקע. זה לא קטן. ✨',
+    'ארוחת בוקר — עוד לבנה. 🌱',
+  ],
+  lunch: [
+    'ארוחת צהריים! הסוכר בדם: "סוף סוף, חשבתי שנשכחת ממני." 🥗',
+    'צהריים הושלמו. מערכת העצבים הרגיעה את עצמה בדיוק עכשיו. ✅',
+    'תידלוק של אמצע יום — אחר הצהריים מרגיש אחרת לגמרי. 🌿',
+    'הגוף שלך קיבל מה שהיה צריך. המוח מרגיש את זה. 💛',
+    'שתי ארוחות היום כבר — זה לא מובן מאליו בכלל. 🌸',
+    'ארוחת צהריים נרשמה. הגוף ממשיך לעבוד בשבילך. ✔',
+    'לאכול בצהריים = להגיד לגוף "אני עדיין איתך." 🌱',
+    'ניצחון שקט של הצהריים. עוד אחת. 💛',
+  ],
+  dinner: [
+    'ארוחת ערב! סגרת את היום בצורה שהגוף אוהב. 🍲',
+    'שלוש ארוחות ביום — הגוף שלך ישן הלילה קצת יותר טוב. 🌙',
+    'טיפלת בעצמך עד סוף היום. זה לא מובן מאליו. 💛',
+    'ארוחת ערב נרשמה. היום סגור בצורה טובה. ✨',
+    'גוף שמקבל ארוחת ערב = גוף שנרגע לקראת הלילה. 🌸',
+    'שלוש ארוחות! הגוף שלך ידע שאת שמה לב אליו היום. 🌟',
+    'ארוחת ערב — עוד לבנה ביום שסגר יפה. 🌿',
+    'נרשם! הגוף מודה לך על הדלק של הלילה. 🌙',
+  ],
+  shower: [
+    'מקלחת! עכשיו את רשמית רעננה יותר מלפני 10 דקות. 🚿',
+    'מקלחת = שינוי ממצב הישרדות למצב ביטחון. מדע. 🌸',
+    'חמים + ניקיון = הנוסחה הפשוטה שהגוף אוהב. ✨',
+    'היגיינה קטנה = מסר גדול לגוף: "אני שמה לב אלייך." 💛',
+    'מקלחת נרשמה. הגוף מרגיש את ההבדל. 🌿',
+    'מקלחת סגורה — אחת הפעולות הכי עוצמתיות לשינוי מצב. 🌸',
+    'ניקיון = תחושת שליטה קטנה. וזה חשוב. ✔',
+    'הגוף שלך הרגיש את המים. זה גם גשר חזרה אליו. 💧',
+  ],
+  breathing: [
+    'עצרת לנשום! מערכת העצבים שלך בדיוק עשתה לעצמה קפה. 🌬️',
+    'נשימה עמוקה = מסר לגוף: "אנחנו בטוחות עכשיו." 💙',
+    'הפאראסימפטטי חוגג. ממש. 🧘',
+    'נשימה אחת ביום = שינוי מצטבר במערכת העצבים. לא בדיחה. 🌬️',
+    'עצרת, נשמת, חזרת. זה לא קטן כמו שנדמה. 💙',
+    'מוח שמקבל נשימה = מוח שמוציא רגל מהלחץ. 🌿',
+    'נשימה נרשמה. הגוף מרגיש את ההבדל גם אם לא שמת לב. ✨',
+    'עצב הוואגוס שלך: "תודה!" 🌬️',
+  ],
+  outside: [
+    'יצאת! השמש אפילו לא ידעה שהיא מרפאה אותך. 🌤️',
+    'אוויר צח — הריאות, הנפש, ומערכת העצבים הגיעו להסכמה. 🚶',
+    '10 דקות בחוץ = שעה של מצב רוח טוב יותר. מחקר, לא בדיחה. 🌳',
+    'יציאה לחוץ = ויסות חושי שעוזר להישאר בכאן ועכשיו. 🌿',
+    'אור יום + תנועה = סרוטונין טבעי. ממש. ☀️',
+    'יצאת לאוויר. הגוף והמוח הרגישו את ההבדל. 🌸',
+    'נרשם! חוץ = הפסקה שהמוח ביקש בלי מילים. 🌤️',
+    'חשיפה לאור יום — אחד הדברים הכי פשוטים ויעילים להחלמה. ✨',
+  ],
+  sleep: [
+    'רשמת שינה! המוח שלך מעבד ומנקה הלילה — בחינם. 🌙',
+    'שינה טובה = ההחלמה הכי יעילה שיש, בלי לעשות שום דבר. 😴',
+    'בשינה המוח מעבד טראומה. ממש. את מחלימה גם תוך כדי שינה. ⭐',
+    'שינה נרשמה. מחר מתחיל קצת יותר קל. 🌙',
+    'שנת REM מנקה זיכרונות כבדים. זה ביולוגיה, לא מיתוס. 💙',
+    'גוף שישן = גוף שמעבד. הכי חשוב ביום. 🌿',
+    'שינה = טיפול ביולוגי. הזמינה אותו — נרשם! ✨',
+    'לישון זה לא לא לעשות כלום. זה לעשות את הדבר הכי חשוב. 🌙',
+  ],
 };
 
 const ENCOURAGEMENTS = [
-  '🌟 כל כך טוב! הגוף שלך מודה לך מכל תא ותא!',
-  '💛 עוד אחת! את/ה בונה משהו אמיתי כאן, לבנה לבנה',
-  '🌿 המוח שלך ממש עכשיו מחזק נתיב עצבי חדש — כי עשית את זה!',
-  '😄 הגוף שלך: "סוף סוף! ידעתי שתחזור/י אליי!"',
-  '💪 רגע — את/ה עושה דברים! זה לא פשוט. זה אומץ ממש.',
-  '🌸 קטן? לא. הגוף שלך מרגיש כל פעולה שאת/ה עושה בשבילו.',
-  '🧠 מחקרית: כל חזרה מחזקת את ההרגל ב-~3%. עשית אחת! 📈',
-  '✨ בכל פעם שאת/ה עושה את זה, ההחלמה מהירה יותר. לא בדיחה.',
-  '🎯 כן! זה בדיוק הצעד הנכון. פשוט ומדויק, בלי גרנדיוזיות.',
-  '🌈 אפשר? כן. עושים? כן. כל הכבוד לגוף וגם לראש!',
+  'הגוף שלך מודה לך. מכל תא ותא. 🌟',
+  'עוד אחת. את בונה משהו אמיתי כאן, לבנה אחרי לבנה. 💛',
+  'המוח שלך ממש עכשיו מחזק נתיב עצבי חדש. כי עשית את זה. 🌿',
+  'הגוף: "ידעתי שתחזרי אליי." 😄',
+  'עשית דברים. זה לא פשוט. זה אומץ. 💙',
+  'קטן? לא. הגוף מרגיש כל פעולה שאת עושה בשבילו. 🌸',
+  'כל חזרה מחזקת את ההרגל. עשית אחת עכשיו. 🧠',
+  'בכל פעם שעושה זאת — ההחלמה מהירה יותר. לא בדיחה. ✨',
+  'זה בדיוק הצעד הנכון. פשוט ומדויק. 🎯',
+  'המוח שלך רשם את זה. ממש. 💛',
+  'לא רק פעולה קטנה — זה דלק. הגוף מודה לך. 🌱',
+  'עוד אחת לקבצת "כן עשיתי היום". 🌿',
+  'הגוף שמח. זה לא מושג — זה כימיה. 🌸',
+  'זה? זה בדיוק מה שבונה שגרה. ✔',
+  'פעולה קטנה + גוף שמרגיש = לבנה אמיתית. 🌟',
 ];
 
 const FACTS = [
@@ -558,6 +650,22 @@ const FACTS = [
   { title:'נשימה — שנייה אחת שמשנה', body:'נשימה עמוקה ומודעת מפעילה את המערכת הפאראסימפטטית — זו שאחראית על מנוחה והחלמה. אפילו נשימה עמוקה אחת ביום מצטברת לשינוי ממשי בוויסות מערכת העצבים לאורך זמן.', src:'Siegel, The Mindful Brain (2007)' },
   { title:'טיפול עצמי = טיפול ממש', body:'כל יום שבו טיפלת בגוף שלך, שלחת לו מסר: "אני כאן, אתה בטוח." לאורך זמן, המוח לומד לאמין בו. טיפול עצמי יומי הוא לא פינוק — הוא חלק מהחלמה מוכחת מחקרית.', src:'Porges, Polyvagal Theory (2011)' },
   { title:'הגוף — בן ברית, לא אויב', body:'אחרי טראומה, הגוף יכול להרגיש כמו מקור של כאב. המחקר מראה שבניית קשר רחום עם הגוף — ולא מלחמה בו — היא אחת מאבני היסוד של ההחלמה מ-C-PTSD.', src:'Fisher, Healing the Fragmented Selves (2017)' },
+  { title:'הקשר בין מזון לוויסות רגשי', body:'רמות נמוכות של סוכר בדם מגבירות ייצור קורטיזול ואדרנלין — הורמוני לחץ. אכילה סדירה ממש מפחיתה את עוצמת הטריגרים הרגשיים. הגוף והמוח רצים על אותו דלק.', src:'Journal of Psychiatric Research, 2019' },
+  { title:'תנועה עדינה ומערכת העצבים', body:'אפילו 10 דקות של הליכה קלה מגבירות BDNF — חלבון שמגן על תאי עצב ומסייע לעיבוד רגשי. תנועה עדינה היא אחת הדרכים הישירות ביותר לווסת את מערכת העצבים האוטונומית.', src:'Neuroscience Letters, 2020' },
+  { title:'שינה ועיבוד זיכרון טראומטי', body:'בשנת REM המוח "מנקה" זיכרונות רגשיים טעונים ומפחית את עוצמתם. זו הסיבה שאחרי שינה טובה אירועים קשים מרגישים לפעמים פחות מכריעים. שינה היא טיפול ביולוגי.', src:'Walker, Why We Sleep (2017)' },
+  { title:'נשימה עמוקה ועצב הוואגוס', body:'עצב הוואגוס מחבר את המוח לכל האיברים הפנימיים ומשפיע על ויסות רגשי. נשימה איטית ועמוקה מפעילה אותו ישירות — ומורידה תגובת לחץ תוך שניות. זה לא מיתוס, זה פיזיולוגיה.', src:'Porges, Polyvagal Theory (2011)' },
+  { title:'C-PTSD ומוח שלמד להגן', body:'במצב של C-PTSD, המוח פיתח מעגלים של ערנות כדי להגן עלייך. הם עשו את עבודתם. ההחלמה היא לא "לתקן" אותם — אלא לבנות מעגלים נוספים של ביטחון לצידם.', src:'Bessel van der Kolk, The Body Keeps the Score' },
+  { title:'הקשר בין מים לאנרגיה', body:'אפילו ירידה של 1-2% ברמת הידרציה גורמת לעייפות, קושי בריכוז ועצבנות. הגוף לא תמיד מרגיש "צמאון" ברמה זו — לכן חשוב לשתות גם בלי תחושת צמא.', src:'Journal of Nutrition, 2012' },
+  { title:'רגשות בגוף — לא רק בראש', body:'רגשות אינם רק מחשבות — הם תחושות גופניות: לחץ בחזה, כיווץ בבטן, כבדות בכתפיים. הכרה בתחושה הגופנית של הרגש היא הצעד הראשון לוויסות שלו.', src:'Damasio, Descartes Error (1994)' },
+  { title:'ריגרסיה — חלק מהחלמה', body:'ריגרסיה זמנית אחרי התקדמות היא חלק מוכח ונורמלי מהחלמה מטראומה. היא לא מחזירה אותך להתחלה — היא חלק מתהליך ספיראלי שממשיך קדימה.', src:'Herman, Trauma and Recovery (1992)' },
+  { title:'הרגלים קטנים משנים מבנה מוחי', body:'מחקרי נוירופלסטיות מראים שחזרה על פעולה קטנה 30-66 פעמים יוצרת שינוי מבני ממשי בקליפת המוח. לא צריך שינויים גדולים — צריך קטן וקבוע.', src:'Lally et al., European Journal of Social Psychology, 2010' },
+  { title:'מגע עצמי ורגיעה', body:'הנחת יד על הלב ונשימה עמוקה מפעילה מסלולי רגיעה במוח דומים למגע חברתי. זה לא "טיפה עצמי" — זה ביולוגיה: המוח מגיב למגע חם גם כשהוא עצמי.', src:'Neff, Self-Compassion (2011)' },
+  { title:'אור בוקר ושעון ביולוגי', body:'חשיפה לאור יום ב-30 הדקות הראשונות לאחר הקימה מסנכרנת את השעון הביולוגי ומשפרת איכות שינה בלילה שלאחריו. זה משפיע על מצב רוח, אנרגיה וויסות רגשי.', src:'Circadian Biology Reviews, 2021' },
+  { title:'בטחון — הבסיס לכל שינוי', body:'המוח לא יכול ללמוד, לצמוח או להשתנות כאשר הוא בתגובת איום. לכן תחושת ביטחון — בגוף, בסביבה, ביחסים — היא תנאי הכרחי לכל שינוי עמוק.', src:'Porges, Polyvagal Theory (2011)' },
+  { title:'גמישות נוירלית לכל החיים', body:'פעם חשבו שהמוח מפסיק להתפתח בגיל מסוים. היום ידוע שנוירופלסטיות — יכולת המוח להשתנות — נשמרת לכל החיים. תמיד אפשר לבנות נתיבים חדשים.', src:'Doidge, The Brain That Changes Itself (2007)' },
+  { title:'חמלה עצמית ויעילות בהחלמה', body:'מחקרים מראים שחמלה עצמית — לדבר לעצמך כמו שתדברי לחברה טובה — קשורה ישירות לעמידות טובה יותר, פחות דיכאון וחרדה. זה לא פינוק — זה כלי מחקרי.', src:'Neff & Germer, Mindful Self-Compassion (2018)' },
+  { title:'ריח ותחושה כקרקוע', body:'חוש הריח מחובר ישירות לאמיגדלה ולהיפוקמפוס — אזורי הרגש והזיכרון. ריח מוכר ונעים יכול לעגן אותך ב"כאן ועכשיו" ולהפחית חרדה תוך שניות.', src:'Bear et al., Neuroscience (2006)' },
+  { title:'ממש עכשיו — הרגע הזה', body:'מחקרי מיינדפולנס מראים שהבאת תשומת לב לרגע הנוכחי — גם לשניה אחת — מפחיתה פעילות ברשת ברירת המחדל (שאחראית על רומינציה). רגע אחד של "כאן" הוא טיפול.', src:'Kabat-Zinn, Full Catastrophe Living (1990)' },
 ];
 
 const HABIT_SCIENCE = [
@@ -571,8 +679,8 @@ const HABIT_SCIENCE = [
 
 const MILESTONES = [
   {days:1,emoji:'🌱',label:'יום 1'}, {days:3,emoji:'🌿',label:'3 ימים'},
-  {days:7,emoji:'🌸',label:'שבוע'}, {days:14,emoji:'🌺',label:'2 שב׳'},
-  {days:21,emoji:'🌳',label:'3 שב׳'}, {days:30,emoji:'🌟',label:'חודש!'},
+  {days:7,emoji:'🌸',label:'שבוע'}, {days:14,emoji:'🌺',label:'2 שבועות'},
+  {days:21,emoji:'🌳',label:'3 שבועות'}, {days:30,emoji:'🌟',label:'חודש!'},
 ];
 
 const ACHIEVEMENTS = [
@@ -600,7 +708,7 @@ function getDOY() { const d=new Date(); return Math.floor((d-new Date(d.getFullY
 function pickRandom(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
 function countDone() { let n=TASK_IDS.filter(t=>s.tasks[t]).length; if(s.water>=6)n++; if(s.exChosen.easy||s.exChosen.hard)n++; return n; }
 function totalTasks() { return TASK_IDS.length+2; }
-function dayQualifies(cnt) { return cnt>=totalTasks()-2; }
+function dayQualifies(cnt) { return cnt >= Math.ceil(totalTasks() * 0.5); }
 
 // TASK TOGGLE
 function toggleTask(id) {
@@ -658,7 +766,9 @@ function updateProgress() {
   let msg='';
   if(pct===0) msg='כל צעד קטן שאת/ה עושה היום חשוב 💙';
   else if(pct<25) msg='התחלת! המוח שלך מציין את זה ☑️';
-  else if(pct<55) msg='כבר חצי דרך! בכנות — זה מרשים 🌿';
+  else if(pct<50) msg='כבר חצי דרך! בכנות — זה מרשים 🌿';
+  else if(pct===50) msg='50%! היום כבר נחשב להצלחה בסטרייק 🔥';
+  else if(pct<55) msg='קצת מעל 50% — היום נחשב בסטרייק. ממשיכות! 🔥';
   else if(pct<85) msg='כמעט שם! רק עוד קצת — הגוף כבר מרגיש 🌸';
   else if(pct<100) msg='כמעט מושלם! עוד צעד קטן ✨';
   else msg='🎉 יום מלא! הגוף והנפש שלך מודים לך!';
@@ -776,6 +886,7 @@ async function loadStreak() {
   try { const raw=await store.get('streak:main'); if(raw){const d=JSON.parse(raw);s.streak=d.streak||0;s.bestStreak=d.best||0;} } catch(e) {}
 }
 async function recalcStreak() {
+  if(cd && cd.active) return; // compassion day: freeze streak
   if(!dayQualifies(countDone())) return;
   let sd=null;
   try{const raw=await store.get('streak:main');if(raw)sd=JSON.parse(raw);}catch(e){}
@@ -822,6 +933,7 @@ let bp = { // botPrefs
 let bs = { // botState
   quietMode:false, compassionDay:false,
   msgsSentToday:0, history:[], botInited:false,
+  lastBotTopic:null,
 };
 
 // --- STORAGE ---
@@ -838,7 +950,7 @@ async function loadBotData() {
 
 // --- MESSAGE BANKS ---
 const BM = {
-  water:['הצעה לא דרמטית בכלל: שלוק מים. הגוף שלך ביקש, אני רק השליחה עם האימוג׳י 💧','אני לא באה לשפוט, אני באה עם שלט קטן שכתוב עליו: מים? 💧','מים? לא? בסדר, לא ספירת עוונות. אבל הגוף מתייבש מאתמול. שלוק קטן? 💧','הגוף שלך הגיש בקשה מנומסת: שלוק מים. הוא אפילו לא צירף טופס. 💧','שלוק מים אחד. קטן עלייך, גדול על מערכת ההפעלה האנושית. 💧'],
+  water:['הצעה לא דרמטית: שלוק מים. הגוף ביקש, אני רק השליחה. 💧','אני לא באה לשפוט, אני באה עם שלט קטן שכתוב עליו: מים? 💧','מים? לא? בסדר, לא ספירת עוונות. אבל הגוף מתייבש מאתמול. שלוק קטן? 💧','הגוף שלך הגיש בקשה מנומסת: שלוק מים. הוא אפילו לא צירף טופס. 💧','שלוק מים אחד. קטן עלייך, גדול על מערכת ההפעלה האנושית. 💧'],
   breakfast:['בדיקת חברה טובה: נראה שהבוקר עוד לא קיבל משהו לאכול. לא צריך טקס — גם תפוח, יוגורט או טוסט קטן יכולים לעשות לגוף הרבה יותר נעים 🍳','הגוף שלך הגיש בקשה מנומסת למשהו אכיל. הוא אפילו לא צירף טופס. מה אפשרי עכשיו? 🥐','ארוחת בוקר לא חייבת להיות ארוחה. ביס זה גם נחשב. מה קרוב אלייך? 🌅','לא אולימפיאדה. גם חצי טוסט עם גבינה יודע להיות גיבור הבוקר. 🍳','בוקר שמח לגוף שלך — הוא מחכה למשהו קטן מאז אתמול בלילה 🥐'],
   lunch:['הי. שעת צהריים. הגוף בדרך כלל אוהב משהו מזין עכשיו. מה הכי קרוב? 🥗','לא ארוחת שף. גם טוסט יודע להיות גיבור משנה בצהריים 🌿','הסוכר בדם: "סוף סוף! חשבתי שנשכחת ממני". מה אפשרי? 😌','צהריים הגיעו. מה הכי מהיר ואפשרי עכשיו? אפילו ביס נחשב 🥗','רעב קצת? הגוף שלך בסבירות גבוהה אומר כן 🌿'],
   dinner:['ערב. הגוף לא בטוח שקיבל מספיק היום. משהו קטן לפני שהיום נסגר? 🌙','לפני שהיום מתכסה בשמיכה — כדאי לתת לגוף משהו קטן. הוא עבד קשה גם אם לא הרגשת 🌙','ערב טוב. שלוק מים + משהו קטן לאכול = גוף שישן לילה טוב יותר 🌙','לא חייב ארוחה מלאה. ביס, פרי, משהו — לגוף יש אכפת שאת שמה לב אליו 🌙','הגוף שלך שואל בעדינות: אכלנו ערב? 🌙'],
@@ -1004,6 +1116,16 @@ function detectIntent(msg) {
   if(/עזבי|תפסיקי|מספיק להיום|לא עכשיו/.test(t)) return ['leave'];
   if(/^שקט$|שקט להיום/.test(t)) return ['quiet'];
   if(/^יום חמלה$/.test(t.trim())) return ['compassionDay'];
+  // Already doing — celebrate, don't push
+  const alreadyDoingPatterns=[
+    /בדיוק (מכינה|אוכלת|שותה|עושה|הולכת|מתקלחת|ישנה|נחה|מתאמנת|יוצאת)/,
+    /כבר (אכלתי|שתיתי|עשיתי|התקלחתי|יצאתי|ישנתי|הלכתי|הכנתי)/,
+    /אני עכשיו (אוכלת|שותה|מכינה|עושה|הולכת)/,
+    /הכנתי|בישלתי|הזמנתי אוכל|יצאתי לאכול/,
+    /סיימתי ל|גמרתי ל|הספקתי/,
+    /בתהליך|באמצע/,
+  ];
+  if(alreadyDoingPatterns.some(p=>p.test(t))) return ['alreadyDoing'];
   // Combination: ate + no water
   const ateAndDry=/(אכלתי|ארוחות|ארוחת)/.test(t)&&/(לא שתיתי|לא מספיק מים|שכחתי מים|מים לא)/.test(t);
   if(ateAndDry) intents.push('ateButNoWater');
@@ -1029,6 +1151,12 @@ function detectIntent(msg) {
   if(/יום טוב|הלך טוב|הצלחתי הרבה|מעולה|נהדר|טוב היום/.test(t)) intents.push('goodDay');
   // Average day with "בסדר" only if nothing stronger was detected
   if(/^בסדר/.test(t.trim())&&intents.length===0) intents.push('averageDay');
+  // Greeting
+  if(/^היי|^שלום|^הי |^בוקר טוב|^ערב טוב|^צהריים/.test(t)&&intents.length===0) intents.push('greeting');
+  // Thanks
+  if(/תודה|תודה רבה|יופי תודה/.test(t)&&intents.length===0) intents.push('thanks');
+  // Okay / acknowledgment
+  if(/^אוקיי$|^בסדר$|^טוב$|^ממש טוב$|^הבנתי$/.test(t.trim())&&intents.length===0) intents.push('okay');
   return intents.length>0?intents:['general'];
 }
 
@@ -1058,6 +1186,10 @@ const TR={
     (ds,p)=>`האוכל עבד! הגוף שלך מרגיש את זה. עכשיו שלוק מים קטן — לא כי "חייבים", אלא כי הגוף שמח כשנזכרים בו. 💧`,
     (ds,p)=>`ניצחון כפול: אוכל הגיע ✔ ועכשיו מים. גרסת מיקרו: שלוק עכשיו, עוד שלוק כשתיזכרי. זהו. 💧`,
     (ds,p)=>`על ${ds.mealsCount||''} ארוחות — הגוף מודה לך. על המים — שלוק עכשיו ועוד אחד לפני שינה. פשוט ומדויק. 💧`,
+    (ds,p)=>`אכלת! מגניב. עכשיו הגוף ביקש עוד דבר קטן — שלוק מים. כי אוכל ומים עובדים ביחד. 💧`,
+    (ds,p)=>`ניצחון: אוכל הגיע לגוף. עכשיו — מים קטן בצד. שלוק אחד מספיק להתחלה. 💧`,
+    (ds,p)=>`יפה מאוד על האוכל. הגוף שמח. ועכשיו, שלוק מים קטן לצד — כי הוא מבקש בעדינות. 💧`,
+    (ds,p)=>`${ds.mealsCount||''} ארוחות זה הישג אמיתי. ועכשיו: שלוק מים אחד. כי ביחד הם עושים קסמים. 💧`,
   ],
   noEnergy:[
     (ds,p)=>`מקובל. גרסת "בן אדם עם סוללה על 7%": שלושה שלוקים מים. זהו. בלי נאום. 💧`,
@@ -1070,6 +1202,10 @@ const TR={
     (ds,p)=>`הגוף שלך לא מצפה לגרנדיוז — הוא מצפה לסימן קטן שאת עדיין איתו. שלוק מים זה הסימן. 💧`,
     (ds,p)=>`אין כוח = גרסת קצה: שלוק מים + רגליים על הרצפה + נשימה אחת. שלושה דברים שהגוף אוהב גם ב-7%. 🌿`,
     (ds,p)=>`בסדר. שאלה אחת בלבד: מה ה-1 דבר הכי קטן שאפשרי עכשיו — ביס, שלוק, או מתיחה אחת? 🌱`,
+    (ds,p)=>`גמורה = גוף שעבד קשה בלי שידעת. הוא לא מחכה לריצה — הוא מחכה לשלוק מים. 💧`,
+    (ds,p)=>`יום של 7% סוללה יש לו גרסה משלו: שלוק מים, עיניים עצומות לדקה, ביס קטן. שלושה דברים. זהו. 🌿`,
+    (ds,p)=>`כשאין כוח — עובדות עם מה שיש. מה ה-1 דבר שגורם לגוף להרגיש שלא נשכח? 💙`,
+    (ds,p)=>`אין כוח? קיבלתי. אין ביקורת. יש רק שאלה אחת: מה הכי קל שיש עכשיו — שלוק, ביס, או נשימה? 🌱`,
   ],
   noFood:[
     (ds,p)=>`לא ארוחה — ביס. ${p.quickFoods&&p.quickFoods.length?'מהרשימה שלך: '+p.quickFoods.slice(0,3).join(', ')+'.':'יוגורט, תפוח, טוסט — מה קרוב?'} אחד מאלה? 🍎`,
@@ -1082,9 +1218,13 @@ const TR={
     (ds,p)=>`נוריד את הרף רחוק מ"ארוחה". ביס. פרי. כפית. הגוף לא צריך מלא — הוא צריך משהו. 🍎`,
     (ds,p)=>`הגוף שלך לא מחכה לארוחה מלאה — הוא מחכה לסימן קטן. ${p.quickFoods&&p.quickFoods[0]||'פרי קטן'}? 🌿`,
     (ds,p)=>`לא אכלת. בסדר. לא מבקשת שנתחיל מגדול. מבקשת: ביס אחד. מה הכי אפשרי עכשיו? 🍎`,
+    (ds,p)=>`לא אכלת עדיין — בסדר. הגוף לא מאשים. הוא רק מחכה. מה הכי קל שיש בהישג יד? 🌿`,
+    (ds,p)=>`אפילו ביס אחד של ${p.quickFoods&&p.quickFoods[0]||'משהו'} = מסר לגוף שאת שמה לב אליו. מה אפשרי? 🍎`,
+    (ds,p)=>`לא ארוחה — ביס. לא הכנה — פתיחה. לא שולחן — עמידה במטבח. מה הכי מינימלי שאפשרי? 🌱`,
+    (ds,p)=>`הגוף שלך עשה עבודה של שעות בלי דלק. הוא לא מלין — הוא מחכה. שאלה: מה יש שם שנגיש ב-10 שניות? 🍎`,
   ],
   noWater:[
-    (ds,p)=>`הצעה לא דרמטית: שלוק מים. הגוף ביקש, אני רק השליחה עם האימוג׳י. 💧`,
+    (ds,p)=>`הצעה לא דרמטית: שלוק מים. הגוף ביקש, אני רק השליחה עם האימוג'י. 💧`,
     (ds,p)=>`מים? לא? בסדר, לא מנהלת רשימת עוונות. אבל הגוף מתייבש מאתמול בלילה. שלוק קטן? 💧`,
     (ds,p)=>`שלוק מים אחד. קטן עלייך, גדול על מערכת ההפעלה האנושית. 💧`,
     (ds,p)=>`אני לא באה לשפוט — אני באה עם שלט קטן שכתוב עליו: מים? 💧`,
@@ -1092,6 +1232,12 @@ const TR={
     (ds,p)=>`מים לא שתית? לא אסון. אפשר להתחיל עכשיו. שלוק אחד = "אני פה". 💧`,
     (ds,p)=>`הגוף שלך בסבירות גבוהה מעדיף שלוק מים על דיון ארוך על שלוק מים. אז — שלוק? 💧`,
     (ds,p)=>`${ds.waterCount} כוסות עד עכשיו. ${ds.waterCount<3?'עוד כמה שלוקים ואנחנו בדרך לשישה. 💧':'ממשיכים לשישה?'}`,
+    (ds,p)=>`${ds.waterCount||0} כוסות היום עד עכשיו. בואי נוסיף עוד אחת — שלוק. לא דרמה. 💧`,
+    (ds,p)=>`מים שכחת? לא כעס, רק שלוק. הגוף מודה לך אפילו על אחד. 💧`,
+    (ds,p)=>`קחי כוס, מלאי מים, שתי. ספרתי: 4 שניות. אפשרי? 💧`,
+    (ds,p)=>`שלוק מים אחד = "אני שמה לב לעצמי". זה הכל. 💧`,
+    (ds,p)=>`מים לא חייבים להיות 8 כוסות ברגע. שלוק עכשיו + שלוק בעוד כמה דקות = כבר מתחילות. 💧`,
+    (ds,p)=>`הגוף שלך: "תזכרי שאני קיים." שלוק מים = "כן, אני זוכרת." 💧`,
   ],
   chooseForMe:[
     (ds,p)=>{ const f=p.quickFoods&&p.quickFoods.length?p.quickFoods[Math.floor(Math.random()*p.quickFoods.length)]:'יוגורט'; return `החלטת ועדת תורי:\n✔ שלושה שלוקים מים\n✔ ${f} (מהרשימה שלך)\nבלי לעשות ממנה פרויקט. 🎯`; },
@@ -1102,6 +1248,10 @@ const TR={
     (ds,p)=>{ const mv=p.easyMovement&&p.easyMovement.length?p.easyMovement[0]:null; return `ועדת תורי בחרה:\n✔ מים\n✔ ${p.quickFoods&&p.quickFoods[0]||'ביס קטן'}${mv&&ds.isMovementDay&&!ds.movementDone?'\n✔ '+mv:''}.\nאחת ואחת. 🎯`; },
     (ds,p)=>`קיבלתי. הנה הסדר: מים קודם, אחר כך ${p.quickFoods&&p.quickFoods[0]||'משהו קטן'}. שתיים. זהו. 🎯`,
     (ds,p)=>`"תבחרי" זה אמיץ להגיד. הנה הבחירה: שלוק מים + ${p.quickFoods&&p.quickFoods[0]||'פרי'}. לא מרשים. ולכן בדיוק אפשרי. 🌿`,
+    (ds,p)=>`בחרתי: קודם שלוק מים, אחר כך ${p.quickFoods&&p.quickFoods[0]||'ביס'}. בלי ועדות. ✔`,
+    (ds,p)=>`ועדת תורי החליטה: ${p.quickFoods&&p.quickFoods.slice(0,2).join(' או ')||'ביס קטן'} + שלוק מים. ללא ערעורים. 🎯`,
+    (ds,p)=>`הבחירה שלי: 1. שלוק מים. 2. ${p.quickFoods&&p.quickFoods[0]||'פרי'}. 3. לנשום. שלושה. זהו. 🌿`,
+    (ds,p)=>`קיבלתי. מים + ${p.quickFoods&&p.quickFoods[0]||'ביס'} + לא לשפוט את עצמך שביקשת. כולם מנצחים. 💛`,
   ],
   guilt:[
     (ds,p)=>`"אני גרועה" זה לא מידע — זה רעש. מה בפועל קרה? ואגב — גם אם קרה משהו, זה לא מגדיר את מי שאת. שלוק מים ונמשיך? 💙`,
@@ -1112,6 +1262,10 @@ const TR={
     (ds,p)=>`אשמה היא הכרטיס הכי יקר לשלם על דבר שעוד אפשר לשנות. נוריד אותה. מה קטן שאפשרי? 💙`,
     (ds,p)=>`"לא שווה" — לפי מה? הגוף שלך לא מסכים. הוא עדיין עובד, עדיין פועם, עדיין ממתין לסימן. מה הסימן הקטן היום? 💛`,
     (ds,p)=>`ימים שמרגישים כישלון הם לפעמים ימים של כוחות מוגבלים. זה לא אותו דבר. מה אחת קטנה שאפשרית עכשיו? 🌱`,
+    (ds,p)=>`"גרועה" — לא. אדם שמתמודד עם משהו כבד — כן. ההבדל חשוב. מה אחת קטנה שאפשרית עכשיו? 💙`,
+    (ds,p)=>`אשמה צורכת אנרגיה שהגוף צריך לדברים אחרים. נשחרר אותה קצת — ונחזיר את האנרגיה לשלוק מים. 💧`,
+    (ds,p)=>`ביקורת עצמית היא לא מידע — היא רעש. מה קרה בפועל? ומה צעד קטן אחד שאפשרי מכאן? 🌿`,
+    (ds,p)=>`"כישלון" לא קיים בשפה שלי. יש "יום שהיה קשה" ויש "נסיון חדש". מה הנסיון הקטן עכשיו? 🌱`,
   ],
   bodyDisconnect:[
     (ds,p)=>`כשלא מרגישים את הגוף — זה לפעמים הגנה, לא תקלה. נחזור אליו בעדינות: רגליים שטוחות על הרצפה. מרגישה אותן? 🌱`,
@@ -1122,6 +1276,10 @@ const TR={
     (ds,p)=>`הגוף לא הלך לשום מקום. הוא שם, ממתין. קרקוע עדין: רגליים על הרצפה + שלוש נשימות. אחת בכל פעם. 🌬️`,
     (ds,p)=>`מנותקת? בסדר. לא מחייבים "להרגיש הכל" — רק להניח יד על הלב ולהרגיש שהוא פועם. שניה. 🌱`,
     (ds,p)=>`כשקשה להרגיש את הגוף, נתחיל מהפיזי ביותר: שלוק מים. הגוף מרגיש מים — זה גשר קטן חזרה אליו. 💧`,
+    (ds,p)=>`ניתוק מהגוף = הגנה שהגוף בנה בשבילך. לא תקלה. עכשיו — רגליים על הרצפה, שלוק מים. גשר קטן. 🌱`,
+    (ds,p)=>`הגוף שם, ממתין. נחזיר אליו בעדינות: מה תחושה אחת שאת מרגישה עכשיו — קור, כבד, חמימות? 🌬️`,
+    (ds,p)=>`כשמנותקים, הכי קל לחזור דרך הפיזי: שלוק מים — הגוף מרגיש אותו. זה גשר. 💧`,
+    (ds,p)=>`ניתוק הוא לפעמים הגוף שאומר "אני עייף". לא נאיץ — נחכה עם עדינות. מה אחד הכי קל? 🌿`,
   ],
   averageDay:[
     (ds,p)=>`"בסדר" זה לפעמים ניצחון. בסדר זה לא "רע", ובסדר זה לא "לא הייתי". מה כן היה היום? 🌿`,
@@ -1132,6 +1290,10 @@ const TR={
     (ds,p)=>`יום ממוצע ועדיין קמת, עדיין עשית, עדיין כאן. זה לא ממוצע בכלל מנקודת המבט שלי. 💛`,
     (ds,p)=>`"ממוצע" — וסך הכל מה סימנת היום? לפעמים ממוצע מסתיר יותר ממה שנדמה. 🌿`,
     (ds,p)=>`בסדר = קמת, המשכת, הגעת לכאן. גם זה. עכשיו — ${!ds.waterCompleted?'שלוק מים לסיים את היום?':!ds.breathingDone?'נשימה אחת לסיים?':'איך אפשר לסגור את היום יפה?'} 💧`,
+    (ds,p)=>`"ממוצע" — ולא שכחת לבוא לכאן. זה כבר ממוצע+ בעיני. 💛`,
+    (ds,p)=>`יום ממוצע עם גוף שדאגת לו = יום שהצליח. מה עוד אפשר לסגור היום? 🌿`,
+    (ds,p)=>`בסדר = נשמת, עמדת, המשכת. לא מעט. מה אחת קטנה לפני שהיום נגמר? 🌱`,
+    (ds,p)=>`"ככה ככה" — וגופך מה אומר? מים שתית? אכלת? 💧`,
   ],
   badDay:[
     (ds,p)=>`יום קשה. שמעתי. לא מבקשת שתסבירי. רק שואלת: יש לך פה? שלוק מים ו${p.quickFoods&&p.quickFoods[0]||'ביס קטן'} — הגוף ממשיך לצטרך גם ביום כזה. 💙`,
@@ -1144,6 +1306,10 @@ const TR={
     (ds,p)=>`ביום קשה — גרסת מיקרו: מים, ביס, נשימה. שלושה דברים שהגוף אוהב גם כשהכל כבד. אחד מהם? 💙`,
     (ds,p)=>`לא נוסיף אשמה ליום שכבר קשה. מה הכי קטן ומיידי שאפשרי עכשיו? 🌿`,
     (ds,p)=>`יום קשה = יום שהגוף עבד. הוא ראוי לסימן קטן של "אני רואה אותך". שלוק מים? 💙`,
+    (ds,p)=>`ביום קשה — הגוף ממשיך לעבוד בשבילך גם אם לא ביקשת. תני לו סימן קטן: שלוק מים. 💙`,
+    (ds,p)=>`יום קשה לא מגדיר אותך. הוא מגדיר את היום הזה. ומחר — יום חדש. מה אחד קטן לפני שזה נגמר? 🌿`,
+    (ds,p)=>`קשה = קשה. לא "כישלון", לא "אפס". קשה. זה מספיק. ומה אחד קטן שאפשרי? 💙`,
+    (ds,p)=>`גם ביום הכי קשה — גוף שמקבל שלוק מים מרגיש קצת פחות לבד. ניסיון? 💧`,
   ],
   goodDay:[
     (ds,p)=>`יום טוב! 🎉 הגוף שלך מרגיש את זה. מה היה הדבר הכי טוב שקרה? 🌟`,
@@ -1154,6 +1320,10 @@ const TR={
     (ds,p)=>`יום טוב הוא עדות שאת מסוגלת. תזכרי את זה ביום הבא שיהיה פחות קל. 💛`,
     (ds,p)=>`הגוף שלך שמח היום. ושומרים על זה — ${!ds.waterCompleted?'שלוק מים לסיום 💧':'מנוחה טובה הלילה 🌙'}. 🌟`,
     (ds,p)=>`יום טוב! 🎉 תסמני לך נקודה. ומחר — אותו הדבר, אבל לא חייב להיות מדהים. גם ממוצע ספור. 💛`,
+    (ds,p)=>`יום טוב! 🌟 תמיד טוב לדעת שהם קיימים. ספרי לי — מה בלט?`,
+    (ds,p)=>`כן! ימים כאלה הם עדות שאת מסוגלת. ${!ds.waterCompleted?'עוד שלוק מים? 💧':'🌸'}`,
+    (ds,p)=>`מעולה! ומה עשה אותו לטוב? רוצה לזכור לפעמים הבאות. 🌟`,
+    (ds,p)=>`יום טוב + הגעת לכאן = כפול. 🎉 תמשיכי ככה!`,
   ],
   success:[
     (ds,p)=>`יפה. זה בדיוק הסוג של קטן שמצטבר. הגוף קיבל סימן שאת איתו. 🌱`,
@@ -1166,6 +1336,10 @@ const TR={
     (ds,p)=>`ניצחון! המוח שלך ממש עכשיו מחזק נתיב עצבי של הרגל טוב. מדע, לא מיתוס. 🧠`,
     (ds,p)=>`זה. בדיוק. זה. ✔ ממשיכים? 🌱`,
     (ds,p)=>`הצלחת משהו ביום שזה לא מובן מאליו — זה גדול. 💛`,
+    (ds,p)=>`עשית! הגוף שמח. המוח רושם. זה עובד. 🌱`,
+    (ds,p)=>`ניצחון שקט = ניצחון אמיתי. ✔`,
+    (ds,p)=>`כל פעולה קטנה שמאותתת לגוף "אני פה" — היא טיפול. עשית טיפול. 💛`,
+    (ds,p)=>`הגוף קיבל סימן שהוא לא נשכח. זה הכל מה שהוא ביקש. 🌸`,
   ],
   waterDone:[
     (ds,p)=>`מים ✔ הגוף שלך: "סוף סוף! חשבתי שנשכחת ממני" 😄 (${ds.waterCount}/8 כוסות)`,
@@ -1198,6 +1372,10 @@ const TR={
     (ds,p)=>`ביום שלא מצליחות — מורידות רף בלי להוריד ערך. פעולה קטנה = גם זה מצליחה. מה זה יהיה? 💙`,
     (ds,p)=>`לא מצליחה זה לא סוף הסיפור — זה עמוד אחד בו. מה הפסקה הבאה? שלוק מים? 💧`,
     (ds,p)=>`שמעתי. נמיר: "לא מצליחה" → "מה הכי קל שיש". לא ארוחה — ביס. לא שאיבה — שלוק. מה מהם? 🌱`,
+    (ds,p)=>`"לא מצליחה" = לא עכשיו, לא בגדול. אז נלך לקטן: שלוק מים. פעולה אחת. 💧`,
+    (ds,p)=>`לא מצליחה גדול — אז קטן. לא ארוחה — ביס. לא אימון — מתיחה. מה הכי קטן שיש? 🌿`,
+    (ds,p)=>`כשהכל נראה גדול מדי, נוריד לרמת גוף: שלוק, ביס, נשימה. אחד מהם. 🌱`,
+    (ds,p)=>`לא מנהלות ציונים. מנהלות צעדים קטנים. מה הקטן ביותר שאפשרי עכשיו? 💙`,
   ],
   noAppToday:[
     (ds,p)=>`היי, לא ראיתי אותך היום. לא מחנכת — רק בודקת. מה קורה? ☕`,
@@ -1234,25 +1412,102 @@ const TR={
     (ds,p)=>`כאן. ${!ds.waterCompleted?'מים? 💧':!ds.breakfastDone&&ds.hour<13?'אכלת בוקר? 🍳':!ds.breathingDone?'נשימה? 🌬️':'מה קורה?'}`,
     (ds,p)=>`מה עוברת עלייך עכשיו? ומה אחת קטנה שהגוף שלך צריך? 💙`,
     (ds,p)=>`כאן. לא שופטת, לא דוחפת. מה הכי קטן שאפשרי עכשיו? 🌱`,
+    (ds,p)=>`כאן בשבילך. מה קורה? 🌿`,
+    (ds,p)=>`מאזינה. ספרי לי מה עוברת עלייך עכשיו. 💙`,
+    (ds,p)=>`לא שופטת, לא ממהרת. מה אחת קטנה שהגוף שלך צריך עכשיו? 🌱`,
+    (ds,p)=>`תמיד כאן. ${ds.waterCount<3?'מים? 💧':ds.mealsCount===0?'ביס? 🍎':'מה קורה?'} 🌸`,
+  ],
+  greeting:[
+    (ds,p)=>`היי ${p.name||''}! שמחה שאת כאן. איך הגוף שלך הבוקר? 🌸`,
+    (ds,p)=>`שלום! רק שאלה אחת: שתית כבר מים היום? 💧`,
+    (ds,p)=>`הי! טוב שבאת. מה עוברת עלייך עכשיו? 🌿`,
+    (ds,p)=>`בוקר טוב! (או ערב טוב — תלוי מה השעה 😄) מה הדבר הראשון שהגוף שלך צריך עכשיו? 🌱`,
+    (ds,p)=>`היי! איזה כיף לראות אותך. ${ds.waterCount<3?'מים קודם? 💧':ds.mealsCount===0?'אכלת משהו היום? 🍎':'מה קורה?'}`,
+    (ds,p)=>`שלום! תגידי, איך אנחנו עושות היום? גוף, ראש, שניהם? 🌿`,
+    (ds,p)=>`הי ${p.name||''}! מוכנה לדאוג לגוף קצת? מה הכי קל שאפשרי עכשיו? 🌸`,
+    (ds,p)=>`שלום שלום! לפני שמתחילות — שלוק מים? זה תמיד התחלה טובה. 💧`,
+  ],
+  thanks:[
+    (ds,p)=>`בשמחה! זה בשבילך 💛 ועכשיו — מה הצעד הקטן הבא?`,
+    (ds,p)=>`תודה שאת כאן! 🌸 זה העיקר.`,
+    (ds,p)=>`תמיד! ועכשיו תגידי — מים שתית? 💧`,
+    (ds,p)=>`❤️ מרגיש טוב לדעת שעזרתי. מה עוד?`,
+    (ds,p)=>`הנאה שלי. עכשיו — ${ds.waterCount<4?'שלוק מים? 💧':ds.mealsCount===0?'משהו לאכול? 🍎':'מה עוד צריך היום?'}`,
+    (ds,p)=>`בשמחה רבה 💛 אני פה כשצריכים.`,
+  ],
+  okay:[
+    (ds,p)=>`קיבלתי! ומה הלאה? ${ds.waterCount<4?'מים? 💧':ds.mealsCount===0?'ביס? 🍎':'🌿'}`,
+    (ds,p)=>`בסדר זה בסיס טוב. ממשיכות? 🌱`,
+    (ds,p)=>`👍 ואם תרצי עוד — אני כאן.`,
+    (ds,p)=>`טוב! ${!ds.waterCompleted?'שלוק מים לחגוג? 💧':'🌟 המשיכי כך!'}`,
+    (ds,p)=>`מעולה. צעד קטן, תמיד קדימה. 🌿`,
+    (ds,p)=>`קיבלתי. תמיד אפשר לחזור כשצריך. 💛`,
+  ],
+  alreadyDoing:[
+    (ds,p)=>`כן! זה בדיוק מה שנחשב. הגוף שלך בדרך לקבל מה שצריך. 💛`,
+    (ds,p)=>`ניצחון. הכנת אוכל / עשית פעולה — זה לא מובן מאליו, ואת עושה את זה. 🌿`,
+    (ds,p)=>`מושלם. זה בדיוק מה שנחשב — בלי להוסיף יותר. ✔`,
+    (ds,p)=>`הגוף שלך יודה לך על זה. מחכות לו לסיים. 🌸`,
+    (ds,p)=>`כן! זה. בדיוק זה. עושה את זה. 🌟`,
+    (ds,p)=>`פעולה שאת כבר עושה = הצלחה בפועל. מעולה. 💛`,
+    (ds,p)=>`מעולה. לא צריך עוד כלום — זה מספיק ויפה. 🌿`,
+    (ds,p)=>`הגוף בתהליך לקבל מה שביקש. זה בדיוק מה שצריך עכשיו. ✨`,
+    (ds,p)=>`כל הכבוד שאת כבר על זה — לא המתנת, פעלת. 💙`,
+    (ds,p)=>`"בדיוק מכינה" / "כבר עשיתי" — זה המשפט הכי יפה שאפשר לשמוע. 🌱`,
+    (ds,p)=>`אין מה להוסיף. את כבר שם. 💛`,
+    (ds,p)=>`הגוף שלך: "תודה שזכרת אותי." 🌸`,
+    (ds,p)=>`פעולה בתהליך = פעולה שקורית. זה נחשב לגמרי. ✔`,
+    (ds,p)=>`מתוך כל התגובות האפשריות — "כבר עושה" היא הטובה ביותר. 🌟`,
   ],
 };
+
+// ==========================================
+// CLEAR CHAT
+// ==========================================
+function clearBotChat() {
+  if(!confirm('לנקות את השיחה?')) return;
+  bs.history=[];
+  document.getElementById('chat-area').innerHTML='';
+  bs.lastBotTopic=null;
+  saveBotData();
+  addBotMsgAsync('שיחה חדשה. היי מחדש 🌱 מה קורה?');
+}
+
+// ==========================================
+// CONTEXT ENRICHMENT — detect reply to bot topic
+// ==========================================
+function enrichIntentWithContext(intents, userMessage, lastTopic) {
+  if(!lastTopic) return intents;
+  const t=userMessage.toLowerCase();
+  const positiveResponse=/כן|בסדר|אוקיי|עושה|עשיתי|עכשיו|מכינה|הולכת|יוצאת|שתיתי|אכלתי|התקלחתי|מתחילה/;
+  const isPositive=positiveResponse.test(t);
+  const isAlreadyDoing=intents.includes('alreadyDoing');
+  if(isPositive||isAlreadyDoing) return ['alreadyDoing'];
+  return intents;
+}
 
 // ==========================================
 // MAIN RESPONSE GENERATOR — LOCAL, No API
 // ==========================================
 function generateToriReply({ userMessage, dailyState, userPreferences, conversationHistory }) {
   const ds=dailyState, p=userPreferences;
-  const intents=detectIntent(userMessage);
+  let intents=detectIntent(userMessage);
+
+  // Enrich with conversation context (did bot proactively raise a topic?)
+  intents=enrichIntentWithContext(intents, userMessage, bs.lastBotTopic);
   const primary=intents[0];
   const mentions=extractMentions(userMessage);
+
+  // Reset topic memory after processing
+  bs.lastBotTopic=null;
 
   // Get response pool
   const pool=TR[primary]||TR.general;
   const fn=pool[Math.floor(Math.random()*pool.length)];
   let response=typeof fn==='function'?fn(ds,p):fn;
 
-  // Enrich: if message mentions meals but no water AND we didn't already handle that intent
-  if(mentions.mentionsMeals&&!mentions.mentionsWater&&ds.waterCount<4&&!intents.includes('ateButNoWater')) {
+  // Enrich with water nudge — skip if user is already mid-action
+  if(primary!=='alreadyDoing'&&mentions.mentionsMeals&&!mentions.mentionsWater&&ds.waterCount<4&&!intents.includes('ateButNoWater')) {
     const waterNotes=[' ולגבי המים — שלוק קטן? 💧',' (ואגב — מים?) 💧',' ועוד שלוק מים לפני שמסיימות? 💧'];
     if(!response.includes('מים')) response+=pick(waterNotes);
   }
@@ -1274,13 +1529,13 @@ function getScheduledBotSuggestion(ds, p) {
   const h=ds.hour;
   if(h<(p.quietEnd||8)||h>=(p.quietStart||22)) return null;
   const fn=(pool)=>{ const f=pool[Math.floor(Math.random()*pool.length)]; return typeof f==='function'?f(ds,p):f; };
-  if(h>=10&&h<12&&!ds.breakfastDone&&ds.waterCount<2) return fn(TR.noFood);
-  if(h>=10&&h<12&&ds.waterCount<2) return fn(TR.noWater);
-  if(h>=10&&h<12&&!ds.breakfastDone) return fn(TR.noFood);
-  if(h>=14&&h<16&&!ds.lunchDone) return `צהריים! ${p.quickFoods&&p.quickFoods[0]?p.quickFoods[0]+' / ':''}מה הכי קרוב עכשיו? 🌿`;
-  if(h>=19&&h<21&&!ds.dinnerDone) return `ערב. משהו קטן לפני שהיום נסגר? ${p.quickFoods&&p.quickFoods[0]||'ביס'} גם נחשב. 🌙`;
-  if(ds.isMovementDay&&!ds.movementDone&&h>=15&&h<18) return `יום תנועה, ועוד יש זמן 🕔 ${p.easyMovement&&p.easyMovement[0]||'מתיחת כתפיים'} — גרסת מיקרו? 🤸`;
-  if(!ds.hygieneDone&&h>=19) return `אם עוד לא — שטיפת פנים / החלפת חולצה / צחצוח שיניים. כל אחת נחשבת. 🌿`;
+  if(h>=10&&h<12&&!ds.breakfastDone&&ds.waterCount<2) { bs.lastBotTopic='breakfast'; return fn(TR.noFood); }
+  if(h>=10&&h<12&&ds.waterCount<2) { bs.lastBotTopic='water'; return fn(TR.noWater); }
+  if(h>=10&&h<12&&!ds.breakfastDone) { bs.lastBotTopic='breakfast'; return fn(TR.noFood); }
+  if(h>=14&&h<16&&!ds.lunchDone) { bs.lastBotTopic='lunch'; return `צהריים! ${p.quickFoods&&p.quickFoods[0]?p.quickFoods[0]+' / ':''}מה הכי קרוב עכשיו? 🌿`; }
+  if(h>=19&&h<21&&!ds.dinnerDone) { bs.lastBotTopic='dinner'; return `ערב. משהו קטן לפני שהיום נסגר? ${p.quickFoods&&p.quickFoods[0]||'ביס'} גם נחשב. 🌙`; }
+  if(ds.isMovementDay&&!ds.movementDone&&h>=15&&h<18) { bs.lastBotTopic='movement'; return `יום תנועה, ועוד יש זמן 🕔 ${p.easyMovement&&p.easyMovement[0]||'מתיחת כתפיים'} — גרסת מיקרו? 🤸`; }
+  if(!ds.hygieneDone&&h>=19) { bs.lastBotTopic='hygiene'; return `אם עוד לא — שטיפת פנים / החלפת חולצה / צחצוח שיניים. כל אחת נחשבת. 🌿`; }
   if(ds.percentDone>=70&&!ds.restDone&&h>=18) return `עשית הרבה היום 💛 מנוחה היא גם פעולה, לא רק פרס. 🌙`;
   if(ds.percentDone<15&&h>=14&&!ds.compassionDay) return `עוד לא נכנסנו לעניינים היום. יום חמלה? 3 דברים קטנים בלבד. 🫶`;
   return null;
@@ -1655,13 +1910,183 @@ function showReset() {
   }
 }
 
+// ============================================================
+// COMPASSION DAY — freeze streak up to 7 days
+// ============================================================
+let cd = { active: false, daysUsed: 0, startDate: null };
+
+async function loadCompassionState() {
+  try { const raw = await store.get('compassion:state'); if(raw) cd = { ...cd, ...JSON.parse(raw) }; } catch(e) {}
+  const today = getTodayKey();
+  // New day + compassion active → increment counter
+  if(cd.active && cd.startDate && cd.startDate !== today) {
+    cd.daysUsed++;
+    cd.startDate = today;
+    if(cd.daysUsed >= 7) {
+      // 7 consecutive compassion days → reset streak
+      cd.active = false; cd.daysUsed = 0; cd.startDate = null;
+      s.streak = 0;
+      await store.set('streak:main', JSON.stringify({streak:0, best:s.bestStreak, lastDay:null, lastCounted:null}));
+    }
+    await saveCompassionState();
+  }
+  updateCompassionUI();
+}
+
+async function saveCompassionState() {
+  await store.set('compassion:state', JSON.stringify(cd));
+}
+
+function openCompassionModal() {
+  if(cd.active) {
+    // Toggle off
+    cd.active = false; cd.daysUsed = 0; cd.startDate = null;
+    saveCompassionState(); updateCompassionUI();
+    bs.compassionDay = false; updateBotUI(); saveBotData();
+    return;
+  }
+  document.getElementById('comp-overlay').classList.add('open');
+}
+
+function closeCompassionModal() {
+  document.getElementById('comp-overlay').classList.remove('open');
+}
+
+async function activateCompassionDay() {
+  cd.active = true; cd.startDate = getTodayKey();
+  await saveCompassionState();
+  closeCompassionModal();
+  updateCompassionUI();
+  bs.compassionDay = true; updateBotUI(); saveBotData();
+}
+
+function updateCompassionUI() {
+  const btn = document.getElementById('comp-btn');
+  const lbl = document.getElementById('comp-label');
+  if(!btn) return;
+  if(cd.active) {
+    btn.classList.add('active');
+    if(lbl) lbl.textContent = (cd.daysUsed + 1) + '/7';
+  } else {
+    btn.classList.remove('active');
+    if(lbl) lbl.textContent = 'יום חמלה';
+  }
+}
+
+// ============================================================
+// NOTIFICATIONS — local Notification API
+// ============================================================
+const NOTIF_MSGS = {
+  water: [
+    'הגוף שלך שלח בקשה עדינה: שלוק מים? 💧',
+    'לא דרמה, לא ועדה — רק שלוק מים. אפשרי? 💧',
+    'מים לא שתית עדיין. שלוק אחד = "אני פה". 💧',
+    'שלוק מים קטן. הגוף מודה לך גם על אחד. 💧',
+    'תזכורת עדינה מתורי: מים? 💧',
+  ],
+  breakfast: [
+    'בוקר טוב! ארוחת בוקר עוד לא הגיעה לגוף — מה אפשרי? 🍳',
+    'הלבלב שלך מחכה. ביס קטן לבוקר? 🌅',
+    'גוף שמתחיל את היום עם אוכל מסודר — גוף שמסוגלת יותר. 🍳',
+    'ארוחת בוקר: גם יוגורט נחשב. גם פרי. גם כריך. 🌿',
+  ],
+  lunch: [
+    'צהריים! הגוף שלך הגיש בקשה מנומסת לדלק. 🥗',
+    'ארוחת צהריים עוד לא? הסוכר בדם ביקש תשומת לב. 🌿',
+    'שעת צהריים — מה אפשרי לאכול עכשיו? 🥗',
+    'תידלוק של צהריים = אחר הצהריים הרבה יותר קלים. 💛',
+  ],
+  dinner: [
+    'ערב טוב! ארוחת ערב עוד לא? הגוף מסיים את היום טוב יותר עם אוכל. 🍲',
+    'ארוחת ערב קטנה לפני הלילה — הגוף ישן טוב יותר כשהוא לא ריק. 🌙',
+    'מה לאכול הערב? גם פשוט נחשב. 🌿',
+    'לפני שהיום נגמר — ארוחת ערב? 💛',
+  ],
+  movement: [
+    'יום תנועה! גם 5 דקות מתיחות = גוף שהרגיש את עצמו. 🤸',
+    'תנועה קטנה היום — הגוף מחכה לסימן. 🌿',
+    'יום פעילות! מה התנועה הכי קלה שאפשרית עכשיו? 🌱',
+    'אפילו הליכה קצרה — הגוף יודע להכיר בה. 🤸',
+  ],
+  shower: [
+    'מקלחת עוד לא? חמים + ניקיון = שינוי מצב ממשי. 🚿',
+    'מקלחת קצרה לפני הלילה? הגוף אוהב את המעבר הזה. 🌸',
+    'שטיפת פנים, צחצוח שיניים — גם זה נחשב. 🌿',
+    'היגיינה קטנה = מסר לגוף שאת שמה לב אליו. ✨',
+  ],
+};
+
+function sendNotification(title, body) {
+  if(!('Notification' in window)) return;
+  if(Notification.permission !== 'granted') return;
+  if(bs && bs.quietMode) return;
+  try { new Notification(title, { body, icon: './logo.png', badge: './logo.png', dir: 'rtl', lang: 'he' }); } catch(e) {}
+}
+
+let _notifsSentToday = {};
+
+async function loadNotifState() {
+  try { const raw = await store.get('notifs:' + getTodayKey()); if(raw) _notifsSentToday = JSON.parse(raw); else _notifsSentToday = {}; } catch(e) { _notifsSentToday = {}; }
+}
+
+async function markNotifSent(key) {
+  _notifsSentToday[key] = true;
+  await store.set('notifs:' + getTodayKey(), JSON.stringify(_notifsSentToday));
+}
+
+function checkAndSendNotifications() {
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  if(bs && bs.quietMode) return;
+  const now = new Date();
+  const hm = now.getHours() * 60 + now.getMinutes();
+  // Water: 09:30–10:00
+  if(hm >= 570 && hm < 600 && !_notifsSentToday['water'] && s.water < 2) {
+    sendNotification('תורי 💧', NOTIF_MSGS.water[Math.floor(Math.random()*NOTIF_MSGS.water.length)]);
+    markNotifSent('water');
+  }
+  // Breakfast: 10:00–10:30
+  if(hm >= 600 && hm < 630 && !_notifsSentToday['breakfast'] && !s.tasks['breakfast']) {
+    sendNotification('תורי 🍳', NOTIF_MSGS.breakfast[Math.floor(Math.random()*NOTIF_MSGS.breakfast.length)]);
+    markNotifSent('breakfast');
+  }
+  // Lunch: 13:30–14:00
+  if(hm >= 810 && hm < 840 && !_notifsSentToday['lunch'] && !s.tasks['lunch']) {
+    sendNotification('תורי 🥗', NOTIF_MSGS.lunch[Math.floor(Math.random()*NOTIF_MSGS.lunch.length)]);
+    markNotifSent('lunch');
+  }
+  // Dinner: 19:00–19:30
+  if(hm >= 1140 && hm < 1170 && !_notifsSentToday['dinner'] && !s.tasks['dinner']) {
+    sendNotification('תורי 🍲', NOTIF_MSGS.dinner[Math.floor(Math.random()*NOTIF_MSGS.dinner.length)]);
+    markNotifSent('dinner');
+  }
+  // Movement: 16:00–16:30 on movement days
+  if(hm >= 960 && hm < 990 && !_notifsSentToday['movement'] && isExerciseDay() && !s.exChosen.easy && !s.exChosen.hard) {
+    sendNotification('תורי 🤸', NOTIF_MSGS.movement[Math.floor(Math.random()*NOTIF_MSGS.movement.length)]);
+    markNotifSent('movement');
+  }
+  // Shower: 21:00–21:30
+  if(hm >= 1260 && hm < 1290 && !_notifsSentToday['shower'] && !s.tasks['shower']) {
+    sendNotification('תורי 🚿', NOTIF_MSGS.shower[Math.floor(Math.random()*NOTIF_MSGS.shower.length)]);
+    markNotifSent('shower');
+  }
+}
+
 // INIT
 async function init() {
+  // Request notification permission on first load
+  if('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
   await loadCustomTasks();
   await loadBotData();
   await loadDay(); await loadStreak();
+  await loadCompassionState();
+  await loadNotifState();
   renderFromState(); renderMilestones(); renderAchievements(); updateJourney();
   document.getElementById('task-name-input').addEventListener('keydown', e=>{ if(e.key==='Enter') saveNewTask(); });
+  // Start notification scheduler
+  checkAndSendNotifications();
+  setInterval(checkAndSendNotifications, 15 * 60 * 1000);
   await initAuth();
 }
 init();
