@@ -134,6 +134,54 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .m-dot { display: none; }
 .m-lbl { display: none; }
 
+/* JOURNEY CARDS */
+.jcard { background:var(--card); border-radius:18px; padding:16px; margin-bottom:14px; border:1px solid var(--border); }
+.jcard-title { font-size:13px; font-weight:700; color:var(--text2); margin-bottom:10px; }
+.jcard-title-lg { font-size:15px; font-weight:800; color:var(--text1); margin-bottom:10px; }
+/* Daily scrollable path */
+.daily-path-outer { overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
+.daily-path-track { display:flex; gap:5px; padding:6px 2px; min-width:max-content; }
+.day-dot { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; border:2px solid transparent; flex-shrink:0; transition:all 0.3s; }
+.day-dot-num { font-size:9px; font-weight:700; line-height:1; }
+.day-dot.done { background:#6B4C9A; color:white; border-color:#6B4C9A; }
+.day-dot.compassion { background:#FBBF85; color:white; border-color:#F4A261; }
+.day-dot.today-dot { background:#EDE0FF; border-color:#6B4C9A; border-width:2.5px; animation:dayPulse 2s ease-in-out infinite; }
+.day-dot.today-dot.done { background:#6B4C9A; color:white; }
+.day-dot.future-dot { background:rgba(180,160,210,0.1); border-color:rgba(180,160,210,0.25); color:rgba(180,160,210,0.45); }
+@keyframes dayPulse { 0%,100%{box-shadow:0 0 0 0 rgba(107,76,154,0.35)} 50%{box-shadow:0 0 0 7px rgba(107,76,154,0)} }
+/* Habit stage */
+.habit-stage-name { font-size:14px; font-weight:800; color:#6B4C9A; margin-bottom:6px; }
+.habit-fact { font-size:12px; color:#4A5568; line-height:1.65; font-style:italic; margin-top:10px; padding:10px 12px; background:rgba(107,76,154,0.06); border-radius:10px; border-right:3px solid rgba(107,76,154,0.3); }
+/* Points card */
+.points-big { font-size:42px; font-weight:900; color:#6B4C9A; text-align:center; line-height:1; }
+.points-sub { font-size:12px; color:var(--text2); text-align:center; margin-bottom:12px; }
+.unlock-bar-wrap { height:8px; background:rgba(107,76,154,0.15); border-radius:4px; overflow:hidden; margin:6px 0; }
+.unlock-bar-fill { height:100%; background:linear-gradient(90deg,#6B4C9A,#9B72D0); border-radius:4px; transition:width 0.8s ease; }
+.unlock-items { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+.unlock-item { border:1.5px solid var(--border); border-radius:12px; padding:10px 6px; text-align:center; transition:all 0.3s; }
+.unlock-item.unlocked { border-color:#6B4C9A; background:#F5F0FF; }
+.unlock-item.locked { opacity:0.45; }
+.unlock-emoji { font-size:22px; display:block; margin-bottom:4px; }
+.unlock-name { font-size:10px; color:var(--text1); font-weight:700; margin-bottom:2px; }
+.unlock-pts-lbl { font-size:9px; color:var(--text2); font-weight:600; }
+/* Growth */
+.growth-locked-wrap { text-align:center; padding:14px 6px; }
+.growth-icon { font-size:36px; margin-bottom:8px; }
+.growth-msg { font-size:12px; color:var(--text2); line-height:1.65; }
+.growth-prog-bar { height:6px; background:rgba(107,76,154,0.15); border-radius:4px; overflow:hidden; margin:8px 0 4px; }
+.growth-prog-fill { height:100%; background:#6B4C9A; border-radius:4px; transition:width 0.8s ease; }
+.growth-open-msg { font-size:13px; color:#6B4C9A; font-weight:700; line-height:1.6; }
+.growth-task-list { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+.growth-task { background:rgba(107,76,154,0.06); border-radius:10px; padding:10px 12px; border-right:3px solid rgba(107,76,154,0.25); font-size:12px; color:var(--text1); line-height:1.5; cursor:pointer; }
+/* Next-unlock hint */
+.next-unlock-hint { display:flex; align-items:center; gap:8px; background:rgba(107,76,154,0.07); border-radius:10px; padding:8px 10px; margin-bottom:10px; }
+.next-unlock-emoji { font-size:20px; flex-shrink:0; }
+.next-unlock-text { font-size:11px; color:var(--text2); flex:1; line-height:1.4; }
+/* Today card */
+.today-card-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.today-dot-big { width:44px; height:44px; border-radius:50%; background:#EDE0FF; border:2.5px solid #6B4C9A; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.today-card-desc { font-size:13px; color:var(--text2); line-height:1.55; }
+
 /* HABIT SCIENCE CARD */
 .habit-card { background: linear-gradient(135deg, var(--sky-l), #EBF5FF); border: 1px solid rgba(74,127,160,0.3); border-radius: 18px; padding: 16px; margin-bottom: 12px; }
 .habit-title { font-size: 13px; font-weight: 700; color: var(--sky); margin-bottom: 6px; }
@@ -426,56 +474,59 @@ if('serviceWorker' in navigator){
 
 <!-- JOURNEY VIEW -->
 <div class="view" id="view-journey">
+  <!-- Hero -->
   <div class="journey-hero">
     <div class="journey-streak"><span id="j-streak">0</span> ימים ברצף 🔥</div>
     <div class="journey-msg" id="j-msg">כל יום שבו טיפלת בעצמך הוא ניצחון 💙</div>
   </div>
 
-  <div class="path-card">
-    <div class="path-label">המסע שלך 🗺️</div>
-    <div class="journey-path-wrap">
-      <svg id="journey-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 370" width="100%" style="display:block">
-        <!-- Background path (full route, grey) -->
-        <path id="path-bg" d="M 160 345 C 120 315 50 295 80 265 C 110 235 270 215 240 185 C 210 155 55 135 85 105 C 115 75 270 65 240 40 C 225 28 190 20 185 18" stroke="#D4C5F0" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Completed path (purple, clipped by progress) -->
-        <path id="path-done" d="M 160 345 C 120 315 50 295 80 265 C 110 235 270 215 240 185 C 210 155 55 135 85 105 C 115 75 270 65 240 40 C 225 28 190 20 185 18" stroke="#6B4C9A" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="800" stroke-dashoffset="800" id="path-progress"/>
-        <!-- Milestone circles (filled by JS) -->
-        <g id="milestone-nodes"></g>
-        <!-- Avatar on path -->
-        <g id="journey-avatar" style="filter:drop-shadow(0 2px 6px rgba(107,76,154,0.4))">
-          <circle id="av-glow" cx="160" cy="345" r="18" fill="#EDE0FF" opacity="0.7"/>
-          <circle id="av-bg" cx="160" cy="345" r="14" fill="#EDE0FF"/>
-          <ellipse id="av-hair" cx="160" cy="339" rx="9" ry="10" fill="#6B4C9A"/>
-          <circle id="av-face" cx="160" cy="347" r="9" fill="#F5C5A3"/>
-          <circle cx="157" cy="346" r="1.4" fill="#4A3060"/>
-          <circle cx="163" cy="346" r="1.4" fill="#4A3060"/>
-          <path d="M156 350 Q160 353 164 350" stroke="#C07850" stroke-width="1" fill="none" stroke-linecap="round"/>
-        </g>
-      </svg>
+  <!-- Today card -->
+  <div class="jcard today-card">
+    <div class="jcard-title-lg">✨ היום במסע</div>
+    <div class="today-card-row">
+      <div class="today-dot-big" id="today-dot-big">🌿</div>
+      <div class="today-card-desc" id="today-journey-desc">טוענת...</div>
     </div>
-    <!-- hidden legacy row kept for JS renderMilestones compat -->
-    <div class="milestones-row" id="milestones-row" style="display:none">
-      <div class="m-track"><div class="m-fill" id="m-fill" style="width:0%"></div></div>
-    </div>
-    <div id="journey-path-msg" style="text-align:center;font-size:13px;color:var(--text2);margin-top:8px;font-weight:600"></div>
   </div>
 
-  <!-- HABIT SCIENCE -->
-  <div class="habit-card">
-    <div class="habit-title" id="habit-title">🧠 מה קורה במוח שלך?</div>
-    <div class="habit-body" id="habit-body">כל יום שבו את/ה מטפל/ת בעצמך, המוח בונה מסלול עצבי חדש. ככל שחוזרים יותר, כך הנתיב מתחזק — וההתנהגות הופכת מ"מאמץ" ל"אוטומטי".</div>
+  <!-- Daily path -->
+  <div class="jcard">
+    <div class="jcard-title">שביל ההחלמה 🗺️</div>
+    <div id="daily-path-wrap"></div>
+    <div id="journey-path-msg" style="text-align:center;font-size:12px;color:var(--text2);margin-top:10px;font-weight:600"></div>
+  </div>
+
+  <!-- Habit strength (upgraded) -->
+  <div class="jcard habit-card">
+    <div class="jcard-title" id="habit-title">🌱 חוזק ההרגל</div>
+    <div id="habit-stage-name" class="habit-stage-name">ניצוץ ראשון</div>
     <div class="habit-bar-wrap">
-      <div class="habit-bar-label"><span>חוזק ההרגל</span><span id="habit-pct-lbl">0%</span></div>
+      <div class="habit-bar-label"><span>התקדמות</span><span id="habit-pct-lbl">0%</span></div>
       <div class="habit-track"><div class="habit-fill" id="habit-fill" style="width:0%"></div></div>
     </div>
+    <div class="habit-body" id="habit-body">כל יום שבו את מטפלת בעצמך, המוח בונה מסלול עצבי חדש.</div>
+    <div class="habit-fact" id="habit-fact"></div>
   </div>
 
-  <div class="sec">⭐ הישגים</div>
-  <div class="achiev-grid" id="achiev-grid"></div>
+  <!-- Connection points -->
+  <div class="jcard">
+    <div class="jcard-title">נקודות חיבור ✨</div>
+    <div class="points-big" id="points-total">0</div>
+    <div class="points-sub">נקודות</div>
+    <div id="next-unlock-wrap"></div>
+    <div class="unlock-items" id="unlock-items"></div>
+  </div>
 
-  <div class="path-card" style="margin-top:14px">
-    <div class="path-label">📊 סטטיסטיקה</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+  <!-- Growth tasks -->
+  <div class="jcard" id="growth-card">
+    <div class="jcard-title">🌱 משימות צמיחה</div>
+    <div id="growth-content"></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="jcard" style="margin-bottom:12px">
+    <div class="jcard-title">📊 סטטיסטיקה</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div style="background:var(--terra-l);border-radius:10px;padding:12px;text-align:center">
         <div style="font-size:24px;font-weight:800;color:var(--terra)" id="stat-streak">0</div>
         <div style="font-size:11px;color:var(--text2)">סטרייק נוכחי</div>
@@ -484,6 +535,27 @@ if('serviceWorker' in navigator){
         <div style="font-size:24px;font-weight:800;color:var(--gold)" id="stat-best">0</div>
         <div style="font-size:11px;color:var(--text2)">הסטרייק הטוב ביותר</div>
       </div>
+    </div>
+  </div>
+
+  <div class="sec">⭐ הישגים</div>
+  <div class="achiev-grid" id="achiev-grid"></div>
+
+  <!-- Hidden legacy SVG kept for JS compat -->
+  <div style="display:none">
+    <svg id="journey-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 370" width="0" height="0">
+      <path id="path-bg" d="M 160 345 C 120 315 50 295 80 265 C 110 235 270 215 240 185 C 210 155 55 135 85 105 C 115 75 270 65 240 40 C 225 28 190 20 185 18" stroke="#D4C5F0" stroke-width="6" fill="none"/>
+      <path id="path-done" d="M 160 345 C 120 315 50 295 80 265" stroke="#6B4C9A" stroke-width="6" fill="none" stroke-dasharray="800" stroke-dashoffset="800" id="path-progress"/>
+      <g id="milestone-nodes"></g>
+      <g id="journey-avatar">
+        <circle id="av-glow" cx="160" cy="345" r="18" fill="#EDE0FF" opacity="0.7"/>
+        <circle id="av-bg" cx="160" cy="345" r="14" fill="#EDE0FF"/>
+        <ellipse id="av-hair" cx="160" cy="339" rx="9" ry="10" fill="#6B4C9A"/>
+        <circle id="av-face" cx="160" cy="347" r="9" fill="#F5C5A3"/>
+      </g>
+    </svg>
+    <div class="milestones-row" id="milestones-row" style="display:none">
+      <div class="m-track"><div class="m-fill" id="m-fill" style="width:0%"></div></div>
     </div>
   </div>
 </div>
@@ -765,7 +837,12 @@ function dayQualifies(cnt) { return cnt >= Math.ceil(totalTasks() * 0.5); }
 function toggleTask(id) {
   s.tasks[id]=!s.tasks[id];
   document.getElementById('tc-'+id).classList.toggle('done',!!s.tasks[id]);
-  if(s.tasks[id]) showToast(pickRandom(TASK_MSGS[id]||ENCOURAGEMENTS));
+  if(s.tasks[id]) {
+    showToast(pickRandom(TASK_MSGS[id]||ENCOURAGEMENTS));
+    const TASK_PTS={breakfast:10,lunch:10,dinner:10,shower:10,breathing:8,sleep:8,outside:8};
+    if(TASK_PTS[id]) awardPoints(TASK_PTS[id]);
+    else awardPoints(10);
+  }
   updateProgress(); saveDay();
 }
 
@@ -782,7 +859,7 @@ function tapDrop(idx) {
   const prev=s.water; s.water=(idx<s.water)?idx:idx+1;
   updateProgress(); // real-time update before render
   renderDrops();
-  if(s.water===6&&prev<6) showToast('💧 6 כוסות! הכליות שלך כרגע עושות מסיבה 🎉');
+  if(s.water===6&&prev<6){showToast('💧 6 כוסות! הכליות שלך כרגע עושות מסיבה 🎉');awardPoints(5);}
   else if(s.water===8&&prev<8) showToast('💧 8 כוסות שלמות! מערכת העצבים שלך אוהבת אותך כי הצפת אותה — במים 💙');
   saveDay();
 }
@@ -799,7 +876,7 @@ function toggleExBox() { s.exBoxOpen=!s.exBoxOpen; document.getElementById('ex-b
 function chooseEx(id,mode) {
   // Toggle off if already chosen
   if(s.exChosen[mode]===id){ s.exChosen[mode]=null; document.getElementById('eopt-'+id).classList.remove('chosen'); }
-  else { s.exChosen[mode]=id; document.querySelectorAll('#ex-opts-'+mode+' .ex-opt').forEach(el=>el.classList.remove('chosen')); document.getElementById('eopt-'+id).classList.add('chosen'); showToast('💃 כן!! הגוף שלך הרגיש שזז. הנוירונים חוגגים עכשיו 🎊'); }
+  else { s.exChosen[mode]=id; document.querySelectorAll('#ex-opts-'+mode+' .ex-opt').forEach(el=>el.classList.remove('chosen')); document.getElementById('eopt-'+id).classList.add('chosen'); showToast('💃 כן!! הגוף שלך הרגיש שזז. הנוירונים חוגגים עכשיו 🎊'); awardPoints(12); }
   const anyDone=s.exChosen.easy||s.exChosen.hard;
   const bothDone=s.exChosen.easy&&s.exChosen.hard;
   document.getElementById('exercise-card').classList.toggle('done',!!anyDone);
@@ -837,6 +914,9 @@ function updateProgress() {
   } else {
     document.getElementById('celebration').classList.remove('show');
   }
+  // Connection points bonuses (once per day)
+  if(pct>=60&&!jp.bonusGivenToday.sixty){jp.bonusGivenToday.sixty=true;awardPoints(15);}
+  if(pct>=100&&!jp.bonusGivenToday.full){jp.bonusGivenToday.full=true;awardPoints(25);}
   updateJourney();
 }
 
@@ -878,6 +958,66 @@ const PATH_AVATAR_POS = [
 // Total approx path length used for dashoffset animation
 const PATH_TOTAL = 800;
 
+
+// ==========================================
+// JOURNEY POINTS & HABIT STAGES
+// ==========================================
+const HABIT_STRENGTH_STAGES = [
+  {min:0,  max:15,  name:'ניצוץ ראשון',                    color:'#A78BFA', desc:'כל חזרה קטנה עוזרת למוח לזהות שזה נתיב שכדאי לשמור.'},
+  {min:16, max:35,  name:'השביל מתחיל להיווצר',          color:'#7C3AED', desc:'הרגל טוב לא נבנה ממושלמות — הוא נבנה מחזרה עדינה, גם אחרי ימים פחות טובים.'},
+  {min:36, max:55,  name:'הגוף מתחיל לזהות את הקצב', color:'#6B4C9A', desc:'הגוף לומד דרך חווייות חוזרות של ביטחון, לא דרך לחץ.'},
+  {min:56, max:75,  name:'ההרגל מתחזק',                      color:'#5B3E8A', desc:'ככל שחוזרים על פעולה בהקשר דומה, היא דורשת פחות מאמץ מודע עם הזמן.'},
+  {min:76, max:90,  name:'זה כבר מתחיל להיות חלק ממך', color:'#4C2F7A', desc:'לוקח בין 18 ל-254 ימים להרגל להפוך לאוטומטי. אין ממוצע אחד — יש את הקצב שלך.'},
+  {min:91, max:100, name:'שגרותה מיטיבה',                      color:'#3B2060', desc:'הגוף זוכר טוב יותר ממה שהמוח חושב. שמרת על הכיוון — וזה נשאר.'},
+];
+
+const HABIT_FACTS = [
+  'כל חזרה קטנה מחזקת את השביל.',
+  'גם יום חלקי יכול לשמור על הכיוון.',
+  'הרגלים טובים נבנים דרך חזרה, לא דרך מושלמות.',
+  'פעולה קטנה בזמן דומה בכל יום עוזרת לגוף לזהות קצב.',
+  'יום חמלה הוא לא עצירה. לפעמים הוא הדרך להמשיך.',
+  'הגוף אוהב עקביות עדינה. לא מרוץ — חזרה.',
+  'גם יום שנראה קטן הוא לבנה בבסיס.',
+  'המוח בונה מסלולים עצביים באמצעות חווייות חוזרות.',
+  'כל צעד קטן שנרשם — נזכר על ידי הגוף.',
+  'לא צריך לאהוב כל יום. רק לחזור אליו.',
+  'עקביות לאורך זמן שווה יותר מאשר מאמץ גדול פעם אחת.',
+  'שינה, מים ואוכל הם הבסיס. הבסיס הוא הכול.',
+  'הגוף מגיב לתשומת לב — גם כשהתשומת הלב קטנה.',
+  'חמלה עצמית היא חלק מהחלמה, לא רק פיצוי.',
+  'ימים קשים שייכים למסע. הם לא מוחקים אותו.',
+  'כל יום שסימנת משהו — אמרת לגוף שלך שאת כאן.',
+  'אפשר לחזור אחרי הפסקה. המסע לא מתאפס לגמרי.',
+  'הרגל שמרגיש קטן הוא עדיין הרגל.',
+  'הגוף בנוי לחזור לאיזון — הוא רק צריך זמן.',
+  'מנוחה היא חלק מהתהליך, לא ניגוד אליו.',
+  'פעולה קטנה גדולה ממחשבה גדולה שלא יצאת לדרך.',
+  'גוף מטופל הוא גוף שמסוגל לתמוך גם בנפש.',
+  'כשאת חוזרת אחרי הפסקה — זה כוח, לא כישלון.',
+  'שגרותה היא מתנה שאת נותנת לגרסה העתידית שלך.',
+  'לפעמים "מספיק" הוא בדיוק מה שצריך.',
+  'הגוף לא שופט ימים חלקיים. הוא מכיר כל נגיעה.',
+  'כל שלוק מים הוא פעולה. כל פעולה נחשבת.',
+  'לא צריך מושלמות. צריך כיוון.',
+  'קצב עדין שנשמר שווה יותר מאשר ניצחון חד פעמי.',
+  'האפליקציה הזאת כאן כדי ללוות, לא לשפוט.',
+];
+
+const CONNECTION_REWARDS = [
+  {pts:50,  id:'flower1',   emoji:'🌸', name:'פרח ראשון', desc:'פרח קטן במסלול שלך'},
+  {pts:100, id:'morning',   emoji:'🌅', name:'בוקר רך',   desc:'רקע בוקר רך'},
+  {pts:200, id:'card1',     emoji:'💌', name:'קלף עידוד', desc:'קלף עידוד חדש'},
+  {pts:400, id:'accessory', emoji:'🌟', name:'אביזור קטן', desc:'אביזור לדמות שלך'},
+  {pts:600, id:'growth',    emoji:'🌱', name:'צמיחה', desc:'משימות צמיחה נפתחות'},
+];
+
+// Journey points state
+let jp = {
+  total:0, unlocked:[],
+  factIndex:0, factDate:'', factStrengthPct:-1,
+  bonusGivenToday:{sixty:false, full:false, compassion:false},
+};
 function renderJourneyPath() {
   const svg=document.getElementById('journey-svg'); if(!svg) return;
   const st=s.streak;
@@ -941,19 +1081,215 @@ function renderJourneyPath() {
   if(pm) pm.textContent=getStreakMsg(st);
 }
 
+// ==========================================
+// JOURNEY POINTS — save / load / award
+// ==========================================
+async function saveJourneyPoints() {
+  await store.set('journey:points', JSON.stringify({
+    total:jp.total, unlocked:jp.unlocked,
+    factIndex:jp.factIndex, factDate:jp.factDate, factStrengthPct:jp.factStrengthPct,
+    bonusGivenToday:jp.bonusGivenToday,
+  }));
+}
+async function loadJourneyPoints() {
+  try {
+    const raw=await store.get('journey:points');
+    if(raw){const d=JSON.parse(raw);Object.assign(jp,d);}
+    // Reset daily bonuses on new day
+    const today=getTodayKey();
+    if(jp.factDate!==today) jp.bonusGivenToday={sixty:false,full:false,compassion:false};
+  } catch(e){}
+}
+function awardPoints(amount) {
+  jp.total+=amount;
+  checkUnlocks();
+  saveJourneyPoints();
+  renderPointsCard();
+}
+function checkUnlocks() {
+  CONNECTION_REWARDS.forEach(r=>{
+    if(jp.total>=r.pts&&!jp.unlocked.includes(r.id)) {
+      jp.unlocked.push(r.id);
+    }
+  });
+}
+
+// ==========================================
+// ROTATING HABIT FACT
+// ==========================================
+function getRotatingFact() {
+  const todayStr=getTodayKey();
+  const hp=Math.min(Math.round(s.streak/66*100),100);
+  if(jp.factDate!==todayStr||jp.factStrengthPct!==hp) {
+    jp.factIndex=(jp.factIndex+1)%HABIT_FACTS.length;
+    jp.factDate=todayStr;
+    jp.factStrengthPct=hp;
+    saveJourneyPoints();
+  }
+  return HABIT_FACTS[jp.factIndex];
+}
+
+// ==========================================
+// RENDER DAILY PATH (scrollable dots)
+// ==========================================
+function renderDailyPath() {
+  const wrap=document.getElementById('daily-path-wrap'); if(!wrap) return;
+  const streak=s.streak;
+  const totalDays=66;
+  const todayDone=dayQualifies(countDone());
+  const todayCompassion=bs.compassionDay;
+
+  let html='<div class="daily-path-outer"><div class="daily-path-track" id="dpt">';
+  for(let d=1;d<=totalDays;d++){
+    const isPast=d<streak+1;
+    const isToday=d===streak+1;
+    let cls='day-dot', inner='';
+    if(isPast){
+      cls+=' done'; inner='<span class="day-dot-num">✓</span>';
+    } else if(isToday&&todayCompassion){
+      cls+=' compassion today-dot'; inner='<span style="font-size:14px">🥷</span>';
+    } else if(isToday&&todayDone){
+      cls+=' done today-dot'; inner='<span class="day-dot-num">✓</span>';
+    } else if(isToday){
+      cls+=' today-dot'; inner='<span class="day-dot-num">'+d+'</span>';
+    } else {
+      cls+=' future-dot'; inner='<span class="day-dot-num">'+d+'</span>';
+    }
+    html+='<div class="'+cls+'" title="יום '+d+'">'+inner+'</div>';
+  }
+  html+='</div></div>';
+  wrap.innerHTML=html;
+
+  // Scroll so today is centered
+  setTimeout(()=>{
+    const outer=wrap.querySelector('.daily-path-outer');
+    const dots=wrap.querySelectorAll('.day-dot');
+    const todayIdx=Math.min(streak,totalDays-1);
+    if(outer&&dots[todayIdx]){
+      const left=dots[todayIdx].offsetLeft;
+      outer.scrollLeft=Math.max(0,left-outer.clientWidth/2+17);
+    }
+  },80);
+}
+
+// ==========================================
+// RENDER HABIT CARD (upgraded)
+// ==========================================
+function renderHabitCard() {
+  const hp=Math.min(Math.round(s.streak/66*100),100);
+  const stage=HABIT_STRENGTH_STAGES.find(st=>hp>=st.min&&hp<=st.max)||HABIT_STRENGTH_STAGES[0];
+  const fact=getRotatingFact();
+  const stageEl=document.getElementById('habit-stage-name');
+  const bodyEl=document.getElementById('habit-body');
+  const factEl=document.getElementById('habit-fact');
+  const fillEl=document.getElementById('habit-fill');
+  const pctEl=document.getElementById('habit-pct-lbl');
+  if(stageEl) stageEl.textContent=stage.name;
+  if(stageEl) stageEl.style.color=stage.color;
+  if(bodyEl) bodyEl.textContent=stage.desc;
+  if(factEl) factEl.textContent=fact;
+  if(fillEl) fillEl.style.width=hp+'%';
+  if(pctEl) pctEl.textContent=hp+'%';
+}
+
+// ==========================================
+// RENDER POINTS CARD
+// ==========================================
+function renderPointsCard() {
+  const ptEl=document.getElementById('points-total');
+  if(ptEl) ptEl.textContent=jp.total;
+
+  // Next unlock hint
+  const nextReward=CONNECTION_REWARDS.find(r=>!jp.unlocked.includes(r.id));
+  const nuw=document.getElementById('next-unlock-wrap');
+  if(nuw&&nextReward){
+    const pct=Math.min(jp.total/nextReward.pts*100,100);
+    nuw.innerHTML='<div class="next-unlock-hint"><div class="next-unlock-emoji">'+nextReward.emoji+'</div>'
+      +'<div class="next-unlock-text"><strong>'+nextReward.name+'</strong> ב-'+nextReward.pts+' נקודות'
+      +'<div class="unlock-bar-wrap"><div class="unlock-bar-fill" style="width:'+pct+'%"></div></div></div></div>';
+  } else if(nuw) {
+    nuw.innerHTML='<div style="text-align:center;font-size:13px;color:#6B4C9A;font-weight:700;padding:6px">🌟 הכל נפתח!</div>';
+  }
+
+  // Unlock grid
+  const grid=document.getElementById('unlock-items');
+  if(grid){
+    grid.innerHTML=CONNECTION_REWARDS.map(r=>{
+      const unlocked=jp.unlocked.includes(r.id);
+      return '<div class="unlock-item '+(unlocked?'unlocked':'locked')+'">'
+        +'<span class="unlock-emoji">'+r.emoji+'</span>'
+        +'<div class="unlock-name">'+r.name+'</div>'
+        +'<div class="unlock-pts-lbl">'+(unlocked?'✓ נפתח':r.pts+' נקודות')+'</div>'
+        +'</div>';
+    }).join('');
+  }
+}
+
+// ==========================================
+// RENDER GROWTH CARD
+// ==========================================
+function renderGrowthCard() {
+  const el=document.getElementById('growth-content'); if(!el) return;
+  const GROWTH_THRESHOLD=30;
+  const qualifyDays=s.streak;
+  const isUnlocked=qualifyDays>=GROWTH_THRESHOLD||jp.unlocked.includes('growth');
+  if(isUnlocked){
+    el.innerHTML='<div class="growth-open-msg">🌱 נראה שנבנה כאן בסיס יפה. רוצה להוסיף משהו קטן שהוא מעבר לטיפול עצמי בסיסי?</div>'
+      +'<div class="growth-task-list">'
+      +'<div class="growth-task">🎨 לבחור תחביב קטן ולהקדיש לו 10 דקות</div>'
+      +'<div class="growth-task">📖 לקרוא עידוד משדי אחת</div>'
+      +'<div class="growth-task">🌱 לבחור נושא ללימוד ולפתוח סרטון אחד</div>'
+      +'<div class="growth-task">✨ לסדר פינה קטנה בבית</div>'
+      +'</div>';
+  } else {
+    const pct=Math.min(qualifyDays/GROWTH_THRESHOLD*100,100);
+    el.innerHTML='<div class="growth-locked-wrap">'
+      +'<div class="growth-icon">🔒</div>'
+      +'<div class="growth-msg">אזור צמיחה ייפתח אחרי 30 ימי התמדה עדינה. אין לחץ להגיע לשם מהר — קודם בונים בסיס.</div>'
+      +'<div class="growth-prog-bar"><div class="growth-prog-fill" style="width:'+pct+'%"></div></div>'
+      +'<div style="font-size:10px;color:var(--text2)">'+(qualifyDays+'/'+GROWTH_THRESHOLD)+' ימים</div>'
+      +'</div>';
+  }
+}
+
+// ==========================================
+// RENDER TODAY CARD
+// ==========================================
+function renderTodayCard() {
+  const descEl=document.getElementById('today-journey-desc');
+  const iconEl=document.getElementById('today-dot-big');
+  if(!descEl) return;
+  const streak=s.streak, hp=Math.min(Math.round(streak/66*100),100);
+  const pct=Math.round(countDone()/totalTasks()*100);
+  let msg='', icon='🌿';
+  if(bs.compassionDay){
+    icon='🥷'; msg='🥷 יום חמלה היום. את עדיין בשביל — רק בקצב שונה.';
+  } else if(pct>=100){
+    icon='🌟'; msg='🌟 יום מלא! הגוף והנפש קיבלו אהבה.';
+  } else if(pct>=60){
+    icon='💫'; msg='💫 יום טוב לגוף. הרבה אחרי השביל.';
+  } else if(pct>0){
+    icon='🌿'; msg='🌱 התחלת. הגוף מציין את זה.';
+  } else {
+    msg='🌙 היום עדיין הולך. אין בעיה להתחיל קטן.';
+  }
+  if(iconEl) iconEl.textContent=icon;
+  if(descEl) descEl.textContent=msg;
+}
 function updateJourney() {
   document.getElementById('hdr-streak').textContent=s.streak;
   document.getElementById('j-streak').textContent=s.streak;
   document.getElementById('j-msg').textContent=getStreakMsg(s.streak);
   document.getElementById('stat-streak').textContent=s.streak;
   document.getElementById('stat-best').textContent=s.bestStreak;
-  const hc=getHabitCard(s.streak);
-  document.getElementById('habit-title').textContent=hc.title;
-  document.getElementById('habit-body').textContent=hc.body;
-  const hp=Math.min(Math.round(s.streak/66*100),100);
-  document.getElementById('habit-fill').style.width=hp+'%';
-  document.getElementById('habit-pct-lbl').textContent=hp+'%';
-  renderJourneyPath(); renderMilestones(); renderAchievements();
+  renderDailyPath();
+  renderHabitCard();
+  renderPointsCard();
+  renderGrowthCard();
+  renderTodayCard();
+  renderJourneyPath();
+  renderMilestones();
+  renderAchievements();
 }
 function renderMilestones() {
   const row=document.getElementById('milestones-row');
@@ -2319,6 +2655,7 @@ async function init() {
   }
   await loadCustomTasks();
   await loadBotData();
+  await loadJourneyPoints();
   await loadDay(); await loadStreak();
   await loadCompassionState();
   await loadNotifState();
