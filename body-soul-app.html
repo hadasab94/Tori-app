@@ -44,11 +44,13 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 
 /* BOTTOM NAV */
 .bottom-nav { position: fixed; bottom: 0; right: 50%; transform: translateX(50%); width: 100%; max-width: 480px; background: var(--card); border-top: 1px solid var(--border); display: flex; padding: 8px 0 12px; z-index: 200; }
-.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 4px 0; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 4px 0; transition: all 0.2s; -webkit-tap-highlight-color: transparent; position: relative; }
 .nav-icon { font-size: 23px; line-height: 1; transition: transform 0.2s; }
 .nav-label { font-size: 10px; font-weight: 600; color: var(--text3); }
 .nav-item.active .nav-label { color: var(--terra); }
 .nav-item.active .nav-icon { transform: scale(1.15); }
+.bot-badge { position: absolute; top: 2px; right: 12px; background: #E53935; color: white; border-radius: 50%; min-width: 16px; height: 16px; font-size: 10px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 3px; line-height: 1; }
+.bot-badge.show { display: flex; }
 
 /* VIEWS */
 .view { display: none; padding: 14px 14px 100px; animation: fadeIn 0.25s ease; }
@@ -115,21 +117,22 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .celeb-sub { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
 
 /* JOURNEY */
-.journey-hero { text-align: center; padding: 20px 0 14px; }
-.char-emoji { font-size: 72px; display: block; animation: charFloat 3s ease-in-out infinite; line-height: 1.1; }
-@keyframes charFloat { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-10px) rotate(2deg); } }
-.journey-streak { font-size: 28px; font-weight: 800; color: var(--terra); margin: 8px 0 3px; }
+.journey-hero { text-align: center; padding: 14px 0 8px; }
+.journey-streak { font-size: 28px; font-weight: 800; color: var(--terra); margin: 6px 0 3px; }
 .journey-msg { font-size: 13px; color: var(--text2); line-height: 1.5; }
-.path-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 18px 14px 14px; margin-bottom: 12px; }
-.path-label { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 16px; }
-.milestones-row { position: relative; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 10px; }
-.m-track { position: absolute; bottom: 22px; left: 10px; right: 10px; height: 5px; background: var(--border); border-radius: 3px; }
-.m-fill { height: 100%; background: linear-gradient(90deg, var(--gold-l), var(--gold)); border-radius: 3px; transition: width 1s cubic-bezier(0.34,1.2,0.64,1); }
-.milestone { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-.m-dot { width: 36px; height: 36px; border-radius: 50%; background: var(--bg); border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.4s; }
-.m-dot.reached { background: var(--gold-l); border-color: var(--gold); }
-.m-dot.current { background: var(--terra); border-color: var(--terra); box-shadow: 0 0 0 5px var(--terra-l); transform: scale(1.25); }
-.m-lbl { font-size: 9px; color: var(--text3); font-weight: 600; white-space: nowrap; }
+.path-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 14px 10px 10px; margin-bottom: 12px; }
+.path-label { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 10px; }
+/* winding path SVG wrapper */
+.journey-path-wrap { position: relative; width: 100%; overflow: hidden; }
+@keyframes charFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+@keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.18); } }
+/* legacy milestone row — hidden now, kept for JS compat */
+.milestones-row { display: none; }
+.m-track { display: none; }
+.m-fill { display: none; }
+.milestone { display: none; }
+.m-dot { display: none; }
+.m-lbl { display: none; }
 
 /* HABIT SCIENCE CARD */
 .habit-card { background: linear-gradient(135deg, var(--sky-l), #EBF5FF); border: 1px solid rgba(74,127,160,0.3); border-radius: 18px; padding: 16px; margin-bottom: 12px; }
@@ -367,7 +370,7 @@ if('serviceWorker' in navigator){
     <div class="task-card" id="tc-shower" onclick="toggleTask('shower')"><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
     <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
     <div class="task-card" id="tc-outside" onclick="toggleTask('outside')"><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
-    <div class="task-card" id="tc-sleep" onclick="toggleTask('sleep')"><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">שנת לילה</div><div class="t-sub">לישון טוב הלילה</div></div>
+    <div class="task-card" id="tc-sleep" onclick="toggleTask('sleep')"><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה בשעה סבירה</div><div class="t-sub">לישון טוב הלילה</div></div>
   </div>
 
   <div class="sec" id="ex-sec-title">💪 פעילות גופנית</div>
@@ -424,16 +427,37 @@ if('serviceWorker' in navigator){
 <!-- JOURNEY VIEW -->
 <div class="view" id="view-journey">
   <div class="journey-hero">
-    <span class="char-emoji" id="j-char">🌱</span>
     <div class="journey-streak"><span id="j-streak">0</span> ימים ברצף 🔥</div>
     <div class="journey-msg" id="j-msg">כל יום שבו טיפלת בעצמך הוא ניצחון 💙</div>
   </div>
 
   <div class="path-card">
     <div class="path-label">המסע שלך 🗺️</div>
-    <div class="milestones-row" id="milestones-row">
+    <div class="journey-path-wrap">
+      <svg id="journey-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 370" width="100%" style="display:block">
+        <!-- Background path (full route, grey) -->
+        <path id="path-bg" d="M 160 345 C 120 315 50 295 80 265 C 110 235 270 215 240 185 C 210 155 55 135 85 105 C 115 75 270 65 240 40 C 225 28 190 20 185 18" stroke="#D4C5F0" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Completed path (purple, clipped by progress) -->
+        <path id="path-done" d="M 160 345 C 120 315 50 295 80 265 C 110 235 270 215 240 185 C 210 155 55 135 85 105 C 115 75 270 65 240 40 C 225 28 190 20 185 18" stroke="#6B4C9A" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="800" stroke-dashoffset="800" id="path-progress"/>
+        <!-- Milestone circles (filled by JS) -->
+        <g id="milestone-nodes"></g>
+        <!-- Avatar on path -->
+        <g id="journey-avatar" style="filter:drop-shadow(0 2px 6px rgba(107,76,154,0.4))">
+          <circle id="av-glow" cx="160" cy="345" r="18" fill="#EDE0FF" opacity="0.7"/>
+          <circle id="av-bg" cx="160" cy="345" r="14" fill="#EDE0FF"/>
+          <ellipse id="av-hair" cx="160" cy="339" rx="9" ry="10" fill="#6B4C9A"/>
+          <circle id="av-face" cx="160" cy="347" r="9" fill="#F5C5A3"/>
+          <circle cx="157" cy="346" r="1.4" fill="#4A3060"/>
+          <circle cx="163" cy="346" r="1.4" fill="#4A3060"/>
+          <path d="M156 350 Q160 353 164 350" stroke="#C07850" stroke-width="1" fill="none" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </div>
+    <!-- hidden legacy row kept for JS renderMilestones compat -->
+    <div class="milestones-row" id="milestones-row" style="display:none">
       <div class="m-track"><div class="m-fill" id="m-fill" style="width:0%"></div></div>
     </div>
+    <div id="journey-path-msg" style="text-align:center;font-size:13px;color:var(--text2);margin-top:8px;font-weight:600"></div>
   </div>
 
   <!-- HABIT SCIENCE -->
@@ -468,7 +492,22 @@ if('serviceWorker' in navigator){
 <!-- BOT VIEW -->
 <div class="view" id="view-bot">
   <div class="bot-hdr">
-    <div class="bot-av">🌱</div>
+    <div class="bot-av" id="bot-av-hdr">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
+        <circle cx="20" cy="20" r="20" fill="#EDE0FF"/>
+        <ellipse cx="20" cy="14" rx="11" ry="13" fill="#6B4C9A"/>
+        <circle cx="20" cy="23" r="11" fill="#F5C5A3"/>
+        <circle cx="16" cy="21" r="2" fill="#4A3060"/>
+        <circle cx="24" cy="21" r="2" fill="#4A3060"/>
+        <circle cx="16.8" cy="20.2" r="0.7" fill="white"/>
+        <circle cx="24.8" cy="20.2" r="0.7" fill="white"/>
+        <circle cx="13" cy="25" r="2.5" fill="#FFB3BA" opacity="0.5"/>
+        <circle cx="27" cy="25" r="2.5" fill="#FFB3BA" opacity="0.5"/>
+        <path d="M15 26.5 Q20 30.5 25 26.5" stroke="#C07850" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M10 16 Q9 9 15 9" stroke="#6B4C9A" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M30 16 Q31 9 25 9" stroke="#6B4C9A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
     <div class="bot-inf">
       <div class="bot-nm">תורי 🤍</div>
       <div class="bot-st" id="bot-st">חברה טובה שמזכירה</div>
@@ -539,6 +578,7 @@ if('serviceWorker' in navigator){
   </div>
   <div class="nav-item" id="nav-bot" onclick="switchView('bot')">
     <div class="nav-icon">🤖</div><div class="nav-label">בוט תורי</div>
+    <div class="bot-badge" id="bot-badge">0</div>
   </div>
 </nav>
 
@@ -637,6 +677,17 @@ const ENCOURAGEMENTS = [
   'פעולה קטנה + גוף שמרגיש = לבנה אמיתית. 🌟',
 ];
 
+const PARTIAL_COMPLETION_MSGS = [
+  'השלמת חצי מהמשימות — וזה המון! כל דבר מכאן הוא בונוס לעצמך. 💛',
+  '50% זה לא חצי כוס ריקה — זה חצי כוס מלאה, ועם מים בפנים. 💧',
+  'עשית את החצי הקשה — להתחיל. השאר הוא בונוס.',
+  'הגוף שלך קיבל תשומת לב אמיתית היום. המספר פחות חשוב מהכיוון.',
+  'כל משימה שסימנת היום היא לבנה. לא צריך בית שלם ביום אחד. 🌱',
+  'הצלחת. ואם לא תצליחי עוד — גם זה נחשב. ממש.',
+  'זה ניצחון — לא ניצחון וחצי. פשוט ניצחון. 💛',
+  'הסטרייק שמור. הגוף שלך שמח. הכל בסדר. 🔥',
+];
+
 const FACTS = [
   { title:'ויסות גופני — הבסיס של הכל', body:'מחקרים מראים שוויסות גופני הוא הצעד הראשון בהחלמה מטראומה מורכבת. הגוף זוכר טראומה, ולכן זקוק לתחושת ביטחון פיזית לפני שהנפש יכולה להחלים לעומק. כל פעולה שמרגיעה את הגוף — היא גם מרפאה את הנפש.', src:'van der Kolk, The Body Keeps the Score (2014)' },
   { title:'מים ומערכת העצבים', body:'כשגופנו מיובש, מערכת העצבים עוברת לכוננות גבוהה יותר ונעשית רגישה יותר לטריגרים. שתיית מים מסייעת ישירות להפחתת תגובת הלחץ. כוס מים היא גם אקט פשוט של "אני מטפל/ת בעצמי".', src:'מחקרים בנוירוביולוגיה של סטרס' },
@@ -728,10 +779,12 @@ function renderDrops() {
   else{wc.classList.remove('done');wc.style.borderColor='';wc.style.background='';}
 }
 function tapDrop(idx) {
-  const prev=s.water; s.water=(idx<s.water)?idx:idx+1; renderDrops();
+  const prev=s.water; s.water=(idx<s.water)?idx:idx+1;
+  updateProgress(); // real-time update before render
+  renderDrops();
   if(s.water===6&&prev<6) showToast('💧 6 כוסות! הכליות שלך כרגע עושות מסיבה 🎉');
   else if(s.water===8&&prev<8) showToast('💧 8 כוסות שלמות! מערכת העצבים שלך אוהבת אותך כי הצפת אותה — במים 💙');
-  updateProgress(); saveDay();
+  saveDay();
 }
 
 // EXERCISE
@@ -773,8 +826,17 @@ function updateProgress() {
   else if(pct<100) msg='כמעט מושלם! עוד צעד קטן ✨';
   else msg='🎉 יום מלא! הגוף והנפש שלך מודים לך!';
   document.getElementById('day-msg').textContent=msg;
-  if(dayQualifies(done)) document.getElementById('celebration').classList.add('show');
-  else document.getElementById('celebration').classList.remove('show');
+  if(dayQualifies(done)) {
+    document.getElementById('celebration').classList.add('show');
+    // Update celebration text based on completion level
+    const celebTitle=document.querySelector('.celeb-title');
+    if(celebTitle) {
+      if(pct>=100) celebTitle.textContent='יום מדהים! השלמת את כל המשימות! 🌟';
+      else celebTitle.textContent=pickRandom(PARTIAL_COMPLETION_MSGS);
+    }
+  } else {
+    document.getElementById('celebration').classList.remove('show');
+  }
   updateJourney();
 }
 
@@ -794,10 +856,94 @@ function getHabitCard(st) {
   if(st>=14) return HABIT_SCIENCE[3]; if(st>=7)  return HABIT_SCIENCE[2];
   if(st>=3)  return HABIT_SCIENCE[1]; return HABIT_SCIENCE[0];
 }
+// Milestone positions on the SVG path (x, y for each of 6 milestones)
+const PATH_NODES = [
+  {x:80,  y:265, days:1,  emoji:'🌱', label:'יום 1'},
+  {x:240, y:185, days:3,  emoji:'🌿', label:'3 ימים'},
+  {x:85,  y:105, days:7,  emoji:'🌸', label:'שבוע'},
+  {x:240, y:40,  days:14, emoji:'🌺', label:'שבועיים'},
+  {x:185, y:18,  days:21, emoji:'🌳', label:'3 שבועות'},
+  {x:185, y:18,  days:30, emoji:'🌟', label:'חודש!'},
+];
+// Avatar x,y at each milestone (and start)
+const PATH_AVATAR_POS = [
+  {x:160,y:345}, // start (streak 0)
+  {x:80, y:265}, // day 1
+  {x:240,y:185}, // day 3
+  {x:85, y:105}, // day 7
+  {x:240,y:40},  // day 14
+  {x:185,y:18},  // day 21
+  {x:185,y:18},  // day 30
+];
+// Total approx path length used for dashoffset animation
+const PATH_TOTAL = 800;
+
+function renderJourneyPath() {
+  const svg=document.getElementById('journey-svg'); if(!svg) return;
+  const st=s.streak;
+  // Animate the progress dash
+  const prog=document.getElementById('path-progress');
+  if(prog) {
+    const idx=PATH_NODES.findIndex(n=>st<n.days);
+    let frac=0;
+    if(idx<0) frac=1;
+    else if(idx===0) frac=0;
+    else {
+      const prev=PATH_NODES[idx-1].days, next=PATH_NODES[idx].days;
+      const segLen=PATH_TOTAL/PATH_NODES.length;
+      frac=(idx-1+(st-prev)/(next-prev))/PATH_NODES.length;
+    }
+    if(st>=30) frac=1;
+    prog.style.strokeDashoffset=PATH_TOTAL*(1-frac);
+  }
+  // Draw milestone nodes
+  const nodesG=document.getElementById('milestone-nodes'); if(!nodesG) return;
+  nodesG.innerHTML='';
+  PATH_NODES.forEach((n,i)=>{
+    const reached=st>=n.days;
+    const isCurrent=reached&&(i===PATH_NODES.length-1||st<PATH_NODES[i+1].days);
+    // glow circle for reached
+    if(reached){
+      const gl=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      gl.setAttribute('cx',n.x); gl.setAttribute('cy',n.y); gl.setAttribute('r','20');
+      gl.setAttribute('fill','#EDE0FF'); gl.setAttribute('opacity','0.8'); nodesG.appendChild(gl);
+    }
+    const bg=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    bg.setAttribute('cx',n.x); bg.setAttribute('cy',n.y); bg.setAttribute('r',isCurrent?'18':'15');
+    bg.setAttribute('fill',reached?'#6B4C9A':'#F3ECFF');
+    bg.setAttribute('stroke',reached?'#6B4C9A':'#D4C5F0'); bg.setAttribute('stroke-width','2');
+    if(isCurrent) bg.style.animation='pulse 1.8s ease-in-out infinite';
+    nodesG.appendChild(bg);
+    const em=document.createElementNS('http://www.w3.org/2000/svg','text');
+    em.setAttribute('x',n.x); em.setAttribute('y',n.y+6); em.setAttribute('text-anchor','middle');
+    em.setAttribute('font-size',isCurrent?'16':'13'); em.textContent=n.emoji;
+    nodesG.appendChild(em);
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',n.x); lbl.setAttribute('y',n.y+(isCurrent?36:32));
+    lbl.setAttribute('text-anchor','middle'); lbl.setAttribute('font-size','9');
+    lbl.setAttribute('fill',reached?'#6B4C9A':'#B09880'); lbl.setAttribute('font-weight','700');
+    lbl.setAttribute('font-family','Segoe UI,Arial Hebrew,sans-serif');
+    lbl.textContent=n.label; nodesG.appendChild(lbl);
+  });
+  // Move avatar to correct position
+  const posIdx=Math.min(PATH_NODES.findIndex(n=>st<n.days)<0?PATH_AVATAR_POS.length-1:Math.max(PATH_NODES.findIndex(n=>st<n.days),0), PATH_AVATAR_POS.length-1);
+  const avPos=st===0?PATH_AVATAR_POS[0]:PATH_AVATAR_POS[Math.min(PATH_NODES.filter(n=>st>=n.days).length,PATH_AVATAR_POS.length-1)];
+  ['av-glow','av-bg','av-hair','av-face'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    const cx=parseFloat(el.getAttribute('cx')||el.getAttribute('x'));
+    const cy=parseFloat(el.getAttribute('cy')||el.getAttribute('y'));
+    // offset from original (160, 345)
+    el.setAttribute('cx'!==null?'cx':'x', avPos.x+(parseFloat(el.getAttribute('cx'))-160));
+    el.setAttribute('cy'!==null?'cy':'y', avPos.y+(parseFloat(el.getAttribute('cy'))-345));
+  });
+  // path message
+  const pm=document.getElementById('journey-path-msg');
+  if(pm) pm.textContent=getStreakMsg(st);
+}
+
 function updateJourney() {
   document.getElementById('hdr-streak').textContent=s.streak;
   document.getElementById('j-streak').textContent=s.streak;
-  document.getElementById('j-char').textContent=getCharEmoji(s.streak);
   document.getElementById('j-msg').textContent=getStreakMsg(s.streak);
   document.getElementById('stat-streak').textContent=s.streak;
   document.getElementById('stat-best').textContent=s.bestStreak;
@@ -807,7 +953,7 @@ function updateJourney() {
   const hp=Math.min(Math.round(s.streak/66*100),100);
   document.getElementById('habit-fill').style.width=hp+'%';
   document.getElementById('habit-pct-lbl').textContent=hp+'%';
-  renderMilestones(); renderAchievements();
+  renderJourneyPath(); renderMilestones(); renderAchievements();
 }
 function renderMilestones() {
   const row=document.getElementById('milestones-row');
@@ -852,6 +998,12 @@ function showToast(msg) {
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),3800);
 }
 
+function updateBotBadge() {
+  const badge=document.getElementById('bot-badge'); if(!badge) return;
+  if(bs.unreadCount>0) { badge.textContent=bs.unreadCount>9?'9+':bs.unreadCount; badge.classList.add('show'); }
+  else { badge.classList.remove('show'); }
+}
+
 // NAV
 function switchView(v) {
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
@@ -859,7 +1011,10 @@ function switchView(v) {
   document.getElementById('view-'+v).classList.add('active');
   document.getElementById('nav-'+v).classList.add('active');
   if(v==='journey') updateJourney();
-  if(v==='bot'&&!bs.botInited) initBot();
+  if(v==='bot') {
+    bs.unreadCount=0; updateBotBadge();
+    if(!bs.botInited) initBot();
+  }
 }
 
 // SAVE / LOAD
@@ -933,7 +1088,9 @@ let bp = { // botPrefs
 let bs = { // botState
   quietMode:false, compassionDay:false,
   msgsSentToday:0, history:[], botInited:false,
-  lastBotTopic:null,
+  lastBotTopic:null, unreadCount:0,
+  conversationContext:{ lastUserMood:null, consecutiveNegative:0, taskJustCompleted:null },
+  lastThreeResponses:[],
 };
 
 // --- STORAGE ---
@@ -1035,6 +1192,8 @@ function obNext() {
 function botNow() { const n=new Date(); return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0'); }
 function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
 
+const BOT_AVATAR_SM = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="24" height="24" style="flex-shrink:0;margin-left:5px" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#EDE0FF"/><ellipse cx="20" cy="14" rx="11" ry="13" fill="#6B4C9A"/><circle cx="20" cy="23" r="11" fill="#F5C5A3"/><circle cx="16" cy="21" r="2" fill="#4A3060"/><circle cx="24" cy="21" r="2" fill="#4A3060"/><circle cx="16.8" cy="20.2" r="0.7" fill="white"/><circle cx="24.8" cy="20.2" r="0.7" fill="white"/><circle cx="13" cy="25" r="2.5" fill="#FFB3BA" opacity="0.5"/><circle cx="27" cy="25" r="2.5" fill="#FFB3BA" opacity="0.5"/><path d="M15 26.5 Q20 30.5 25 26.5" stroke="#C07850" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
+
 // Shows typing bubble → replaces with message (accepts string or Promise)
 async function addBotMsgAsync(msgOrPromise, instant=false) {
   const area=document.getElementById('chat-area'); if(!area) return;
@@ -1044,20 +1203,29 @@ async function addBotMsgAsync(msgOrPromise, instant=false) {
     typing.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';
     area.appendChild(typing); area.scrollTop=area.scrollHeight;
   }
+  // Unread badge — increment if bot tab not active
+  const activeView=document.querySelector('.view.active')?.id;
+  if(activeView!=='view-bot') { bs.unreadCount=(bs.unreadCount||0)+1; updateBotBadge(); }
   try {
     const text = (typeof msgOrPromise==='string') ? msgOrPromise : await msgOrPromise;
     document.getElementById(tid)?.remove();
+    const wrap=document.createElement('div'); wrap.style.cssText='display:flex;align-items:flex-end;gap:2px';
+    wrap.innerHTML=BOT_AVATAR_SM;
     const div=document.createElement('div'); div.className='cmsg cmsg-bot';
     div.innerHTML=text.replace(/\n/g,'<br>')+`<div class="cmsg-time">${botNow()}</div>`;
-    area.appendChild(div); area.scrollTop=area.scrollHeight;
+    wrap.appendChild(div);
+    area.appendChild(wrap); area.scrollTop=area.scrollHeight;
     bs.history.push({r:'bot',t:text,ts:new Date().toISOString()});
     bs.msgsSentToday++; saveBotData();
   } catch(e) {
     document.getElementById(tid)?.remove();
     const fb='קצת התבלבלתי 😅 אני כאן — מה קורה?';
+    const wrap=document.createElement('div'); wrap.style.cssText='display:flex;align-items:flex-end;gap:2px';
+    wrap.innerHTML=BOT_AVATAR_SM;
     const div=document.createElement('div'); div.className='cmsg cmsg-bot';
     div.innerHTML=fb+`<div class="cmsg-time">${botNow()}</div>`;
-    area.appendChild(div); area.scrollTop=area.scrollHeight;
+    wrap.appendChild(div);
+    area.appendChild(wrap); area.scrollTop=area.scrollHeight;
     bs.history.push({r:'bot',t:fb,ts:new Date().toISOString()});
   }
 }
@@ -1443,6 +1611,28 @@ const TR={
     (ds,p)=>`מעולה. צעד קטן, תמיד קדימה. 🌿`,
     (ds,p)=>`קיבלתי. תמיד אפשר לחזור כשצריך. 💛`,
   ],
+  validation:[
+    (ds,p)=>`כן. בדיוק זה. 💛`,
+    (ds,p)=>`ראיתי. זה חשוב. ✔`,
+    (ds,p)=>`הגוף שלך קיבל מה שהיה צריך. לא צריך עוד כלום עכשיו. 🌿`,
+    (ds,p)=>`זה מספיק. ממש. 💛`,
+    (ds,p)=>`קיבלתי. טיפלת בעצמך. 🌸`,
+    (ds,p)=>`לא תמיד צריך לעשות יותר — לפעמים מספיק לעשות. ✔`,
+    (ds,p)=>`עשית. זה הכל מה שנדרש. 💙`,
+    (ds,p)=>`מושלם. הגוף שמח. אין צורך להוסיף. 🌿`,
+    (ds,p)=>`קיבלתי ✔ כשתרצי עוד — אני כאן. 💛`,
+  ],
+  gentlePresence:[
+    (ds,p)=>`שמעתי אותך. 💙`,
+    (ds,p)=>`זה נשמע כבד. אני כאן. 🫶`,
+    (ds,p)=>`לא צריך לפתור כלום עכשיו. 💙`,
+    (ds,p)=>`יש לך רשות לא להרגיש טוב. ממש. 🌿`,
+    (ds,p)=>`אני לא הולכת לשום מקום. 💛`,
+    (ds,p)=>`לא מבקשת ממך שום דבר עכשיו — רק שתדעי שאני כאן. 💙`,
+    (ds,p)=>`כבד. מובן. אני כאן בשקט. 🫶`,
+    (ds,p)=>`לפעמים פשוט להיות עם מישהי זה מספיק. אני כאן. 💙`,
+    (ds,p)=>`לא מציעה כלום — רק נוכחות. 🌿`,
+  ],
   alreadyDoing:[
     (ds,p)=>`כן! זה בדיוק מה שנחשב. הגוף שלך בדרך לקבל מה שצריך. 💛`,
     (ds,p)=>`ניצחון. הכנת אוכל / עשית פעולה — זה לא מובן מאליו, ואת עושה את זה. 🌿`,
@@ -1489,38 +1679,88 @@ function enrichIntentWithContext(intents, userMessage, lastTopic) {
 // ==========================================
 // MAIN RESPONSE GENERATOR — LOCAL, No API
 // ==========================================
+function analyzeConversationFlow(userMessage, history) {
+  const msg = userMessage.toLowerCase();
+  const lastThree = (history||[]).slice(-3);
+  const botLastMsg = lastThree.filter(h=>h.r==='bot').slice(-1)[0];
+  const userLastMsgs = lastThree.filter(h=>h.r==='user');
+
+  const posWords = ['כן','עשיתי','בסדר','אוקי','נסיתי','תודה','יפה','נהדר','טוב','הצלחתי','שתיתי','אכלתי','יצאתי','ניסיתי'];
+  const negWords = ['לא','קשה','עייפה','כבד','גרוע','נורא','אין כוח','עצובה','בוכה','מפחדת','נפלתי'];
+
+  const isPositiveResponse = posWords.some(w=>msg.includes(w));
+  const isNegativeResponse = negWords.some(w=>msg.includes(w));
+  const isResponseToBotQuestion = !!(bs.lastBotTopic) ||
+    !!(botLastMsg && (botLastMsg.t.includes('?') || botLastMsg.t.includes('מה')));
+
+  let consecNeg = 0;
+  for (let i=userLastMsgs.length-1; i>=0; i--) {
+    const t = userLastMsgs[i].t.toLowerCase();
+    if (negWords.some(w=>t.includes(w))) consecNeg++;
+    else break;
+  }
+  if (isNegativeResponse) bs.conversationContext.consecutiveNegative = consecNeg + 1;
+  else if (isPositiveResponse) bs.conversationContext.consecutiveNegative = 0;
+
+  const moodTrajectory = bs.conversationContext.consecutiveNegative >= 2 ? 'declining'
+    : isPositiveResponse ? 'improving' : 'neutral';
+  const needsValidation = isPositiveResponse && isResponseToBotQuestion;
+  const needsActionSuggestion = moodTrajectory !== 'declining';
+
+  return { isResponseToBotQuestion, isPositiveResponse, isNegativeResponse, moodTrajectory, needsValidation, needsActionSuggestion };
+}
+
 function generateToriReply({ userMessage, dailyState, userPreferences, conversationHistory }) {
   const ds=dailyState, p=userPreferences;
   let intents=detectIntent(userMessage);
 
-  // Enrich with conversation context (did bot proactively raise a topic?)
   intents=enrichIntentWithContext(intents, userMessage, bs.lastBotTopic);
   const primary=intents[0];
   const mentions=extractMentions(userMessage);
 
-  // Reset topic memory after processing
+  const flow=analyzeConversationFlow(userMessage, conversationHistory||bs.history);
+
   bs.lastBotTopic=null;
 
-  // Get response pool
-  const pool=TR[primary]||TR.general;
-  const fn=pool[Math.floor(Math.random()*pool.length)];
-  let response=typeof fn==='function'?fn(ds,p):fn;
+  let poolName=primary;
+  const isSafe=primary!=='crisis'&&primary!=='tooHeavy';
+  if (isSafe && flow.needsValidation) {
+    poolName='validation';
+  } else if (isSafe && flow.moodTrajectory==='declining' && bs.conversationContext.consecutiveNegative>=2) {
+    poolName='gentlePresence';
+  }
 
-  // Enrich with water nudge — skip if user is already mid-action
-  if(primary!=='alreadyDoing'&&mentions.mentionsMeals&&!mentions.mentionsWater&&ds.waterCount<4&&!intents.includes('ateButNoWater')) {
+  const ltr=bs.lastThreeResponses;
+  if (ltr.length>=1 && ltr[ltr.length-1]===poolName &&
+     (poolName==='validation'||poolName==='gentlePresence')) {
+    poolName='general';
+  }
+
+  const pool=TR[poolName]||TR.general;
+  const recentBotTexts=bs.history.slice(-10).filter(h=>h.r==='bot').map(h=>h.t);
+  let response, attempts=0;
+  do {
+    const fn=pool[Math.floor(Math.random()*pool.length)];
+    response=typeof fn==='function'?fn(ds,p):fn;
+    attempts++;
+  } while(recentBotTexts.includes(response)&&attempts<pool.length);
+
+  bs.lastThreeResponses.push(poolName);
+  if(bs.lastThreeResponses.length>3) bs.lastThreeResponses.shift();
+
+  if(primary!=='alreadyDoing'&&!flow.needsValidation&&flow.needsActionSuggestion&&
+     mentions.mentionsMeals&&!mentions.mentionsWater&&ds.waterCount<4&&!intents.includes('ateButNoWater')) {
     const waterNotes=[' ולגבי המים — שלוק קטן? 💧',' (ואגב — מים?) 💧',' ועוד שלוק מים לפני שמסיימות? 💧'];
     if(!response.includes('מים')) response+=pick(waterNotes);
   }
 
-  // Light personalization (60% chance to add name)
   if(p.name&&!response.startsWith(p.name)&&Math.random()>0.6) {
-    const hasPunctuation=/^[^\u0590-\u05FF]/.test(response);
+    const hasPunctuation=/^[^֐-׿]/.test(response);
     if(!hasPunctuation) response=p.name+', '+response;
   }
 
   return response;
 }
-
 // ==========================================
 // SCHEDULED SUGGESTIONS — local, time-based
 // ==========================================
