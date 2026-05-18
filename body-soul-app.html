@@ -28,7 +28,7 @@
   --g-sage:#9DB89C; --g-sage-deep:#6D8B6E; --g-sage-soft:#C5D4BF;
   --g-peach:#F2C7A9; --g-peach-deep:#DFA786;
   --g-lavender:#C8B8DC; --g-lavender-deep:#A593C0;
-  --g-sky:#BDD7E8; --g-sky-deep:#93B3C4;
+  --g-sky:#C6DCE8; --g-sky-deep:#93B3C4;
   --g-pink:#E6BFC3; --g-pink-deep:#C99098;
   --g-butter:#F4DFA6; --g-cream:#E6D6BB;
   --g-shadow:0 1px 0 rgba(47,45,42,0.02),0 6px 20px -10px rgba(47,45,42,0.10);
@@ -1436,7 +1436,7 @@ function renderTodayCard() {
 
 const FLOWER_DEFS = {
   bite:      {name:'פרח הביס הקטן',   cost:12, swatch:'#E6BFC3', icon:'🌸'},
-  slukit:    {name:'שלוקונית מצויה',  cost:8,  swatch:'#BDD7E8', icon:'💧'},
+  slukit:    {name:'שלוקונית מצויה',  cost:8,  swatch:'#C6DCE8', icon:'💧'},
   lavender:  {name:'לבנדר לאדרמטי',  cost:14, swatch:'#C8B8DC', icon:'🌸'},
   daisy:     {name:'חיננית עשיתי משהו',  cost:10, swatch:'#FFFFFF', icon:'🌼'},
   chamomile: {name:'קמומיל מצב שמיכה', cost:14, swatch:'#F4DFA6', icon:'🌼'},
@@ -1444,7 +1444,7 @@ const FLOWER_DEFS = {
   anemone:   {name:'כלנית הקאמבק',  cost:20, swatch:'#E08A87', icon:'🌹'},
   jasmine:   {name:'יסמין ה-10 דקות', cost:18, swatch:'#FFFFFF', icon:'✨'},
   narcissus: {name:'נרקיס בלי נאום',  cost:16, swatch:'#F4DFA6', icon:'🌻'},
-  shluk:     {name:'פרח השלוק הקטן', cost:6,  swatch:'#BDD7E8', icon:'💧'},
+  shluk:     {name:'פרח השלוק הקטן', cost:6,  swatch:'#C6DCE8', icon:'💧'},
 };
 
 const WILD_DEFS = {
@@ -1673,7 +1673,7 @@ function buildGardenSVG() {
   let sky1,sky2,ground;
   if (mood==='compassion') { sky1='#C8B8DC'; sky2='#A593C0'; ground='#6D8B6E'; }
   else if (mood==='hard')  { sky1='#D0C8C0'; sky2='#B8B0A8'; ground='#9DB89C'; }
-  else                     { sky1='#F2C7A9'; sky2='#BDD7E8'; ground='#9DB89C'; }
+  else                     { sky1='#F2C7A9'; sky2='#C6DCE8'; ground='#9DB89C'; }
   const els = gs.garden.elements;
 
   let svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block">';
@@ -1734,7 +1734,7 @@ function flowerSVG(kind, cx, cy, sc, isWild) {
       +[0,72,144,216,288].map(a=>'<ellipse rx="3.5" ry="6.5" transform="rotate('+a+') translate(0,-8)" fill="#E6BFC3" opacity="0.85"/>').join('')
       +'<circle r="2.5" fill="#C99098"/></g>',
     slukit:    ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
-      +'<ellipse rx="5" ry="8" cy="-3" fill="#BDD7E8" opacity="0.9"/>'
+      +'<ellipse rx="5" ry="8" cy="-3" fill="#C6DCE8" opacity="0.9"/>'
       +'<circle r="3" cy="5" fill="#93B3C4" opacity="0.8"/></g>',
     lavender:  ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
       +'<line x1="0" y1="0" x2="0" y2="-15" stroke="#9DB89C" stroke-width="1.5"/>'
@@ -1762,7 +1762,7 @@ function flowerSVG(kind, cx, cy, sc, isWild) {
       +'<circle r="4" fill="#DFA786"/>'
       +'<circle r="2" fill="#F4DFA6"/></g>',
     shluk:     ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
-      +'<path d="M0,-11 C-5,-4 -5,2 0,5 C5,2 5,-4 0,-11" fill="#BDD7E8" opacity="0.9"/>'
+      +'<path d="M0,-11 C-5,-4 -5,2 0,5 C5,2 5,-4 0,-11" fill="#C6DCE8" opacity="0.9"/>'
       +'<ellipse rx="2" ry="1.5" cy="6.5" fill="#93B3C4" opacity="0.7"/></g>',
   };
   const fn = ops[kind] || ops['daisy'];
