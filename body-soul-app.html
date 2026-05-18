@@ -350,8 +350,8 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   border-radius:999px; font-size:11.5px; color:var(--g-ink-2);
   border:0.5px solid rgba(47,45,42,0.08); }
 .g-mood-dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
-.g-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-.g-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 10px 6px 8px; background:var(--g-card-tint); border:1px solid var(--g-hairline); border-radius:999px; font-size:12.5px; color:var(--g-ink-2); }
+.g-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; align-items:center; }
+.g-chip { display:inline-flex; align-items:center; gap:5px; padding:6px 10px 6px 8px; background:var(--g-card-tint); border:1px solid var(--g-hairline); border-radius:999px; font-size:12.5px; color:var(--g-ink-2); cursor:default; }
 .g-streak-label { font-size:13px; color:var(--g-ink-3); margin-top:6px; }
 .g-flower-preview { display:flex; gap:10px; margin:10px 0 4px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px; }
 .g-flower-thumb { flex-shrink:0; min-width:100px; background:var(--g-card-tint);
@@ -583,7 +583,7 @@ if('serviceWorker' in navigator){
 <div class="view" id="view-journey">
   <!-- Top card -->
   <div class="g-card" style="padding-bottom:14px">
-    <p class="g-eyebrow">גינת האור שלי</p>
+    <p class="g-eyebrow" id="g-top-eyebrow" style="letter-spacing:0.3px">גינת האור שלי</p>
     <h1 class="g-h1" id="g-top-title">גינת האור שלי</h1>
     <p class="g-body" id="g-top-sub" style="margin-top:4px">כל פעולה קטנה מוסיפה משהו חי בדרך חזרה לגוף.</p>
   </div>
@@ -613,7 +613,7 @@ if('serviceWorker' in navigator){
 
   <!-- What grows card -->
   <div class="g-card">
-    <h2 class="g-h2">מה יגדל עכשיו?</h2>
+    <p class="g-eyebrow" style="margin-bottom:2px">עם נקודות חיבור</p><h2 class="g-h2">מה יגדל עכשיו?</h2>
     <p class="g-meta" style="margin-bottom:6px">בחירה רכה של משהו קטן שיוסיף נוכחות לגינה.</p>
     <div class="g-flower-preview" id="g-flower-preview"></div>
     <button class="g-cta-btn" onclick="openFlowerPicker()">
@@ -640,8 +640,8 @@ if('serviceWorker' in navigator){
   </div>
 
   <!-- Did you know card -->
-  <div class="g-fact-card" style="margin-bottom:14px">
-    <p class="g-eyebrow">עובדה רכה להיום</p>
+  <div class="g-fact-card" style="margin-bottom:14px;background:linear-gradient(180deg,#FBF6EC,#F4ECD9)">
+    <p class="g-eyebrow" style="margin-bottom:2px">הידעת</p><p class="g-eyebrow" style="margin-bottom:4px">עובדה רכה להיום</p>
     <p class="g-body" id="g-fact-text" style="font-style:italic"></p>
   </div>
 
@@ -709,8 +709,11 @@ if('serviceWorker' in navigator){
   <div class="g-sheet-backdrop" id="g-picker-backdrop" onclick="closeFlowerPicker()"></div>
   <div class="g-sheet" id="g-picker-sheet">
     <div class="g-sheet-handle"></div>
-    <h2 class="g-h2">מה יגדל בגינה?</h2>
-    <p class="g-meta" style="margin-bottom:4px">לא חנות, לא רכישה — בחירה רכה של משהו קטן שיוסיף נוכחות בגינה.</p>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;padding:2px 0 4px">
+      <h2 class="g-h2" style="margin:0">מה יגדל עכשיו?</h2>
+      <span style="font-size:12px;color:var(--g-ink-3)"><span id="g-picker-pts" style="color:var(--g-ink);font-weight:600">0</span> נקודות</span>
+    </div>
+    <p class="g-meta" style="margin-bottom:10px">לא חנות, לא רכישה — בחירה רכה של משהו קטן שיוסיף נוכחות בגינה.</p>
     <div class="g-flower-grid" id="g-picker-grid"></div>
   </div>
 
@@ -1736,8 +1739,8 @@ function buildGardenSVG() {
     svg += '<circle cx="'+(W*0.78)+'" cy="72" r="32" fill="#F0E6D2" opacity="0.55"/>';
   }
 
-  // Stars (compassion)
-  if (mood === 'compassion') {
+  // Stars (compassion) — only when elements includes 'stars'
+  if (mood === 'compassion' || els.includes('stars')) {
     [[60,40],[110,90],[300,30],[340,75],[200,46]].forEach(([x,y],i) => {
       svg += '<circle cx="'+x+'" cy="'+y+'" r="'+(1.2+(i%2)*0.6)+'" fill="#FFFFFF" opacity="0.85"/>';
     });
@@ -1971,11 +1974,21 @@ function renderGardenHero() {
 function renderGardenTopCard() {
   const mood = gs.todayMood;
   const sub = document.getElementById('g-top-sub'); if(!sub) return;
+  // Set eyebrow with Hebrew day + date + mood context (like prototype)
+  const eyebrowEl = document.getElementById('g-top-eyebrow');
+  if (eyebrowEl) {
+    const wk=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+    const mo=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+    const now = new Date();
+    const dateStr = 'יום '+wk[now.getDay()]+' · '+now.getDate()+' ב'+mo[now.getMonth()];
+    const moodSuffix = mood==='hard'?' · מצב שמיכה':mood==='compassion'?' · יום חמלה':'';
+    eyebrowEl.textContent = dateStr+moodSuffix;
+  }
   const notice = document.getElementById('g-mood-notice'); if(notice) {
     notice.className='g-mood-notice';
     if (mood==='hard') {
       notice.className+=' hard';
-      const stripeColor = '#C99098';
+      const stripeColor = '#D5CFC0';
       notice.innerHTML = '<div class="g-mood-stripe" style="background:'+stripeColor+'"></div>'
         + '<div class="g-mood-notice-body">'
         + '<div class="g-mood-notice-title">מצב שמיכה</div>'
@@ -1983,10 +1996,10 @@ function renderGardenTopCard() {
         + '</div>';
     } else if (mood==='compassion') {
       notice.className+=' compassion';
-      const stripeColor = '#A593C0';
+      const stripeColor = '#C8B8DC';
       notice.innerHTML = '<div class="g-mood-stripe" style="background:'+stripeColor+'"></div>'
         + '<div class="g-mood-notice-body">'
-        + '<div class="g-mood-notice-title">יום חמלה</div>'
+        + '<div class="g-mood-notice-title">יום חמלה פעיל</div>'
         + '<div class="g-mood-notice-line">הוספנו ענן מנוחה לגינה. שום דבר לא דורש ממך כרגע.</div>'
         + '</div>';
     } else {
@@ -2001,12 +2014,29 @@ function renderConnectionPointsCard() {
   const ptTot = document.getElementById('g-pts-total-inline');
   if(ptDay) ptDay.textContent = gs.todayPoints;
   if(ptTot) ptTot.textContent = gs.points;
+  // Update picker sheet point counter too
+  const ppPts = document.getElementById('g-picker-pts');
+  if(ppPts) ppPts.textContent = gs.points;
   const chips = document.getElementById('g-today-chips');
   if (chips) {
     const LABELS={water:'מים',food:'אוכל',rest:'מנוחה',move:'תנועה',breath:'נשימה',hygiene:'היגיינה',compassion:'חמלה'};
+    // SVG glyphs matching prototype ICONS map (18×18, viewBox 0 0 24 24)
+    const GLYPHS = {
+      water:   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3 C15 8 18 11 18 15 a6 6 0 0 1 -12 0 c0 -4 3 -7 6 -12 Z" stroke="#93B3C4" stroke-width="1.5" fill="rgba(189,215,232,0.35)"/></svg>',
+      food:    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13" r="6" stroke="#DFA786" stroke-width="1.5" fill="rgba(242,199,169,0.35)"/><path d="M12 7 V4" stroke="#DFA786" stroke-width="1.5" stroke-linecap="round"/></svg>',
+      rest:    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 14 c3 -2 6 -2 8 0 s5 2 8 0 v4 H4 Z" stroke="#A593C0" stroke-width="1.5" fill="rgba(200,184,220,0.35)"/></svg>',
+      move:    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="2.2" fill="#7E9C7B"/><path d="M12 9 v6 M9 18 l3 -3 3 3 M9 12 h6" stroke="#7E9C7B" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>',
+      breath:  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="6" stroke="#93B3C4" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="2.2" fill="#93B3C4"/></svg>',
+      hygiene: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 5 h10 v3 H7 Z M9 8 l1 12 h4 l1 -12" stroke="#C99098" stroke-width="1.5" fill="rgba(230,191,195,0.3)"/></svg>',
+      compassion:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 19 C 6 15, 4 11, 6 8 a3.5 3.5 0 0 1 6 0 a3.5 3.5 0 0 1 6 0 c2 3, 0 7, -6 11 Z" stroke="#C99098" stroke-width="1.5" fill="rgba(230,191,195,0.4)"/></svg>',
+    };
     const seen = new Set();
-    chips.innerHTML = gs.todayActions.filter(a=>{if(seen.has(a.kind))return false;seen.add(a.kind);return true;})
-      .map(a=>'<span class="g-chip">'+(LABELS[a.kind]||a.kind)+'</span>').join('');
+    const actions = gs.todayActions.filter(a=>{if(seen.has(a.kind))return false;seen.add(a.kind);return true;});
+    chips.innerHTML = actions.map(a=>{
+      const icon = GLYPHS[a.kind]||'';
+      const cnt = gs.todayActions.filter(x=>x.kind===a.kind).reduce((s,x)=>s+(x.count||1),0);
+      return '<div class="g-chip">'+icon+'<span>'+(LABELS[a.kind]||a.kind)+'</span>'+(cnt>1?'<span style="color:var(--g-ink-3);">× '+cnt+'</span>':'')+'</div>';
+    }).join('');
   }
   const stk = document.getElementById('g-streak-label');
   if (stk) {
@@ -2016,11 +2046,13 @@ function renderConnectionPointsCard() {
 }
 function renderWhatGrowsCard() {
   const preview = document.getElementById('g-flower-preview'); if(!preview) return;
-  const defs = Object.entries(FLOWER_DEFS).slice(0,6);
-  preview.innerHTML = defs.map(([k,d])=>{
+  // Prototype shows these 4 specific flowers in preview
+  const previewKinds = ['shluk','bite','daisy','lavender'];
+  preview.innerHTML = previewKinds.map(k=>{
+    const d = FLOWER_DEFS[k]; if(!d) return '';
     const canAfford = gs.points >= d.cost;
-    return '<div class="g-flower-thumb" style="opacity:'+(canAfford?1:0.55)+'">'
-      +'<div class="g-flower-icon-wrap">'+flowerIconSVG(k, 38)+'</div>'
+    return '<div class="g-flower-thumb" style="opacity:'+(canAfford?1:0.6)+'">'
+      +'<div class="g-flower-icon-wrap">'+flowerIconSVG(k, 44)+'</div>'
       +'<div class="g-flower-name">'+d.name+'</div>'
       +'<div class="g-flower-cost">'+d.cost+' נקודות</div>'
       +'</div>';
@@ -2064,45 +2096,65 @@ function renderJournalCard() {
     el.innerHTML='<p class="g-meta" style="padding:8px 0">הגינה מחכה לימים ראשונים.</p>';
     return;
   }
+  // Prototype-exact mood backgrounds
   const MOOD_BG = {
-    regular: 'rgba(157,184,156,0.15)',
-    hard:    'rgba(200,192,184,0.2)',
-    compassion:'rgba(200,184,220,0.18)',
+    regular: 'var(--g-card-tint)',
+    hard:    '#F1ECDF',
+    compassion:'#EFE7EF',
   };
   const hebrewDate = (d) => {
-    try { const dt=new Date(d); return dt.toLocaleDateString('he-IL',{day:'numeric',month:'short'}); } catch(e){return d;}
+    try {
+      const dt=new Date(d);
+      const wk=['א','ב','ג','ד','ה','ו','ש'];
+      return wk[dt.getDay()]+String.fromCharCode(39)+' · '+dt.toLocaleDateString('he-IL',{day:'numeric',month:'numeric'});
+    } catch(e){return d;}
   };
   el.innerHTML = days.map(d=>{
     const bg = MOOD_BG[d.mood]||MOOD_BG.regular;
-    const flowers = (d.flowers||[]).slice(0,3);
-    const flowerIcons = flowers.map(k=>flowerIconSVG(k,22)).join('');
+    const flowers = (d.flowers||[]).slice(0,4);
+    const wildKind = d.wildFlower && WILD_DEFS[d.wildFlower] ? d.wildFlower : null;
+    const flowerIcons = flowers.map(k=>flowerIconSVG(k,22)).join('') + (wildKind ? flowerIconSVG(wildKind,26) : '');
+    const line = d.line || '';
     return '<div class="g-journal-day" style="background:'+bg+'">'
+      +'<div style="font-size:11px;color:var(--g-ink-3)">'+hebrewDate(d.date)+'</div>'
       +'<div class="g-journal-flowers">'+flowerIcons+'</div>'
-      +'<div class="g-journal-date">'+hebrewDate(d.date)+'</div>'
-      +'<div style="font-size:10.5px;color:var(--g-ink-3)">'+d.points+' נק.</div>'
+      +(line?'<div style="font-size:11.5px;color:var(--g-ink-2);line-height:1.3">'+line+'</div>':'')
+      +'<div style="font-size:10.5px;color:var(--g-ink-3)">'+d.points+' נקודות</div>'
       +'</div>';
   }).join('');
 }
 function renderGrowthCorner() {
+  const card = document.getElementById('g-growth-card');
   const el = document.getElementById('g-growth-content'); if(!el) return;
-  if (gs.growthCornerUnlocked) {
-    el.innerHTML='<div class="g-growth-open">'
+  const unlocked = gs.growthCornerUnlocked;
+  // Match prototype card style: dashed border, gradient bg
+  if (card) {
+    card.style.border = '1px dashed rgba(47,45,42,0.12)';
+    card.style.boxShadow = 'none';
+    card.style.background = unlocked
+      ? 'linear-gradient(180deg, #FBF6EC, #F1E9D4)'
+      : 'linear-gradient(180deg, rgba(255,255,255,0.6), rgba(245,239,227,0.6))';
+  }
+  // SVG lock/unlock icon (from prototype)
+  const iconSVG_locked = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#8A857D" stroke-width="1.5"/><path d="M8 11 V8 a4 4 0 0 1 8 0 v3" stroke="#8A857D" stroke-width="1.5"/></svg>';
+  const iconSVG_unlocked = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3 v6 M12 9 a4 4 0 0 1 4 4 v3 H8 v-3 a4 4 0 0 1 4 -4 Z" stroke="#9B7E33" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  const iconBg = unlocked ? 'rgba(244,223,166,0.5)' : 'rgba(181,175,164,0.18)';
+  const iconSVG = unlocked ? iconSVG_unlocked : iconSVG_locked;
+
+  if (unlocked) {
+    el.innerHTML = '<div style="display:flex;align-items:flex-start;gap:14px">'
+      +'<div style="width:44px;height:44px;border-radius:14px;background:'+iconBg+';display:flex;align-items:center;justify-content:center;flex-shrink:0">'+iconSVG+'</div>'
+      +'<div style="flex:1">'
+      +'<div class="g-h2" style="font-size:17px;margin-bottom:4px">פינת הצמיחה</div>'
       +'<p class="g-body">נראה שנבנה כאן בסיס יפה. אפשר להוסיף משהו קטן שהוא מעבר לטיפול עצמי בסיסי: תחביב, לימוד, יצירה או פרויקט קטן.</p>'
-      +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">'
-      +'<div style="background:rgba(255,255,255,0.6);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--g-ink-2)">🎨 לבחור תחביב ולהקדיש לו 10 דקות</div>'
-      +'<div style="background:rgba(255,255,255,0.6);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--g-ink-2)">📖 לקרוא עידוד מעודד אחד</div>'
-      +'<div style="background:rgba(255,255,255,0.6);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--g-ink-2)">🌱 לבחור נושא ללימוד ולפתוח סרטון אחד</div>'
       +'</div></div>';
   } else {
-    const pct = Math.min((s.streak||0)/30*100, 100);
-    el.innerHTML='<div class="g-growth-locked">'
-      +'<div style="font-size:36px;margin-bottom:10px">🔒</div>'
-      +'<p class="g-body" style="margin-bottom:10px">תיפתח אחרי בסיס יציב של התמדה עדינה. אין לחץ להגיע מהר — קודם בונים שורשים.</p>'
-      +'<div style="height:6px;background:var(--g-hairline);border-radius:999px;overflow:hidden;margin:8px 0 4px">'
-      +'<div style="height:100%;width:'+pct+'%;background:var(--g-sage-deep);border-radius:999px;transition:width 1s ease"></div>'
-      +'</div>'
-      +'<div class="g-meta">'+(s.streak||0)+'/30 ימים</div>'
-      +'</div>';
+    el.innerHTML = '<div style="display:flex;align-items:flex-start;gap:14px">'
+      +'<div style="width:44px;height:44px;border-radius:14px;background:'+iconBg+';display:flex;align-items:center;justify-content:center;flex-shrink:0">'+iconSVG+'</div>'
+      +'<div style="flex:1">'
+      +'<div class="g-h2" style="font-size:17px;margin-bottom:4px">פינת הצמיחה</div>'
+      +'<p class="g-body">תיפתח אחרי בסיס יציב של התמדה עדינה. אין לחץ להגיע מהר — קודם בונים שורשים.</p>'
+      +'</div></div>';
   }
 }
 
