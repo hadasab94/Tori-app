@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="תורי">
 <link rel="apple-touch-icon" href="./logo.png">
 <title>תורי 🌱</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;600;700&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -21,6 +22,16 @@
   --text: #3A2515; --text2: #7A5E4A; --text3: #B09880;
   --border: rgba(58,37,21,0.10); --border2: rgba(58,37,21,0.18);
   --radius: 14px;
+  --g-bg:#F6F1E8; --g-bg-deep:#EFE7D6; --g-card:#FFFFFF; --g-card-tint:#FBF6EC;
+  --g-ink:#2F2D2A; --g-ink-2:#57534D; --g-ink-3:#8A857D; --g-ink-4:#B5AFA4;
+  --g-hairline:rgba(47,45,42,0.08);
+  --g-sage:#9DB89C; --g-sage-deep:#6D8B6E; --g-sage-soft:#C5D4BF;
+  --g-peach:#F2C7A9; --g-peach-deep:#DFA786;
+  --g-lavender:#C8B8DC; --g-lavender-deep:#A593C0;
+  --g-sky:#BDD7E8; --g-sky-deep:#93B3C4;
+  --g-pink:#E6BFC3; --g-pink-deep:#C99098;
+  --g-butter:#F4DFA6; --g-cream:#E6D6BB;
+  --g-shadow:0 1px 0 rgba(47,45,42,0.02),0 6px 20px -10px rgba(47,45,42,0.10);
 }
 html { scroll-behavior: smooth; }
 body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica Neue',sans-serif; color: var(--text); min-height: 100vh; direction: rtl; max-width: 480px; margin: 0 auto; }
@@ -303,6 +314,77 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .auth-btn:active { transform:scale(0.97); opacity:0.9; }
 .auth-error { color:#C0392B; font-size:13px; margin-top:12px; min-height:20px; line-height:1.4; }
 .auth-reset { background:none; border:none; color:var(--text3); font-size:12px; cursor:pointer; margin-top:12px; font-family:inherit; padding:4px; text-decoration:underline; display:block; width:100%; }
+
+/* ========== GARDEN SYSTEM ========== */
+#view-journey { background:var(--g-bg); font-family:'Assistant','Segoe UI',sans-serif; }
+.g-card { background:var(--g-card); border-radius:22px; box-shadow:var(--g-shadow); padding:18px 18px 20px; margin-bottom:14px; }
+.g-eyebrow { font-size:11.5px; font-weight:500; color:var(--g-ink-3); letter-spacing:0.4px; margin-bottom:6px; }
+.g-h1 { font-family:'Frank Ruhl Libre',serif; font-size:26px; font-weight:500; color:var(--g-ink); line-height:1.15; }
+.g-h2 { font-family:'Frank Ruhl Libre',serif; font-size:19px; font-weight:500; color:var(--g-ink); line-height:1.2; margin-bottom:6px; }
+.g-body { font-size:14px; color:var(--g-ink-2); line-height:1.55; }
+.g-meta { font-size:12px; color:var(--g-ink-3); line-height:1.4; }
+.g-big-num { font-family:'Frank Ruhl Libre',serif; font-size:38px; font-weight:500; color:var(--g-ink); line-height:1; }
+.g-mood-notice { border-radius:14px; padding:12px 14px; margin-bottom:14px; font-size:13px; line-height:1.55; color:var(--g-ink-2); display:none; }
+.g-mood-notice.hard { background:rgba(200,192,184,0.3); border:1px solid rgba(200,192,184,0.5); display:block; }
+.g-mood-notice.compassion { background:rgba(200,184,220,0.2); border:1px solid rgba(200,184,220,0.4); display:block; }
+.g-garden-wrap { border-radius:16px; overflow:hidden; position:relative; margin-bottom:8px; }
+.g-garden-wrap svg { display:block; width:100%; }
+.g-mood-pill { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:500; color:var(--g-ink-3); padding:4px 10px; border-radius:999px; background:rgba(255,255,255,0.7); margin-top:6px; }
+.g-mood-dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+.g-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.g-chip { padding:4px 10px; border-radius:999px; font-size:12px; font-weight:500; background:var(--g-sage-soft); color:var(--g-sage-deep); }
+.g-streak-label { font-size:13px; color:var(--g-ink-3); margin-top:6px; }
+.g-flower-preview { display:flex; gap:10px; margin:10px 0 4px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px; }
+.g-flower-thumb { flex-shrink:0; width:58px; text-align:center; }
+.g-flower-swatch { width:38px; height:38px; border-radius:50%; margin:0 auto 4px; }
+.g-flower-name { font-size:10px; color:var(--g-ink-3); line-height:1.3; }
+.g-cta-btn { display:inline-flex; align-items:center; gap:6px; background:var(--g-sage-deep); color:white; border:none; border-radius:999px; padding:9px 18px; font-size:13px; font-weight:600; font-family:'Assistant',sans-serif; cursor:pointer; margin-top:10px; }
+.g-root-item { margin-bottom:12px; }
+.g-root-label { display:flex; justify-content:space-between; font-size:12px; color:var(--g-ink-2); margin-bottom:4px; font-weight:500; }
+.g-root-bar { height:7px; background:var(--g-hairline); border-radius:999px; overflow:hidden; }
+.g-root-fill { height:100%; border-radius:999px; transition:width 1.2s ease; }
+.g-root-note { font-size:11.5px; color:var(--g-ink-3); margin-top:3px; }
+.g-journal-list { display:flex; flex-direction:column; gap:0; }
+.g-journal-day { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--g-hairline); cursor:pointer; }
+.g-journal-day:last-child { border-bottom:none; }
+.g-journal-dot { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:15px; }
+.g-journal-dot.regular { background:var(--g-sage-soft); }
+.g-journal-dot.hard { background:rgba(200,192,184,0.3); }
+.g-journal-dot.compassion { background:rgba(200,184,220,0.3); }
+.g-journal-info { flex:1; }
+.g-journal-date { font-size:12px; color:var(--g-ink-2); font-weight:500; }
+.g-journal-pts { font-size:11px; color:var(--g-ink-4); }
+.g-growth-locked { border:1.5px dashed var(--g-hairline); border-radius:18px; padding:22px 18px; text-align:center; }
+.g-growth-open { background:linear-gradient(135deg,var(--g-butter),var(--g-cream)); border-radius:18px; padding:18px; }
+.g-fact-card { background:linear-gradient(135deg,rgba(197,212,191,0.4) 0%,rgba(189,215,232,0.4) 100%); border-radius:18px; padding:16px 18px; border:1px solid var(--g-hairline); }
+.g-sheet-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.12); z-index:800; display:none; }
+.g-sheet-backdrop.open { display:block; }
+.g-sheet { position:fixed; bottom:0; right:0; left:0; max-width:480px; margin:0 auto; background:var(--g-card); border-radius:22px 22px 0 0; padding:12px 18px 34px; z-index:801; transform:translateY(100%); transition:transform 0.35s cubic-bezier(.2,.8,.3,1); max-height:82vh; overflow-y:auto; }
+.g-sheet.open { transform:translateY(0); }
+.g-sheet-handle { width:36px; height:4px; background:var(--g-hairline); border-radius:999px; margin:0 auto 16px; }
+.g-flower-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:14px; }
+.g-flower-item { border:1.5px solid var(--g-hairline); border-radius:16px; padding:12px 10px; display:flex; align-items:center; gap:10px; }
+.g-flower-item .swatch { width:32px; height:32px; border-radius:50%; flex-shrink:0; }
+.g-flower-item .info { flex:1; min-width:0; }
+.g-flower-item .fname { font-size:11.5px; font-weight:600; color:var(--g-ink); }
+.g-flower-item .fcost { font-size:10.5px; color:var(--g-ink-3); }
+.g-flower-item .fbtn { border:none; border-radius:999px; padding:5px 11px; font-size:11.5px; font-weight:600; font-family:'Assistant',sans-serif; cursor:pointer; white-space:nowrap; }
+.g-flower-item .fbtn.can { background:var(--g-sage-deep); color:white; }
+.g-flower-item .fbtn.cant { background:var(--g-hairline); color:var(--g-ink-4); cursor:default; }
+.g-wild-modal { position:fixed; inset:0; z-index:900; display:none; align-items:center; justify-content:center; padding:20px; }
+.g-wild-modal.open { display:flex; }
+.g-wild-backdrop { position:absolute; inset:0; background:rgba(47,45,42,0.25); }
+.g-wild-box { position:relative; background:var(--g-card); border-radius:24px; padding:28px 24px 24px; text-align:center; max-width:300px; width:100%; box-shadow:0 8px 40px -8px rgba(47,45,42,0.2); }
+.g-wild-halo { width:80px; height:80px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:42px; background:rgba(244,223,166,0.3); animation:wild-halo 3s ease-in-out infinite; }
+@keyframes wild-halo { 0%,100%{box-shadow:0 0 0 0 rgba(244,223,166,0.5)} 50%{box-shadow:0 0 0 14px rgba(244,223,166,0)} }
+.g-wild-btn { border:none; border-radius:999px; padding:9px 18px; font-size:13px; font-weight:600; font-family:'Assistant',sans-serif; cursor:pointer; margin:4px; }
+.g-wild-btn.soft { background:var(--g-sage-soft); color:var(--g-sage-deep); }
+.g-wild-btn.outline { background:transparent; border:1.5px solid var(--g-hairline); color:var(--g-ink-2); }
+@keyframes plant-bloom { 0%{opacity:0;transform:translateY(6px) scale(0.6)} 65%{opacity:1;transform:translateY(0) scale(1.05)} 100%{opacity:1;transform:scale(1)} }
+.plant-new { animation:plant-bloom 600ms cubic-bezier(.2,.7,.3,1) both; }
+@media (prefers-reduced-motion:reduce) { .plant-new,.g-wild-halo{animation:none!important} }
+/* keep legacy jcard classes working */
+.jcard { background:var(--card); border-radius:18px; padding:16px; margin-bottom:14px; border:1px solid var(--border); }
 </style>
 <script>
 if('serviceWorker' in navigator){
@@ -474,77 +556,119 @@ if('serviceWorker' in navigator){
 
 <!-- JOURNEY VIEW -->
 <div class="view" id="view-journey">
-  <!-- Hero -->
-  <div class="journey-hero">
-    <div class="journey-streak"><span id="j-streak">0</span> ימים ברצף 🔥</div>
-    <div class="journey-msg" id="j-msg">כל יום שבו טיפלת בעצמך הוא ניצחון 💙</div>
+  <!-- Top card -->
+  <div class="g-card" style="padding-bottom:14px">
+    <p class="g-eyebrow">גינת האור שלי</p>
+    <h1 class="g-h1" id="g-top-title">גינת האור שלי</h1>
+    <p class="g-body" id="g-top-sub" style="margin-top:4px">כל פעולה קטנה מוסיפה משהו חי בדרך חזרה לגוף.</p>
   </div>
 
-  <!-- Today card -->
-  <div class="jcard today-card">
-    <div class="jcard-title-lg">✨ היום במסע</div>
-    <div class="today-card-row">
-      <div class="today-dot-big" id="today-dot-big">🌿</div>
-      <div class="today-card-desc" id="today-journey-desc">טוענת...</div>
+  <!-- Mood notice (hidden by default) -->
+  <div class="g-mood-notice" id="g-mood-notice"></div>
+
+  <!-- Garden hero -->
+  <div class="g-card" style="padding:14px 14px 12px">
+    <div class="g-garden-wrap" id="g-garden-wrap">
+      <!-- SVG rendered by JS -->
+    </div>
+    <div class="g-mood-pill" id="g-mood-pill">
+      <span class="g-mood-dot" id="g-mood-dot" style="background:var(--g-peach)"></span>
+      <span id="g-mood-label">אור יום רך</span>
     </div>
   </div>
 
-  <!-- Daily path -->
-  <div class="jcard">
-    <div class="jcard-title">שביל ההחלמה 🗺️</div>
-    <div id="daily-path-wrap"></div>
-    <div id="journey-path-msg" style="text-align:center;font-size:12px;color:var(--text2);margin-top:10px;font-weight:600"></div>
-  </div>
-
-  <!-- Habit strength (upgraded) -->
-  <div class="jcard habit-card">
-    <div class="jcard-title" id="habit-title">🌱 חוזק ההרגל</div>
-    <div id="habit-stage-name" class="habit-stage-name">ניצוץ ראשון</div>
-    <div class="habit-bar-wrap">
-      <div class="habit-bar-label"><span>התקדמות</span><span id="habit-pct-lbl">0%</span></div>
-      <div class="habit-track"><div class="habit-fill" id="habit-fill" style="width:0%"></div></div>
+  <!-- Connection points card -->
+  <div class="g-card">
+    <p class="g-eyebrow">נקודות חיבור · היום</p>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">
+      <span class="g-big-num" id="g-pts-today">0</span>
+      <span class="g-meta">היום · <span id="g-pts-total-inline">0</span> סה"כ</span>
     </div>
-    <div class="habit-body" id="habit-body">כל יום שבו את מטפלת בעצמך, המוח בונה מסלול עצבי חדש.</div>
-    <div class="habit-fact" id="habit-fact"></div>
+    <p class="g-meta" style="margin-bottom:6px">נקודות חיבור הן לא מדד להצלחה. הן סימן קטן לכך שחזרת לגוף.</p>
+    <div class="g-chips" id="g-today-chips"></div>
+    <p class="g-streak-label" id="g-streak-label"></p>
   </div>
 
-  <!-- Connection points -->
-  <div class="jcard">
-    <div class="jcard-title">נקודות חיבור ✨</div>
-    <div class="points-big" id="points-total">0</div>
-    <div class="points-sub">נקודות</div>
-    <div id="next-unlock-wrap"></div>
-    <div class="unlock-items" id="unlock-items"></div>
+  <!-- What grows card -->
+  <div class="g-card">
+    <h2 class="g-h2">מה יגדל עכשיו?</h2>
+    <p class="g-meta" style="margin-bottom:6px">בחירה רכה של משהו קטן שיוסיף נוכחות לגינה.</p>
+    <div class="g-flower-preview" id="g-flower-preview"></div>
+    <button class="g-cta-btn" onclick="openFlowerPicker()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      בחירת פרח
+    </button>
   </div>
 
-  <!-- Growth tasks -->
-  <div class="jcard" id="growth-card">
-    <div class="jcard-title">🌱 משימות צמיחה</div>
-    <div id="growth-content"></div>
-  </div>
-
-  <!-- Stats -->
-  <div class="jcard" style="margin-bottom:12px">
-    <div class="jcard-title">📊 סטטיסטיקה</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div style="background:var(--terra-l);border-radius:10px;padding:12px;text-align:center">
-        <div style="font-size:24px;font-weight:800;color:var(--terra)" id="stat-streak">0</div>
-        <div style="font-size:11px;color:var(--text2)">סטרייק נוכחי</div>
+  <!-- Habit roots card -->
+  <div class="g-card">
+    <h2 class="g-h2">שורשי ההרגל</h2>
+    <div id="g-roots-list"></div>
+    <!-- keep legacy bar for compat -->
+    <div style="display:none">
+      <div class="habit-bar-wrap">
+        <div class="habit-bar-label"><span>חוזק ההרגל</span><span id="habit-pct-lbl">0%</span></div>
+        <div class="habit-track"><div class="habit-fill" id="habit-fill" style="width:0%"></div></div>
       </div>
-      <div style="background:var(--gold-l);border-radius:10px;padding:12px;text-align:center">
-        <div style="font-size:24px;font-weight:800;color:var(--gold)" id="stat-best">0</div>
-        <div style="font-size:11px;color:var(--text2)">הסטרייק הטוב ביותר</div>
+      <div id="habit-stage-name"></div>
+      <div id="habit-body"></div>
+      <div id="habit-fact"></div>
+      <div id="habit-title"></div>
+    </div>
+  </div>
+
+  <!-- Did you know card -->
+  <div class="g-fact-card" style="margin-bottom:14px">
+    <p class="g-eyebrow">עובדה רכה להיום</p>
+    <p class="g-body" id="g-fact-text" style="font-style:italic"></p>
+  </div>
+
+  <!-- Garden journal -->
+  <div class="g-card">
+    <h2 class="g-h2">יומן הגינה</h2>
+    <div class="g-journal-list" id="g-journal-list"></div>
+  </div>
+
+  <!-- Growth corner -->
+  <div class="g-card" id="g-growth-card">
+    <h2 class="g-h2">פינת הצמיחה</h2>
+    <div id="g-growth-content"></div>
+    <!-- legacy -->
+    <div style="display:none" id="growth-content"></div>
+  </div>
+
+  <!-- Stats (kept for legacy JS) -->
+  <div class="g-card" style="margin-bottom:12px">
+    <p class="g-eyebrow">סטטיסטיקה</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+      <div style="background:var(--g-sage-soft);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-family:'Frank Ruhl Libre',serif;font-size:28px;font-weight:500;color:var(--g-sage-deep)" id="stat-streak">0</div>
+        <div class="g-meta">ימים רצופים</div>
+      </div>
+      <div style="background:var(--g-butter);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-family:'Frank Ruhl Libre',serif;font-size:28px;font-weight:500;color:var(--g-peach-deep)" id="stat-best">0</div>
+        <div class="g-meta">הטוב ביותר</div>
       </div>
     </div>
   </div>
 
-  <div class="sec">⭐ הישגים</div>
-  <div class="achiev-grid" id="achiev-grid"></div>
+  <!-- Achievements (legacy) -->
+  <p class="g-eyebrow" style="padding:0 4px 8px">אבני דרך</p>
+  <div class="achiev-grid" id="achiev-grid" style="margin-bottom:24px"></div>
 
-  <!-- Hidden legacy SVG kept for JS compat -->
+  <!-- Hidden legacy elements for JS compat -->
   <div style="display:none">
+    <div id="j-streak">0</div>
+    <div id="j-msg"></div>
+    <div id="journey-path-msg"></div>
+    <div id="daily-path-wrap"></div>
+    <div id="points-total">0</div>
+    <div id="next-unlock-wrap"></div>
+    <div id="unlock-items"></div>
+    <div id="today-journey-desc"></div>
+    <div id="today-dot-big"></div>
     <svg id="journey-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 370" width="0" height="0">
-      <path id="path-bg" d="M 160 345 C 120 315 50 295 80 265 C 110 235 270 215 240 185 C 210 155 55 135 85 105 C 115 75 270 65 240 40 C 225 28 190 20 185 18" stroke="#D4C5F0" stroke-width="6" fill="none"/>
+      <path id="path-bg" d="M 160 345 C 120 315 50 295 80 265" stroke="#D4C5F0" stroke-width="6" fill="none"/>
       <path id="path-done" d="M 160 345 C 120 315 50 295 80 265" stroke="#6B4C9A" stroke-width="6" fill="none" stroke-dasharray="800" stroke-dashoffset="800" id="path-progress"/>
       <g id="milestone-nodes"></g>
       <g id="journey-avatar">
@@ -554,8 +678,32 @@ if('serviceWorker' in navigator){
         <circle id="av-face" cx="160" cy="347" r="9" fill="#F5C5A3"/>
       </g>
     </svg>
-    <div class="milestones-row" id="milestones-row" style="display:none">
+    <div class="milestones-row" id="milestones-row">
       <div class="m-track"><div class="m-fill" id="m-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Flower picker bottom sheet -->
+  <div class="g-sheet-backdrop" id="g-picker-backdrop" onclick="closeFlowerPicker()"></div>
+  <div class="g-sheet" id="g-picker-sheet">
+    <div class="g-sheet-handle"></div>
+    <h2 class="g-h2">מה יגדל בגינה?</h2>
+    <p class="g-meta" style="margin-bottom:4px">לא חנות, לא רכישה — בחירה רכה של משהו קטן שיוסיף נוכחות בגינה.</p>
+    <div class="g-flower-grid" id="g-picker-grid"></div>
+  </div>
+
+  <!-- Wild flower reveal modal -->
+  <div class="g-wild-modal" id="g-wild-modal">
+    <div class="g-wild-backdrop" onclick="closeWildReveal()"></div>
+    <div class="g-wild-box">
+      <div class="g-wild-halo" id="g-wild-icon">🌿</div>
+      <p class="g-eyebrow">פרח פרא · מתנה</p>
+      <h2 class="g-h2" id="g-wild-name" style="margin-bottom:6px"></h2>
+      <p class="g-body" id="g-wild-line" style="margin-bottom:16px"></p>
+      <div>
+        <button class="g-wild-btn soft" onclick="acknowledgeWild(false)">תודה רכה</button>
+        <button class="g-wild-btn outline" onclick="acknowledgeWild(true)">ראי בגינה</button>
+      </div>
     </div>
   </div>
 </div>
@@ -842,6 +990,9 @@ function toggleTask(id) {
     const TASK_PTS={breakfast:10,lunch:10,dinner:10,shower:10,breathing:8,sleep:8,outside:8};
     if(TASK_PTS[id]) awardPoints(TASK_PTS[id]);
     else awardPoints(10);
+    // garden action
+    const gkind = TASK_ACTION_MAP[id]||'rest';
+    addGardenAction(gkind);
   }
   updateProgress(); saveDay();
 }
@@ -861,6 +1012,8 @@ function tapDrop(idx) {
   renderDrops();
   if(s.water===6&&prev<6){showToast('💧 6 כוסות! הכליות שלך כרגע עושות מסיבה 🎉');awardPoints(5);}
   else if(s.water===8&&prev<8) showToast('💧 8 כוסות שלמות! מערכת העצבים שלך אוהבת אותך כי הצפת אותה — במים 💙');
+  // garden water action
+  addGardenAction('water');
   saveDay();
 }
 
@@ -1276,21 +1429,507 @@ function renderTodayCard() {
   if(iconEl) iconEl.textContent=icon;
   if(descEl) descEl.textContent=msg;
 }
-function updateJourney() {
-  document.getElementById('hdr-streak').textContent=s.streak;
-  document.getElementById('j-streak').textContent=s.streak;
-  document.getElementById('j-msg').textContent=getStreakMsg(s.streak);
-  document.getElementById('stat-streak').textContent=s.streak;
-  document.getElementById('stat-best').textContent=s.bestStreak;
-  renderDailyPath();
-  renderHabitCard();
-  renderPointsCard();
-  renderGrowthCard();
-  renderTodayCard();
-  renderJourneyPath();
-  renderMilestones();
-  renderAchievements();
+
+// ==========================================
+// GARDEN SYSTEM — גינת האור
+// ==========================================
+
+const FLOWER_DEFS = {
+  bite:      {name:'פרח הביס הקטן',   cost:12, swatch:'#E6BFC3', icon:'🌸'},
+  slukit:    {name:'שלוקונית מצויה',  cost:8,  swatch:'#BDD7E8', icon:'💧'},
+  lavender:  {name:'לבנדר לאדרמטי',  cost:14, swatch:'#C8B8DC', icon:'🌸'},
+  daisy:     {name:'חיננית עשיתי משהו',  cost:10, swatch:'#FFFFFF', icon:'🌼'},
+  chamomile: {name:'קמומיל מצב שמיכה', cost:14, swatch:'#F4DFA6', icon:'🌼'},
+  sage:      {name:'מרוות הקרקוע',  cost:16, swatch:'#9DB89C', icon:'🌿'},
+  anemone:   {name:'כלנית הקאמבק',  cost:20, swatch:'#E08A87', icon:'🌹'},
+  jasmine:   {name:'יסמין ה-10 דקות', cost:18, swatch:'#FFFFFF', icon:'✨'},
+  narcissus: {name:'נרקיס בלי נאום',  cost:16, swatch:'#F4DFA6', icon:'🌻'},
+  shluk:     {name:'פרח השלוק הקטן', cost:6,  swatch:'#BDD7E8', icon:'💧'},
+};
+
+const WILD_DEFS = {
+  retreat:    {name:'פרח החזרה',              icon:'🌱', line:'הופיע כשחזרת אחרי יום קשה.'},
+  compassion: {name:'פרח החמלה',              icon:'💫', line:'אחרי שסימנת יום חמלה.'},
+  partial:    {name:'פרח לא מושלם ונחשב',  icon:'🌼', line:'אחרי יום חלקי שעדיין נחשב.'},
+  firstSip:   {name:'פרח השלוק הראשון',  icon:'💧', line:'אחרי כמה ימי מים ברצף רך.'},
+  firstBite:  {name:'פרח הביס הקטן',   icon:'🌺', line:'אחרי כמה ימי אוכל ברצף רך.'},
+  blanket:    {name:'פרח השמיכה',           icon:'🧣', line:'אחרי יום שבחרת לנוח.'},
+  stillHere:  {name:'פרח אני עדיין פה',   icon:'🌿', line:'אחרי פעולה אחת ביום קשה.'},
+  comeback:   {name:'פרח הקאמבק השקט',   icon:'🌸', line:'אחרי חזרת אחרי הפסקה.'},
+  noInquiry:  {name:'פרח בלי ועדת חקירה', icon:'🌻', line:'אחרי משימה שהייתה קשה במיוחד.'},
+};
+
+const GARDEN_FACTS = [
+  'שלוק מים אחד כל שעה משחרר את המערכת מחיפוש מתמיד. גוף שיודע שתחזרי אליו, נרגע.',
+  'תנועה של 90 שניות מספיקה כדי לאתחל את מערכת העצבים.',
+  'נשימה איטית של 4 שניות פנימה ו-6 החוצה היא איתות ביטחון לגוף.',
+  'גוף טוב הוא גוף שמסוגל לתמוך גם בנפש.',
+  'ימי חמלה הם החלק הסמוי בעקביות. בלעדיהם, השורשים לא מספיקים להעמיק.',
+  'כל חזרה קטנה אחרי הפסקה היא צאד קדימה. המסע לא התאפס לגמרי.',
+  'הרגלים נבנים דרך חזרה, לא דרך מושלמות.',
+  'פעולה קטנה בזמן דומה בכל יום עוזרת לגוף לזהות קצב.',
+  'הגוף מגיב לתשומת לב — גם כשהתשומת הלב קטנה.',
+  'מנוחה היא חלק מהתהליך, לא ניגוד אליו.',
+  'חמלה עצמית היא חלק מהחלמה, לא רק פיצוי.',
+  'כשאת שומרת על גופך, את שומרת על הכל.',
+  'שינה טובה יותר ממושלמות באוכל, עבודה וגוף.',
+  'לפעמים מספיק הוא בדיוק מה שצריך.',
+  'הגוף לא שופט ימים חלקיים. הוא מכיר כל נגיעה.',
+];
+
+// Garden state
+let gs = {
+  points: 0,
+  garden: {plants:[], wild:[], elements:[]},
+  daysJournal: [],
+  todayMood: 'regular',
+  todayActions: [],
+  todayPoints: 0,
+  todayWildPending: null,
+  streakDays: 0,
+  growthCornerUnlocked: false,
+  lastVisit: null,
+  factIdx: 0,
+  factDate: '',
+  wildCooldowns: {},
+};
+
+// ---- Storage ----
+async function saveGardenState() {
+  try { await store.set('tori_garden_v1.userState', JSON.stringify(gs)); } catch(e){}
 }
+async function loadGardenState() {
+  try {
+    const raw = await store.get('tori_garden_v1.userState');
+    if (raw) { const d=JSON.parse(raw); Object.assign(gs, d); }
+  } catch(e){}
+  // Day rollover
+  const today = getTodayKey();
+  const lastVisit = gs.lastVisit ? gs.lastVisit.slice(0,10) : '';
+  if (lastVisit && lastVisit !== today) {
+    // Archive yesterday to journal
+    if (gs.todayActions.length > 0 || gs.todayMood !== 'regular') {
+      gs.daysJournal.unshift({
+        date: lastVisit, mood: gs.todayMood,
+        points: gs.todayPoints, actions: gs.todayActions.slice(),
+        wildFlower: gs.todayWildPending || null,
+        fact: GARDEN_FACTS[gs.factIdx % GARDEN_FACTS.length],
+      });
+      if (gs.daysJournal.length > 60) gs.daysJournal = gs.daysJournal.slice(0,60);
+    }
+    gs.todayActions = [];
+    gs.todayPoints = 0;
+    gs.todayWildPending = null;
+    gs.todayMood = 'regular';
+    // Check comeback wild
+    const daysSince = Math.round((new Date(today) - new Date(lastVisit)) / 86400000);
+    if (daysSince >= 5) scheduleWild('comeback');
+  }
+  gs.lastVisit = new Date().toISOString();
+  // Sync streak
+  gs.streakDays = s.streak || 0;
+  gs.growthCornerUnlocked = gs.growthCornerUnlocked || gs.streakDays >= 30 || gs.points >= 600;
+  // Check mood
+  updateGardenMood();
+  await saveGardenState();
+}
+
+// ---- Mood logic ----
+function updateGardenMood() {
+  const h = new Date().getHours();
+  const hasCom = gs.todayActions.some(a=>a.kind==='compassion');
+  const hasAct = gs.todayActions.length > 0;
+  if (hasCom) { gs.todayMood = 'compassion'; return; }
+  if (h >= 14 && !hasAct) { gs.todayMood = 'hard'; return; }
+  gs.todayMood = 'regular';
+}
+function syncMoodFromApp() {
+  if (bs && bs.compassionDay) gs.todayMood = 'compassion';
+  else updateGardenMood();
+}
+
+// ---- Points ----
+const ACTION_POINTS = {water:2, food:3, rest:3, move:3, breath:2, hygiene:4, compassion:6};
+const ACTION_DAILY_CAP = 5;
+const DAY_POINTS_CAP = 30;
+
+function addGardenAction(kind) {
+  const sameToday = gs.todayActions.filter(a=>a.kind===kind).length;
+  const earn = sameToday >= ACTION_DAILY_CAP ? 0 : (ACTION_POINTS[kind]||2);
+  const capped = Math.max(0, Math.min(earn, DAY_POINTS_CAP - gs.todayPoints));
+  gs.todayActions.push({kind, count:1, loggedAt:new Date().toISOString()});
+  gs.todayPoints += capped;
+  gs.points += capped;
+  evaluateWildFlowers(kind);
+  syncMoodFromApp();
+  saveGardenState();
+  renderGardenCards();
+}
+
+// ---- Wild flowers ----
+function scheduleWild(key) {
+  const cool = gs.wildCooldowns[key];
+  const COOLDOWN = 14 * 86400000;
+  const skip = ['compassion','stillHere'].includes(key);
+  if (!skip && cool && (Date.now()-cool) < COOLDOWN) return;
+  if (gs.todayWildPending) return; // one per day
+  gs.todayWildPending = key;
+  gs.wildCooldowns[key] = Date.now();
+}
+function evaluateWildFlowers(actionKind) {
+  const actions = gs.todayActions;
+  const todayWater = actions.filter(a=>a.kind==='water').length;
+  const todayFood = actions.filter(a=>a.kind==='food').length;
+  const todayAny = actions.length;
+  if (actionKind === 'compassion') { scheduleWild('compassion'); return; }
+  if (gs.todayMood==='hard' && todayAny===1) { scheduleWild('stillHere'); return; }
+  const yesterday = gs.daysJournal[0];
+  if (yesterday && yesterday.actions.length===0) { scheduleWild('retreat'); return; }
+  // water streak
+  const last5Journal = gs.daysJournal.slice(0,5);
+  if (last5Journal.length>=5 && last5Journal.every(d=>d.actions.some(a=>a.kind==='water')) && todayWater>=1) {
+    scheduleWild('firstSip'); return;
+  }
+  if (last5Journal.length>=5 && last5Journal.every(d=>d.actions.some(a=>a.kind==='food')) && todayFood>=1) {
+    scheduleWild('firstBite'); return;
+  }
+}
+
+// ---- Plant placement ----
+function placePlant() {
+  const plants = gs.garden.plants;
+  const candidates = Array.from({length:20}, ()=>({x:0.05+Math.random()*0.9, y:0.82+Math.random()*0.1}));
+  function minDist(c) {
+    if (!plants.length) return 1;
+    return Math.min(...plants.map(p=>Math.hypot(p.x-c.x, p.y-c.y)));
+  }
+  return candidates.sort((a,b)=>minDist(b)-minDist(a))[0];
+}
+
+// ---- Flower picker ----
+function openFlowerPicker() {
+  renderPickerGrid();
+  document.getElementById('g-picker-backdrop').classList.add('open');
+  document.getElementById('g-picker-sheet').classList.add('open');
+}
+function closeFlowerPicker() {
+  document.getElementById('g-picker-backdrop').classList.remove('open');
+  document.getElementById('g-picker-sheet').classList.remove('open');
+}
+function renderPickerGrid() {
+  const grid = document.getElementById('g-picker-grid'); if(!grid) return;
+  grid.innerHTML = Object.entries(FLOWER_DEFS).map(([key,def])=>{
+    const can = gs.points >= def.cost;
+    return '<div class="g-flower-item">'
+      +'<div class="swatch" style="background:'+def.swatch+';border:1.5px solid rgba(0,0,0,0.06)"></div>'
+      +'<div class="info"><div class="fname">'+def.name+'</div><div class="fcost">'+def.cost+' נקודות</div></div>'
+      +'<button class="fbtn '+(can?'can':'cant')+'" '+(can?'onclick="growFlower(\"'+key+'\")"':'disabled')+'>'+
+      (can?'צמיחה':'עוד מעט')+'</button>'
+      +'</div>';
+  }).join('');
+}
+function growFlower(kind) {
+  const def = FLOWER_DEFS[kind]; if(!def) return;
+  if (gs.points < def.cost) return;
+  gs.points -= def.cost;
+  const pos = placePlant();
+  const plant = {kind, x:pos.x, y:pos.y, scale:0.9+Math.random()*0.2, plantedOn:getTodayKey(), id:Date.now()+'_'+kind};
+  if (gs.garden.plants.length >= 40) gs.garden.plants.shift();
+  gs.garden.plants.push(plant);
+  closeFlowerPicker();
+  saveGardenState();
+  renderGardenCards();
+  showToast('🌿 ' + def.name + ' צמח בגינה');
+}
+
+// ---- Wild reveal ----
+function checkWildReveal() {
+  const key = gs.todayWildPending;
+  if (!key || !WILD_DEFS[key]) return;
+  const def = WILD_DEFS[key];
+  const el = document.getElementById('g-wild-modal'); if(!el) return;
+  document.getElementById('g-wild-icon').textContent = def.icon;
+  document.getElementById('g-wild-name').textContent = def.name;
+  document.getElementById('g-wild-line').textContent = def.line;
+  el.classList.add('open');
+}
+function acknowledgeWild(scrollToGarden) {
+  const key = gs.todayWildPending;
+  if (key && WILD_DEFS[key]) {
+    const pos = placePlant();
+    gs.garden.wild.push({kind:key, x:pos.x, y:pos.y, scale:1.1, appearedOn:getTodayKey(), reason:WILD_DEFS[key].line, id:Date.now()+'_w'});
+  }
+  gs.todayWildPending = null;
+  document.getElementById('g-wild-modal').classList.remove('open');
+  saveGardenState();
+  renderGardenCards();
+}
+function closeWildReveal() { acknowledgeWild(false); }
+
+// ---- SVG Garden ----
+function buildGardenSVG() {
+  const mood = gs.todayMood;
+  const W=380, H=190, GY=135; // ground y
+  let sky1,sky2,ground;
+  if (mood==='compassion') { sky1='#C8B8DC'; sky2='#A593C0'; ground='#6D8B6E'; }
+  else if (mood==='hard')  { sky1='#D0C8C0'; sky2='#B8B0A8'; ground='#9DB89C'; }
+  else                     { sky1='#F2C7A9'; sky2='#BDD7E8'; ground='#9DB89C'; }
+  const els = gs.garden.elements;
+
+  let svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block">';
+  svg += '<defs><linearGradient id="gsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+sky1+'"/><stop offset="100%" stop-color="'+sky2+'"/></linearGradient></defs>';
+  svg += '<rect width="'+W+'" height="'+H+'" fill="url(#gsky)"/>';
+  // Ground
+  svg += '<rect y="'+GY+'" width="'+W+'" height="'+(H-GY)+'" fill="'+ground+'" rx="0"/>';
+  svg += '<rect y="'+GY+'" width="'+W+'" height="8" fill="'+ground+'" opacity="0.6"/>';
+  // Mood elements
+  if (mood==='compassion') {
+    svg += '<circle cx="310" cy="35" r="22" fill="#EDE0FF" opacity="0.9"/>';
+    svg += '<circle cx="323" cy="27" r="19" fill="'+sky1+'"/>';
+    [[50,20],[120,30],[200,15],[280,25],[160,10]].forEach(([x,y])=>{
+      svg += '<circle cx="'+x+'" cy="'+y+'" r="1.5" fill="white" opacity="0.8"/>';
+    });
+  }
+  if (mood==='hard') {
+    svg += '<g opacity="0.8"><ellipse cx="80" cy="52" rx="36" ry="22" fill="#C8C0B8"/>';
+    svg += '<ellipse cx="60" cy="58" rx="26" ry="18" fill="#D0C8C0"/>';
+    svg += '<ellipse cx="108" cy="57" rx="22" ry="15" fill="#C8C0B8"/></g>';
+  }
+  // Bench (compassion)
+  if (mood==='compassion') {
+    svg += '<g transform="translate(290,'+(GY-12)+')">'
+      +'<rect x="-22" y="-8" width="44" height="4" fill="#C99098" rx="2"/>'
+      +'<rect x="-20" y="-4" width="40" height="4" fill="#E6BFC3" rx="2"/>'
+      +'<rect x="-20" y="0" width="5" height="12" fill="#C99098" rx="1"/>'
+      +'<rect x="15" y="0" width="5" height="12" fill="#C99098" rx="1"/>'
+      +'</g>';
+  }
+  // Plants
+  svg += '<g>';
+  const plants = gs.garden.plants.slice(-40);
+  plants.forEach(p => {
+    const cx = Math.round(p.x*W);
+    const cy = GY - 5;
+    const sc = p.scale||1;
+    svg += flowerSVG(p.kind, cx, cy, sc, false);
+  });
+  // Wild plants
+  gs.garden.wild.forEach(p => {
+    const cx = Math.round(p.x*W);
+    const cy = GY - 5;
+    const sc = (p.scale||1)*1.15;
+    svg += '<circle cx="'+cx+'" cy="'+cy+'" r="16" fill="#F4DFA6" opacity="0.35"/>';
+    svg += flowerSVG(p.kind.replace(/^wild_/,''), cx, cy, sc, true);
+  });
+  svg += '</g></svg>';
+  return svg;
+}
+
+function flowerSVG(kind, cx, cy, sc, isWild) {
+  const c=cx, y=cy, s=sc||1;
+  const wc = isWild ? 1.1 : 1;
+  const ops = {
+    bite:      ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +'<circle r="3.5" fill="#E6BFC3"/>'
+      +[0,72,144,216,288].map(a=>'<ellipse rx="3.5" ry="6.5" transform="rotate('+a+') translate(0,-8)" fill="#E6BFC3" opacity="0.85"/>').join('')
+      +'<circle r="2.5" fill="#C99098"/></g>',
+    slukit:    ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +'<ellipse rx="5" ry="8" cy="-3" fill="#BDD7E8" opacity="0.9"/>'
+      +'<circle r="3" cy="5" fill="#93B3C4" opacity="0.8"/></g>',
+    lavender:  ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +'<line x1="0" y1="0" x2="0" y2="-15" stroke="#9DB89C" stroke-width="1.5"/>'
+      +[-3,-1,0,1,3].map((x,i)=>'<ellipse cx="'+x+'" cy="'+(-7-i*2)+'" rx="2" ry="3" fill="#C8B8DC" opacity="'+(0.55+i*0.1)+'"/>').join('')
+      +'</g>',
+    daisy:     ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +[0,45,90,135,180,225,270,315].map(a=>'<ellipse rx="2.5" ry="6" transform="rotate('+a+') translate(0,-7)" fill="white" stroke="#eee" stroke-width="0.5"/>').join('')
+      +'<circle r="4" fill="#F4DFA6"/></g>',
+    chamomile: ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +[0,40,80,120,160,200,240,280,320].map(a=>'<ellipse rx="2" ry="5" transform="rotate('+a+') translate(0,-6)" fill="#FFFAEF" stroke="#eee" stroke-width="0.5"/>').join('')
+      +'<circle r="3.5" fill="#F4DFA6"/></g>',
+    sage:      ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +'<ellipse rx="11" ry="9" cy="-5" fill="#9DB89C" opacity="0.85"/>'
+      +'<ellipse rx="7" ry="6" cy="-9" fill="#C5D4BF"/></g>',
+    anemone:   ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +[0,60,120,180,240,300].map(a=>'<ellipse rx="5" ry="8" transform="rotate('+a+') translate(0,-8)" fill="#E08A87" opacity="0.85"/>').join('')
+      +'<circle r="3" fill="#2F2D2A"/>'
+      +'<circle r="1.5" fill="#F4DFA6"/></g>',
+    jasmine:   ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +'<path d="M0,0 C-3,-5 -2,-12 0,-14 C2,-12 3,-5 0,0" stroke="#C5D4BF" stroke-width="1.2" fill="none"/>'
+      +[[-5,-6],[5,-4],[0,-11],[7,-9],[-3,-13]].map(([px,py])=>'<circle cx="'+px+'" cy="'+py+'" r="2.5" fill="white" stroke="#F2C7A9" stroke-width="0.5"/>').join('')
+      +'</g>',
+    narcissus: ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +[0,60,120,180,240,300].map(a=>'<ellipse rx="4" ry="6.5" transform="rotate('+a+') translate(0,-7.5)" fill="#F4DFA6"/>').join('')
+      +'<circle r="4" fill="#DFA786"/>'
+      +'<circle r="2" fill="#F4DFA6"/></g>',
+    shluk:     ()=>'<g transform="translate('+c+','+y+') scale('+s*wc+')">'
+      +'<path d="M0,-11 C-5,-4 -5,2 0,5 C5,2 5,-4 0,-11" fill="#BDD7E8" opacity="0.9"/>'
+      +'<ellipse rx="2" ry="1.5" cy="6.5" fill="#93B3C4" opacity="0.7"/></g>',
+  };
+  const fn = ops[kind] || ops['daisy'];
+  try { return fn(); } catch(e) { return ''; }
+}
+
+// ---- Card renders ----
+function renderGardenHero() {
+  const wrap = document.getElementById('g-garden-wrap'); if(!wrap) return;
+  wrap.innerHTML = buildGardenSVG();
+  const mood = gs.todayMood;
+  const dotEl = document.getElementById('g-mood-dot');
+  const lblEl = document.getElementById('g-mood-label');
+  const pillEl = document.getElementById('g-mood-pill');
+  if (dotEl) dotEl.style.background = mood==='compassion'?'#C8B8DC':mood==='hard'?'#B8B0A8':'#F2C7A9';
+  if (lblEl) lblEl.textContent = mood==='compassion'?'יום חמלה פעיל':mood==='hard'?'מצב שמיכה':'אור יום רך';
+}
+function renderGardenTopCard() {
+  const mood = gs.todayMood;
+  const sub = document.getElementById('g-top-sub'); if(!sub) return;
+  const notice = document.getElementById('g-mood-notice'); if(notice) {
+    notice.className='g-mood-notice';
+    if (mood==='hard') { notice.className+=' hard'; notice.textContent='לא קרה פה אסון בוטני. פעולה אחת קטנה יכולה להדליק אור בגינה.'; }
+    else if (mood==='compassion') { notice.className+=' compassion'; notice.textContent='הוספנו ענן מנוחה לגינה. שום דבר לא דורש ממך כרגע.'; }
+  }
+  const subs = {regular:'כל פעולה קטנה מוסיפה משהו חי בדרך חזרה לגוף.', hard:'הגינה לא נובלת כשקשה לך. היא פשוט עברה למצב שמיכה.', compassion:'יום חמלה הוא לא עצירה. לפעמים הוא מה ששומר על השורשים.'};
+  sub.textContent = subs[mood]||subs.regular;
+}
+function renderConnectionPointsCard() {
+  const ptDay = document.getElementById('g-pts-today');
+  const ptTot = document.getElementById('g-pts-total-inline');
+  if(ptDay) ptDay.textContent = gs.todayPoints;
+  if(ptTot) ptTot.textContent = gs.points;
+  const chips = document.getElementById('g-today-chips');
+  if (chips) {
+    const LABELS={water:'מים',food:'אוכל',rest:'מנוחה',move:'תנועה',breath:'נשימה',hygiene:'היגיינה',compassion:'חמלה'};
+    const seen = new Set();
+    chips.innerHTML = gs.todayActions.filter(a=>{if(seen.has(a.kind))return false;seen.add(a.kind);return true;})
+      .map(a=>'<span class="g-chip">'+(LABELS[a.kind]||a.kind)+'</span>').join('');
+  }
+  const stk = document.getElementById('g-streak-label');
+  if (stk) {
+    const st = s.streak||0;
+    stk.textContent = st>0?('ברצף '+st+' ימים רכים'):'';
+  }
+}
+function renderWhatGrowsCard() {
+  const preview = document.getElementById('g-flower-preview'); if(!preview) return;
+  const defs = Object.entries(FLOWER_DEFS).slice(0,6);
+  preview.innerHTML = defs.map(([k,d])=>'<div class="g-flower-thumb" style="opacity:'+(gs.points>=d.cost?1:0.55)+'">'
+    +'<div class="g-flower-swatch" style="background:'+d.swatch+';border:1.5px solid rgba(0,0,0,0.06)"></div>'
+    +'<div class="g-flower-name">'+d.name+'</div>'
+    +'</div>').join('');
+}
+function renderRootsCard() {
+  const el = document.getElementById('g-roots-list'); if(!el) return;
+  const streak = s.streak||0;
+  const roots = [
+    {label:'שורש המים', kind:'water', pct:Math.min(100,Math.round(gs.daysJournal.filter(d=>d.actions.some(a=>a.kind==='water')).length/Math.max(gs.daysJournal.length,1)*100)), color:'var(--g-sky)'},
+    {label:'שורש האוכל', kind:'food', pct:Math.min(100,Math.round(gs.daysJournal.filter(d=>d.actions.some(a=>a.kind==='food')).length/Math.max(gs.daysJournal.length,1)*100)), color:'var(--g-peach)'},
+    {label:'שורש התנועה', kind:'move', pct:Math.min(100,Math.round(gs.daysJournal.filter(d=>d.actions.some(a=>a.kind==='move')).length/Math.max(gs.daysJournal.length,1)*100)), color:'var(--g-sage)'},
+    {label:'שורש המנוחה', kind:'rest', pct:Math.min(100,Math.round(gs.daysJournal.filter(d=>d.actions.some(a=>a.kind==='rest'||a.kind==='breath')).length/Math.max(gs.daysJournal.length,1)*100)), color:'var(--g-lavender)'},
+  ];
+  function rootNote(pct) {
+    if(pct>=75) return 'שורש עמוק — הגוף כבר זוכר את הקצב.';
+    if(pct>=40) return 'שורש מתחזק — כל חזרה תורמת.';
+    if(pct>0)  return 'שורש צעיר — התחלה להתעמק.';
+    return 'היום עצמו הוא חלק מהשורש.';
+  }
+  el.innerHTML = roots.map(r=>'<div class="g-root-item">'
+    +'<div class="g-root-label"><span>'+r.label+'</span><span>'+r.pct+'%</span></div>'
+    +'<div class="g-root-bar"><div class="g-root-fill" style="width:'+r.pct+'%;background:'+r.color+'"></div></div>'
+    +'<div class="g-root-note">'+rootNote(r.pct)+'</div>'
+    +'</div>').join('');
+}
+function renderFactCard() {
+  const el = document.getElementById('g-fact-text'); if(!el) return;
+  const today = getTodayKey();
+  const hp = Math.min(Math.round((s.streak||0)/66*100),100);
+  if (gs.factDate!==today || gs.factStrPct!==hp) {
+    gs.factIdx=(gs.factIdx+1)%GARDEN_FACTS.length;
+    gs.factDate=today; gs.factStrPct=hp;
+  }
+  el.textContent = GARDEN_FACTS[gs.factIdx];
+}
+function renderJournalCard() {
+  const el = document.getElementById('g-journal-list'); if(!el) return;
+  const days = gs.daysJournal.slice(0,7);
+  if (!days.length) { el.innerHTML='<p class="g-meta" style="padding:8px 0">הגינה מחכה לימים ראשונים.</p>'; return; }
+  const MOOD_ICON={regular:'🌿',hard:'☁️',compassion:'🪴'};
+  const hebrewDate = (d) => {
+    try { const dt=new Date(d); return dt.toLocaleDateString('he-IL',{day:'numeric',month:'short'}); } catch(e){return d;}
+  };
+  el.innerHTML = days.map(d=>'<div class="g-journal-day">'
+    +'<div class="g-journal-dot '+d.mood+'">'+(MOOD_ICON[d.mood]||'🌿')+'</div>'
+    +'<div class="g-journal-info">'
+    +'<div class="g-journal-date">'+hebrewDate(d.date)+'</div>'
+    +'<div class="g-journal-pts">'+d.points+' נקודות · '+(d.actions.length)+' פעולות</div>'
+    +'</div>'
+    +(d.wildFlower&&WILD_DEFS[d.wildFlower]?'<span style="font-size:18px">'+WILD_DEFS[d.wildFlower].icon+'</span>':'')
+    +'</div>').join('');
+}
+function renderGrowthCorner() {
+  const el = document.getElementById('g-growth-content'); if(!el) return;
+  if (gs.growthCornerUnlocked) {
+    el.innerHTML='<div class="g-growth-open">'
+      +'<p class="g-body">נראה שנבנה כאן בסיס יפה. אפשר להוסיף משהו קטן שהוא מעבר לטיפול עצמי בסיסי: תחביב, לימוד, יצירה או פרויקט קטן.</p>'
+      +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">'
+      +'<div style="background:rgba(255,255,255,0.6);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--g-ink-2)">🎨 לבחור תחביב ולהקדיש לו 10 דקות</div>'
+      +'<div style="background:rgba(255,255,255,0.6);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--g-ink-2)">📖 לקרוא עידוד מעודד אחד</div>'
+      +'<div style="background:rgba(255,255,255,0.6);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--g-ink-2)">🌱 לבחור נושא ללימוד ולפתוח סרטון אחד</div>'
+      +'</div></div>';
+  } else {
+    const pct = Math.min((s.streak||0)/30*100, 100);
+    el.innerHTML='<div class="g-growth-locked">'
+      +'<div style="font-size:36px;margin-bottom:10px">🔒</div>'
+      +'<p class="g-body" style="margin-bottom:10px">תיפתח אחרי בסיס יציב של התמדה עדינה. אין לחץ להגיע מהר — קודם בונים שורשים.</p>'
+      +'<div style="height:6px;background:var(--g-hairline);border-radius:999px;overflow:hidden;margin:8px 0 4px">'
+      +'<div style="height:100%;width:'+pct+'%;background:var(--g-sage-deep);border-radius:999px;transition:width 1s ease"></div>'
+      +'</div>'
+      +'<div class="g-meta">'+(s.streak||0)+'/30 ימים</div>'
+      +'</div>';
+  }
+}
+
+function renderGardenCards() {
+  renderGardenTopCard();
+  renderGardenHero();
+  renderConnectionPointsCard();
+  renderWhatGrowsCard();
+  renderRootsCard();
+  renderFactCard();
+  renderJournalCard();
+  renderGrowthCorner();
+  // legacy compat
+  const hpEl=document.getElementById('habit-pct-lbl');
+  const hp=Math.min(Math.round((s.streak||0)/66*100),100);
+  if(hpEl) hpEl.textContent=hp+'%';
+  const hfEl=document.getElementById('habit-fill');
+  if(hfEl) hfEl.style.width=hp+'%';
+  // legacy streak
+  const jstk=document.getElementById('j-streak');
+  if(jstk) jstk.textContent=s.streak||0;
+}
+
+// Map app task ids to garden action kinds
+const TASK_ACTION_MAP = {
+  breakfast:'food', lunch:'food', dinner:'food',
+  shower:'hygiene', breathing:'breath', sleep:'rest', outside:'rest',
+};
+
+function updateJourney() {
+  const streak = s.streak||0;
+  document.getElementById('hdr-streak').textContent = streak;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('stat-best').textContent = s.bestStreak||0;
+  // legacy hidden els
+  const jstk=document.getElementById('j-streak'); if(jstk) jstk.textContent=streak;
+  const jmsg=document.getElementById('j-msg'); if(jmsg) jmsg.textContent=getStreakMsg(streak);
+  // sync garden streak
+  gs.streakDays = streak;
+  gs.growthCornerUnlocked = gs.growthCornerUnlocked || streak>=30 || gs.points>=600;
+  syncMoodFromApp();
+  renderGardenCards();
+  renderMilestones(); renderAchievements();
+}
+
 function renderMilestones() {
   const row=document.getElementById('milestones-row');
   const track=row.querySelector('.m-track'); row.innerHTML=''; row.appendChild(track);
@@ -1346,7 +1985,7 @@ function switchView(v) {
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   document.getElementById('nav-'+v).classList.add('active');
-  if(v==='journey') updateJourney();
+  if(v==='journey'){updateJourney();setTimeout(checkWildReveal,400);}
   if(v==='bot') {
     bs.unreadCount=0; updateBotBadge();
     if(!bs.botInited) initBot();
@@ -2158,6 +2797,7 @@ function handleBotInput(raw) {
   }
   if(t.trim()==='יום חמלה') {
     bs.compassionDay=true; updateBotUI(); saveBotData();
+    addGardenAction('compassion');
     addBotMsgAsync(pick(BM.compassion_day)); return;
   }
   // Day reflection
@@ -2315,6 +2955,7 @@ function showSystemPrompt() {
 // --- INIT BOT ---
 async function initBot() {
   await loadBotData();
+  await loadGardenState();
   if(!bp.isSetup) {
     document.getElementById('ob-ov').classList.add('open');
     renderObStep();
