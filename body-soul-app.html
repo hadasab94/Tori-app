@@ -239,32 +239,6 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 
 /* ===== BOT CHAT ===== */
 #view-bot { padding: 0 !important; }
-.view.active#view-bot { display: flex !important; flex-direction: column; height: calc(100vh - 110px); }
-.bot-hdr { background: #6B4C9A; color: white; padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.bot-av { width: 36px; height: 36px; border-radius: 50%; background: #9B72CF; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
-.bot-inf { flex: 1; }
-.bot-nm { font-weight: 700; font-size: 14px; }
-.bot-st { font-size: 10px; opacity: 0.85; }
-.bot-mpills { display: flex; gap: 5px; }
-.mpill { background: rgba(255,255,255,0.18); border: none; color: white; border-radius: 10px; padding: 3px 9px; font-size: 10px; cursor: pointer; font-family: inherit; font-weight: 600; transition: background 0.2s; white-space: nowrap; }
-.mpill.on { background: rgba(255,255,255,0.45); }
-.chat-area { flex: 1; overflow-y: auto; padding: 10px 10px 6px; background: #ECE5DD; display: flex; flex-direction: column; gap: 7px; }
-.cmsg { max-width: 80%; padding: 7px 11px 4px; border-radius: 8px; font-size: 13px; line-height: 1.5; word-break: break-word; }
-.cmsg-bot { background: white; align-self: flex-start; border-radius: 0 8px 8px 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
-.cmsg-user { background: #EDE0FF; align-self: flex-end; border-radius: 8px 0 8px 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
-.cmsg-time { font-size: 9px; color: #999; text-align: left; margin-top: 3px; }
-.typing-ind { display: flex; gap: 4px; align-items: center; padding: 9px 13px; background: white; border-radius: 0 8px 8px 8px; align-self: flex-start; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
-.td { width: 7px; height: 7px; border-radius: 50%; background: #aaa; animation: tdB 1.2s infinite; }
-.td:nth-child(2) { animation-delay: 0.2s; }
-.td:nth-child(3) { animation-delay: 0.4s; }
-@keyframes tdB { 0%,60%,100%{transform:translateY(0);} 30%{transform:translateY(-5px);} }
-.qr-wrap { display: flex; flex-wrap: wrap; gap: 5px; padding: 7px 10px; background: #ECE5DD; flex-shrink: 0; border-top: 1px solid rgba(0,0,0,0.06); }
-.qrb { background: white; border: 1px solid #9B72CF; color: #6B4C9A; border-radius: 14px; padding: 5px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
-.qrb:hover, .qrb:active { background: #9B72CF; color: white; }
-.chat-inp-row { display: flex; gap: 7px; padding: 7px 10px; background: #F0F0F0; flex-shrink: 0; align-items: center; border-top: 1px solid #ddd; }
-.chat-inp { flex: 1; border: none; border-radius: 18px; padding: 8px 13px; font-size: 13px; font-family: inherit; background: white; outline: none; direction: rtl; }
-.chat-snd { width: 36px; height: 36px; border-radius: 50%; background: #9B72CF; border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.chat-snd:hover { background: #7B5BAF; }
 /* ONBOARDING */
 .ob-ov { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 850; display: none; align-items: center; justify-content: center; padding: 16px; }
 .ob-ov.open { display: flex; }
@@ -1129,62 +1103,6 @@ if('serviceWorker' in navigator){
     <div id="g-picker-backdrop"></div><div id="g-picker-sheet"></div><div id="g-wild-modal"></div>
   </div>
 </div>
-
-<!-- BOT VIEW -->
-<div class="view" id="view-bot">
-  <div class="bot-hdr">
-    <div class="bot-av" id="bot-av-hdr">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
-        <circle cx="20" cy="20" r="20" fill="#EDE0FF"/>
-        <ellipse cx="20" cy="14" rx="11" ry="13" fill="#6B4C9A"/>
-        <circle cx="20" cy="23" r="11" fill="#F5C5A3"/>
-        <circle cx="16" cy="21" r="2" fill="#4A3060"/>
-        <circle cx="24" cy="21" r="2" fill="#4A3060"/>
-        <circle cx="16.8" cy="20.2" r="0.7" fill="white"/>
-        <circle cx="24.8" cy="20.2" r="0.7" fill="white"/>
-        <circle cx="13" cy="25" r="2.5" fill="#FFB3BA" opacity="0.5"/>
-        <circle cx="27" cy="25" r="2.5" fill="#FFB3BA" opacity="0.5"/>
-        <path d="M15 26.5 Q20 30.5 25 26.5" stroke="#C07850" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <path d="M10 16 Q9 9 15 9" stroke="#6B4C9A" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <path d="M30 16 Q31 9 25 9" stroke="#6B4C9A" stroke-width="3" fill="none" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <div class="bot-inf">
-      <div class="bot-nm">תורי 🤍</div>
-      <div class="bot-st" id="bot-st">חברה טובה שמזכירה</div>
-    </div>
-    <div class="bot-mpills">
-      <button class="mpill" id="pill-quiet" onclick="botToggleQuiet()">🤫 שקט</button>
-      <button class="mpill" id="pill-comp" onclick="botToggleCompassion()">🫶 חמלה</button>
-      <button class="mpill" onclick="showSystemPrompt()">⚙️</button>
-      <button class="mpill" onclick="clearBotChat()">🗑 נקה</button>
-    </div>
-  </div>
-  <div class="chat-area" id="chat-area"></div>
-  <div class="qr-wrap">
-    <button class="qrb" onclick="botQR('עשיתי ✓')">עשיתי ✓</button>
-    <button class="qrb" onclick="botQR('אין לי כוח')">אין לי כוח 😮‍💨</button>
-    <button class="qrb" onclick="botQR('תציעי משהו קטן')">משהו קטן 🌿</button>
-    <button class="qrb" onclick="botQR('תזכירי לי אחר כך')">אחר כך ⏰</button>
-    <button class="qrb" onclick="botQR('תבחרי בשבילי')">תבחרי בשבילי 🎯</button>
-    <button class="qrb" onclick="botQR('יום חמלה')">יום חמלה 🫶</button>
-  </div>
-  <div class="chat-inp-row">
-    <button class="chat-snd" onclick="botSendInput()">➤</button>
-    <input class="chat-inp" id="chat-inp" placeholder="כתבי הודעה..." onkeydown="if(event.key==='Enter')botSendInput()">
-  </div>
-</div>
-
-<!-- COMPASSION DAY MODAL -->
-<div class="comp-modal-overlay" id="comp-overlay">
-  <div class="comp-modal">
-    <div class="comp-modal-title">🫶 יום חמלה</div>
-    <div class="comp-modal-body">יום חמלה מקפיא את הסטרייק שלך — הוא לא נשבר ולא עולה.<br><br>אפשר להפעיל עד 7 ימים ברצף. אחרי שבוע — הסטרייק מתאפס.</div>
-    <button class="comp-modal-confirm" onclick="activateCompassionDay()">הפעילי יום חמלה 🫶</button>
-    <button class="comp-modal-cancel" onclick="closeCompassionModal()">ביטול</button>
-  </div>
-</div>
-
 <!-- ONBOARDING -->
 <div class="ob-ov" id="ob-ov">
   <div class="ob-card">
@@ -1217,10 +1135,7 @@ if('serviceWorker' in navigator){
   <div class="nav-item" id="nav-journey" onclick="switchView('journey')">
     <div class="nav-icon">🌿</div><div class="nav-label">המסע</div>
   </div>
-  <div class="nav-item" id="nav-bot" onclick="switchView('bot')">
-    <div class="nav-icon">🤖</div><div class="nav-label">בוט תורי</div>
-    <div class="bot-badge" id="bot-badge">0</div>
-  </div>
+
 </nav>
 
 
@@ -3060,23 +2975,18 @@ function showToast(msg) {
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),3800);
 }
 
-function updateBotBadge() {
-  const badge=document.getElementById('bot-badge'); if(!badge) return;
-  if(bs.unreadCount>0) { badge.textContent=bs.unreadCount>9?'9+':bs.unreadCount; badge.classList.add('show'); }
-  else { badge.classList.remove('show'); }
-}
+function updateBotBadge() { /* bot tab removed — no-op stub */ }
 
 // NAV
 function switchView(v) {
+  if (v === 'bot') v = 'journey'; // bot tab removed — redirect to journey
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  document.getElementById('nav-'+v).classList.add('active');
-  if(v==='journey'){updateJourney();setTimeout(checkWildReveal,400);setTimeout(checkAndShowCompanion,50);}
-  if(v==='bot') {
-    bs.unreadCount=0; updateBotBadge();
-    if(!bs.botInited) initBot();
-  }
+  var viewEl = document.getElementById('view-'+v);
+  var navEl  = document.getElementById('nav-'+v);
+  if (viewEl) viewEl.classList.add('active');
+  if (navEl)  navEl.classList.add('active');
+  if (v==='journey'){updateJourney();setTimeout(checkWildReveal,400);setTimeout(checkAndShowCompanion,50);}
 }
 
 // SAVE / LOAD
@@ -3936,12 +3846,7 @@ function botToggleCompassion() {
   bs.compassionDay=!bs.compassionDay; updateBotUI(); saveBotData();
   addBotMsg(bs.compassionDay?pick(BM.compassion_day):'יצאנו ממצב יום חמלה. בכל קצב שמתאים לך 🌱');
 }
-function updateBotUI() {
-  const pq=document.getElementById('pill-quiet'), pc=document.getElementById('pill-comp'), st=document.getElementById('bot-st');
-  if(pq) pq.classList.toggle('on',bs.quietMode);
-  if(pc) pc.classList.toggle('on',bs.compassionDay);
-  if(st) st.textContent=bs.quietMode?'🤫 מצב שקט':bs.compassionDay?'🫶 יום חמלה':'חברה טובה שמזכירה';
-}
+function updateBotUI() { /* bot tab removed — no-op stub */ }
 
 // --- SESSION START ---
 function startBotSession() {
@@ -4040,17 +3945,7 @@ function showSystemPrompt() {
 }
 
 // --- INIT BOT ---
-async function initBot() {
-  await loadBotData();
-  await loadGardenState();
-  if(!bp.isSetup) {
-    document.getElementById('ob-ov').classList.add('open');
-    renderObStep();
-  } else {
-    startBotSession();
-  }
-  bs.botInited=true;
-}
+async function initBot() { /* bot tab removed — no-op stub */ }
 
 
 // CUSTOM TASKS
