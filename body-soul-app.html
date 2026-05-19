@@ -2951,7 +2951,7 @@ function renderGrowthCorner() {
 
 function renderGardenCards() {
   // Refresh new journey tab when tasks change
-  try { renderJourneyTab(); _journeyTrailDays=getJourneyTrail(); } catch(e){}
+  try { renderJourneyTab(); } catch(e){} // sync journey companion mood when tasks change
   if(cs.companionId) renderCompanionSection();
   renderGardenTopCard();
   renderGardenHero();
@@ -4446,93 +4446,8 @@ var STONE_PATH_D = 'M -10 -115 C 40 -120, 88 -98, 100 -55 C 110 -10, 108 35, 92 
 var SMALL_STONE_PATH_D = 'M -2 -42 C 18 -44, 38 -35, 42 -12 C 46 12, 40 32, 22 40 C 0 46, -25 42, -38 28 C -48 12, -48 -10, -36 -28 C -25 -42, -15 -44, -2 -42 Z';
 
 // Build large stone SVG
-function buildStoneSVG(marks, compassion, w, h) {
-  var id = 'st' + (++_stoneUid);
-  var toneKey = stoneToneKey(marks, compassion);
-  var t = STONE_TONES[toneKey];
-  var markSet = new Set(marks||[]);
-  w = w||240; h = h||258;
-
-  var carvings = '';
-  Object.keys(SLOTS_LARGE).forEach(function(k) {
-    if (!markSet.has(k)) return;
-    var slot = SLOTS_LARGE[k];
-    carvings += '<g transform="translate('+slot.x+' '+slot.y+')">'+(CARVE_PATHS[k]||'')+'</g>';
-  });
-
-  var emptyDots = '';
-  if (markSet.size === 0) {
-    Object.keys(SLOTS_LARGE).forEach(function(k){
-      var slot=SLOTS_LARGE[k];
-      emptyDots += '<circle cx="'+slot.x+'" cy="'+slot.y+'" r="1.2"/>';
-    });
-  }
-
-  var compassionMark = compassion
-    ? '<g stroke="rgba(70,55,30,0.45)" stroke-width="1.2" stroke-linecap="round" fill="none"><path d="M -40 18 L 40 18"/><circle cx="0" cy="6" r="6" fill="none"/></g>'
-    : '';
-
-  return '<svg viewBox="-130 -140 260 280" width="'+w+'" height="'+h+'" style="display:block">'
-    +'<defs>'
-    +'<linearGradient id="sg'+id+'" x1="0.2" y1="0" x2="0.8" y2="1">'
-    +'<stop offset="0" stop-color="'+t.light+'"/><stop offset="0.55" stop-color="'+t.light+'"/><stop offset="1" stop-color="'+t.deep+'"/>'
-    +'</linearGradient>'
-    +'<radialGradient id="sh'+id+'" cx="0.3" cy="0.25" r="0.5">'
-    +'<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>'
-    +'</radialGradient>'
-    +'<pattern id="sp'+id+'" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">'
-    +'<circle cx="3" cy="4" r="0.5" fill="'+t.edge+'" opacity="0.35"/>'
-    +'<circle cx="10" cy="9" r="0.4" fill="'+t.edge+'" opacity="0.28"/>'
-    +'<circle cx="7" cy="2" r="0.3" fill="'+t.edge+'" opacity="0.20"/>'
-    +'<circle cx="2" cy="11" r="0.35" fill="'+t.edge+'" opacity="0.25"/>'
-    +'</pattern>'
-    +'<clipPath id="sc'+id+'"><path d="'+STONE_PATH_D+'"/></clipPath>'
-    +'</defs>'
-    +'<ellipse cx="-4" cy="120" rx="100" ry="10" fill="'+t.shadow+'"/>'
-    +'<path d="'+STONE_PATH_D+'" fill="url(#sg'+id+')"/>'
-    +'<g clip-path="url(#sc'+id+')"><rect x="-130" y="-140" width="260" height="280" fill="url(#sp'+id+')"/></g>'
-    +'<path d="'+STONE_PATH_D+'" fill="none" stroke="'+t.edge+'" stroke-opacity="0.4" stroke-width="0.8"/>'
-    +'<path d="'+STONE_PATH_D+'" fill="url(#sh'+id+')"/>'
-    +'<g stroke="rgba(70,55,30,0.6)" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round">'+carvings+'</g>'
-    +'<g fill="rgba(70,55,30,0.13)">'+emptyDots+'</g>'
-    +compassionMark
-    +'</svg>';
-}
-
-// Build small trail stone SVG
-function buildTrailStoneSVG(marks, compassion, isToday, size) {
-  var id = 'ts' + (++_stoneUid);
-  var toneKey = stoneToneKey(marks, compassion);
-  var t = STONE_TONES[toneKey];
-  var markSet = new Set(marks||[]);
-  size = size || 52;
-  var positions = [{x:-10,y:-10},{x:10,y:-10},{x:-10,y:10},{x:10,y:10}];
-  var markArr = Array.from(markSet).slice(0,4);
-
-  var carvings = '';
-  markArr.forEach(function(k,i){
-    var p = markArr.length<=1 ? {x:0,y:0} : (positions[i]||{x:0,y:0});
-    var sc = markArr.length<=1 ? 0.55 : 0.42;
-    carvings += '<g transform="translate('+p.x+' '+p.y+') scale('+sc+')">'+(CARVE_PATHS[k]||'')+'</g>';
-  });
-
-  var compassionMark = (compassion && markSet.size===0)
-    ? '<g stroke="rgba(70,55,30,0.6)" stroke-width="1.0" fill="none" stroke-linecap="round"><path d="M -16 4 L 16 4"/><circle cx="0" cy="-3" r="3"/></g>'
-    : '';
-  var activeDash = isToday
-    ? '<circle r="50" fill="none" stroke="#2D2A26" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="2 3"/>'
-    : '';
-
-  return '<svg viewBox="-52 -52 104 104" width="'+size+'" height="'+size+'" style="display:block">'
-    +'<defs><linearGradient id="'+id+'" x1="0.2" y1="0" x2="0.8" y2="1">'
-    +'<stop offset="0" stop-color="'+t.light+'"/><stop offset="1" stop-color="'+t.deep+'"/>'
-    +'</linearGradient></defs>'
-    +activeDash
-    +'<path d="'+SMALL_STONE_PATH_D+'" fill="url(#'+id+')" stroke="'+t.edge+'" stroke-opacity="0.4" stroke-width="0.6"/>'
-    +'<g stroke="rgba(70,55,30,0.6)" stroke-width="1.0" fill="none" stroke-linecap="round" stroke-linejoin="round">'+carvings+'</g>'
-    +compassionMark
-    +'</svg>';
-}
+function buildStoneSVG() { return ''; /* removed — stones not used in companion model */}
+function buildTrailStoneSVG() { return ''; /* removed — trail stones not used */}
 
 // ── Stone naming ──
 function stoneNameFor(marks, compassion) {
@@ -4657,28 +4572,7 @@ function buildFloatingSVG(kind, size) {
 
 // ── 7-day trail data ──
 var HEBREW_DAYS = ['ש','א','ב','ג','ד','ה','ו'];
-function getJourneyTrail() {
-  var days = [];
-  var today = new Date();
-  for (var i=6; i>=0; i--) {
-    var d = new Date(today);
-    d.setDate(d.getDate()-i);
-    var isToday = i===0;
-    var label = isToday ? 'היום' : HEBREW_DAYS[d.getDay()];
-    if (isToday) {
-      days.push({
-        marks: getJourneyMarks(),
-        compassion: gs.todayMood==='compassion',
-        isToday: true,
-        shortLabel: label,
-        dateLabel: d.toLocaleDateString('he-IL',{weekday:'long',month:'long',day:'numeric'}),
-      });
-    } else {
-      days.push({ marks:[], compassion:false, isToday:false, shortLabel:label });
-    }
-  }
-  return days;
-}
+function getJourneyTrail() { return []; /* removed — trail no longer shown in companion model */}
 
 // ── Habit strength data ──
 function getJourneyHabits() {
@@ -4837,23 +4731,7 @@ function buildAlongTheDayHTML(marks, c) {
   return buildMCard(content);
 }
 
-function buildStoneTrailHTML(trailDays) {
-  var content = buildMCardHeader('הדרך מאחור', 'שבעת הימים האחרונים');
-  content += '<div style="font-size:12.5px;color:var(--g-ink-3);line-height:1.5;margin-bottom:12px;margin-top:-4px">כל אבן היא יום. לחיצה תפתח את הפרטים.</div>';
-  content += '<div class="j-trail-row">';
-  trailDays.forEach(function(d,i){
-    var size = d.isToday ? 64 : 52;
-    var svg = buildTrailStoneSVG(d.marks, d.compassion, d.isToday, size);
-    var labelClass = d.isToday ? 'j-trail-label today' : 'j-trail-label';
-    var dateStr = d.dateLabel || '';
-    content += '<button class="j-trail-stone-btn" onclick="openDayDetail('+i+')" aria-label="'+(d.shortLabel||'')+'">'
-      +svg
-      +'<div class="'+labelClass+'">'+d.shortLabel+'</div>'
-      +'</button>';
-  });
-  content += '</div>';
-  return buildMCard(content);
-}
+function buildStoneTrailHTML() { return ''; /* removed — companion model replaces trail model */}
 
 function buildPointsCardHTML(points, marks, c) {
   var todayPoints = (marks.length * 3 + 2);
@@ -4902,33 +4780,10 @@ function buildFactCardHTML() {
   return buildMCard(content, 'background:linear-gradient(180deg,#FBF6EB,#F4ECDA)');
 }
 
-function buildNextStageHTML() {
-  var content = '<div style="display:flex;align-items:flex-start;gap:14px">'
-    +'<div class="j-next-icon" style="background:rgba(186,177,160,0.22)">'
-    +'<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="#8A857D" stroke-width="1.6"/><path d="M8 11 V8 a4 4 0 0 1 8 0 v3" stroke="#8A857D" stroke-width="1.6"/></svg>'
-    +'</div>'
-    +'<div style="flex:1">'
-    +'<div class="serif" style="font-size:17px;font-weight:500;color:var(--g-ink);margin-bottom:4px">השלב הבא</div>'
-    +'<div style="font-size:13px;color:var(--g-ink-2);line-height:1.55">השלב הבא ייפתח אחרי תקופה של התמדה מול עצמך. לא כדי להעמיס, אלא כדי להוסיף משהו שהוא מעבר לבסיס.</div>'
-    +'</div></div>';
-  return buildMCard(content, 'background:linear-gradient(180deg,rgba(255,255,255,0.55),rgba(245,239,224,0.55));border:1px dashed rgba(70,55,30,0.18);box-shadow:none');
-}
+function buildNextStageHTML() { return ''; /* removed — not part of companion model */}
 
 // ── Today stone card HTML ──
-function buildTodayStoneHTML(marks, compassion) {
-  var dotColor = compassion ? '#A89E96' : marks.length>=5 ? '#B59E80' : marks.length===0 ? '#BAB1A0' : '#B19B7D';
-  var name = stoneNameFor(marks, compassion);
-  var sentence = stoneSentenceFor(marks, compassion);
-  var svg = buildStoneSVG(marks, compassion, 240, 258);
-  var content = '<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px">'
-    +'<span style="display:inline-block;width:6px;height:6px;border-radius:999px;background:'+dotColor+'"></span>'
-    +'<div class="j-eyebrow" style="margin:0">האבן של היום</div>'
-    +'</div>'
-    +'<div style="display:flex;justify-content:center;margin:4px 0 8px">'+svg+'</div>'
-    +'<div class="serif" style="font-size:22px;font-weight:500;color:var(--g-ink);line-height:1.2;margin-bottom:8px;text-align:center">'+name+'</div>'
-    +'<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.55;max-width:280px;margin:0 auto;text-align:center">'+sentence+'</div>';
-  return buildMCard(content, 'background:linear-gradient(180deg,#FBF6EB 0%,#FFFFFF 65%);padding:22px 18px;text-align:center;position:relative');
-}
+function buildTodayStoneHTML() { return ''; /* removed — companion model replaces stone model */}
 
 // ── Companion select screen — DOM approach (reliable on mobile) ──
 function buildCompanionSelectHTML() {
@@ -5108,27 +4963,23 @@ function buildConfirmModalHTML(c) {
 // ── Main journey content HTML ──
 function buildJourneyMainHTML() {
   var c = COMPANIONS[cs.companionId];
-  if (!c) return buildCompanionSelectHTML();
+  if (!c) return ''; // renderJourneyTab shows companion select instead
   var marks = getJourneyMarks();
-  var compassion = gs.todayMood==='compassion';
   var mood = deriveCompanionMood();
   var points = gs.points || 0;
   var habits = getJourneyHabits();
-  var trail = getJourneyTrail();
-  var today = trail[trail.length-1];
-  var todayDateLabel = today.dateLabel || '';
+  // Date label computed directly — no trail dependency
+  var todayDateLabel = new Date().toLocaleDateString('he-IL', {weekday:'long', month:'long', day:'numeric'});
 
+  // Companion-only parts — no stones, no garden, no trail
   var parts = [
     buildCompanionTopCardHTML(c, todayDateLabel),
     buildCompanionHeroHTML(c, marks, mood),
     buildCompanionActionsHTML(c),
     buildAlongTheDayHTML(marks, c),
-    buildTodayStoneHTML(marks, compassion),
-    buildStoneTrailHTML(trail),
     buildPointsCardHTML(points, marks, c),
     buildHabitStrengthHTML(habits),
     buildFactCardHTML(),
-    buildNextStageHTML(),
   ];
 
   return parts.join('');
@@ -5139,9 +4990,8 @@ function renderJourneyTab() {
   var inner = document.getElementById('journey-inner');
   if (!inner) return;
   if (!cs.companionId) {
-    renderCompanionSelectDOM(inner); // DOM approach — no inline onclick, proper touch support
+    renderCompanionSelectDOM(inner);
   } else {
-    _journeyTrailDays = getJourneyTrail();
     inner.innerHTML = buildJourneyMainHTML();
   }
 }
@@ -5199,55 +5049,14 @@ function doConfirmJourneyCompanion() {
 
 // ── Day detail sheet ──
 var _journeyTrailDays = [];
-function openDayDetail(idx) {
-  var day = _journeyTrailDays[idx];
-  if (!day) return;
-  var marks = day.marks||[];
-  var compassion = day.compassion||false;
-  var name = stoneNameFor(marks, compassion);
-  var sentence = stoneSentenceFor(marks, compassion);
-  var svg = buildStoneSVG(marks, compassion, 186, 200);
-
-  var chipsHTML = marks.length===0
-    ? '<span style="font-size:13px;color:var(--g-ink-3)">היום נשמר ניטרלי.</span>'
-    : marks.map(function(k){
-        return '<div style="display:flex;align-items:center;gap:6px;padding:5px 11px 5px 9px;background:#F7F3EC;border:1px solid rgba(70,55,30,0.10);border-radius:999px;font-size:12.5px;color:var(--g-ink-2)">'
-          +buildCarveIconSVG(k,14)+'<span>'+(JOURNEY_ACTION_LABELS[k]||k)+'</span></div>';
-      }).join('');
-
-  var html = '<div style="position:fixed;inset:0;z-index:100;background:rgba(45,42,38,0.32);backdrop-filter:blur(2px);display:flex;align-items:flex-end" onclick="closeDayDetail()">'
-    +'<div onclick="event.stopPropagation()" style="width:100%;background:#FFFFFF;border-top-left-radius:28px;border-top-right-radius:28px;padding:12px 22px 38px;box-shadow:0 -24px 60px -20px rgba(45,42,38,0.18)">'
-    +'<div style="display:flex;justify-content:center;margin-bottom:6px"><div style="width:36px;height:4px;border-radius:999px;background:rgba(110,80,40,0.18)"></div></div>'
-    +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">'
-    +'<div><div class="j-eyebrow">'+(day.dateLabel||day.shortLabel||'')+'</div>'
-    +'<div class="serif" style="font-size:22px;font-weight:500;color:var(--g-ink);line-height:1.15;margin-top:4px">'+name+'</div>'
-    +'</div>'
-    +'<button onclick="closeDayDetail()" style="border:none;background:#F7F3EC;width:32px;height:32px;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">'
-    +'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3 L11 11 M11 3 L3 11" stroke="#57534D" stroke-width="1.6" stroke-linecap="round"/></svg>'
-    +'</button></div>'
-    +'<div style="display:flex;justify-content:center;margin:12px 0 14px">'+svg+'</div>'
-    +'<div style="font-size:11.5px;color:var(--g-ink-3);margin-bottom:4px">סימנים שנחרטו</div>'
-    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">'+chipsHTML+'</div>'
-    +'<div style="font-size:11.5px;color:var(--g-ink-3);margin-bottom:4px">משפט תורי</div>'
-    +'<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.55;font-style:italic">'+sentence+'</div>'
-    +'</div></div>';
-
-  var wrapper = document.createElement('div');
-  wrapper.innerHTML = html;
-  var overlay = wrapper.firstElementChild;
-  if (overlay) { overlay.id = 'j-day-detail-overlay'; document.body.appendChild(overlay); }
-}
-function closeDayDetail() {
-  document.querySelectorAll('#j-day-detail-overlay').forEach(function(e){ e.remove(); });
-}
+function openDayDetail() { /* removed — trail no longer shown */ }
+function closeDayDetail() { /* removed — trail no longer shown */ }
 
 // Override checkAndShowCompanion
 async function checkAndShowCompanion() {
   await loadCompanionState();
   cs._pendingId = cs._pendingId || cs.companionId;
   renderJourneyTab();
-  // cache trail for day detail
-  _journeyTrailDays = getJourneyTrail();
 }
 
 
