@@ -901,6 +901,29 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   cursor: pointer;
   touch-action: manipulation;
 }
+
+/* ===== COMPANION SWITCH BUTTON ===== */
+.j-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--g-ink-3);
+  background: rgba(70,55,30,0.07);
+  border: none;
+  border-radius: 999px;
+  padding: 5px 11px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0,0,0,0.04);
+  transition: background 0.15s, color 0.15s;
+  font-family: 'Assistant', sans-serif;
+}
+.j-switch-btn:active {
+  background: rgba(70,55,30,0.14);
+  color: var(--g-ink-2);
+}
 </style>
 <script>
 if('serviceWorker' in navigator){
@@ -4642,7 +4665,10 @@ function buildMCardHeader(eyebrow, title) {
 
 function buildCompanionTopCardHTML(c, today) {
   return '<div style="padding:4px 4px 0">'
-    +'<div style="font-size:12px;color:var(--g-ink-3);margin-bottom:6px;letter-spacing:0.3px">'+today+' · '+c.name+' איתך</div>'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+    +'<div style="font-size:12px;color:var(--g-ink-3);letter-spacing:0.3px">'+today+' · '+c.name+' איתך</div>'
+    +'<button type="button" class="j-switch-btn" onclick="switchJourneyCompanion()">החלף דמות</button>'
+    +'</div>'
     +'<div class="serif" style="font-size:30px;line-height:1.1;font-weight:500;color:var(--g-ink);margin-bottom:8px">המסע של היום</div>'
     +'<div style="font-size:14.5px;line-height:1.55;color:var(--g-ink-2);max-width:320px">אנחנו פשוט עוברים את היום עם נוכחות אחת קטנה לידנו.</div>'
     +'</div>';
@@ -4989,7 +5015,7 @@ function buildJourneyMainHTML() {
 function renderJourneyTab() {
   var inner = document.getElementById('journey-inner');
   if (!inner) return;
-  if (!cs.companionId) {
+  if (!cs.companionId || cs._switching) {
     renderCompanionSelectDOM(inner);
   } else {
     inner.innerHTML = buildJourneyMainHTML();
@@ -5024,6 +5050,7 @@ function doConfirmJourneyCompanion() {
   cs.selectedAt = new Date().toISOString();
   cs.switchCount = (cs.switchCount||0) + 1;
   cs._pendingId = null;
+  cs._switching = false; // clear switch mode
   saveCompanionState();
   cancelJourneyConfirm();
   try {
@@ -5269,6 +5296,16 @@ function buildCompanionActionsHTML(c) {
     + '</div>'
     + '<div class="j-action-response" id="j-action-response"></div>'
     + '</div>';
+}
+
+// ── Switch companion — shows select screen without losing current companion ──
+function switchJourneyCompanion() {
+  cs._pendingId = cs.companionId; // pre-select current companion in the grid
+  cs._switching = true;           // flag: show select screen even if companion is set
+  renderJourneyTab();
+  // Scroll to top of journey inner
+  var inner = document.getElementById('journey-inner');
+  if (inner) inner.scrollTop = 0;
 }
 </script>
 </body>
