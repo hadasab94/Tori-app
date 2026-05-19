@@ -4386,12 +4386,15 @@ const TASK_TO_MARK = {
 
 // Derive marks from today's state
 function getJourneyMarks() {
-  const marks = new Set();
-  (s.tasks||[]).forEach(function(t){
-    if (t.done && TASK_TO_MARK[t.id]) marks.add(TASK_TO_MARK[t.id]);
+  var marks = new Set();
+  // s.tasks is {taskId: boolean} — not an array
+  var tasksObj = s.tasks || {};
+  Object.keys(tasksObj).forEach(function(taskId) {
+    if (tasksObj[taskId] && TASK_TO_MARK[taskId]) marks.add(TASK_TO_MARK[taskId]);
   });
   if ((s.water||0) >= 4) marks.add('water');
-  if (s.exChosen) marks.add('move');
+  // s.exChosen is always an object {easy,hard} — check that one was actually chosen
+  if (s.exChosen && (s.exChosen.easy || s.exChosen.hard)) marks.add('move');
   if (gs.todayMood === 'compassion') marks.add('compassion');
   return Array.from(marks);
 }
@@ -5173,7 +5176,25 @@ function doConfirmJourneyCompanion() {
   cs._pendingId = null;
   saveCompanionState();
   cancelJourneyConfirm();
-  renderJourneyTab();
+  try {
+    renderJourneyTab();
+  } catch(e) {
+    console.error('[Tori] renderJourneyTab failed after companion confirm:', e);
+    // Fallback: show a minimal companion screen so the user isn't stuck
+    var inner = document.getElementById('journey-inner');
+    if (inner) {
+      var c = COMPANIONS[cs.companionId];
+      inner.innerHTML = '<div style="padding:40px 20px;text-align:center;color:var(--g-ink-2)">'
+        + '<div style="font-size:40px;margin-bottom:12px">' + (c ? '🐾' : '🌿') + '</div>'
+        + '<div style="font-size:18px;font-weight:500;margin-bottom:8px">' + (c ? c.name + ' מצטרפת אלייך' : 'המסע מוכן') + '</div>'
+        + '<div style="font-size:13px;line-height:1.6">רגע, טוענת את המסך שלך...</div>'
+        + '</div>';
+      // Retry once after a short delay
+      setTimeout(function() {
+        try { renderJourneyTab(); } catch(e2) { console.error('[Tori] retry failed:', e2); }
+      }, 200);
+    }
+  }
 }
 
 // ── Day detail sheet ──
