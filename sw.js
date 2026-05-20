@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v6';
+const CACHE = 'body-soul-v7'; // bumped patch24 — forces old cache eviction
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

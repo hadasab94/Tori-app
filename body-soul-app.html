@@ -572,11 +572,20 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .jcc-tagline { font-size:12px; font-weight:500; }
 .jcc-bio { font-size:12.5px; color:var(--g-ink-2); line-height:1.5; }
 .jcc-fits { font-size:11.5px; color:var(--g-ink-3); line-height:1.5; padding-top:5px; margin-top:3px; border-top:1px solid rgba(70,55,30,0.08); }
+.jcc-radio-hitarea {
+  position:absolute; top:0; right:0;
+  width:44px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  background:transparent; border:none; cursor:pointer; padding:0;
+  -webkit-tap-highlight-color:rgba(0,0,0,0.04);
+  touch-action:manipulation;
+  z-index:5;
+}
 .jcc-radio {
   width:22px; height:22px; border-radius:999px;
   border:1.5px solid rgba(45,42,38,0.25); background:#FFFFFF;
-  position:absolute; top:14px; right:14px;
-  transition:border 180ms; pointer-events:none; flex-shrink:0;
+  transition:border 180ms; flex-shrink:0;
+  pointer-events:none;
 }
 /* When selected: filled dot in companion accent colour — the ONLY selection indicator */
 .jcc-radio.on { border-width:6px; }
@@ -1363,6 +1372,10 @@ const ACHIEVEMENTS = [
   {emoji:'🌸',name:'שבוע שלם!',days:7}, {emoji:'🌺',name:'שבועיים מלאים',days:14},
   {emoji:'🌳',name:'3 שבועות!',days:21}, {emoji:'🌟',name:'חודש שלם! 🎉',days:30},
 ];
+
+// BUILD VERSION — visible in DevTools console; bump on every deploy
+const TORI_BUILD = 'patch24-companion-fix-2026-05-20';
+console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
 let s = { todayKey:getTodayKey(), tasks:{}, water:0, exMode:'easy', exChosen:{easy:null,hard:null}, exBoxOpen:true, streak:0, bestStreak:0 };
@@ -2343,6 +2356,7 @@ function flowerIconSVG(kind, size) {
 const COMPANIONS = {
   capy: {
     id:'capy', name:'קפיברה', species:'קפיברה',
+    displayNameWithArticle:'הקפיברה',
     img:'assets/companions/capy.webp',
     homeImg:'assets/companions/capy-home.webp',
     tagline:'הכי רגועה, באופן עקבי',
@@ -2353,6 +2367,7 @@ const COMPANIONS = {
   },
   bear: {
     id:'bear', name:'דובה', species:'דובה',
+    displayNameWithArticle:'הדובה',
     img:'assets/companions/bear.webp',
     homeImg:'assets/companions/bear-home.webp',
     tagline:'אלופת מצב מאורה',
@@ -2363,6 +2378,7 @@ const COMPANIONS = {
   },
   fox: {
     id:'fox', name:'שועלה', species:'שועלה',
+    displayNameWithArticle:'השועלה',
     img:'assets/companions/fox.webp',
     homeImg:'assets/companions/fox-home.webp',
     tagline:'מתעוררת קלות, סקרנית בנימוס',
@@ -2373,6 +2389,7 @@ const COMPANIONS = {
   },
   forest: {
     id:'forest', name:'חפשושית', species:'חפשושית',
+    displayNameWithArticle:'החפשושית',
     img:'assets/companions/forest.webp',
     homeImg:'assets/companions/forest-home.webp',
     tagline:'הכי קרובה לאדמה',
@@ -2383,6 +2400,7 @@ const COMPANIONS = {
   },
   cat: {
     id:'cat', name:'חתולה', species:'חתולה',
+    displayNameWithArticle:'החתולה',
     img:'assets/companions/cat.webp',
     homeImg:'assets/companions/cat-home.webp',
     tagline:'אינטואיטיבית, אדם של ערב',
@@ -5005,6 +5023,38 @@ function buildNextStageHTML() { return ''; /* removed — not part of companion 
 // ── Today stone card HTML ──
 function buildTodayStoneHTML() { return ''; /* removed — companion model replaces stone model */}
 
+// ── Global visual sync for companion select screen ──────────────────────────
+// Reads cs._pendingId (the single source of truth) and updates every radio
+// dot + the CTA button. Called by renderJourneyTab guard and hitarea.onclick.
+function _jcsSyncVisuals() {
+  var list = document.getElementById('jcs-card-list');
+  if (!list) return;
+  var pending = cs._pendingId || null;
+  console.log('[Tori] _jcsSyncVisuals, pending:', pending);
+  list.querySelectorAll('.jcc-radio-hitarea').forEach(function(ha) {
+    var hId  = ha.getAttribute('data-companion-id');
+    var comp = hId ? COMPANIONS[hId] : null;
+    var dot  = ha.querySelector('.jcc-radio');
+    var sel  = !!(hId && hId === pending);
+    if (dot) {
+      dot.classList.toggle('on', sel);
+      dot.style.border = (sel && comp)
+        ? '6px solid ' + comp.accent
+        : '1.5px solid rgba(45,42,38,0.25)';
+    }
+    ha.setAttribute('aria-checked', sel ? 'true' : 'false');
+  });
+  var ctaBtn = document.getElementById('jcs-cta-btn');
+  if (ctaBtn) {
+    var selComp = pending ? COMPANIONS[pending] : null;
+    ctaBtn.disabled   = !selComp;
+    ctaBtn.className  = selComp ? 'jcs-cta active' : 'jcs-cta inactive';
+    ctaBtn.textContent = selComp
+      ? 'בחרתי את ' + selComp.name
+      : 'בחרי דמות כדי להמשיך';
+  }
+}
+
 // ── Companion select screen — DOM approach (reliable on mobile) ──
 function buildCompanionSelectHTML() {
   // stub — renderJourneyTab calls renderCompanionSelectDOM instead
@@ -5015,10 +5065,7 @@ function renderCompanionSelectDOM(inner) {
   if (!inner) inner = document.getElementById('journey-inner');
   if (!inner) return;
 
-  // Wipe and disable animations during construction
   inner.innerHTML = '';
-
-  var selectedId = cs._pendingId || null;
 
   // ── Header ──
   var hdr = document.createElement('div');
@@ -5033,57 +5080,27 @@ function renderCompanionSelectDOM(inner) {
   list.className = 'jcs-list';
   list.id = 'jcs-card-list';
 
-  // Update visual state of all cards + CTA
-  function updateVisuals() {
-    var allBtns = list.querySelectorAll('.jcc-btn');
-    allBtns.forEach(function(btn) {
-      var id = btn.getAttribute('data-id');
-      var c = COMPANIONS[id];
-      if (!c) return;
-      var sel = (id === selectedId);
-      // Card itself: no visual change — border, shadow, background stay identical
-      // Selection is shown ONLY through the radio dot below
-      var radio = btn.querySelector('.jcc-radio');
-      if (radio) {
-        radio.classList.toggle('on', sel);
-        radio.style.border = sel
-          ? '6px solid ' + c.accent          // filled dot in companion colour
-          : '1.5px solid rgba(45,42,38,0.25)'; // subtle empty circle
-      }
-    });
-    var ctaBtn = document.getElementById('jcs-cta-btn');
-    if (ctaBtn) {
-      var selComp = selectedId ? COMPANIONS[selectedId] : null;
-      ctaBtn.disabled = !selComp;
-      ctaBtn.className = selComp ? 'jcs-cta active' : 'jcs-cta inactive';
-      ctaBtn.textContent = selComp
-        ? 'בחרתי את ' + selComp.name
-        : 'בחרי דמות כדי להמשיך';
-    }
-  }
-
   // Build each companion card
+  // Card = <div> (not <button>). Hitarea = <button> inside div (valid HTML).
+  // Each hitarea has a direct onclick — no delegation, no bubbling required.
+  // cs._pendingId is the single source of truth; _jcsSyncVisuals reads it.
   Object.values(COMPANIONS).forEach(function(c) {
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'jcc-btn';
-    btn.setAttribute('data-id', c.id);
-    // Ensure pointer events reach the button
-    btn.style.cssText = 'pointer-events:auto;cursor:pointer;touch-action:manipulation;';
+    var card = document.createElement('div');
+    card.className = 'jcc-btn';
+    card.setAttribute('data-id', c.id);
+    card.style.cssText = 'cursor:default;touch-action:manipulation;';
 
-    // Portrait section
+    // Portrait
     var portrait = document.createElement('div');
     portrait.className = 'jcc-portrait';
     portrait.style.background = 'radial-gradient(circle at 50% 60%,#FFFFFF 0%,' + c.sceneTint + ' 70%)';
     portrait.style.pointerEvents = 'none';
     var img = document.createElement('img');
-    img.src = c.img;
-    img.alt = c.species;
-    img.loading = 'lazy';
-    img.decoding = 'async';
+    img.src = c.img; img.alt = c.species;
+    img.loading = 'lazy'; img.decoding = 'async';
     img.style.pointerEvents = 'none';
     portrait.appendChild(img);
-    btn.appendChild(portrait);
+    card.appendChild(portrait);
 
     // Text content
     var content = document.createElement('div');
@@ -5095,38 +5112,34 @@ function renderCompanionSelectDOM(inner) {
       + '</div>'
       + '<div class="jcc-tagline" style="color:' + c.accent + '">' + c.tagline + '</div>'
       + '<div class="jcc-bio" style="font-size:11.5px;line-height:1.55">' + (c.personalitySummary || c.bio) + '</div>';
-    btn.appendChild(content);
+    card.appendChild(content);
 
-    // Radio indicator — this is the ONLY click target for selecting a companion
-    var radioWrap = document.createElement('div');
-    radioWrap.style.cssText = 'display:flex;align-items:center;justify-content:center;'
-      + 'padding:0 14px;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,0,0.04);';
-    var radio = document.createElement('div');
-    radio.className = 'jcc-radio';
-    radio.style.border = '1.5px solid rgba(45,42,38,0.25)';
-    radio.style.pointerEvents = 'none';
-    radioWrap.appendChild(radio);
-    btn.appendChild(radioWrap);
+    // Radio hitarea — 44×44 button, position:absolute top-right of card
+    // data-companion-id is read by _jcsSyncVisuals to identify this hitarea
+    var hitarea = document.createElement('button');
+    hitarea.type  = 'button';
+    hitarea.className = 'jcc-radio-hitarea';
+    hitarea.setAttribute('data-companion-id', c.id);
+    hitarea.setAttribute('aria-label',   'בחירת ' + c.name);
+    hitarea.setAttribute('aria-checked', 'false');
 
-    // Click handler — ONLY on the radio wrapper, not the whole card
-    function doSelect() {
-      selectedId = c.id;
+    var dot = document.createElement('div');
+    dot.className  = 'jcc-radio';
+    dot.style.border = '1.5px solid rgba(45,42,38,0.25)';
+    hitarea.appendChild(dot);
+    card.appendChild(hitarea);
+
+    // Direct onclick — fires when hitarea (or radio dot inside it) is tapped.
+    // pointer-events:none on dot means the tap falls through to the button;
+    // the button's onclick fires. cs._pendingId updated → _jcsSyncVisuals redraws.
+    hitarea.onclick = function(e) {
+      e.stopPropagation();
+      console.log('[Tori] companion radio clicked:', c.id);
       cs._pendingId = c.id;
-      updateVisuals();
-    }
-    radioWrap.addEventListener('click', function(e) {
-      e.stopPropagation();
-      doSelect();
-    });
-    radioWrap.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      doSelect();
-    }, {passive: false});
-    // Card itself: no selection, just remove btn default click behavior
-    btn.addEventListener('click', function(e) { e.stopPropagation(); });
+      _jcsSyncVisuals();
+    };
 
-    list.appendChild(btn);
+    list.appendChild(card);
   });
 
   inner.appendChild(list);
@@ -5137,30 +5150,32 @@ function renderCompanionSelectDOM(inner) {
   note.textContent = 'אפשר להחליף בכל זמן. הן לא ייפגעו.';
   inner.appendChild(note);
 
-  // CTA bar
+  // CTA bar — reads cs._pendingId directly (no local selectedId variable)
   var ctaBar = document.createElement('div');
   ctaBar.className = 'jcs-cta-bar';
   var ctaBtn = document.createElement('button');
   ctaBtn.type = 'button';
-  ctaBtn.id = 'jcs-cta-btn';
-  ctaBtn.className = 'jcs-cta inactive';
-  ctaBtn.disabled = true;
+  ctaBtn.id   = 'jcs-cta-btn';
+  ctaBtn.className  = 'jcs-cta inactive';
+  ctaBtn.disabled   = true;
   ctaBtn.textContent = 'בחרי דמות כדי להמשיך';
   ctaBtn.addEventListener('click', function(e) {
     e.stopPropagation();
-    if (!selectedId) return;
+    console.log('[Tori] CTA clicked, cs._pendingId:', cs._pendingId);
+    if (!cs._pendingId) return;
     confirmJourneyCompanion();
   });
   ctaBtn.addEventListener('touchend', function(e) {
     e.preventDefault();
-    if (!selectedId) return;
+    console.log('[Tori] CTA touchend, cs._pendingId:', cs._pendingId);
+    if (!cs._pendingId) return;
     confirmJourneyCompanion();
   }, {passive: false});
   ctaBar.appendChild(ctaBtn);
   inner.appendChild(ctaBar);
 
-  // Apply initial state if companion already selected
-  if (selectedId) updateVisuals();
+  // Sync initial visual state (pre-select companion if switching)
+  _jcsSyncVisuals();
 }
 
 
@@ -5216,7 +5231,14 @@ function renderJourneyTab() {
   var inner = document.getElementById('journey-inner');
   if (!inner) return;
   if (!cs.companionId || cs._switching) {
-    renderCompanionSelectDOM(inner);
+    // Guard: if select screen already in DOM, just sync visuals.
+    // Prevents repeated calls (renderGardenCards, checkAndShowCompanion)
+    // from wiping the DOM and breaking hitarea click handlers.
+    if (inner.querySelector('#jcs-card-list')) {
+      _jcsSyncVisuals();
+    } else {
+      renderCompanionSelectDOM(inner);
+    }
   } else {
     inner.innerHTML = buildJourneyMainHTML();
   }
@@ -5330,12 +5352,16 @@ function journeyFunnyLine() {
   var companionId = (typeof cs !== 'undefined') ? cs.companionId : null;
   if (!companionId || !COMPANION_PHRASES[companionId]) {
     // Fallback: no companion selected yet
-    showActionResponse('תגידי לי משהו מצחיק ומרים',
+    showActionResponse('ההברקה של הדמות',
       'בחרי דמות מלווה כדי לקבל ממנה משפט אישי 🌿', resp);
     return;
   }
+  var companion = COMPANIONS[companionId];
+  var btnTitle = companion && companion.displayNameWithArticle
+    ? 'ההברקה של ' + companion.displayNameWithArticle
+    : 'ההברקה';
   var phrase = getNextCompanionPhrase(companionId);
-  showActionResponse('תגידי לי משהו מצחיק ומרים', phrase, resp);
+  showActionResponse(btnTitle, phrase, resp);
 }
 
 // ── What I did today ──
@@ -5448,7 +5474,7 @@ function buildCompanionActionsHTML(c) {
     + '<button type="button" class="j-action-chip" onclick="journeyPickFood()">'
     + '<span class="j-chip-icon">🍽️</span>תבחרי לי משהו קטן לאכול</button>'
     + '<button type="button" class="j-action-chip" onclick="journeyFunnyLine()">'
-    + '<span class="j-chip-icon">✨</span>תגידי לי משהו מצחיק ומרים</button>'
+    + '<span class="j-chip-icon">✨</span>ההברקה של ' + (c && c.displayNameWithArticle ? c.displayNameWithArticle : 'הדמות') + '</button>'
     + '<button type="button" class="j-action-chip" onclick="journeyWhatDoneToday()">'
     + '<span class="j-chip-icon">📋</span>תזכירי לי מה כבר עשיתי היום</button>'
     + '<button type="button" class="j-action-chip compassion-chip" onclick="journeyCompassionInfo()">'
