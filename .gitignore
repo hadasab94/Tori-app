@@ -1,0 +1,11 @@
+node_modules/
+test-results/
+playwright-report/
+.claude/
+qa/_last-run-qa.json
+qa/last-run.json
+qa/last-run-local.json
+qa/diagnostic-screenshot.png
+*.zip
+patch*.js
+verify*.js

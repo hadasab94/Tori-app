@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "qa:permanent": "node qa/qa-runner.js",
+    "qa:permanent:local": "node qa/qa-runner.js --local",
+    "qa:permanent:headed": "node qa/qa-runner.js --headed",
+    "qa:tori": "npx playwright test --config=playwright.config.js",
+    "qa:tori:headed": "npx playwright test --config=playwright.config.js --headed",
+    "qa:tori:debug": "node qa/tori-debug.js",
+    "qa:tori:smoke": "npx playwright test --config=playwright.config.js qa/tori-smoke.spec.js",
+    "qa:tori:selection": "npx playwright test --config=playwright.config.js qa/tori-companion-selection.spec.js",
+    "qa:tori:local": "npx playwright test --config=playwright.local.config.js",
+    "qa:tori:local:smoke": "npx playwright test --config=playwright.local.config.js qa/tori-smoke.spec.js",
+    "qa:tori:local:selection": "npx playwright test --config=playwright.local.config.js qa/tori-companion-selection.spec.js",
+    "qa:report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "sharp": "^0.34.5"
+  }
+}
