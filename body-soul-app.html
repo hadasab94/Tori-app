@@ -553,14 +553,11 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   display:flex; align-items:stretch; gap:0; padding:0; width:100%;
   background:#FFFFFF; border:1.5px solid rgba(70,55,30,0.10);
   border-radius:22px; cursor:pointer; text-align:right;
-  overflow:hidden; transition:border 180ms, box-shadow 180ms;
+  overflow:hidden;
   box-shadow:0 1px 0 rgba(45,42,38,0.02), 0 6px 16px -12px rgba(45,42,38,0.12);
   position:relative;
 }
-.jcc-btn.selected {
-  border-width:2px;
-  box-shadow:0 1px 0 rgba(45,42,38,0.02), 0 12px 28px -16px rgba(0,0,0,0.18);
-}
+/* .jcc-btn.selected — intentionally empty: selection shown only via .jcc-radio.on */
 .jcc-portrait {
   width:116px; flex-shrink:0;
   display:flex; align-items:flex-end; justify-content:center;
@@ -579,9 +576,10 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   width:22px; height:22px; border-radius:999px;
   border:1.5px solid rgba(45,42,38,0.25); background:#FFFFFF;
   position:absolute; top:14px; right:14px;
-  transition:all 180ms; pointer-events:none; flex-shrink:0;
+  transition:border 180ms; pointer-events:none; flex-shrink:0;
 }
-.jcc-radio.on { border-width:5px; }
+/* When selected: filled dot in companion accent colour — the ONLY selection indicator */
+.jcc-radio.on { border-width:6px; }
 
 /* CTA bar */
 .jcs-cta-bar {
@@ -5043,16 +5041,14 @@ function renderCompanionSelectDOM(inner) {
       var c = COMPANIONS[id];
       if (!c) return;
       var sel = (id === selectedId);
-      btn.classList.toggle('selected', sel);
-      btn.style.borderColor = sel ? c.accent : 'rgba(70,55,30,0.10)';
-      btn.style.borderWidth = sel ? '2px' : '1.5px';
-      btn.style.boxShadow = sel
-        ? '0 1px 0 rgba(45,42,38,0.02),0 12px 28px -16px ' + c.accent + '88'
-        : '0 1px 0 rgba(45,42,38,0.02),0 6px 16px -12px rgba(45,42,38,0.12)';
+      // Card itself: no visual change — border, shadow, background stay identical
+      // Selection is shown ONLY through the radio dot below
       var radio = btn.querySelector('.jcc-radio');
       if (radio) {
         radio.classList.toggle('on', sel);
-        radio.style.border = sel ? '5px solid ' + c.accent : '1.5px solid rgba(45,42,38,0.25)';
+        radio.style.border = sel
+          ? '6px solid ' + c.accent          // filled dot in companion colour
+          : '1.5px solid rgba(45,42,38,0.25)'; // subtle empty circle
       }
     });
     var ctaBtn = document.getElementById('jcs-cta-btn');
@@ -5073,8 +5069,7 @@ function renderCompanionSelectDOM(inner) {
     btn.className = 'jcc-btn';
     btn.setAttribute('data-id', c.id);
     // Ensure pointer events reach the button
-    btn.style.cssText = 'pointer-events:auto;cursor:pointer;touch-action:manipulation;'
-      + 'border-color:rgba(70,55,30,0.10);border-width:1.5px;';
+    btn.style.cssText = 'pointer-events:auto;cursor:pointer;touch-action:manipulation;';
 
     // Portrait section
     var portrait = document.createElement('div');
