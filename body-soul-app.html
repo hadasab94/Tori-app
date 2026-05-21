@@ -634,6 +634,80 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   display:block;
 }
 
+/* ===== COMPANION IDLE ANIMATIONS — patch25 =====
+   One CSS class per companion (idle-bear / idle-cat / idle-forest / idle-capy / idle-fox).
+   Applied to both the portrait img in the selection card and the home illustration.
+   All transforms use bottom-center origin so breathing grows upward naturally.
+   Max translateY: -3px card  /  -5px home.  Max scale: 1.015.
+   Rotation only on cat & fox (≤0.5°).
+   Will-change: transform for GPU compositing — no layout reflow.
+   prefers-reduced-motion: animation set to 0s duration (freezes on first frame = rest pose).
+================================================= */
+
+/* ── Bear: slow warm breathing, cup-and-blanket calm ─────────── 4.2s */
+@keyframes idle-bear-kf {
+  0%,100% { transform:translateY(0) scale(1,1); }
+  45%     { transform:translateY(-3px) scale(1,1.012); }
+  55%     { transform:translateY(-3px) scale(1,1.012); }
+}
+
+/* ── Cat: elegant float with the tiniest sway ────────────────── 4.8s */
+@keyframes idle-cat-kf {
+  0%,100% { transform:translateY(0) rotate(0deg) scale(1); }
+  30%     { transform:translateY(-3px) rotate( 0.35deg) scale(1.010); }
+  65%     { transform:translateY(-3px) rotate(-0.30deg) scale(1.010); }
+}
+
+/* ── Forest (חפשושית): whimsical double-bounce ───────────────── 2.6s */
+@keyframes idle-forest-kf {
+  0%,100% { transform:translateY(0) scale(1); }
+  18%     { transform:translateY(-4px) scale(1.014); }
+  32%     { transform:translateY(-1px) scale(1.004); }
+  52%     { transform:translateY(-4px) scale(1.014); }
+  68%     { transform:translateY(-1px) scale(1.004); }
+  85%     { transform:translateY(0)    scale(1); }
+}
+
+/* ── Capy: deadpan, almost motionless ────────────────────────── 6.0s */
+@keyframes idle-capy-kf {
+  0%,100% { transform:translateY(0) scale(1,1); }
+  50%     { transform:translateY(-2px) scale(1,1.007); }
+}
+
+/* ── Fox: lively spring tilt ─────────────────────────────────── 3.0s */
+@keyframes idle-fox-kf {
+  0%,100% { transform:translateY(0) rotate(0deg) scale(1); }
+  22%     { transform:translateY(-4px) rotate( 0.45deg) scale(1.013); }
+  50%     { transform:translateY(-2px) rotate( 0deg)    scale(1.008); }
+  75%     { transform:translateY(-4px) rotate(-0.40deg) scale(1.013); }
+}
+
+/* Shared base */
+.idle-bear, .idle-cat, .idle-forest, .idle-capy, .idle-fox {
+  will-change: transform;
+  transform-origin: center bottom;
+}
+.idle-bear   { animation: idle-bear-kf   4.2s ease-in-out infinite; }
+.idle-cat    { animation: idle-cat-kf    4.8s ease-in-out infinite; }
+.idle-forest { animation: idle-forest-kf 2.6s ease-in-out infinite; }
+.idle-capy   { animation: idle-capy-kf   6.0s ease-in-out infinite; }
+.idle-fox    { animation: idle-fox-kf    3.0s ease-in-out infinite; }
+
+/* Accessibility: freeze animation at rest pose */
+@media (prefers-reduced-motion: reduce) {
+  .idle-bear, .idle-cat, .idle-forest, .idle-capy, .idle-fox {
+    animation-duration: 0.001ms;
+    animation-iteration-count: 1;
+  }
+}
+
+/* Home illustration: slightly more expressive (larger container → motion more readable) */
+.j-home-img-wrap .idle-bear   { animation-name: idle-bear-kf;   animation-duration: 4.2s; }
+.j-home-img-wrap .idle-cat    { animation-name: idle-cat-kf;    animation-duration: 4.8s; }
+.j-home-img-wrap .idle-forest { animation-name: idle-forest-kf; animation-duration: 2.6s; }
+.j-home-img-wrap .idle-capy   { animation-name: idle-capy-kf;   animation-duration: 6.0s; }
+.j-home-img-wrap .idle-fox    { animation-name: idle-fox-kf;    animation-duration: 3.0s; }
+
 /* Companion scene */
 .j-scene-wrap {
   position:relative; border-radius:999px; overflow:hidden;
@@ -4927,7 +5001,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
   // Full-scene illustration
   var imgSrc = c.homeImg || c.img;
   var homeHTML = '<div class="j-home-img-wrap' + (compassion ? ' cave' : '') + '">'
-    + '<img src="' + imgSrc + '" alt="' + c.name + '" loading="lazy" decoding="async">'
+    + '<img class="idle-' + c.id + '" src="' + imgSrc + '" alt="' + c.name + '" loading="lazy" decoding="async">'
     + (marksHTML ? '<div class="j-home-marks">' + marksHTML + '</div>' : '')
     + '<div class="j-home-pill">'
     + '<span class="j-home-pill-dot" style="background:' + dotColor + '"></span>'
@@ -5099,6 +5173,7 @@ function renderCompanionSelectDOM(inner) {
     img.src = c.img; img.alt = c.species;
     img.loading = 'lazy'; img.decoding = 'async';
     img.style.pointerEvents = 'none';
+    img.className = 'idle-' + c.id; // companion idle animation (patch25)
     portrait.appendChild(img);
     card.appendChild(portrait);
 
