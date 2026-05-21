@@ -1102,7 +1102,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   object-fit: contain;
   object-position: center center;
   display: block;
-  transition: opacity 0.35s ease;
+  transition: opacity 260ms linear;
 }
 .j-lair-img.fading { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
@@ -3036,7 +3036,7 @@ function cycleLairState(companionId) {
       var labelEl = document.getElementById('j-lair-label');
       if (labelEl) labelEl.textContent = newState.label || '';
       img.classList.remove('fading');
-    }, 320);
+    }, 260); // matches CSS transition duration exactly — src swaps at full opacity-0
   }
 }
 
