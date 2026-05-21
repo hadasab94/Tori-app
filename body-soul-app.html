@@ -634,31 +634,48 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   display:block;
 }
 
-/* ===== COMPANION IDLE ANIMATIONS — patch25 =====
-   One CSS class per companion (idle-bear / idle-cat / idle-forest / idle-capy / idle-fox).
-   Applied to both the portrait img in the selection card and the home illustration.
-   All transforms use bottom-center origin so breathing grows upward naturally.
-   Max translateY: -3px card  /  -5px home.  Max scale: 1.015.
-   Rotation only on cat & fox (≤0.5°).
-   Will-change: transform for GPU compositing — no layout reflow.
-   prefers-reduced-motion: animation set to 0s duration (freezes on first frame = rest pose).
+/* ===== COMPANION IDLE ANIMATIONS — patch25-b =====
+   Architecture: CHARACTER-ONLY animation via mix-blend-mode:multiply.
+
+   WHERE THE ANIMATION LIVES:
+   · Selection card portraits (.jcc-portrait img) — ONLY here.
+   · Home scene illustrations (.j-home-img-wrap img) — NO animation.
+     Reason: home images (*-home.webp) are flat RGB scene illustrations with
+     rich coloured backgrounds. Animating them moves the entire scene.
+     Transparent character-only assets do not yet exist.
+
+   WHY CARD PORTRAITS WORK:
+   · .jcc-portrait img already has mix-blend-mode:multiply.
+   · Card portrait files (bear/cat/fox/forest.webp) have near-white borders
+     (≥249 on all channels). White × card-bg = card-bg → background invisible.
+   · Only the coloured character pixels remain visible → moving the image
+     visually moves only the character, not its background.
+   · capy.webp has a slightly warmer background (236,219,201) but its
+     animation is intentionally the most subtle (6s / 2px) so the effect
+     remains acceptable.
+
+   TECHNICAL:
+   · transform only (GPU compositor thread, no layout reflow)
+   · will-change:transform declared
+   · transform-origin:center bottom — breathing grows upward naturally
+   · prefers-reduced-motion: freeze on rest pose
 ================================================= */
 
-/* ── Bear: slow warm breathing, cup-and-blanket calm ─────────── 4.2s */
+/* ── Bear: slow warm breathing, cozy calm ──────────────────── 4.2s */
 @keyframes idle-bear-kf {
   0%,100% { transform:translateY(0) scale(1,1); }
   45%     { transform:translateY(-3px) scale(1,1.012); }
   55%     { transform:translateY(-3px) scale(1,1.012); }
 }
 
-/* ── Cat: elegant float with the tiniest sway ────────────────── 4.8s */
+/* ── Cat: elegant float with the tiniest sway ───────────────── 4.8s */
 @keyframes idle-cat-kf {
   0%,100% { transform:translateY(0) rotate(0deg) scale(1); }
   30%     { transform:translateY(-3px) rotate( 0.35deg) scale(1.010); }
   65%     { transform:translateY(-3px) rotate(-0.30deg) scale(1.010); }
 }
 
-/* ── Forest (חפשושית): whimsical double-bounce ───────────────── 2.6s */
+/* ── Forest (חפשושית): whimsical double-bounce ─────────────── 2.6s */
 @keyframes idle-forest-kf {
   0%,100% { transform:translateY(0) scale(1); }
   18%     { transform:translateY(-4px) scale(1.014); }
@@ -668,13 +685,13 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   85%     { transform:translateY(0)    scale(1); }
 }
 
-/* ── Capy: deadpan, almost motionless ────────────────────────── 6.0s */
+/* ── Capy: deadpan, almost motionless ──────────────────────── 6.0s */
 @keyframes idle-capy-kf {
   0%,100% { transform:translateY(0) scale(1,1); }
   50%     { transform:translateY(-2px) scale(1,1.007); }
 }
 
-/* ── Fox: lively spring tilt ─────────────────────────────────── 3.0s */
+/* ── Fox: lively spring tilt ───────────────────────────────── 3.0s */
 @keyframes idle-fox-kf {
   0%,100% { transform:translateY(0) rotate(0deg) scale(1); }
   22%     { transform:translateY(-4px) rotate( 0.45deg) scale(1.013); }
@@ -682,7 +699,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   75%     { transform:translateY(-4px) rotate(-0.40deg) scale(1.013); }
 }
 
-/* Shared base */
+/* Shared base — applied ONLY on .jcc-portrait img (selection card) */
 .idle-bear, .idle-cat, .idle-forest, .idle-capy, .idle-fox {
   will-change: transform;
   transform-origin: center bottom;
@@ -701,12 +718,11 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   }
 }
 
-/* Home illustration: slightly more expressive (larger container → motion more readable) */
-.j-home-img-wrap .idle-bear   { animation-name: idle-bear-kf;   animation-duration: 4.2s; }
-.j-home-img-wrap .idle-cat    { animation-name: idle-cat-kf;    animation-duration: 4.8s; }
-.j-home-img-wrap .idle-forest { animation-name: idle-forest-kf; animation-duration: 2.6s; }
-.j-home-img-wrap .idle-capy   { animation-name: idle-capy-kf;   animation-duration: 6.0s; }
-.j-home-img-wrap .idle-fox    { animation-name: idle-fox-kf;    animation-duration: 3.0s; }
+/* HOME ILLUSTRATION: NO animation — scene background must not move.
+   Transparent character-only assets required for home-screen animation.
+   When those assets exist, add a second <img> layer inside .j-home-img-wrap
+   with position:absolute, mix-blend-mode:multiply, and the idle-* class. */
+.j-home-img-wrap img { animation: none !important; }
 
 /* Companion scene */
 .j-scene-wrap {
@@ -5001,7 +5017,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
   // Full-scene illustration
   var imgSrc = c.homeImg || c.img;
   var homeHTML = '<div class="j-home-img-wrap' + (compassion ? ' cave' : '') + '">'
-    + '<img class="idle-' + c.id + '" src="' + imgSrc + '" alt="' + c.name + '" loading="lazy" decoding="async">'
+    + '<img src="' + imgSrc + '" alt="' + c.name + '" loading="lazy" decoding="async">'
     + (marksHTML ? '<div class="j-home-marks">' + marksHTML + '</div>' : '')
     + '<div class="j-home-pill">'
     + '<span class="j-home-pill-dot" style="background:' + dotColor + '"></span>'
