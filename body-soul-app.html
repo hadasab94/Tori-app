@@ -1065,6 +1065,50 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   color: var(--g-ink-2);
   box-shadow: 0 1px 4px rgba(0,0,0,0.09);
 }
+
+/* ===== COMPANION LAIR SYSTEM =====
+   The lair switcher button — appears only when a companion has 2+ lair states.
+   Positioned bottom-left of the image wrap, mirroring the mood pill (bottom-right).
+   Trauma-sensitive: no autoplay, no surprise, no flash, soft opacity change only.
+*/
+.j-lair-switch-btn {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Assistant', sans-serif;
+  color: var(--g-ink-2);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: opacity 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.j-lair-switch-btn:hover  { opacity: 0.88; }
+.j-lair-switch-btn:active { opacity: 0.65; }
+/* Lair image — soft crossfade when src changes; skip if reduced-motion */
+.j-lair-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  transition: opacity 0.35s ease;
+}
+.j-lair-img.fading { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .j-lair-switch-btn { transition: none; }
+  .j-lair-img        { transition: none; }
+}
 </style>
 <script>
 if('serviceWorker' in navigator){
@@ -2454,6 +2498,13 @@ const COMPANIONS = {
     fitsIf:'קצב יציב ובלי דרמה',
     personalitySummary:'קפיברה היא החברה הרגועה־יבשה. ההומור שלה דד־פאן, מינימליסטי, רגוע ולא מתרגש. היא מורידה לחץ דרך משפטים פשוטים, יבשים ומדויקים שמחזירים את המשתמשת לפעולה אחת קטנה בלי רעש. היא לא מנסה להלהיב, לא מדרבנת בקול גדול ולא עושה עניין. מתאימה במיוחד למצבים של הצפה, לחץ, עומס משימות, צורך להאט או תחושה שהכול דחוף.',
     accent:'#D9A48A', accentSoft:'rgba(217,164,138,0.18)', sceneTint:'#FBF3EB',
+    lair: {
+      defaultState: 'home',
+      states: [
+        { id:'home', label:'במאורה', src:'assets/companions/capy-home.webp',
+          alt:'קפיברה יושבת במאורה שקטה שלה, רגועה ונינוחה' },
+      ],
+    },
   },
   bear: {
     id:'bear', name:'דובה', species:'דובה',
@@ -2465,6 +2516,13 @@ const COMPANIONS = {
     fitsIf:'שקט ומרחב שמוגן',
     personalitySummary:'דובה היא החברה המחבקת־פרקטית. ההומור שלה חם, ביתי ומאמאצחיק — כזה שמזכיר למשתמשת לאכול, לשתות, לנשום ולעשות צעד קטן בלי אשמה. היא לא דוחפת ולא מאתגרת בכוח, אלא מרגיעה דרך דאגה פשוטה לגוף ולרגע הנוכחי. מתאימה במיוחד למצבים של עייפות, עומס, צורך במנוחה, אוכל, מים או פעולה בסיסית.',
     accent:'#B9A0BD', accentSoft:'rgba(185,160,189,0.18)', sceneTint:'#F4ECF4',
+    lair: {
+      defaultState: 'home',
+      states: [
+        { id:'home', label:'במאורה', src:'assets/companions/bear-home.webp',
+          alt:'דובה יושבת במאורה שלה עם שמיכה חמה, שקט ובטוח' },
+      ],
+    },
   },
   fox: {
     id:'fox', name:'שועלה', species:'שועלה',
@@ -2476,6 +2534,13 @@ const COMPANIONS = {
     fitsIf:'רוטינות בוקר ופתיחות',
     personalitySummary:'שועלה היא החברה הערמומית־מוטיבציונית. ההומור שלה משחקי, חכם, זריז ומניע לפעולה, אבל בלי להיות קשוח או נוזף. היא עוזרת להתחיל דרך מיני־אתגרים קטנים, עקיפה חכמה של התנגדות ותחושת "עשינו מהלך". מתאימה במיוחד להתחלת משימות, סימון הרגלים, יציאה מתקיעות או כשצריך דחיפה קטנה.',
     accent:'#A8956A', accentSoft:'rgba(168,149,106,0.18)', sceneTint:'#F5EFE0',
+    lair: {
+      defaultState: 'home',
+      states: [
+        { id:'home', label:'במאורה', src:'assets/companions/fox-home.webp',
+          alt:'שועלה יושבת במאורה שלה, ערנית ורגועה' },
+      ],
+    },
   },
   forest: {
     id:'forest', name:'חפשושית', species:'חפשושית',
@@ -2487,6 +2552,13 @@ const COMPANIONS = {
     fitsIf:'לנוע ולהרגיש את הגוף',
     personalitySummary:'חפשושית היא החברה הפייתית־אבסורדית. ההומור שלה מוזר־מתוק, יערי, קליל ומקטין איום. היא הופכת משימות גדולות למשהו קטן, מצחיק ואפשרי, כאילו המשימה היא מפלצת קטנה עם יחסי ציבור מוגזמים. מתאימה במיוחד למצבים של הימנעות, פחד מהתחלה, משימות ביתיות או תחושה שהכול גדול מדי.',
     accent:'#8FA679', accentSoft:'rgba(143,166,121,0.18)', sceneTint:'#EFF1E5',
+    lair: {
+      defaultState: 'home',
+      states: [
+        { id:'home', label:'במאורה', src:'assets/companions/forest-home.webp',
+          alt:'חפשושית יושבת בפינת יער שקטה שלה, שרויה בשקט' },
+      ],
+    },
   },
   cat: {
     id:'cat', name:'חתולה', species:'חתולה',
@@ -2498,6 +2570,13 @@ const COMPANIONS = {
     fitsIf:'ערב שקט ואור עמום',
     personalitySummary:'חתולה היא החברה השנונה־קסומה. ההומור שלה חכם, אלגנטי וממסגר מחדש מחשבות מלחיצות. היא עוזרת להסתכל על מחשבות, עומס בראש או פרשנות שלילית מזווית קצת פחות מאיימת. היא לא צוחקת על המשתמשת, אלא על המוח כשהוא פותח ישיבות, כותב תסריטים או מתנהג כאילו כל מחשבה היא נבואה. מתאימה למצבים של לופ מחשבתי, ספק, הצפה מנטלית.',
     accent:'#8E89A8', accentSoft:'rgba(142,137,168,0.18)', sceneTint:'#EEEBF1',
+    lair: {
+      defaultState: 'home',
+      states: [
+        { id:'home', label:'במאורה', src:'assets/companions/cat-home.webp',
+          alt:'חתולה נחה במאורה הירחית שלה, שקטה ורגועה' },
+      ],
+    },
   },
 };
 
@@ -2905,6 +2984,72 @@ async function saveCompanionState() {
       switchCount: cs.switchCount,
       seenCaveCopy: cs.seenCaveCopy,
     }));
+  } catch(e) {}
+}
+
+// ===== COMPANION LAIR STATE =====
+// Stores the active lair state ID per companion.
+// Key: 'tori_lair_v1.states' → JSON object { companionId: stateId, ... }
+// Separate from companion selection state so neither overwrites the other.
+
+var _lairStates = {}; // in-memory: { 'bear': 'coffee', 'cat': 'home', ... }
+
+function getLairState(companionId) {
+  var c = COMPANIONS[companionId];
+  if (!c || !c.lair || !c.lair.states || c.lair.states.length === 0) return null;
+  var stateId = _lairStates[companionId] || c.lair.defaultState;
+  // Find the state object; fall back to first state
+  var found = c.lair.states.find(function(s){ return s.id === stateId; });
+  return found || c.lair.states[0];
+}
+
+function cycleLairState(companionId) {
+  var c = COMPANIONS[companionId];
+  if (!c || !c.lair || c.lair.states.length <= 1) return;
+  var states = c.lair.states;
+  var curId = _lairStates[companionId] || c.lair.defaultState;
+  var idx = states.findIndex(function(s){ return s.id === curId; });
+  var nextIdx = (idx + 1) % states.length;
+  _lairStates[companionId] = states[nextIdx].id;
+  saveLairStates();
+  // Soft crossfade: fade out → swap src → fade in
+  var img = document.getElementById('j-lair-img');
+  if (!img) {
+    // fallback: full re-render
+    var inner = document.getElementById('journey-inner');
+    if (inner) inner.innerHTML = buildJourneyMainHTML();
+    return;
+  }
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var newState = getLairState(companionId);
+  if (reducedMotion) {
+    img.src = newState.src;
+    img.alt = newState.alt || companionId;
+    // also update label pill if present
+    var labelEl = document.getElementById('j-lair-label');
+    if (labelEl) labelEl.textContent = newState.label || '';
+  } else {
+    img.classList.add('fading');
+    setTimeout(function() {
+      img.src = newState.src;
+      img.alt = newState.alt || companionId;
+      var labelEl = document.getElementById('j-lair-label');
+      if (labelEl) labelEl.textContent = newState.label || '';
+      img.classList.remove('fading');
+    }, 320);
+  }
+}
+
+async function loadLairStates() {
+  try {
+    var raw = await store.get('tori_lair_v1.states');
+    if (raw) { _lairStates = JSON.parse(raw) || {}; }
+  } catch(e) { _lairStates = {}; }
+}
+
+async function saveLairStates() {
+  try {
+    await store.set('tori_lair_v1.states', JSON.stringify(_lairStates));
   } catch(e) {}
 }
 
@@ -5014,15 +5159,32 @@ function buildCompanionHeroHTML(c, marks, mood) {
     return '<div class="j-home-mark-chip">' + (labelMap[k] || k) + '</div>';
   }).join('');
 
-  // Full-scene illustration
-  var imgSrc = c.homeImg || c.img;
+  // Lair state — use lair data for image src + alt; fall back to homeImg
+  var lairState = getLairState(c.id);
+  var imgSrc  = lairState ? lairState.src  : (c.homeImg || c.img);
+  var imgAlt  = lairState ? lairState.alt  : (c.name + ' במאורה שלה');
+  var lairLabel = lairState ? lairState.label : '';
+  var hasMultipleStates = c.lair && c.lair.states && c.lair.states.length > 1;
+
+  // Lair switcher — only shown when companion has 2+ lair states
+  var switcherHTML = hasMultipleStates
+    ? '<button type="button" class="j-lair-switch-btn"'
+      + ' onclick="cycleLairState(\'' + c.id + '\')"'
+      + ' aria-label="לעבור למצב מאורה הבא">'
+      + '<span id="j-lair-label">' + lairLabel + '</span>'
+      + ' ←'
+      + '</button>'
+    : '';
+
+  // Full-scene illustration with lair image
   var homeHTML = '<div class="j-home-img-wrap' + (compassion ? ' cave' : '') + '">'
-    + '<img src="' + imgSrc + '" alt="' + c.name + '" loading="lazy" decoding="async">'
+    + '<img id="j-lair-img" class="j-lair-img" src="' + imgSrc + '" alt="' + imgAlt + '" loading="lazy" decoding="async">'
     + (marksHTML ? '<div class="j-home-marks">' + marksHTML + '</div>' : '')
     + '<div class="j-home-pill">'
     + '<span class="j-home-pill-dot" style="background:' + dotColor + '"></span>'
     + pillText
     + '</div>'
+    + switcherHTML
     + '</div>';
 
   // Speech bubble
@@ -5395,6 +5557,7 @@ function closeDayDetail() { /* removed — trail no longer shown */ }
 // Override checkAndShowCompanion
 async function checkAndShowCompanion() {
   await loadCompanionState();
+  await loadLairStates(); // load per-companion lair state before rendering
   cs._pendingId = cs._pendingId || cs.companionId;
   renderJourneyTab();
 }
