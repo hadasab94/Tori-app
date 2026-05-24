@@ -2498,13 +2498,6 @@ const COMPANIONS = {
     fitsIf:'קצב יציב ובלי דרמה',
     personalitySummary:'קפיברה היא החברה הרגועה־יבשה. ההומור שלה דד־פאן, מינימליסטי, רגוע ולא מתרגש. היא מורידה לחץ דרך משפטים פשוטים, יבשים ומדויקים שמחזירים את המשתמשת לפעולה אחת קטנה בלי רעש. היא לא מנסה להלהיב, לא מדרבנת בקול גדול ולא עושה עניין. מתאימה במיוחד למצבים של הצפה, לחץ, עומס משימות, צורך להאט או תחושה שהכול דחוף.',
     accent:'#D9A48A', accentSoft:'rgba(217,164,138,0.18)', sceneTint:'#FBF3EB',
-    lair: {
-      defaultState: 'home',
-      states: [
-        { id:'home', label:'במאורה', src:'assets/companions/capy-home.webp',
-          alt:'קפיברה יושבת במאורה שקטה שלה, רגועה ונינוחה' },
-      ],
-    },
   },
   bear: {
     id:'bear', name:'דובה', species:'דובה',
@@ -2516,13 +2509,6 @@ const COMPANIONS = {
     fitsIf:'שקט ומרחב שמוגן',
     personalitySummary:'דובה היא החברה המחבקת־פרקטית. ההומור שלה חם, ביתי ומאמאצחיק — כזה שמזכיר למשתמשת לאכול, לשתות, לנשום ולעשות צעד קטן בלי אשמה. היא לא דוחפת ולא מאתגרת בכוח, אלא מרגיעה דרך דאגה פשוטה לגוף ולרגע הנוכחי. מתאימה במיוחד למצבים של עייפות, עומס, צורך במנוחה, אוכל, מים או פעולה בסיסית.',
     accent:'#B9A0BD', accentSoft:'rgba(185,160,189,0.18)', sceneTint:'#F4ECF4',
-    lair: {
-      defaultState: 'home',
-      states: [
-        { id:'home', label:'במאורה', src:'assets/companions/bear-home.webp',
-          alt:'דובה יושבת במאורה שלה עם שמיכה חמה, שקט ובטוח' },
-      ],
-    },
   },
   fox: {
     id:'fox', name:'שועלה', species:'שועלה',
@@ -2534,13 +2520,6 @@ const COMPANIONS = {
     fitsIf:'רוטינות בוקר ופתיחות',
     personalitySummary:'שועלה היא החברה הערמומית־מוטיבציונית. ההומור שלה משחקי, חכם, זריז ומניע לפעולה, אבל בלי להיות קשוח או נוזף. היא עוזרת להתחיל דרך מיני־אתגרים קטנים, עקיפה חכמה של התנגדות ותחושת "עשינו מהלך". מתאימה במיוחד להתחלת משימות, סימון הרגלים, יציאה מתקיעות או כשצריך דחיפה קטנה.',
     accent:'#A8956A', accentSoft:'rgba(168,149,106,0.18)', sceneTint:'#F5EFE0',
-    lair: {
-      defaultState: 'home',
-      states: [
-        { id:'home', label:'במאורה', src:'assets/companions/fox-home.webp',
-          alt:'שועלה יושבת במאורה שלה, ערנית ורגועה' },
-      ],
-    },
   },
   forest: {
     id:'forest', name:'חפשושית', species:'חפשושית',
@@ -2552,13 +2531,6 @@ const COMPANIONS = {
     fitsIf:'לנוע ולהרגיש את הגוף',
     personalitySummary:'חפשושית היא החברה הפייתית־אבסורדית. ההומור שלה מוזר־מתוק, יערי, קליל ומקטין איום. היא הופכת משימות גדולות למשהו קטן, מצחיק ואפשרי, כאילו המשימה היא מפלצת קטנה עם יחסי ציבור מוגזמים. מתאימה במיוחד למצבים של הימנעות, פחד מהתחלה, משימות ביתיות או תחושה שהכול גדול מדי.',
     accent:'#8FA679', accentSoft:'rgba(143,166,121,0.18)', sceneTint:'#EFF1E5',
-    lair: {
-      defaultState: 'home',
-      states: [
-        { id:'home', label:'במאורה', src:'assets/companions/forest-home.webp',
-          alt:'חפשושית יושבת בפינת יער שקטה שלה, שרויה בשקט' },
-      ],
-    },
   },
   cat: {
     id:'cat', name:'חתולה', species:'חתולה',
@@ -2570,12 +2542,90 @@ const COMPANIONS = {
     fitsIf:'ערב שקט ואור עמום',
     personalitySummary:'חתולה היא החברה השנונה־קסומה. ההומור שלה חכם, אלגנטי וממסגר מחדש מחשבות מלחיצות. היא עוזרת להסתכל על מחשבות, עומס בראש או פרשנות שלילית מזווית קצת פחות מאיימת. היא לא צוחקת על המשתמשת, אלא על המוח כשהוא פותח ישיבות, כותב תסריטים או מתנהג כאילו כל מחשבה היא נבואה. מתאימה למצבים של לופ מחשבתי, ספק, הצפה מנטלית.',
     accent:'#8E89A8', accentSoft:'rgba(142,137,168,0.18)', sceneTint:'#EEEBF1',
-    lair: {
-      defaultState: 'home',
-      states: [
-        { id:'home', label:'במאורה', src:'assets/companions/cat-home.webp',
-          alt:'חתולה נחה במאורה הירחית שלה, שקטה ורגועה' },
-      ],
+  },
+};
+
+// ===== COMPANION LAIRS =====
+// Canonical lair data, separate from companion personality data.
+// Structure is future-ready: each companion has named states and a defaultState.
+// Only defaultState is rendered in the MVP — no state-switching UI yet.
+//
+// Future lairTheme support: add a `themes` layer here when designs exist.
+//   e.g. lairTheme: 'default' | 'warm' | 'green' | 'night' | 'clean'
+// All image paths use ASCII filenames and are relative to the site root,
+// so they work identically on localhost and GitHub Pages.
+const COMPANION_LAIRS = {
+  bear: {
+    id: 'bear',
+    hebrewName: 'דובה',
+    defaultState: 'coffee',
+    states: {
+      empty:  { src: 'assets/companions/lairs/bear-empty.webp',
+                alt: 'המאורה הריקה של דובה, שקטה ומוכנה' },
+      coffee: { src: 'assets/companions/lairs/bear-coffee.webp',
+                alt: 'דובה יושבת במאורה שלה עם ספל קפה חם ביד, שקטה ורגועה' },
+      phone:  { src: 'assets/companions/lairs/bear-phone.webp',
+                alt: 'דובה מחזיקה פלאפון במאורה שלה, נינוחה' },
+      // coffee-alt: { src: 'assets/companions/lairs/bear-coffee-alt.webp', alt: '...' },
+    },
+  },
+  cat: {
+    id: 'cat',
+    hebrewName: 'חתולה',
+    defaultState: 'rest',
+    states: {
+      empty:  { src: 'assets/companions/lairs/cat-empty.webp',
+                alt: 'המאורה הירחית הריקה של חתולה, שקטה ורגועה' },
+      rest:   { src: 'assets/companions/lairs/cat-rest.webp',
+                alt: 'חתולה נחה במאורה הירחית שלה, שקטה ורגועה' },
+      scroll: { src: 'assets/companions/lairs/cat-scroll.webp',
+                alt: 'חתולה גוללת בטלפון במאורה שלה' },
+      phone:  { src: 'assets/companions/lairs/cat-phone.webp',
+                alt: 'חתולה עם פלאפון במאורה שלה, רגועה' },
+    },
+  },
+  forest: {
+    id: 'forest',
+    hebrewName: 'חפשושית',
+    defaultState: 'tea',
+    states: {
+      empty:  { src: 'assets/companions/lairs/hafshushit-empty.webp',
+                alt: 'פינת היער השקטה הריקה של חפשושית' },
+      tea:    { src: 'assets/companions/lairs/hafshushit-tea.webp',
+                alt: 'חפשושית יושבת בפינת יער שלה עם ספל תה, שלווה' },
+      scroll: { src: 'assets/companions/lairs/hafshushit-scroll.webp',
+                alt: 'חפשושית גוללת בטלפון בפינת היער שלה' },
+      phone:  { src: 'assets/companions/lairs/hafshushit-phone.webp',
+                alt: 'חפשושית עם פלאפון בפינת היער שלה' },
+    },
+  },
+  capy: {
+    id: 'capy',
+    hebrewName: 'קפיברה',
+    defaultState: 'coffee',
+    states: {
+      empty:  { src: 'assets/companions/lairs/capy-empty.webp',
+                alt: 'המאורה השקטה הריקה של קפיברה' },
+      coffee: { src: 'assets/companions/lairs/capy-coffee.webp',
+                alt: 'קפיברה יושבת במאורה שלה עם קפה, רגועה ונינוחה' },
+      phone:  { src: 'assets/companions/lairs/capy-phone.webp',
+                alt: 'קפיברה מחזיקה פלאפון במאורה שלה, נינוחה לגמרי' },
+      // coffee-alt: { src: 'assets/companions/lairs/capy-coffee-alt.webp', alt: '...' },
+    },
+  },
+  fox: {
+    id: 'fox',
+    hebrewName: 'שועלה',
+    defaultState: 'coffee',
+    states: {
+      empty:  { src: 'assets/companions/lairs/fox-empty.webp',
+                alt: 'המאורה הריקה של שועלה, ערנית ונעימה' },
+      coffee: { src: 'assets/companions/lairs/fox-coffee.webp',
+                alt: 'שועלה יושבת במאורה שלה עם קפה, ערנית ורגועה' },
+      scroll: { src: 'assets/companions/lairs/fox-scroll.webp',
+                alt: 'שועלה גוללת בטלפון במאורה שלה' },
+      phone:  { src: 'assets/companions/lairs/fox-phone.webp',
+                alt: 'שועלה עם פלאפון במאורה שלה, רגועה' },
     },
   },
 };
@@ -2988,55 +3038,69 @@ async function saveCompanionState() {
 }
 
 // ===== COMPANION LAIR STATE =====
-// Stores the active lair state ID per companion.
-// Key: 'tori_lair_v1.states' → JSON object { companionId: stateId, ... }
-// Separate from companion selection state so neither overwrites the other.
+// Resolves which lair image to show for the active companion.
+// Source of truth: COMPANION_LAIRS (defined above).
+// MVP: always shows defaultState. State-switching UI not exposed yet.
+// Storage key retained for future: 'tori_lair_v1.states' → { companionId: stateId }
 
-var _lairStates = {}; // in-memory: { 'bear': 'coffee', 'cat': 'home', ... }
+var _lairStates = {}; // future: persisted user overrides per companion
 
-function getLairState(companionId) {
-  var c = COMPANIONS[companionId];
-  if (!c || !c.lair || !c.lair.states || c.lair.states.length === 0) return null;
-  var stateId = _lairStates[companionId] || c.lair.defaultState;
-  // Find the state object; fall back to first state
-  var found = c.lair.states.find(function(s){ return s.id === stateId; });
-  return found || c.lair.states[0];
+// Returns { src, alt } for the companion's active lair state.
+// Falls back to companion homeImg if COMPANION_LAIRS entry is missing.
+function getActiveLair(companionId) {
+  var lairDef = COMPANION_LAIRS[companionId];
+  if (!lairDef || !lairDef.states) {
+    // Graceful fallback: use existing homeImg
+    var c = COMPANIONS[companionId];
+    return c ? { src: c.homeImg || c.img, alt: c.name + ' במאורה שלה' } : null;
+  }
+  // Active state: user override (future) → defaultState → first available state
+  var stateId = _lairStates[companionId] || lairDef.defaultState;
+  var state   = lairDef.states[stateId];
+  if (!state) {
+    // defaultState key not found — use first state in the object
+    var keys = Object.keys(lairDef.states);
+    state = keys.length ? lairDef.states[keys[0]] : null;
+  }
+  if (!state) {
+    var c2 = COMPANIONS[companionId];
+    return c2 ? { src: c2.homeImg || c2.img, alt: c2.name + ' במאורה שלה' } : null;
+  }
+  return state; // { src, alt }
 }
 
+// cycleLairState — wired for future use when state-switching UI is added.
+// Currently never called from the UI (no switcher button rendered in MVP).
 function cycleLairState(companionId) {
-  var c = COMPANIONS[companionId];
-  if (!c || !c.lair || c.lair.states.length <= 1) return;
-  var states = c.lair.states;
-  var curId = _lairStates[companionId] || c.lair.defaultState;
-  var idx = states.findIndex(function(s){ return s.id === curId; });
-  var nextIdx = (idx + 1) % states.length;
-  _lairStates[companionId] = states[nextIdx].id;
+  var lairDef = COMPANION_LAIRS[companionId];
+  if (!lairDef || !lairDef.states) return;
+  var stateKeys = Object.keys(lairDef.states);
+  if (stateKeys.length <= 1) return;
+  var curId  = _lairStates[companionId] || lairDef.defaultState;
+  var curIdx = stateKeys.indexOf(curId);
+  var nextId = stateKeys[(curIdx + 1) % stateKeys.length];
+  _lairStates[companionId] = nextId;
   saveLairStates();
   // Soft crossfade: fade out → swap src → fade in
   var img = document.getElementById('j-lair-img');
   if (!img) {
-    // fallback: full re-render
     var inner = document.getElementById('journey-inner');
     if (inner) inner.innerHTML = buildJourneyMainHTML();
     return;
   }
+  var newState = getActiveLair(companionId);
+  if (!newState) return;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var newState = getLairState(companionId);
   if (reducedMotion) {
     img.src = newState.src;
     img.alt = newState.alt || companionId;
-    // also update label pill if present
-    var labelEl = document.getElementById('j-lair-label');
-    if (labelEl) labelEl.textContent = newState.label || '';
   } else {
     img.classList.add('fading');
     setTimeout(function() {
       img.src = newState.src;
       img.alt = newState.alt || companionId;
-      var labelEl = document.getElementById('j-lair-label');
-      if (labelEl) labelEl.textContent = newState.label || '';
       img.classList.remove('fading');
-    }, 260); // matches CSS transition duration exactly — src swaps at full opacity-0
+    }, 260);
   }
 }
 
@@ -5159,22 +5223,12 @@ function buildCompanionHeroHTML(c, marks, mood) {
     return '<div class="j-home-mark-chip">' + (labelMap[k] || k) + '</div>';
   }).join('');
 
-  // Lair state — use lair data for image src + alt; fall back to homeImg
-  var lairState = getLairState(c.id);
-  var imgSrc  = lairState ? lairState.src  : (c.homeImg || c.img);
-  var imgAlt  = lairState ? lairState.alt  : (c.name + ' במאורה שלה');
-  var lairLabel = lairState ? lairState.label : '';
-  var hasMultipleStates = c.lair && c.lair.states && c.lair.states.length > 1;
-
-  // Lair switcher — only shown when companion has 2+ lair states
-  var switcherHTML = hasMultipleStates
-    ? '<button type="button" class="j-lair-switch-btn"'
-      + ' onclick="cycleLairState(\'' + c.id + '\')"'
-      + ' aria-label="לעבור למצב מאורה הבא">'
-      + '<span id="j-lair-label">' + lairLabel + '</span>'
-      + ' ←'
-      + '</button>'
-    : '';
+  // Lair image — resolved from COMPANION_LAIRS defaultState; falls back to homeImg
+  var lairImg = getActiveLair(c.id);
+  var imgSrc  = lairImg ? lairImg.src : (c.homeImg || c.img);
+  var imgAlt  = lairImg ? lairImg.alt : (c.name + ' במאורה שלה');
+  // State-switching UI is NOT rendered in the MVP.
+  // cycleLairState() is implemented and ready; add a button here when needed.
 
   // Full-scene illustration with lair image
   var homeHTML = '<div class="j-home-img-wrap' + (compassion ? ' cave' : '') + '">'
@@ -5184,7 +5238,6 @@ function buildCompanionHeroHTML(c, marks, mood) {
     + '<span class="j-home-pill-dot" style="background:' + dotColor + '"></span>'
     + pillText
     + '</div>'
-    + switcherHTML
     + '</div>';
 
   // Speech bubble
