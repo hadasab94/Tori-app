@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-copy-2026-05-24-1900 -->
+<!-- Tori version: pamper-pool-2026-05-25-1000 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2247,12 +2247,49 @@ function getAvailablePamperPoints() {
   return Math.max(0, (gs.lifetimeConnectionPoints || 0) - (gs.dedicatedPamperPoints || 0));
 }
 
+// Pick an image from the pool for card+companion+mode, preferring images not yet seen.
+// Records the pick so next call gets a different image.
+// When all pool images have been seen, resets that combination and starts fresh.
+function pickPamperImage(cardId, companionId, mode) {
+  var cardDef = PAMPER_CARDS[cardId];
+  if (!cardDef) return null;
+  var pool = ((cardDef.companionImages || {})[companionId] || {})[mode] || [];
+  if (!pool.length) return null;
+
+  // Seen list for this exact card+companion+mode
+  if (!pamperState.seenPamperImageIds)                              pamperState.seenPamperImageIds = {};
+  if (!pamperState.seenPamperImageIds[cardId])                      pamperState.seenPamperImageIds[cardId] = {};
+  if (!pamperState.seenPamperImageIds[cardId][companionId])         pamperState.seenPamperImageIds[cardId][companionId] = {};
+  if (!pamperState.seenPamperImageIds[cardId][companionId][mode])   pamperState.seenPamperImageIds[cardId][companionId][mode] = [];
+
+  var seenList = pamperState.seenPamperImageIds[cardId][companionId][mode];
+  var unseen   = pool.filter(function(img) { return seenList.indexOf(img.id) === -1; });
+
+  // If all images in this pool have been shown, reset and use the full pool again
+  var candidates = unseen.length > 0 ? unseen : pool;
+  if (!unseen.length) {
+    pamperState.seenPamperImageIds[cardId][companionId][mode] = [];
+    seenList = [];
+  }
+
+  var picked = candidates[Math.floor(Math.random() * candidates.length)];
+
+  // Record this pick as seen
+  pamperState.seenPamperImageIds[cardId][companionId][mode] = seenList.concat([picked.id]);
+
+  return picked; // { id, src }
+}
+
 // ===== PAMPER STATE =====
 let pamperState = {
   activePamper: null,
-  // activePamper shape: { cardId, companionId, mode, selectedAt, activeUntil, imageSrc, summaryLine }
+  // activePamper shape: { cardId, companionId, mode, selectedAt, activeUntil, imageId, imageSrc, summaryLine }
   archivedPamperCards: [],
   // archivedPamperCards item: same + { archivedAt }
+  seenPamperImageIds: {},
+  // seenPamperImageIds[cardId][companionId][mode] = [imageId, ...]
+  // Tracks which pool images were already shown, so the next pick is always fresh.
+  // Resets per combination once all images in that pool have been seen.
 };
 const PAMPER_STATE_KEY = 'tori_pamper_v1.state';
 
@@ -2863,22 +2900,39 @@ const PAMPER_CARDS = {
     icon: '🛁',
     modes: ['alone', 'friend', 'sister'],
     modeLabels: { alone: 'לבד', friend: 'עם חברה', sister: 'עם אחות' },
-    imagePaths: {
-      bear:   { alone: 'assets/companions/pamper/spa/bear-spa-alone.webp',
-                friend: 'assets/companions/pamper/spa/bear-spa-friend.webp',
-                sister: 'assets/companions/pamper/spa/bear-spa-sister.webp' },
-      cat:    { alone: 'assets/companions/pamper/spa/cat-spa-alone.webp',
-                friend: 'assets/companions/pamper/spa/cat-spa-friend.webp',
-                sister: 'assets/companions/pamper/spa/cat-spa-sister.webp' },
-      forest: { alone: 'assets/companions/pamper/spa/hafshushit-spa-alone.webp',
-                friend: 'assets/companions/pamper/spa/hafshushit-spa-friend.webp',
-                sister: 'assets/companions/pamper/spa/hafshushit-spa-sister.webp' },
-      capy:   { alone: 'assets/companions/pamper/spa/capy-spa-alone.webp',
-                friend: 'assets/companions/pamper/spa/capy-spa-friend.webp',
-                sister: 'assets/companions/pamper/spa/capy-spa-sister.webp' },
-      fox:    { alone: 'assets/companions/pamper/spa/fox-spa-alone.webp',
-                friend: 'assets/companions/pamper/spa/fox-spa-friend.webp',
-                sister: 'assets/companions/pamper/spa/fox-spa-sister.webp' },
+    // companionImages: pool arrays — add more objects to grow the pool per companion+mode.
+    // Each entry: { id: '<ascii-id>', src: '<relative-path>' }
+    // The app randomly picks an unseen image first; repeats only after all have been shown.
+    companionImages: {
+      bear: {
+        alone:  [{ id:'bear-spa-alone-01',  src:'assets/companions/pamper/spa/bear-spa-alone-01.webp' }],
+        friend: [{ id:'bear-spa-friend-01', src:'assets/companions/pamper/spa/bear-spa-friend-01.webp' }],
+        sister: [{ id:'bear-spa-sister-01', src:'assets/companions/pamper/spa/bear-spa-sister-01.webp' }],
+      },
+      cat: {
+        alone:  [{ id:'cat-spa-alone-01',  src:'assets/companions/pamper/spa/cat-spa-alone-01.webp' }],
+        friend: [{ id:'cat-spa-friend-01', src:'assets/companions/pamper/spa/cat-spa-friend-01.webp' }],
+        sister: [{ id:'cat-spa-sister-01', src:'assets/companions/pamper/spa/cat-spa-sister-01.webp' }],
+      },
+      forest: {
+        alone:  [{ id:'hafshushit-spa-alone-01',  src:'assets/companions/pamper/spa/hafshushit-spa-alone-01.webp' }],
+        friend: [{ id:'hafshushit-spa-friend-01', src:'assets/companions/pamper/spa/hafshushit-spa-friend-01.webp' }],
+        sister: [
+          { id:'hafshushit-spa-sister-01', src:'assets/companions/pamper/spa/hafshushit-spa-sister-01.webp' },
+          { id:'hafshushit-spa-sister-02', src:'assets/companions/pamper/spa/hafshushit-spa-sister-02.webp' },
+          { id:'hafshushit-spa-sister-03', src:'assets/companions/pamper/spa/hafshushit-spa-sister-03.webp' },
+        ],
+      },
+      capy: {
+        alone:  [{ id:'capy-spa-alone-01',  src:'assets/companions/pamper/spa/capy-spa-alone-01.webp' }],
+        friend: [{ id:'capy-spa-friend-01', src:'assets/companions/pamper/spa/capy-spa-friend-01.webp' }],
+        sister: [{ id:'capy-spa-sister-01', src:'assets/companions/pamper/spa/capy-spa-sister-01.webp' }],
+      },
+      fox: {
+        alone:  [{ id:'fox-spa-alone-01',  src:'assets/companions/pamper/spa/fox-spa-alone-01.webp' }],
+        friend: [{ id:'fox-spa-friend-01', src:'assets/companions/pamper/spa/fox-spa-friend-01.webp' }],
+        sister: [{ id:'fox-spa-sister-01', src:'assets/companions/pamper/spa/fox-spa-sister-01.webp' }],
+      },
     },
     afterLines: {
       bear:   [
@@ -5778,8 +5832,13 @@ function selectPamperMode(cardId, mode) {
   if (available < cardDef.requiredPoints) return; // guard
 
   var companionId = cs.companionId;
-  var imgSrc = (cardDef.imagePaths[companionId] || {})[mode] || '';
   var now = Date.now();
+
+  // Pick an unseen pool image (records the pick in seenPamperImageIds)
+  var picked = pickPamperImage(cardId, companionId, mode);
+  var imgId  = picked ? picked.id  : '';
+  var imgSrc = picked ? picked.src : '';
+
   // Pick a summary line (seeded from current hour to be deterministic per session)
   var lines = (cardDef.afterLines || {})[companionId] || [];
   var summaryLine = lines.length ? lines[new Date().getHours() % lines.length] : '';
@@ -5790,6 +5849,7 @@ function selectPamperMode(cardId, mode) {
     mode:        mode,
     selectedAt:  new Date().toISOString(),
     activeUntil: now + 24 * 60 * 60 * 1000,   // 24 hours from now
+    imageId:     imgId,
     imageSrc:    imgSrc,
     summaryLine: summaryLine,
   };
