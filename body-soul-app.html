@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-mvp-2026-05-24-1845 -->
+<!-- Tori version: pamper-copy-2026-05-24-1900 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -5654,16 +5654,17 @@ function buildPamperDrawerHTML(c) {
     // Just-activated: show full confirmation copy; otherwise show ongoing state copy
     if (_pamperJustActivated) {
       _pamperJustActivated = false;
-      html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.6">'
+      html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.65">'
         + 'את בחרת לפנק את ה' + c.name + ' היום.<br>'
         + 'זה בזכות רגעים שבהם דאגת גם לעצמך — וזה לא דבר קטן.</div>';
-      html += '<div style="font-size:13px;color:var(--g-sage-deep);line-height:1.55;margin-top:8px;font-style:italic">'
-        + 'עכשיו הספא הקטן שלה יופיע במקום המאורה ל־24 שעות.</div>';
+      html += '<div style="font-size:13px;color:var(--g-sage-deep);line-height:1.55;margin-top:8px">'
+        + 'הספא הקטן שלה יופיע עכשיו בתור הבילוי של היום.</div>';
     } else {
-      html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.6">היא בספא קטן, וזה בזכותך.</div>';
+      html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.65">'
+        + 'את בחרת לפנק את ה' + c.name + ' היום. היא בספא קטן, וזה בזכותך.</div>';
     }
     // Link to gallery
-    html += '<div style="margin-top:10px;font-size:12.5px;color:var(--g-sage-deep);cursor:pointer" onclick="scrollToPamperGallery()">← הבילויים שלי</div>';
+    html += '<div style="margin-top:10px;font-size:12.5px;color:var(--g-sage-deep);cursor:pointer" onclick="scrollToPamperGallery()">הבילויים שלי ←</div>';
     html += '</div>'; // j-pamper-active-card
 
   } else {
@@ -5676,21 +5677,22 @@ function buildPamperDrawerHTML(c) {
       + '<div class="j-pamper-placeholder-icon">🛁</div>'
       + '<div style="font-size:12px;color:var(--g-ink-3)">ספא קטן · ' + c.name + '</div>'
       + '</div></div>';
-    // Points row
+    // Points row — warm framing, no "cost" language
     html += '<div class="j-pamper-pts-row">'
-      + '<span class="j-pamper-pts-chip">15 נקודות חיבור</span>'
-      + '<span class="j-pamper-pts-avail">זמינות לך: ' + available + '</span>'
+      + '<span class="j-pamper-pts-chip">נפתח מ־15 נקודות חיבור</span>'
+      + '<span class="j-pamper-pts-avail">אפשר להקדיש עכשיו: ' + available + '</span>'
       + '</div>';
     // Title + subtitle
     html += '<div style="font-size:16px;font-weight:600;color:var(--g-ink);margin-bottom:4px">ספא קטן</div>';
     html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.55;margin-bottom:14px">'
       + cardDef.subtitle + '</div>';
     // CTA
+    var _nameArticle = c.displayNameWithArticle || ('ה' + c.name);
     if (canChoose) {
-      html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'spa-small\')">לבחור כרטיס פינוק</button>';
+      html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'spa-small\',\'' + c.id + '\')">לבחור פינוק ל' + _nameArticle + '</button>';
     } else {
-      html += '<button class="j-pamper-btn muted" disabled>לבחור כרטיס פינוק</button>';
-      html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והכרטיס הזה ייפתח לבחירה.</div>';
+      html += '<button class="j-pamper-btn muted" disabled>לבחור פינוק ל' + _nameArticle + '</button>';
+      html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והפינוק הזה ייפתח לבחירה.</div>';
     }
     html += '</div>'; // j-pamper-card-wrap
   }
@@ -5716,13 +5718,13 @@ function buildPamperDrawerHTML(c) {
       var iDate = item.selectedAt ? new Date(item.selectedAt).toLocaleDateString('he-IL', {day:'numeric', month:'long'}) : '';
       var iLine = getPamperAfterLine(item.cardId, item.companionId, item.archivedAt);
       html += '<div class="j-pamper-archive-item">';
-      // Thumb: emoji icon (images not yet available — graceful fallback)
       html += '<div class="j-pamper-archive-thumb">'
         + '<span>' + (iCard.icon||'🛁') + '</span>'
         + '</div>';
       html += '<div style="flex:1;min-width:0">'
         + '<div style="font-size:13.5px;font-weight:600;color:var(--g-ink)">' + (iCard.title||item.cardId) + ' · ' + iMode + '</div>'
-        + '<div style="font-size:11.5px;color:var(--g-ink-3);margin-bottom:4px">' + (iComp.name||item.companionId) + (iDate ? ' · ' + iDate : '') + '</div>'
+        + '<div style="font-size:11.5px;color:var(--g-ink-3);margin-bottom:4px">'
+        + 'נבחר עבור ' + (iComp.name||item.companionId) + (iDate ? ' · ' + iDate : '') + '</div>'
         + (iLine ? '<div style="font-size:12.5px;color:var(--g-ink-2);line-height:1.55;font-style:italic">' + iLine + '</div>' : '')
         + '</div>';
       html += '</div>'; // archive-item
@@ -5735,23 +5737,29 @@ function buildPamperDrawerHTML(c) {
 }
 
 // ── Pamper modal (mode picker) ──
-function openPamperModal(cardId) {
+function openPamperModal(cardId, companionId) {
   var existing = document.getElementById('j-pamper-modal');
   if (existing) existing.remove();
   var cardDef = PAMPER_CARDS[cardId];
   if (!cardDef) return;
+  var comp = COMPANIONS[companionId || cs.companionId] || {};
+  // displayNameWithArticle: e.g. "הקפיברה", "הדובה", etc.
+  var withArticle = comp.displayNameWithArticle || ('ה' + comp.name);
+  var modalTitle = 'עם מי ' + withArticle + ' שלך רוצה להתפנק היום?';
+  var modalSub   = 'הבילוי הוא של ' + withArticle + ' שלך. את רק בוחרת לה רגע טוב.'
+    + '<br><span style="font-size:12px;color:var(--g-ink-3)">זה לא משימה בשבילך — רק פינוק קטן בשבילה.</span>';
   var html = '<div class="j-pamper-modal-overlay" id="j-pamper-modal" onclick="closePamperModal()">'
     + '<div class="j-pamper-modal-box" onclick="event.stopPropagation()">'
     + '<div class="j-pamper-modal-handle"></div>'
-    + '<div class="j-pamper-modal-title">למי הדמות שלך יוצאת להתפנק?</div>'
-    + '<div class="j-pamper-modal-sub">הבילוי הוא של הדמות שלך. את רק בוחרת לה רגע טוב.</div>'
+    + '<div class="j-pamper-modal-title">' + modalTitle + '</div>'
+    + '<div class="j-pamper-modal-sub">' + modalSub + '</div>'
     + '<div class="j-pamper-mode-options">';
   cardDef.modes.forEach(function(mode) {
     html += '<button class="j-pamper-mode-btn" onclick="selectPamperMode(\'' + cardId + '\',\'' + mode + '\')">'
       + cardDef.modeLabels[mode] + '</button>';
   });
   html += '</div>'
-    + '<button class="j-pamper-cancel-btn" onclick="closePamperModal()">ביטול</button>'
+    + '<button class="j-pamper-cancel-btn" onclick="closePamperModal()">עוד לא</button>'
     + '</div></div>';
   var wrapper = document.createElement('div');
   wrapper.innerHTML = html;
