@@ -1,3 +1,4 @@
+<!-- Tori version: pamper-mvp-2026-05-24-1845 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1109,6 +1110,149 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   .j-lair-switch-btn { transition: none; }
   .j-lair-img        { transition: none; }
 }
+
+/* ===== PAMPER DRAWER — מגירת הפינוקים ===== */
+.j-pamper-section { display:flex; flex-direction:column; gap:10px; }
+.j-pamper-card-wrap {
+  background:#FFFFFF;
+  border-radius:20px;
+  box-shadow:0 1px 0 rgba(45,42,38,0.02),0 6px 20px -10px rgba(45,42,38,0.10);
+  padding:18px 18px 20px;
+}
+.j-pamper-card-img-area {
+  width:100%; aspect-ratio:4/3; max-height:180px;
+  background:linear-gradient(160deg,#F7F0E8 0%,#EDE4D6 100%);
+  border-radius:14px; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:14px; position:relative;
+}
+.j-pamper-card-img-area img {
+  width:100%; height:100%; object-fit:cover; object-position:center;
+  display:block;
+}
+.j-pamper-placeholder {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:8px; width:100%; height:100%;
+  color:var(--g-ink-3); font-size:13px; text-align:center; padding:16px;
+}
+.j-pamper-placeholder-icon { font-size:40px; line-height:1; }
+.j-pamper-pts-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.j-pamper-pts-chip {
+  font-size:12px; font-weight:600; color:var(--g-sage-deep);
+  background:var(--g-sage-soft); border-radius:999px;
+  padding:4px 11px;
+}
+.j-pamper-pts-avail {
+  font-size:12px; color:var(--g-ink-3);
+}
+.j-pamper-btn {
+  width:100%; padding:13px 16px; border-radius:999px;
+  border:none; font-size:14px; font-weight:600;
+  font-family:'Assistant',sans-serif; cursor:pointer;
+  transition:transform 0.15s, opacity 0.15s;
+}
+.j-pamper-btn:active { transform:scale(0.97); }
+.j-pamper-btn.primary {
+  background:var(--g-sage-deep); color:#FFFFFF;
+  box-shadow:0 4px 14px -4px rgba(109,139,110,0.45);
+}
+.j-pamper-btn.muted {
+  background:#F2EDE4; color:var(--g-ink-3); cursor:default;
+}
+.j-pamper-soon {
+  font-size:13px; color:var(--g-ink-3); line-height:1.55;
+  text-align:center; padding:4px 0 0;
+}
+/* Active pamper state */
+.j-pamper-active-card {
+  background:linear-gradient(160deg,#F2F7F2 0%,#EAF0EA 100%);
+  border-radius:20px; padding:18px 18px 20px;
+  box-shadow:0 1px 0 rgba(45,42,38,0.02),0 6px 20px -10px rgba(45,42,38,0.08);
+}
+.j-pamper-active-scene {
+  width:100%; aspect-ratio:4/3; max-height:180px;
+  background:linear-gradient(160deg,#E8F0E8 0%,#D8E8D8 100%);
+  border-radius:14px; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:14px;
+}
+.j-pamper-active-scene img {
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.j-pamper-expired-msg {
+  background:#F7F3EC; border-radius:14px; padding:14px 16px;
+  font-size:13px; color:var(--g-ink-2); line-height:1.6;
+}
+/* Gallery */
+.j-pamper-gallery { display:flex; flex-direction:column; gap:8px; }
+.j-pamper-archive-item {
+  background:#FAFAF8; border-radius:16px; padding:14px 16px;
+  border:1px solid rgba(45,42,38,0.07);
+  display:flex; gap:12px; align-items:flex-start;
+}
+.j-pamper-archive-thumb {
+  width:52px; height:52px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg,#F0EBE0,#E0D8CC);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+}
+.j-pamper-archive-thumb img {
+  width:100%; height:100%; object-fit:cover; border-radius:10px;
+}
+/* Mode picker modal */
+.j-pamper-modal-overlay {
+  position:fixed; inset:0; z-index:200;
+  background:rgba(45,42,38,0.38); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+  display:flex; align-items:flex-end; justify-content:center;
+  padding:0 0 env(safe-area-inset-bottom,0);
+}
+.j-pamper-modal-box {
+  background:#FFFFFF; border-radius:26px 26px 0 0; width:100%; max-width:480px;
+  padding:26px 22px calc(26px + env(safe-area-inset-bottom,0));
+  box-shadow:0 -8px 40px rgba(45,42,38,0.18);
+}
+.j-pamper-modal-handle {
+  width:36px; height:4px; border-radius:999px;
+  background:rgba(45,42,38,0.12); margin:0 auto 20px;
+}
+.j-pamper-modal-title {
+  font-family:'Frank Ruhl Libre',serif; font-size:22px; font-weight:500;
+  color:var(--g-ink); line-height:1.2; margin-bottom:6px; text-align:center;
+}
+.j-pamper-modal-sub {
+  font-size:13px; color:var(--g-ink-3); line-height:1.55;
+  text-align:center; margin-bottom:20px;
+}
+.j-pamper-mode-options {
+  display:flex; flex-direction:column; gap:9px; margin-bottom:14px;
+}
+.j-pamper-mode-btn {
+  width:100%; padding:14px 18px; border-radius:14px;
+  border:1.5px solid rgba(45,42,38,0.10);
+  background:#FAFAF8; color:var(--g-ink); font-size:15px;
+  font-weight:500; font-family:'Assistant',sans-serif;
+  cursor:pointer; text-align:center;
+  transition:background 0.15s, border-color 0.15s;
+}
+.j-pamper-mode-btn:active { background:#F0EAE0; border-color:rgba(45,42,38,0.2); }
+.j-pamper-cancel-btn {
+  width:100%; padding:11px; border:none; background:none;
+  font-size:13.5px; color:var(--g-ink-3); cursor:pointer;
+  font-family:'Assistant',sans-serif;
+}
+/* Confirmation panel (replaces card after activation) */
+.j-pamper-confirm-panel {
+  background:linear-gradient(160deg,#F2F7F2 0%,#EBF0EB 100%);
+  border-radius:18px; padding:18px;
+  font-size:13.5px; color:var(--g-ink-2); line-height:1.65;
+}
+.j-pamper-confirm-accent {
+  font-size:13px; color:var(--g-sage-deep);
+  font-style:italic; margin-top:8px; line-height:1.55;
+}
 </style>
 <script>
 if('serviceWorker' in navigator){
@@ -2031,6 +2175,8 @@ const GARDEN_FACTS = [
 // Garden state
 let gs = {
   points: 0,
+  lifetimeConnectionPoints: 0,  // total ever earned — never decremented
+  dedicatedPamperPoints: 0,      // points committed to pamper cards
   garden: {plants:[], wild:[], elements:[]},
   daysJournal: [],
   todayMood: 'regular',
@@ -2052,7 +2198,17 @@ async function saveGardenState() {
 async function loadGardenState() {
   try {
     const raw = await store.get('tori_garden_v1.userState');
-    if (raw) { const d=JSON.parse(raw); Object.assign(gs, d); }
+    if (raw) {
+      const d = JSON.parse(raw);
+      Object.assign(gs, d);
+      // Migration: if lifetimeConnectionPoints was never saved, seed it from gs.points
+      if (typeof gs.lifetimeConnectionPoints !== 'number' || gs.lifetimeConnectionPoints === 0 && gs.points > 0) {
+        gs.lifetimeConnectionPoints = gs.points || 0;
+      }
+      if (typeof gs.dedicatedPamperPoints !== 'number') {
+        gs.dedicatedPamperPoints = 0;
+      }
+    }
   } catch(e){}
   // Day rollover
   const today = getTodayKey();
@@ -2085,6 +2241,70 @@ async function loadGardenState() {
   await saveGardenState();
 }
 
+// ---- Connection Points helpers ----
+// availablePamperPoints = lifetimeConnectionPoints − dedicatedPamperPoints
+function getAvailablePamperPoints() {
+  return Math.max(0, (gs.lifetimeConnectionPoints || 0) - (gs.dedicatedPamperPoints || 0));
+}
+
+// ===== PAMPER STATE =====
+let pamperState = {
+  activePamper: null,
+  // activePamper shape: { cardId, companionId, mode, selectedAt, activeUntil, imageSrc, summaryLine }
+  archivedPamperCards: [],
+  // archivedPamperCards item: same + { archivedAt }
+};
+const PAMPER_STATE_KEY = 'tori_pamper_v1.state';
+
+async function savePamperState() {
+  try { await store.set(PAMPER_STATE_KEY, JSON.stringify(pamperState)); } catch(e) {}
+}
+
+async function loadPamperState() {
+  try {
+    const raw = await store.get(PAMPER_STATE_KEY);
+    if (raw) { const d = JSON.parse(raw); Object.assign(pamperState, d); }
+  } catch(e) {}
+  checkPamperExpiry();
+}
+
+// Returns true if a pamper just expired (useful for showing the gentle inline message).
+function checkPamperExpiry() {
+  if (!pamperState.activePamper) return false;
+  if (Date.now() >= pamperState.activePamper.activeUntil) {
+    pamperState.archivedPamperCards.unshift(
+      Object.assign({}, pamperState.activePamper, { archivedAt: new Date().toISOString() })
+    );
+    pamperState.activePamper = null;
+    savePamperState();
+    return true;
+  }
+  return false;
+}
+
+// Returns the active pamper if it's still valid for the given companion (or any companion if companionId omitted).
+function getActivePamper(companionId) {
+  checkPamperExpiry();
+  var ap = pamperState.activePamper;
+  if (!ap) return null;
+  if (companionId && ap.companionId !== companionId) return null;
+  return ap;
+}
+
+// Pick a deterministic-but-varied summary line for a companion.
+function getPamperAfterLine(cardId, companionId, archivedAt) {
+  var card = PAMPER_CARDS[cardId];
+  if (!card) return '';
+  var lines = card.afterLines[companionId] || card.afterLines['capy'] || [];
+  if (!lines.length) return '';
+  // Use date string to vary the line without pure random (stable across renders).
+  var seed = archivedAt ? (new Date(archivedAt).getDate() % lines.length) : 0;
+  return lines[seed];
+}
+
+// JS-only flag set when the user just activated a pamper this session (shows confirmation).
+var _pamperJustActivated = false;
+
 // ---- Mood logic ----
 function updateGardenMood() {
   const h = new Date().getHours();
@@ -2111,6 +2331,7 @@ function addGardenAction(kind) {
   gs.todayActions.push({kind, count:1, loggedAt:new Date().toISOString()});
   gs.todayPoints += capped;
   gs.points += capped;
+  gs.lifetimeConnectionPoints += capped;
   evaluateWildFlowers(kind);
   syncMoodFromApp();
   saveGardenState();
@@ -2626,6 +2847,65 @@ const COMPANION_LAIRS = {
                 alt: 'שועלה גוללת בטלפון במאורה שלה' },
       phone:  { src: 'assets/companions/lairs/fox-phone.webp',
                 alt: 'שועלה עם פלאפון במאורה שלה, רגועה' },
+    },
+  },
+};
+
+// ===== PAMPER CARDS — מגירת הפינוקים =====
+// imagePaths: relative to site root. Files may not exist yet;
+// the UI falls back to a calm placeholder automatically.
+const PAMPER_CARDS = {
+  'spa-small': {
+    id: 'spa-small',
+    title: 'ספא קטן',
+    subtitle: 'את בוחרת לפנק את הדמות שלך ברגע רגוע, כי גם לה מגיע לנוח בזכות זה שדאגת לעצמך.',
+    requiredPoints: 15,
+    icon: '🛁',
+    modes: ['alone', 'friend', 'sister'],
+    modeLabels: { alone: 'לבד', friend: 'עם חברה', sister: 'עם אחות' },
+    imagePaths: {
+      bear:   { alone: 'assets/companions/pamper/spa/bear-spa-alone.webp',
+                friend: 'assets/companions/pamper/spa/bear-spa-friend.webp',
+                sister: 'assets/companions/pamper/spa/bear-spa-sister.webp' },
+      cat:    { alone: 'assets/companions/pamper/spa/cat-spa-alone.webp',
+                friend: 'assets/companions/pamper/spa/cat-spa-friend.webp',
+                sister: 'assets/companions/pamper/spa/cat-spa-sister.webp' },
+      forest: { alone: 'assets/companions/pamper/spa/hafshushit-spa-alone.webp',
+                friend: 'assets/companions/pamper/spa/hafshushit-spa-friend.webp',
+                sister: 'assets/companions/pamper/spa/hafshushit-spa-sister.webp' },
+      capy:   { alone: 'assets/companions/pamper/spa/capy-spa-alone.webp',
+                friend: 'assets/companions/pamper/spa/capy-spa-friend.webp',
+                sister: 'assets/companions/pamper/spa/capy-spa-sister.webp' },
+      fox:    { alone: 'assets/companions/pamper/spa/fox-spa-alone.webp',
+                friend: 'assets/companions/pamper/spa/fox-spa-friend.webp',
+                sister: 'assets/companions/pamper/spa/fox-spa-sister.webp' },
+    },
+    afterLines: {
+      bear:   [
+        'היה נעים, היה חמים, ועכשיו חוזרות הביתה לספל שמכיר אותנו אישית.',
+        'ספא זה נחמד מאוד. גם לחזור לשמיכה זה אירוע תרבותי.',
+        'עשינו פינוק, נשמנו קצת, ועכשיו הבית מקבל אותנו בלי לשאול שאלות.',
+      ],
+      cat:    [
+        'הספא היה מוצלח. המוח כמעט לא ניסה לנהל את המקום, וזה כבר הישג שקט.',
+        'יצאנו, התפנקנו, חזרנו עם פרווה מסודרת וקצת פחות רעש בראש.',
+        'היה אלגנטי, היה נעים, ולא נתנו למחשבות לקבל כיסא VIP.',
+      ],
+      forest: [
+        'היה טוב. עטפנו את היום במגבת קטנה וחזרנו למאורה עם עלה בכיס.',
+        'הספא עשה פוף קטן על הלב. לא פתר הכול, אבל פוף זה גם משהו.',
+        'יצאנו לפינוק קטן, חזרנו בשלום, והמשימה הזאת לא נשכה אף אחת.',
+      ],
+      capy:   [
+        'היה טוב וטוב שהיה. עכשיו נחזור הביתה לפני שמישהו מציע פעילות נוספת.',
+        'ספא זה נחמד. בית זה גם נחמד. אני בעד שני הדברים במידה שלא דורשת נעליים.',
+        'התפנקנו, שרדנו את החלק החברתי, וחזרנו עם פנים רגועות באופן חשוד.',
+      ],
+      fox:    [
+        'עשינו יציאה אלגנטית, אספנו פינוק קטן, וחזרנו לפני שהאנרגיה ביקשה חשבונית.',
+        'היה פינוק מוצלח. אפילו ההתנגדות הודתה שזה היה מהלך חכם.',
+        'יצאנו, התפנקנו, חזרנו. תוכנית קטנה, ביצוע יפה, אפס נאומים.',
+      ],
     },
   },
 };
@@ -4918,6 +5198,8 @@ async function init() {
   await loadCustomTasks();
   await loadBotData();
   await loadJourneyPoints();
+  await loadGardenState();
+  await loadPamperState();
   await loadDay(); await loadStreak();
   await loadCompassionState();
   await loadNotifState();
@@ -5223,16 +5505,40 @@ function buildCompanionHeroHTML(c, marks, mood) {
     return '<div class="j-home-mark-chip">' + (labelMap[k] || k) + '</div>';
   }).join('');
 
-  // Lair image — resolved from COMPANION_LAIRS defaultState; falls back to homeImg
-  var lairImg = getActiveLair(c.id);
-  var imgSrc  = lairImg ? lairImg.src : (c.homeImg || c.img);
-  var imgAlt  = lairImg ? lairImg.alt : (c.name + ' במאורה שלה');
-  // State-switching UI is NOT rendered in the MVP.
-  // cycleLairState() is implemented and ready; add a button here when needed.
+  // Check for active pamper scene — overrides regular lair for 24 hours
+  var _activePamper = getActivePamper(c.id);
+  var imgSrc, imgAlt;
+  if (_activePamper) {
+    imgSrc   = _activePamper.imageSrc || '';
+    imgAlt   = c.name + ' בספא קטן';
+    pillText = 'הבילוי של היום';
+    dotColor = c.accent;
+  } else {
+    // Lair image — resolved from COMPANION_LAIRS defaultState; falls back to homeImg
+    var lairImg = getActiveLair(c.id);
+    imgSrc  = lairImg ? lairImg.src : (c.homeImg || c.img);
+    imgAlt  = lairImg ? lairImg.alt : (c.name + ' במאורה שלה');
+    // State-switching UI is NOT rendered in the MVP.
+    // cycleLairState() is implemented and ready; add a button here when needed.
+  }
 
-  // Full-scene illustration with lair image
+  // Image element — onerror shows placeholder (for missing pamper / lair assets)
+  var _phIcon = _activePamper ? '🛁' : '🏠';
+  var _phText = _activePamper ? ('ספא קטן · ' + c.name) : (c.name + ' במאורה');
+  var _phStyle = 'display:none;width:100%;height:100%;align-items:center;justify-content:center;'
+    + 'flex-direction:column;gap:8px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:20px';
+  var _phDiv  = '<div id="j-lair-ph" style="' + _phStyle + '">'
+    + '<span style="font-size:44px">' + _phIcon + '</span>'
+    + '<span>' + _phText + '</span></div>';
+  var imgHTML = imgSrc
+    ? '<img id="j-lair-img" class="j-lair-img" src="' + imgSrc + '" alt="' + imgAlt + '" loading="lazy" decoding="async"'
+      + ' onerror="this.onerror=null;this.style.display=\'none\';var ph=document.getElementById(\'j-lair-ph\');if(ph)ph.style.display=\'flex\';">'
+      + _phDiv
+    : _phDiv.replace('display:none', 'display:flex');
+
+  // Full-scene illustration with lair/pamper image
   var homeHTML = '<div class="j-home-img-wrap' + (compassion ? ' cave' : '') + '">'
-    + '<img id="j-lair-img" class="j-lair-img" src="' + imgSrc + '" alt="' + imgAlt + '" loading="lazy" decoding="async">'
+    + imgHTML
     + (marksHTML ? '<div class="j-home-marks">' + marksHTML + '</div>' : '')
     + '<div class="j-home-pill">'
     + '<span class="j-home-pill-dot" style="background:' + dotColor + '"></span>'
@@ -5277,7 +5583,7 @@ function buildAlongTheDayHTML(marks, c) {
 function buildStoneTrailHTML() { return ''; /* removed — companion model replaces trail model */}
 
 function buildPointsCardHTML(points, marks, c) {
-  var todayPoints = (marks.length * 3 + 2);
+  var todayPoints = gs.todayPoints || 0;
   var content = '<div style="display:flex;align-items:baseline;justify-content:space-between">'
     +'<div>'
     +'<div class="j-eyebrow">נקודות חיבור</div>'
@@ -5311,6 +5617,190 @@ function buildHabitStrengthHTML(habits) {
   });
   content += '</div>';
   return buildMCard(content);
+}
+
+// ── Pamper Drawer — מגירת הפינוקים ──
+function buildPamperDrawerHTML(c) {
+  var cardDef   = PAMPER_CARDS['spa-small'];
+  var available = getAvailablePamperPoints();
+  var canChoose = available >= cardDef.requiredPoints;
+  var ap        = getActivePamper(c.id);  // active pamper for THIS companion
+  var html      = '<div class="j-pamper-section">';
+
+  // ── Section eyebrow
+  html += '<div class="j-eyebrow" style="padding:0 2px">מגירת הפינוקים</div>';
+
+  if (ap) {
+    // ── Active pamper state ──
+    var modeLabel = cardDef.modeLabels[ap.mode] || ap.mode;
+    html += '<div class="j-pamper-active-card">';
+    // Active scene image / placeholder
+    html += '<div class="j-pamper-active-scene">';
+    if (ap.imageSrc) {
+      html += '<img src="' + ap.imageSrc + '" alt="' + c.name + ' בספא קטן" loading="lazy"'
+        + ' onerror="this.onerror=null;this.style.display=\'none\';var ph=this.nextElementSibling;if(ph)ph.style.display=\'flex\';">'
+        + '<div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;'
+        + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
+        + '<span style="font-size:36px">🛁</span><span>ספא קטן · ' + c.name + '</span></div>';
+    } else {
+      html += '<div style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;'
+        + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
+        + '<span style="font-size:36px">🛁</span><span>ספא קטן · ' + c.name + '</span></div>';
+    }
+    html += '</div>';
+    // Active copy
+    html += '<div style="font-size:11.5px;letter-spacing:0.4px;color:var(--g-ink-3);margin-bottom:4px">הבילוי של היום</div>';
+    html += '<div class="serif" style="font-size:19px;font-weight:500;color:var(--g-ink);line-height:1.2;margin-bottom:8px">ספא קטן · ' + modeLabel + '</div>';
+    // Just-activated: show full confirmation copy; otherwise show ongoing state copy
+    if (_pamperJustActivated) {
+      _pamperJustActivated = false;
+      html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.6">'
+        + 'את בחרת לפנק את ה' + c.name + ' היום.<br>'
+        + 'זה בזכות רגעים שבהם דאגת גם לעצמך — וזה לא דבר קטן.</div>';
+      html += '<div style="font-size:13px;color:var(--g-sage-deep);line-height:1.55;margin-top:8px;font-style:italic">'
+        + 'עכשיו הספא הקטן שלה יופיע במקום המאורה ל־24 שעות.</div>';
+    } else {
+      html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.6">היא בספא קטן, וזה בזכותך.</div>';
+    }
+    // Link to gallery
+    html += '<div style="margin-top:10px;font-size:12.5px;color:var(--g-sage-deep);cursor:pointer" onclick="scrollToPamperGallery()">← הבילויים שלי</div>';
+    html += '</div>'; // j-pamper-active-card
+
+  } else {
+    // ── Card browser: ספא קטן ──
+
+    html += '<div class="j-pamper-card-wrap">';
+    // Image area (placeholder until real images exist)
+    html += '<div class="j-pamper-card-img-area">'
+      + '<div class="j-pamper-placeholder">'
+      + '<div class="j-pamper-placeholder-icon">🛁</div>'
+      + '<div style="font-size:12px;color:var(--g-ink-3)">ספא קטן · ' + c.name + '</div>'
+      + '</div></div>';
+    // Points row
+    html += '<div class="j-pamper-pts-row">'
+      + '<span class="j-pamper-pts-chip">15 נקודות חיבור</span>'
+      + '<span class="j-pamper-pts-avail">זמינות לך: ' + available + '</span>'
+      + '</div>';
+    // Title + subtitle
+    html += '<div style="font-size:16px;font-weight:600;color:var(--g-ink);margin-bottom:4px">ספא קטן</div>';
+    html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.55;margin-bottom:14px">'
+      + cardDef.subtitle + '</div>';
+    // CTA
+    if (canChoose) {
+      html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'spa-small\')">לבחור כרטיס פינוק</button>';
+    } else {
+      html += '<button class="j-pamper-btn muted" disabled>לבחור כרטיס פינוק</button>';
+      html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והכרטיס הזה ייפתח לבחירה.</div>';
+    }
+    html += '</div>'; // j-pamper-card-wrap
+  }
+
+  // ── Gallery "הבילויים שלי" ──
+  var archived = pamperState.archivedPamperCards || [];
+  if (archived.length > 0) {
+    // Gentle inline message if the most recent was archived in the last 12 hours
+    var latest = archived[0];
+    var msAgo = latest.archivedAt ? Date.now() - new Date(latest.archivedAt).getTime() : Infinity;
+    if (msAgo < 12 * 3600 * 1000) {
+      html += '<div class="j-pamper-expired-msg">'
+        + 'היה ממש כיף. וכמה נעים גם לחזור הביתה.<br>'
+        + 'הבילוי נשמר ב״הבילויים שלי״.'
+        + '</div>';
+    }
+    html += '<div id="j-pamper-gallery" class="j-pamper-gallery">';
+    html += '<div class="j-eyebrow" style="padding:0 2px">הבילויים שלי</div>';
+    archived.forEach(function(item) {
+      var iCard = PAMPER_CARDS[item.cardId] || {};
+      var iComp = COMPANIONS[item.companionId] || {};
+      var iMode = (iCard.modeLabels || {})[item.mode] || item.mode;
+      var iDate = item.selectedAt ? new Date(item.selectedAt).toLocaleDateString('he-IL', {day:'numeric', month:'long'}) : '';
+      var iLine = getPamperAfterLine(item.cardId, item.companionId, item.archivedAt);
+      html += '<div class="j-pamper-archive-item">';
+      // Thumb: emoji icon (images not yet available — graceful fallback)
+      html += '<div class="j-pamper-archive-thumb">'
+        + '<span>' + (iCard.icon||'🛁') + '</span>'
+        + '</div>';
+      html += '<div style="flex:1;min-width:0">'
+        + '<div style="font-size:13.5px;font-weight:600;color:var(--g-ink)">' + (iCard.title||item.cardId) + ' · ' + iMode + '</div>'
+        + '<div style="font-size:11.5px;color:var(--g-ink-3);margin-bottom:4px">' + (iComp.name||item.companionId) + (iDate ? ' · ' + iDate : '') + '</div>'
+        + (iLine ? '<div style="font-size:12.5px;color:var(--g-ink-2);line-height:1.55;font-style:italic">' + iLine + '</div>' : '')
+        + '</div>';
+      html += '</div>'; // archive-item
+    });
+    html += '</div>'; // gallery
+  }
+
+  html += '</div>'; // j-pamper-section
+  return html;
+}
+
+// ── Pamper modal (mode picker) ──
+function openPamperModal(cardId) {
+  var existing = document.getElementById('j-pamper-modal');
+  if (existing) existing.remove();
+  var cardDef = PAMPER_CARDS[cardId];
+  if (!cardDef) return;
+  var html = '<div class="j-pamper-modal-overlay" id="j-pamper-modal" onclick="closePamperModal()">'
+    + '<div class="j-pamper-modal-box" onclick="event.stopPropagation()">'
+    + '<div class="j-pamper-modal-handle"></div>'
+    + '<div class="j-pamper-modal-title">למי הדמות שלך יוצאת להתפנק?</div>'
+    + '<div class="j-pamper-modal-sub">הבילוי הוא של הדמות שלך. את רק בוחרת לה רגע טוב.</div>'
+    + '<div class="j-pamper-mode-options">';
+  cardDef.modes.forEach(function(mode) {
+    html += '<button class="j-pamper-mode-btn" onclick="selectPamperMode(\'' + cardId + '\',\'' + mode + '\')">'
+      + cardDef.modeLabels[mode] + '</button>';
+  });
+  html += '</div>'
+    + '<button class="j-pamper-cancel-btn" onclick="closePamperModal()">ביטול</button>'
+    + '</div></div>';
+  var wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  document.body.appendChild(wrapper.firstElementChild);
+}
+
+function closePamperModal() {
+  var el = document.getElementById('j-pamper-modal');
+  if (el) el.remove();
+}
+
+function selectPamperMode(cardId, mode) {
+  var cardDef = PAMPER_CARDS[cardId];
+  if (!cardDef) return;
+  var available = getAvailablePamperPoints();
+  if (available < cardDef.requiredPoints) return; // guard
+
+  var companionId = cs.companionId;
+  var imgSrc = (cardDef.imagePaths[companionId] || {})[mode] || '';
+  var now = Date.now();
+  // Pick a summary line (seeded from current hour to be deterministic per session)
+  var lines = (cardDef.afterLines || {})[companionId] || [];
+  var summaryLine = lines.length ? lines[new Date().getHours() % lines.length] : '';
+
+  pamperState.activePamper = {
+    cardId:      cardId,
+    companionId: companionId,
+    mode:        mode,
+    selectedAt:  new Date().toISOString(),
+    activeUntil: now + 24 * 60 * 60 * 1000,   // 24 hours from now
+    imageSrc:    imgSrc,
+    summaryLine: summaryLine,
+  };
+
+  // Dedicate points — do NOT decrement lifetimeConnectionPoints
+  gs.dedicatedPamperPoints = (gs.dedicatedPamperPoints || 0) + cardDef.requiredPoints;
+
+  // Persist both
+  savePamperState();
+  saveGardenState();
+
+  closePamperModal();
+  _pamperJustActivated = true;  // show confirmation on next render
+  renderJourneyTab();
+}
+
+function scrollToPamperGallery() {
+  var el = document.getElementById('j-pamper-gallery');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function buildFactCardHTML() {
@@ -5513,7 +6003,7 @@ function buildJourneyMainHTML() {
   if (!c) return ''; // renderJourneyTab shows companion select instead
   var marks = getJourneyMarks();
   var mood = deriveCompanionMood();
-  var points = gs.points || 0;
+  var points = gs.lifetimeConnectionPoints || gs.points || 0;
   var habits = getJourneyHabits();
   // Date label computed directly — no trail dependency
   var todayDateLabel = new Date().toLocaleDateString('he-IL', {weekday:'long', month:'long', day:'numeric'});
@@ -5525,6 +6015,7 @@ function buildJourneyMainHTML() {
     buildCompanionActionsHTML(c),
     buildAlongTheDayHTML(marks, c),
     buildPointsCardHTML(points, marks, c),
+    buildPamperDrawerHTML(c),
     buildHabitStrengthHTML(habits),
     buildFactCardHTML(),
   ];
@@ -5611,6 +6102,7 @@ function closeDayDetail() { /* removed — trail no longer shown */ }
 async function checkAndShowCompanion() {
   await loadCompanionState();
   await loadLairStates(); // load per-companion lair state before rendering
+  checkPamperExpiry();   // archive expired pampers before rendering
   cs._pendingId = cs._pendingId || cs.companionId;
   renderJourneyTab();
 }

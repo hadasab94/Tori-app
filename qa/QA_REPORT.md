@@ -1,6 +1,6 @@
 # QA Report — תורי
 
-**Date:** 2026-05-21 20:22:57
+**Date:** 2026-05-24 16:03:00
 **Target:** https://hadasab94.github.io/Tori-app/ (live)
 **Suites run:** ALL
 
