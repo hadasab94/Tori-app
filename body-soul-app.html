@@ -1,4 +1,4 @@
-<!-- Tori version: envelope-img-2026-05-25-2000 -->
+<!-- Tori version: envelope-preview-fix-2026-05-25-2030 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2486,10 +2486,11 @@ function repairPamperImageRefs() {
       }
     }
 
-    // Repair missing previewImage
-    if (!ap.previewImage) {
-      var cd = PAMPER_CARDS[ap.cardId];
-      if (cd && cd.previewImage) { ap.previewImage = cd.previewImage; repaired = true; }
+    // Sync previewImage to current card definition (fixes stale paths after card update)
+    var cd = PAMPER_CARDS[ap.cardId];
+    var cdPreview = cd && cd.previewImage;
+    if (cdPreview && ap.previewImage !== cdPreview) {
+      ap.previewImage = cdPreview; repaired = true;
     }
 
     // Repair missing summaryLine — pick first available caption for this combination
@@ -2522,9 +2523,11 @@ function repairPamperImageRefs() {
           { idx: idx, cardId: arc.cardId, companionId: arc.companionId, mode: arc.mode, imageId: picked.id });
       }
     }
-    if (!arc.previewImage) {
-      var cd3 = PAMPER_CARDS[arc.cardId];
-      if (cd3 && cd3.previewImage) { arc.previewImage = cd3.previewImage; repaired = true; }
+    // Sync previewImage to current card definition (fixes stale paths after card update)
+    var cd3 = PAMPER_CARDS[arc.cardId];
+    var cd3Preview = cd3 && cd3.previewImage;
+    if (cd3Preview && arc.previewImage !== cd3Preview) {
+      arc.previewImage = cd3Preview; repaired = true;
     }
     if (!arc.summaryLine) {
       var ml2 = (((((PAMPER_CARDS[arc.cardId] || {}).afterLines || {})[arc.companionId] || {})[arc.mode] || []));
@@ -6243,8 +6246,8 @@ function _buildMyPampersSheetHTML() {
       var aCard    = PAMPER_CARDS[ap.cardId] || {};
       var aComp    = COMPANIONS[ap.companionId] || {};
       var aMode    = (aCard.modeLabels || {})[ap.mode] || ap.mode;
-      // Use saved previewImage first, fallback to cardDef
-      var aPreview = ap.previewImage || aCard.previewImage || '';
+      // Always use current card definition for envelope cover; fall back to saved value
+      var aPreview = aCard.previewImage || ap.previewImage || '';
 
       inner += '<div class="j-myp-item">';
       inner += '<div class="j-myp-thumb">'
@@ -6273,8 +6276,8 @@ function _buildMyPampersSheetHTML() {
       var iComp    = COMPANIONS[item.companionId] || {};
       var iMode    = (iCard.modeLabels || {})[item.mode] || item.mode;
       var iDate    = item.selectedAt ? new Date(item.selectedAt).toLocaleDateString('he-IL', {day:'numeric', month:'long'}) : '';
-      // Use saved previewImage first, fallback to cardDef
-      var iPreview = item.previewImage || iCard.previewImage || '';
+      // Always use current card definition for envelope cover; fall back to saved value
+      var iPreview = iCard.previewImage || item.previewImage || '';
 
       inner += '<div class="j-myp-item">';
       inner += '<div class="j-myp-thumb">'
