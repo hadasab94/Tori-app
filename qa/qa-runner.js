@@ -46,6 +46,7 @@ const SUITES = [
   { id: 'QA7', name: 'Water drops',                            grep: 'QA7:' },
   { id: 'QA8', name: 'Compassion day',                         grep: 'QA8:' },
   { id: 'QA9', name: 'RTL & mobile layout',                   grep: 'QA9:' },
+  { id: 'QA10', name: 'Pamper image repair — legacy migration', grep: 'QA10:' },
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────

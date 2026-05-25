@@ -1,4 +1,4 @@
-<!-- Tori version: spa-images-pool-import-2026-05-25-1200 -->
+<!-- Tori version: pamper-image-repair-2026-05-25-1400 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2303,6 +2303,77 @@ async function loadPamperState() {
     if (raw) { const d = JSON.parse(raw); Object.assign(pamperState, d); }
   } catch(e) {}
   checkPamperExpiry();
+  repairPamperImageRefs();  // heal legacy records with missing/invalid imageSrc
+}
+
+// ─── Pamper image repair ─────────────────────────────────────────────────────
+// Runs after loadPamperState(). Finds activePamper or archived records whose
+// imageSrc/imageId are missing or invalid and quietly assigns a valid pool image.
+// Does NOT change points, activeUntil, selectedAt, or any user data.
+// Once repaired the new imageSrc is saved, so the same image survives refreshes.
+//
+// "Invalid" means any of:
+//   • imageSrc is falsy / null / undefined / empty string
+//   • imageId is falsy
+//   • imageSrc contains Windows drive letter (C:\...)
+//   • imageSrc contains Hebrew characters (old AI placeholder paths)
+//   • imageSrc does not start with "assets/" (absolute or external)
+//   • imageSrc is not present in the current PAMPER_CARDS pool for that card+companion+mode
+//
+function _isPamperSrcValid(src, cardId, companionId, mode) {
+  if (!src || typeof src !== 'string') return false;
+  if (/[A-Za-z]:[\\\/]/.test(src))    return false;   // Windows absolute path
+  if (/[א-ת]/.test(src))    return false;   // Hebrew characters
+  if (src.indexOf('assets/') !== 0)   return false;   // not a relative asset path
+  // Must be a member of the current pool
+  var cardDef = PAMPER_CARDS[cardId];
+  if (!cardDef) return false;
+  var pool = ((cardDef.companionImages || {})[companionId] || {})[mode] || [];
+  return pool.some(function(img) { return img.src === src; });
+}
+
+function repairPamperImageRefs() {
+  var repaired = false;
+
+  // ── Repair activePamper ──────────────────────────────────────────────
+  var ap = pamperState.activePamper;
+  if (ap && Date.now() < ap.activeUntil) {
+    var apNeedsRepair = !ap.imageId
+      || !_isPamperSrcValid(ap.imageSrc, ap.cardId, ap.companionId, ap.mode);
+    if (apNeedsRepair) {
+      var picked = pickPamperImage(ap.cardId, ap.companionId, ap.mode);
+      if (picked) {
+        ap.imageId  = picked.id;
+        ap.imageSrc = picked.src;
+        repaired = true;
+        console.info('[pamper repair] repaired activePamper image', {
+          cardId: ap.cardId, companionId: ap.companionId, mode: ap.mode,
+          imageId: picked.id, imageSrc: picked.src,
+        });
+      }
+    }
+  }
+
+  // ── Repair archivedPamperCards ───────────────────────────────────────
+  var archived = pamperState.archivedPamperCards || [];
+  archived.forEach(function(arc, idx) {
+    var arcNeedsRepair = !arc.imageId
+      || !_isPamperSrcValid(arc.imageSrc, arc.cardId, arc.companionId, arc.mode);
+    if (arcNeedsRepair) {
+      var picked = pickPamperImage(arc.cardId, arc.companionId, arc.mode);
+      if (picked) {
+        arc.imageId  = picked.id;
+        arc.imageSrc = picked.src;
+        repaired = true;
+        console.info('[pamper repair] repaired archived pamper image', {
+          idx: idx, cardId: arc.cardId, companionId: arc.companionId, mode: arc.mode,
+          imageId: picked.id, imageSrc: picked.src,
+        });
+      }
+    }
+  });
+
+  if (repaired) { savePamperState(); }
 }
 
 // Returns true if a pamper just expired (useful for showing the gentle inline message).

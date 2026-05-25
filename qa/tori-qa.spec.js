@@ -1,6 +1,6 @@
 // qa/tori-qa.spec.js
 // Permanent QA suite for the תורי app.
-// 9 test suites — run with qa-runner.js to generate QA_REPORT.md and REPAIR_PROMPT.md.
+// 10 test suites — run with qa-runner.js to generate QA_REPORT.md and REPAIR_PROMPT.md.
 //
 // Rules:
 //  ✗  Does NOT auto-fix any bug
@@ -9,7 +9,7 @@
 //  ✓  Generates REPAIR_PROMPT.md if anything fails
 
 const { test, expect } = require('@playwright/test');
-const { gotoApp, goToJourneyTab } = require('./helpers');
+const { gotoApp, goToJourneyTab, APP_HTML } = require('./helpers');
 
 // ══════════════════════════════════════════════════════════════════════
 // QA1 — Smoke: app loads, correct tabs present
@@ -875,6 +875,176 @@ test.describe('QA9: RTL & mobile layout', () => {
     const box = await nav.boundingBox();
     expect(box.x, 'nav left edge must be within viewport').toBeGreaterThanOrEqual(0);
     expect(box.x + box.width, 'nav right edge must be within viewport').toBeLessThanOrEqual(395); // small tolerance
+  });
+
+});
+
+// ══════════════════════════════════════════════════════════════════════
+// QA10 — Pamper image repair: legacy activePamper migration
+// Verifies that repairPamperImageRefs() heals existing activePamper records
+// that have imageSrc:null / imageId:null (saved before image system was wired).
+// Does NOT reset points, activeUntil, selectedAt, or archive.
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * Seeds localStorage with a legacy pamperState (imageSrc:null, imageId:null)
+ * and a companion + garden state before page.goto().
+ * Must be called before page.goto() — uses addInitScript.
+ */
+async function seedLegacyPamperState(page, companionId, mode, opts = {}) {
+  await page.addInitScript((args) => {
+    const { companionId, mode, futureUntil, selectedAt, dedicatedPamperPoints, archived } = args;
+    try {
+      const expiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+      localStorage.setItem('user:session', JSON.stringify({ expiry }));
+      localStorage.setItem('user:profile', JSON.stringify({ name: 'QA10', password: '' }));
+      localStorage.setItem('tori_companion_v1.state', JSON.stringify({
+        companionId, selectedAt: new Date().toISOString(), switchCount: 1,
+      }));
+      localStorage.setItem('tori_garden_v1.state', JSON.stringify({
+        points: 30, lifetimeConnectionPoints: 30,
+        dedicatedPamperPoints: dedicatedPamperPoints || 15,
+        garden: { plants: [], wild: [], elements: [] },
+        daysJournal: [], todayMood: 'regular', todayActions: [], todayPoints: 0,
+        streakDays: 0, growthCornerUnlocked: false, lastVisit: null,
+        factIdx: 0, factDate: '', wildCooldowns: {},
+      }));
+      localStorage.setItem('tori_pamper_v1.state', JSON.stringify({
+        activePamper: {
+          cardId: 'spa-small', companionId, mode,
+          selectedAt: selectedAt || new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          activeUntil: futureUntil || (Date.now() + 22 * 60 * 60 * 1000),
+          imageSrc: null, imageId: null,
+          summaryLine: 'היה טוב.',
+        },
+        archivedPamperCards: archived || [],
+        seenPamperImageIds: {},
+      }));
+    } catch (e) {}
+  }, {
+    companionId, mode,
+    futureUntil: opts.futureUntil || (Date.now() + 22 * 60 * 60 * 1000),
+    selectedAt:  opts.selectedAt  || new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    dedicatedPamperPoints: opts.dedicatedPamperPoints || 15,
+    archived: opts.archived || [],
+  });
+}
+
+/** Navigate to journey after app load, return the repaired pamperState from localStorage. */
+async function loadAndGetRepairedState(page) {
+  await page.goto(APP_HTML, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(1500);
+  await page.evaluate(() => { if (typeof switchView === 'function') switchView('journey'); });
+  await page.waitForTimeout(1000);
+  return page.evaluate(() => {
+    try { return JSON.parse(localStorage.getItem('tori_pamper_v1.state')); } catch (e) { return null; }
+  });
+}
+
+test.describe('QA10: Pamper image repair — legacy activePamper migration', () => {
+
+  test('QA10-A: hafshushit·alone — null imageSrc is repaired on load', async ({ page }) => {
+    const futureUntil = Date.now() + 22 * 60 * 60 * 1000;
+    await seedLegacyPamperState(page, 'forest', 'alone', { futureUntil });
+    const state = await loadAndGetRepairedState(page);
+
+    expect(state, 'pamperState must be saved after repair').not.toBeNull();
+    const ap = state.activePamper;
+    expect(ap, 'activePamper must still exist').not.toBeNull();
+    expect(ap.imageSrc, 'imageSrc must be a valid hafshushit-alone WebP path')
+      .toMatch(/^assets\/companions\/pamper\/spa\/hafshushit-spa-alone-\d+\.webp$/);
+    expect(ap.imageId, 'imageId must be a valid hafshushit-alone id')
+      .toMatch(/hafshushit-spa-alone-\d+/);
+    expect(ap.activeUntil, 'activeUntil must not be changed').toBeGreaterThanOrEqual(futureUntil - 100);
+    expect(ap.cardId,  'cardId must be unchanged').toBe('spa-small');
+    expect(ap.companionId, 'companionId must be unchanged').toBe('forest');
+    expect(ap.mode, 'mode must be unchanged').toBe('alone');
+    expect(ap.summaryLine, 'summaryLine must be unchanged').toBe('היה טוב.');
+  });
+
+  test('QA10-B: hafshushit·friend — null imageSrc is repaired on load', async ({ page }) => {
+    await seedLegacyPamperState(page, 'forest', 'friend');
+    const state = await loadAndGetRepairedState(page);
+    const ap = state && state.activePamper;
+    expect(ap).not.toBeNull();
+    expect(ap.imageSrc).toMatch(/^assets\/companions\/pamper\/spa\/hafshushit-spa-friend-\d+\.webp$/);
+    expect(ap.imageId).toMatch(/hafshushit-spa-friend-\d+/);
+  });
+
+  test('QA10-C: hafshushit·sister — null imageSrc is repaired, picks from pool of 3', async ({ page }) => {
+    await seedLegacyPamperState(page, 'forest', 'sister');
+    const state = await loadAndGetRepairedState(page);
+    const ap = state && state.activePamper;
+    expect(ap).not.toBeNull();
+    expect(ap.imageSrc).toMatch(/^assets\/companions\/pamper\/spa\/hafshushit-spa-sister-\d+\.webp$/);
+    expect(ap.imageId).toMatch(/hafshushit-spa-sister-\d+/);
+  });
+
+  test('QA10-D: bear·alone — null imageSrc is repaired on load', async ({ page }) => {
+    await seedLegacyPamperState(page, 'bear', 'alone');
+    const state = await loadAndGetRepairedState(page);
+    const ap = state && state.activePamper;
+    expect(ap).not.toBeNull();
+    expect(ap.imageSrc).toMatch(/^assets\/companions\/pamper\/spa\/bear-spa-alone-\d+\.webp$/);
+    expect(ap.imageId).toMatch(/bear-spa-alone-\d+/);
+  });
+
+  test('QA10-E: repair is stable — same image survives a second page load', async ({ page }) => {
+    await seedLegacyPamperState(page, 'forest', 'alone');
+    const state1 = await loadAndGetRepairedState(page);
+    const imgSrc1 = state1 && state1.activePamper && state1.activePamper.imageSrc;
+    expect(imgSrc1).toBeTruthy();
+
+    // Second load — no re-seed, reads from localStorage already written by repair
+    await page.goto(APP_HTML, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
+    const state2 = await page.evaluate(() => {
+      try { return JSON.parse(localStorage.getItem('tori_pamper_v1.state')); } catch (e) { return null; }
+    });
+    const imgSrc2 = state2 && state2.activePamper && state2.activePamper.imageSrc;
+    expect(imgSrc2, 'same image must survive second load').toBe(imgSrc1);
+  });
+
+  test('QA10-F: archived pamper with null image is also repaired', async ({ page }) => {
+    const archivedAt = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
+    await seedLegacyPamperState(page, 'forest', 'alone', {
+      archived: [{
+        cardId: 'spa-small', companionId: 'forest', mode: 'sister',
+        selectedAt: archivedAt, activeUntil: Date.now() - 24 * 60 * 60 * 1000,
+        archivedAt, imageSrc: null, imageId: null, summaryLine: 'היה טוב.',
+      }],
+    });
+    const state = await loadAndGetRepairedState(page);
+    const arc = state && state.archivedPamperCards && state.archivedPamperCards[0];
+    expect(arc, 'archived card must still exist').not.toBeNull();
+    expect(arc.imageSrc, 'archived imageSrc must be repaired')
+      .toMatch(/^assets\/companions\/pamper\/spa\/hafshushit-spa-sister-\d+\.webp$/);
+    expect(arc.imageId, 'archived imageId must be repaired').toMatch(/hafshushit-spa-sister-\d+/);
+    expect(arc.archivedAt, 'archivedAt must not be changed').toBe(archivedAt);
+  });
+
+  test('QA10-G: points not changed by repair — dedicatedPamperPoints stays at 15', async ({ page }) => {
+    await seedLegacyPamperState(page, 'bear', 'friend', { dedicatedPamperPoints: 15 });
+    await page.goto(APP_HTML, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
+    const gardenRaw = await page.evaluate(() => {
+      try { return JSON.parse(localStorage.getItem('tori_garden_v1.state')); } catch (e) { return null; }
+    });
+    expect(gardenRaw).not.toBeNull();
+    expect(gardenRaw.dedicatedPamperPoints, 'repair must NOT dedicate more points').toBe(15);
+    expect(gardenRaw.lifetimeConnectionPoints, 'lifetimeConnectionPoints must not change').toBe(30);
+  });
+
+  test('QA10-H: journey hero shows the spa image after repair (not fallback 🛁)', async ({ page }) => {
+    await seedLegacyPamperState(page, 'forest', 'alone');
+    await page.goto(APP_HTML, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1500);
+    await page.evaluate(() => { if (typeof switchView === 'function') switchView('journey'); });
+    await page.waitForTimeout(1000);
+
+    // After repair, the companion hero should show j-lair-img with a valid hafshushit spa src
+    const imgSrc = await page.locator('#j-lair-img').getAttribute('src').catch(() => null);
+    expect(imgSrc, 'j-lair-img must have a valid spa path after repair').toMatch(/hafshushit-spa-alone/);
   });
 
 });
