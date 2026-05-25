@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-test-mode-2026-05-25-1500 -->
+<!-- Tori version: spa-rename-2026-05-25-1530 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2972,7 +2972,7 @@ const PAMPER_TEST_MODE = true;
 const PAMPER_CARDS = {
   'spa-small': {
     id: 'spa-small',
-    title: 'ספא קטן',
+    title: 'ספא ביתי',
     subtitle: 'את בוחרת לפנק את הדמות שלך ברגע רגוע, כי גם לה מגיע לנוח בזכות זה שדאגת לעצמך.',
     requiredPoints: 15,
     icon: '🛁',
@@ -5658,7 +5658,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
   var imgSrc, imgAlt;
   if (_activePamper) {
     imgSrc   = _activePamper.imageSrc || '';
-    imgAlt   = c.name + ' בספא קטן';
+    imgAlt   = c.name + ' בספא ביתי';
     pillText = 'הבילוי של היום';
     dotColor = c.accent;
   } else {
@@ -5672,7 +5672,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
 
   // Image element — onerror shows placeholder (for missing pamper / lair assets)
   var _phIcon = _activePamper ? '🛁' : '🏠';
-  var _phText = _activePamper ? ('ספא קטן · ' + c.name) : (c.name + ' במאורה');
+  var _phText = _activePamper ? ('ספא ביתי ·' + c.name) : (c.name + ' במאורה');
   var _phStyle = 'display:none;width:100%;height:100%;align-items:center;justify-content:center;'
     + 'flex-direction:column;gap:8px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:20px';
   var _phDiv  = '<div id="j-lair-ph" style="' + _phStyle + '">'
@@ -5786,20 +5786,20 @@ function buildPamperDrawerHTML(c) {
     // Active scene image / placeholder
     html += '<div class="j-pamper-active-scene">';
     if (ap.imageSrc) {
-      html += '<img src="' + ap.imageSrc + '" alt="' + c.name + ' בספא קטן" loading="lazy"'
+      html += '<img src="' + ap.imageSrc + '" alt="' + c.name + ' בספא ביתי" loading="lazy"'
         + ' onerror="this.onerror=null;this.style.display=\'none\';var ph=this.nextElementSibling;if(ph)ph.style.display=\'flex\';">'
         + '<div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;'
         + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
-        + '<span style="font-size:36px">🛁</span><span>ספא קטן · ' + c.name + '</span></div>';
+        + '<span style="font-size:36px">🛁</span><span>ספא ביתי ·' + c.name + '</span></div>';
     } else {
       html += '<div style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;'
         + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
-        + '<span style="font-size:36px">🛁</span><span>ספא קטן · ' + c.name + '</span></div>';
+        + '<span style="font-size:36px">🛁</span><span>ספא ביתי ·' + c.name + '</span></div>';
     }
     html += '</div>';
     // Active copy
     html += '<div style="font-size:11.5px;letter-spacing:0.4px;color:var(--g-ink-3);margin-bottom:4px">הבילוי של היום</div>';
-    html += '<div class="serif" style="font-size:19px;font-weight:500;color:var(--g-ink);line-height:1.2;margin-bottom:8px">ספא קטן · ' + modeLabel + '</div>';
+    html += '<div class="serif" style="font-size:19px;font-weight:500;color:var(--g-ink);line-height:1.2;margin-bottom:8px">ספא ביתי ·' + modeLabel + '</div>';
     // Just-activated: show full confirmation copy; otherwise show ongoing state copy
     if (_pamperJustActivated) {
       _pamperJustActivated = false;
@@ -5807,31 +5807,31 @@ function buildPamperDrawerHTML(c) {
         + 'את בחרת לפנק את ה' + c.name + ' היום.<br>'
         + 'זה בזכות רגעים שבהם דאגת גם לעצמך — וזה לא דבר קטן.</div>';
       html += '<div style="font-size:13px;color:var(--g-sage-deep);line-height:1.55;margin-top:8px">'
-        + 'הספא הקטן שלה יופיע עכשיו בתור הבילוי של היום.</div>';
+        + 'הספא הביתי שלה יופיע עכשיו בתור הבילוי של היום.</div>';
     } else {
       html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.65">'
-        + 'את בחרת לפנק את ה' + c.name + ' היום. היא בספא קטן, וזה בזכותך.</div>';
+        + 'את בחרת לפנק את ה' + c.name + ' היום. היא בספא ביתי, וזה בזכותך.</div>';
     }
     // Link to gallery
     html += '<div style="margin-top:10px;font-size:12.5px;color:var(--g-sage-deep);cursor:pointer" onclick="scrollToPamperGallery()">הבילויים שלי ←</div>';
     html += '</div>'; // j-pamper-active-card
 
   } else {
-    // ── Card browser: ספא קטן ──
+    // ── Card browser: ספא ביתי ──
 
     html += '<div class="j-pamper-card-wrap">';
     // Preview image — shows the card scene before the user picks a mode
     html += '<div class="j-pamper-card-img-area">';
     if (cardDef.previewImage) {
-      html += '<img src="' + cardDef.previewImage + '" alt="ספא קטן" loading="lazy"'
+      html += '<img src="' + cardDef.previewImage + '" alt="ספא ביתי" loading="lazy"'
         + ' onerror="this.onerror=null;this.style.display=\'none\';var ph=this.nextElementSibling;if(ph)ph.style.display=\'flex\';">'
         + '<div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;'
         + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
-        + '<span style="font-size:36px">🛁</span><span>ספא קטן</span></div>';
+        + '<span style="font-size:36px">🛁</span><span>ספא ביתי</span></div>';
     } else {
       html += '<div style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;'
         + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
-        + '<span style="font-size:36px">🛁</span><span>ספא קטן</span></div>';
+        + '<span style="font-size:36px">🛁</span><span>ספא ביתי</span></div>';
     }
     html += '</div>';
     // Points row — warm framing, no "cost" language
@@ -5840,7 +5840,7 @@ function buildPamperDrawerHTML(c) {
       + '<span class="j-pamper-pts-avail">אפשר להקדיש עכשיו: ' + available + '</span>'
       + '</div>';
     // Title + subtitle
-    html += '<div style="font-size:16px;font-weight:600;color:var(--g-ink);margin-bottom:4px">ספא קטן</div>';
+    html += '<div style="font-size:16px;font-weight:600;color:var(--g-ink);margin-bottom:4px">ספא ביתי</div>';
     html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.55;margin-bottom:14px">'
       + cardDef.subtitle + '</div>';
     // CTA
