@@ -1,4 +1,4 @@
-<!-- Tori version: envelope-preview-fix-2026-05-25-2030 -->
+<!-- Tori version: coffee-walk-card-2026-05-26-1200 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2403,7 +2403,7 @@ function migrateLegacyActivePamper() {
   var migrated = Object.assign({}, ap, {
     id:                'migrated-' + (ap.companionId || 'x') + '-' + (ap.selectedAt || Date.now()),
     cardTitleSnapshot: ap.cardTitleSnapshot || cardDef.title || ap.cardId || '',
-    previewImage:      ap.previewImage      || cardDef.previewImage || '',
+    previewImage:      cardDef.previewImage  || ap.previewImage      || '',
     summaryLine:       ap.summaryLine       || '',
   });
 
@@ -3249,6 +3249,153 @@ const PAMPER_CARDS = {
         alone:  ['הגעתי לספא, הורדתי הילוך, והגוף שלי העמיד פנים שהוא לא חיכה לזה כל השבוע.'],
         friend: ['שתינו תה, צחקנו, והיה רגע כזה שבו אפילו הגוף אמר: טוב, זה היה רעיון חכם.'],
         sister: ['אחותי ואני נרגענו יחד. זה נקרא ניהול משאבים רגשי עם חלוקים יפים.'],
+      },
+    },
+  },
+  'coffee-walk-small': {
+    id: 'coffee-walk-small',
+    title: 'קפה וסיבוב קטן',
+    subtitle: 'כוס קטנה, סיבוב קטן, ותזכורת עדינה שלא כל יציאה חייבת להיות פרויקט.',
+    drawerDescription: 'פינוק קטן לדמות שלך: קפה ביד, קצת אוויר, וסיבוב נעים שלא צריך להוכיח כלום.',
+    requiredPoints: 15,
+    icon: '☕',
+    previewImage: 'assets/companions/pamper/coffee-walk/coffee-walk-envelope-01.webp',
+    modes: ['alone', 'friend', 'sister'],
+    modeLabels: { alone: 'לבד', friend: 'עם חברה', sister: 'עם אחות' },
+    // companionImages: pool arrays — add more objects to grow the pool per companion+mode.
+    // Each entry: { id: '<ascii-id>', src: '<relative-path>' }
+    // The app randomly picks an unseen image first; repeats only after all have been shown.
+    companionImages: {
+      bear: {
+        alone:  [{ id:'bear-coffee-walk-alone-01',   src:'assets/companions/pamper/coffee-walk/bear-coffee-walk-alone-01.webp' }],
+        friend: [{ id:'bear-coffee-walk-friend-01',  src:'assets/companions/pamper/coffee-walk/bear-coffee-walk-friend-01.webp' }],
+        sister: [
+          { id:'bear-coffee-walk-sister-01', src:'assets/companions/pamper/coffee-walk/bear-coffee-walk-sister-01.webp' },
+          { id:'bear-coffee-walk-sister-02', src:'assets/companions/pamper/coffee-walk/bear-coffee-walk-sister-02.webp' },
+        ],
+      },
+      cat: {
+        alone:  [
+          { id:'cat-coffee-walk-alone-01', src:'assets/companions/pamper/coffee-walk/cat-coffee-walk-alone-01.webp' },
+          { id:'cat-coffee-walk-alone-02', src:'assets/companions/pamper/coffee-walk/cat-coffee-walk-alone-02.webp' },
+        ],
+        friend: [{ id:'cat-coffee-walk-friend-01',  src:'assets/companions/pamper/coffee-walk/cat-coffee-walk-friend-01.webp' }],
+        sister: [{ id:'cat-coffee-walk-sister-01',  src:'assets/companions/pamper/coffee-walk/cat-coffee-walk-sister-01.webp' }],
+      },
+      // forest = חפשושית (internal key; asset filenames use hafshushit- prefix)
+      forest: {
+        alone:  [{ id:'hafshushit-coffee-walk-alone-01',  src:'assets/companions/pamper/coffee-walk/hafshushit-coffee-walk-alone-01.webp' }],
+        friend: [{ id:'hafshushit-coffee-walk-friend-01', src:'assets/companions/pamper/coffee-walk/hafshushit-coffee-walk-friend-01.webp' }],
+        sister: [
+          { id:'hafshushit-coffee-walk-sister-01', src:'assets/companions/pamper/coffee-walk/hafshushit-coffee-walk-sister-01.webp' },
+          { id:'hafshushit-coffee-walk-sister-02', src:'assets/companions/pamper/coffee-walk/hafshushit-coffee-walk-sister-02.webp' },
+        ],
+      },
+      capy: {
+        alone:  [{ id:'capy-coffee-walk-alone-01',   src:'assets/companions/pamper/coffee-walk/capy-coffee-walk-alone-01.webp' }],
+        friend: [{ id:'capy-coffee-walk-friend-01',  src:'assets/companions/pamper/coffee-walk/capy-coffee-walk-friend-01.webp' }],
+        sister: [
+          { id:'capy-coffee-walk-sister-01', src:'assets/companions/pamper/coffee-walk/capy-coffee-walk-sister-01.webp' },
+          { id:'capy-coffee-walk-sister-02', src:'assets/companions/pamper/coffee-walk/capy-coffee-walk-sister-02.webp' },
+        ],
+      },
+      // fox = שועלה (internal key 'fox')
+      fox: {
+        alone:  [
+          { id:'fox-coffee-walk-alone-01', src:'assets/companions/pamper/coffee-walk/fox-coffee-walk-alone-01.webp' },
+          { id:'fox-coffee-walk-alone-02', src:'assets/companions/pamper/coffee-walk/fox-coffee-walk-alone-02.webp' },
+        ],
+        friend: [{ id:'fox-coffee-walk-friend-01',  src:'assets/companions/pamper/coffee-walk/fox-coffee-walk-friend-01.webp' }],
+        sister: [{ id:'fox-coffee-walk-sister-01',  src:'assets/companions/pamper/coffee-walk/fox-coffee-walk-sister-01.webp' }],
+      },
+    },
+    // afterLines: mode-keyed captions per companion.
+    // Companion keys: bear / cat / forest (חפשושית) / capy / fox (שועלה)
+    afterLines: {
+      bear: {
+        alone:  [
+          'קפה קטן, סיבוב קטן, ואני חוזרת הביתה כאישה שהשקיעה ביחסים שלה עם האוויר.',
+          'יצאתי רק לקפה. זה נחשב ספורט אם הלב עשה מתיחות.',
+          'לפעמים כל מה שצריך זה כוס חמה וידיעה שהשמיכה תחכה בלי לשפוט.',
+        ],
+        friend: [
+          'שתינו קפה, צחקנו על משהו קטן, ואף אחת לא ביקשה מאיתנו להיות יעילות. מרגש.',
+          'קפה עם חברה זה כמו שמיכה, רק עם עדכונים חיים.',
+          'עשינו סיבוב קטן, חזרנו עם לב קצת פחות מקומט. אני קוראת לזה תחזוקה שוטפת.',
+        ],
+        sister: [
+          'קפה עם אחות זה להבין אחת את השנייה לפי הרמת גבה וחצי לגימה.',
+          'יצאנו לסיבוב קטן, והיא ידעה לבד מתי להציע מאפה. משפחה עם כישורי שטח.',
+          'אחות טובה יודעת מתי לדבר, מתי לשתוק, ומתי להגיד: "קחי עוד שלוק לפני שאת עונה."',
+        ],
+      },
+      cat: {
+        alone:  [
+          'יצאתי לקפה קטן. המחשבות באו גם, אז הזמנתי להן שולחן צדדי ולא נתתי להן לנהל את המקום.',
+          'כוס ביד, שמש קטנה, ואני נזכרת שאפשר להיות מסתורית גם בסיבוב של עשר דקות.',
+          'הקפה היה חמים, האוויר היה סביר, ואני בחרתי לקרוא לזה טקס קטן של חזרה לעצמי.',
+        ],
+        friend: [
+          'קפה עם חברה טובה: שתי לגימות, מבט אחד, ופתאום העולם נראה קצת יותר רך בקצוות.',
+          'קפה, מבט אחד, ושלוש מסקנות מדויקות בלי שאף אחת הייתה צריכה להגיד הכול בקול.',
+          'יש חברות שיודעות להפוך סיבוב קטן לרגע שבו אפילו הרחוב נראה כאילו הוא בעדך.',
+        ],
+        sister: [
+          'אחותי אמרה שאני נראית רגועה. בחרתי להאמין לה, כי היא כבר ראתה אותי במצבים פחות פוטוגניים.',
+          'קפה עם אחות: חצי שיחה, חצי טלפתיה, וקצת קסם שלא מופיע בחשבונית.',
+          'היא ידעה בדיוק מתי לשאול ומתי פשוט להזיז אליי את העוגייה. זו אינטליגנציה רגשית עם קצפת.',
+        ],
+      },
+      forest: {
+        alone:  [
+          'לקחתי קפה קטן לסיבוב, והלב שלי נזכר שיש גם דלתות שנפתחות בלי לדחוף.',
+          'לא קרה שום דבר גדול. רק כוס חמה, אוויר, ואני — וזה היה די הרבה.',
+          'יצאתי לסיבוב קטן וגיליתי שהעולם בחוץ לא תמיד נושך. לפעמים הוא רק עושה רוח בשיער.',
+        ],
+        friend: [
+          'שתינו משהו חם, צחקנו על משהו קטן, והיום נהיה פחות קוצני בקצוות.',
+          'החברה דיברה, אני הנהנתי, ואז שתינו צחקנו בדיוק בזמן. תיאום קטן של לבבות בלי חזרות.',
+          'קפה עם חברה זה נחמד. במיוחד כשלא צריך להיות מעניינת כל רגע, רק להיות שם.',
+        ],
+        sister: [
+          'אחותי לקחה קפה, אני לקחתי נשימה, וביחד הצלחנו לא למהר לשום מקום.',
+          'עשינו סיבוב קטן, היא אמרה משהו מצחיק, ואני כמעט נשפכתי לתוך הכוס. התקדמות.',
+          'אחותי ידעה שאני צריכה קפה, לא נאום. בגלל זה היא אחות ולא עלון מידע.',
+        ],
+      },
+      capy: {
+        alone:  [
+          'יצאתי לקפה לבד. דיברתי עם אפס אנשים. חוויה מומלצת למתקדמות.',
+          'סיבוב קטן, כוס חמה, וחזרה הביתה לפני שמישהו הציע "להמשיך לעוד מקום". מושלם.',
+          'היה נעים. לא קרה יותר מדי. אני בעד רגעים שלא דורשים ממני אישיות מלאה.',
+        ],
+        friend: [
+          'החברה הייתה נעימה, הקפה היה חמים, ואני עדיין תומכת בזכותי לחזור הביתה בזמן.',
+          'צחקנו קצת, שתינו קצת, ואף אחת לא ניסתה להפוך את זה ליום פעילות. תודה לצוות.',
+          'קפה עם חברה זה טוב כשהחברה מבינה ששתיקה ליד כוס היא גם שיחה.',
+        ],
+        sister: [
+          'אחותי אמרה "נלך רק לסיבוב קטן". אני מעריכה נשים שמכבדות חוזים.',
+          'יצאנו, שתינו, חזרנו. בלי סיבוכים, בלי הרחבות, בלי "רק עוד משהו קטן". עשר מעשר.',
+          'אחותי מכירה אותי: קפה קצר, ספסל קרוב, וחזרה לפני שהסוללה עושה פרצוף.',
+        ],
+      },
+      fox: {
+        alone:  [
+          'יצאתי לקפה קטן וקראתי לזה מהלך אסטרטגי של אישה שיודעת להשקות את עצמה.',
+          'כוס ביד, סיבוב קצר, וחזרה הביתה עם תחושה שהיום קיבל ניהול טוב יותר.',
+          'לפעמים גם תכנית קטנה מפתיעה בכמה שהיא מוצלחת. במיוחד כשהיא כוללת קפה ולא דורשת הכנות מיוחדות.',
+        ],
+        friend: [
+          'שתינו קפה, צחקנו, והיה רגע כזה שבו אפילו הגוף אמר: טוב, זה היה רעיון חכם.',
+          'קפה עם חברה טובה: קצת צחוק, קצת אוויר, ואפס צורך להסביר את עצמך מההתחלה.',
+          'עשינו סיבוב קטן וחזרנו עם הוכחה עדינה שלפעמים חברה היא פשוט מזג אוויר טוב.',
+        ],
+        sister: [
+          'קפה עם אחות זה שילוב מוצלח: מספיק קרוב כדי להתחמם, מספיק פשוט כדי להישאר נעים.',
+          'אחותי ואני עשינו סיבוב קטן. היא הביאה נוכחות, אני הבאתי יציאה בזמן. שיתוף פעולה יפה.',
+          'יש משהו יעיל באחות שמבינה מתי לצחוק איתך ומתי להצביע על הקפה כאילו הוא הפתרון.',
+        ],
       },
     },
   },
@@ -5915,7 +6062,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
     + '</div>'
     + '<div class="j-bubble-text">' + lineText + '</div>'
     + (_activePamper
-        ? '<div style="font-size:11px;color:var(--g-ink-3);margin-top:6px">המאורה מחכה בבית — היום יש לה ספא ביתי.</div>'
+        ? '<div style="font-size:11px;color:var(--g-ink-3);margin-top:6px">המאורה מחכה בבית — היום יש לה ' + (_activePamper.cardTitleSnapshot || 'פינוק') + '.</div>'
         : '')
     + '</div>';
 
@@ -5983,13 +6130,12 @@ function buildHabitStrengthHTML(habits) {
 }
 
 // ── Pamper Drawer — מגירת הפינוקים ──
+// Renders all cards in PAMPER_CARDS. To add a new card, add it to PAMPER_CARDS — no drawer changes needed.
 function buildPamperDrawerHTML(c) {
-  var cardDef   = PAMPER_CARDS['spa-small'];
-  var available = getAvailablePamperPoints();
-  // In test mode the card is always chooseable regardless of point balance.
-  var canChoose = PAMPER_TEST_MODE || available >= cardDef.requiredPoints;
-  var ap        = getActivePamper(c.id);  // active pamper for THIS companion
-  var html      = '<div class="j-pamper-section">';
+  var available    = getAvailablePamperPoints();
+  var ap           = getActivePamper(c.id);  // active pamper for THIS companion
+  var _nameArticle = c.displayNameWithArticle || ('ה' + c.name);
+  var html         = '<div class="j-pamper-section">';
 
   // ── Section eyebrow + drawer subtitle
   html += '<div class="j-eyebrow" style="padding:0 2px">מגירת הפינוקים</div>';
@@ -5999,24 +6145,26 @@ function buildPamperDrawerHTML(c) {
   if (ap) {
     // ── Active pamper — compact status card (NO duplicate scene image) ──
     // activePamper.imageSrc is shown ONLY in the top hero area and inside "הפינוקים שלי".
-    var modeLabel = cardDef.modeLabels[ap.mode] || ap.mode;
-    var _nameArticle = c.displayNameWithArticle || ('ה' + c.name);
-    var _previewSrc  = cardDef.previewImage || '';
+    var _apCardDef  = PAMPER_CARDS[ap.cardId] || {};
+    var _apTitle    = ap.cardTitleSnapshot || _apCardDef.title || ap.cardId;
+    var _modeLabels = _apCardDef.modeLabels || {};
+    var _modeLabel  = _modeLabels[ap.mode] || ap.mode;
+    var _previewSrc = _apCardDef.previewImage || ap.previewImage || '';
 
     html += '<div class="j-pamper-status-card">';
     // Small envelope thumbnail (preview image, not the scene)
     html += '<div class="j-pamper-status-thumb">';
     if (_previewSrc) {
-      html += '<img src="' + _previewSrc + '" alt="ספא ביתי" loading="lazy"'
+      html += '<img src="' + _previewSrc + '" alt="' + _apTitle + '" loading="lazy"'
         + ' onerror="this.onerror=null;this.style.display=\'none\';">';
     } else {
-      html += '🛁';
+      html += (_apCardDef.icon || '✨');
     }
     html += '</div>';
     // Text side
     html += '<div style="flex:1;min-width:0">';
     html += '<div style="font-size:11px;font-weight:700;letter-spacing:0.6px;color:var(--g-sage-deep);margin-bottom:3px">הפינוק של היום כבר פתוח</div>';
-    html += '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:4px">ספא ביתי · ' + modeLabel + '</div>';
+    html += '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:4px">' + _apTitle + ' · ' + _modeLabel + '</div>';
 
     if (_pamperJustActivated) {
       _pamperJustActivated = false;
@@ -6034,41 +6182,46 @@ function buildPamperDrawerHTML(c) {
     html += '<button class="j-pamper-btn primary" style="margin-top:4px" onclick="openMyPampers()">הפינוקים שלי</button>';
 
   } else {
-    // ── Card browser: ספא ביתי ──
+    // ── Card browser: one block per card in PAMPER_CARDS ──
+    Object.keys(PAMPER_CARDS).forEach(function(cardId) {
+      var cardDef   = PAMPER_CARDS[cardId];
+      var canChoose = PAMPER_TEST_MODE || available >= cardDef.requiredPoints;
+      var cardIcon  = cardDef.icon || '✨';
+      var cardTitle = cardDef.title || cardId;
+      var cardDesc  = cardDef.drawerDescription || cardDef.subtitle || '';
 
-    html += '<div class="j-pamper-card-wrap">';
-    // Preview image — shows the card scene before the user picks a mode
-    html += '<div class="j-pamper-card-img-area">';
-    if (cardDef.previewImage) {
-      html += '<img src="' + cardDef.previewImage + '" alt="ספא ביתי" loading="lazy"'
-        + ' onerror="this.onerror=null;this.style.display=\'none\';var ph=this.nextElementSibling;if(ph)ph.style.display=\'flex\';">'
-        + '<div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;'
-        + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
-        + '<span style="font-size:36px">🛁</span><span>ספא ביתי</span></div>';
-    } else {
-      html += '<div style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;'
-        + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
-        + '<span style="font-size:36px">🛁</span><span>ספא ביתי</span></div>';
-    }
-    html += '</div>';
-    // Points row — warm framing, no "cost" language
-    html += '<div class="j-pamper-pts-row">'
-      + '<span class="j-pamper-pts-chip">נפתח מ־15 נקודות חיבור</span>'
-      + '<span class="j-pamper-pts-avail">אפשר להקדיש עכשיו: ' + available + '</span>'
-      + '</div>';
-    // Title + subtitle
-    html += '<div style="font-size:16px;font-weight:600;color:var(--g-ink);margin-bottom:4px">ספא ביתי</div>';
-    html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.55;margin-bottom:14px">'
-      + cardDef.subtitle + '</div>';
-    // CTA
-    var _nameArticle = c.displayNameWithArticle || ('ה' + c.name);
-    if (canChoose) {
-      html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'spa-small\',\'' + c.id + '\')">לבחור פינוק ' + withLamed(_nameArticle) + '</button>';
-    } else {
-      html += '<button class="j-pamper-btn muted" disabled>לבחור פינוק ' + withLamed(_nameArticle) + '</button>';
-      html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והפינוק הזה ייפתח לבחירה.</div>';
-    }
-    html += '</div>'; // j-pamper-card-wrap
+      html += '<div class="j-pamper-card-wrap">';
+      // Preview / envelope image
+      html += '<div class="j-pamper-card-img-area">';
+      if (cardDef.previewImage) {
+        html += '<img src="' + cardDef.previewImage + '" alt="' + cardTitle + '" loading="lazy"'
+          + ' onerror="this.onerror=null;this.style.display=\'none\';var ph=this.nextElementSibling;if(ph)ph.style.display=\'flex\';">'
+          + '<div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;'
+          + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
+          + '<span style="font-size:36px">' + cardIcon + '</span><span>' + cardTitle + '</span></div>';
+      } else {
+        html += '<div style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;'
+          + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
+          + '<span style="font-size:36px">' + cardIcon + '</span><span>' + cardTitle + '</span></div>';
+      }
+      html += '</div>';
+      // Points row
+      html += '<div class="j-pamper-pts-row">'
+        + '<span class="j-pamper-pts-chip">נפתח מ־' + cardDef.requiredPoints + ' נקודות חיבור</span>'
+        + '<span class="j-pamper-pts-avail">אפשר להקדיש עכשיו: ' + available + '</span>'
+        + '</div>';
+      // Title + description
+      html += '<div style="font-size:16px;font-weight:600;color:var(--g-ink);margin-bottom:4px">' + cardTitle + '</div>';
+      html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.55;margin-bottom:14px">' + cardDesc + '</div>';
+      // CTA
+      if (canChoose) {
+        html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'' + cardId + '\',\'' + c.id + '\')">לבחור פינוק ' + withLamed(_nameArticle) + '</button>';
+      } else {
+        html += '<button class="j-pamper-btn muted" disabled>לבחור פינוק ' + withLamed(_nameArticle) + '</button>';
+        html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והפינוק הזה ייפתח לבחירה.</div>';
+      }
+      html += '</div>'; // j-pamper-card-wrap
+    });
   }
 
   // ── Gentle inline expiry message (12h window) + "הפינוקים שלי" entry button ──

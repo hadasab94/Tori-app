@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v7'; // bumped patch24 — forces old cache eviction
+const CACHE = 'body-soul-v9'; // bumped — coffee-walk card added
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
