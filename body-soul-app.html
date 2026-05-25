@@ -1,4 +1,4 @@
-<!-- Tori version: spa-rename-2026-05-25-1530 -->
+<!-- Tori version: pamper-copy-2026-05-25-1600 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -5659,7 +5659,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
   if (_activePamper) {
     imgSrc   = _activePamper.imageSrc || '';
     imgAlt   = c.name + ' בספא ביתי';
-    pillText = 'הבילוי של היום';
+    pillText = 'הפינוק של היום';
     dotColor = c.accent;
   } else {
     // Lair image — resolved from COMPANION_LAIRS defaultState; falls back to homeImg
@@ -5776,8 +5776,10 @@ function buildPamperDrawerHTML(c) {
   var ap        = getActivePamper(c.id);  // active pamper for THIS companion
   var html      = '<div class="j-pamper-section">';
 
-  // ── Section eyebrow
+  // ── Section eyebrow + drawer subtitle
   html += '<div class="j-eyebrow" style="padding:0 2px">מגירת הפינוקים</div>';
+  html += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.6;margin-bottom:12px;padding:0 2px">'
+    + 'את דואגת לעצמך, הדמות שלך מתפנקת, והטוב עושה סיבוב חזרה.</div>';
 
   if (ap) {
     // ── Active pamper state ──
@@ -5798,7 +5800,7 @@ function buildPamperDrawerHTML(c) {
     }
     html += '</div>';
     // Active copy
-    html += '<div style="font-size:11.5px;letter-spacing:0.4px;color:var(--g-ink-3);margin-bottom:4px">הבילוי של היום</div>';
+    html += '<div style="font-size:11.5px;letter-spacing:0.4px;color:var(--g-ink-3);margin-bottom:4px">הפינוק של היום</div>';
     html += '<div class="serif" style="font-size:19px;font-weight:500;color:var(--g-ink);line-height:1.2;margin-bottom:8px">ספא ביתי ·' + modeLabel + '</div>';
     // Just-activated: show full confirmation copy; otherwise show ongoing state copy
     if (_pamperJustActivated) {
@@ -5807,13 +5809,13 @@ function buildPamperDrawerHTML(c) {
         + 'את בחרת לפנק את ה' + c.name + ' היום.<br>'
         + 'זה בזכות רגעים שבהם דאגת גם לעצמך — וזה לא דבר קטן.</div>';
       html += '<div style="font-size:13px;color:var(--g-sage-deep);line-height:1.55;margin-top:8px">'
-        + 'הספא הביתי שלה יופיע עכשיו בתור הבילוי של היום.</div>';
+        + 'הספא הביתי שלה יופיע עכשיו בתור הפינוק של היום.</div>';
     } else {
       html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.65">'
-        + 'את בחרת לפנק את ה' + c.name + ' היום. היא בספא ביתי, וזה בזכותך.</div>';
+        + 'את בחרת לפנק את ה' + c.name + ' היום. המאורה מחכה בבית — היום יש לה ספא ביתי.</div>';
     }
     // Link to gallery
-    html += '<div style="margin-top:10px;font-size:12.5px;color:var(--g-sage-deep);cursor:pointer" onclick="scrollToPamperGallery()">הבילויים שלי ←</div>';
+    html += '<div style="margin-top:10px;font-size:12.5px;color:var(--g-sage-deep);cursor:pointer" onclick="scrollToPamperGallery()">הפינוקים שלי ←</div>';
     html += '</div>'; // j-pamper-active-card
 
   } else {
@@ -5854,7 +5856,7 @@ function buildPamperDrawerHTML(c) {
     html += '</div>'; // j-pamper-card-wrap
   }
 
-  // ── Gallery "הבילויים שלי" ──
+  // ── Gallery "הפינוקים שלי" ──
   var archived = pamperState.archivedPamperCards || [];
   if (archived.length > 0) {
     // Gentle inline message if the most recent was archived in the last 12 hours
@@ -5863,11 +5865,13 @@ function buildPamperDrawerHTML(c) {
     if (msAgo < 12 * 3600 * 1000) {
       html += '<div class="j-pamper-expired-msg">'
         + 'היה ממש כיף. וכמה נעים גם לחזור הביתה.<br>'
-        + 'הבילוי נשמר ב״הבילויים שלי״.'
+        + 'הפינוק נשמר ב״הפינוקים שלי״.'
         + '</div>';
     }
     html += '<div id="j-pamper-gallery" class="j-pamper-gallery">';
-    html += '<div class="j-eyebrow" style="padding:0 2px">הבילויים שלי</div>';
+    html += '<div class="j-eyebrow" style="padding:0 2px">הפינוקים שלי</div>';
+    html += '<div style="font-size:12px;color:var(--g-ink-3);margin-bottom:10px;padding:0 2px">'
+      + 'רגעים קטנים שבחרת לשמור לדמות שלך.</div>';
     archived.forEach(function(item) {
       var iCard = PAMPER_CARDS[item.cardId] || {};
       var iComp = COMPANIONS[item.companionId] || {};
@@ -5887,6 +5891,10 @@ function buildPamperDrawerHTML(c) {
       html += '</div>'; // archive-item
     });
     html += '</div>'; // gallery
+  } else {
+    // Empty state — shown only when no archived pampers yet
+    html += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;padding:0 2px;margin-top:4px">'
+      + 'עוד אין כאן פינוקים שמורים. לאט לאט — גם רגעים טובים נאספים בקצב שלהם.</div>';
   }
 
   html += '</div>'; // j-pamper-section
@@ -5903,7 +5911,7 @@ function openPamperModal(cardId, companionId) {
   // displayNameWithArticle: e.g. "הקפיברה", "הדובה", etc.
   var withArticle = comp.displayNameWithArticle || ('ה' + comp.name);
   var modalTitle = 'עם מי ' + withArticle + ' שלך רוצה להתפנק היום?';
-  var modalSub   = 'הבילוי הוא של ' + withArticle + ' שלך. את רק בוחרת לה רגע טוב.'
+  var modalSub   = 'הפינוק הוא של ' + withArticle + ' שלך. את רק בוחרת לה רגע טוב.'
     + '<br><span style="font-size:12px;color:var(--g-ink-3)">זה לא משימה בשבילך — רק פינוק קטן בשבילה.</span>';
   var html = '<div class="j-pamper-modal-overlay" id="j-pamper-modal" onclick="closePamperModal()">'
     + '<div class="j-pamper-modal-box" onclick="event.stopPropagation()">'
