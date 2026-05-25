@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-multi-2026-05-25-1900 -->
+<!-- Tori version: tab-persist-2026-05-25-1930 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -4238,6 +4238,7 @@ function showToast(msg) {
 function updateBotBadge() { /* bot tab removed — no-op stub */ }
 
 // NAV
+var VALID_TABS = ['today', 'journey'];
 function switchView(v) {
   if (v === 'bot') v = 'journey'; // bot tab removed — redirect to journey
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
@@ -4247,6 +4248,10 @@ function switchView(v) {
   if (viewEl) viewEl.classList.add('active');
   if (navEl)  navEl.classList.add('active');
   if (v==='journey'){updateJourney();setTimeout(checkWildReveal,400);setTimeout(checkAndShowCompanion,50);}
+  // Persist the active tab so refresh restores the same view
+  if (VALID_TABS.indexOf(v) !== -1) {
+    try { localStorage.setItem('tori_active_tab', v); } catch(e) {}
+  }
 }
 
 // SAVE / LOAD
@@ -5550,6 +5555,12 @@ async function init() {
   checkAndSendNotifications();
   setInterval(checkAndSendNotifications, 15 * 60 * 1000);
   await initAuth();
+  // Restore last active tab (after auth so we don't switch while auth screen may be visible)
+  var _savedTab;
+  try { _savedTab = localStorage.getItem('tori_active_tab'); } catch(e) {}
+  if (_savedTab && VALID_TABS.indexOf(_savedTab) !== -1 && _savedTab !== 'today') {
+    switchView(_savedTab);
+  }
 }
 init();
 
