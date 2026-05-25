@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-ux-fix-2026-05-25-1700 -->
+<!-- Tori version: pamper-captions-2026-05-25-1800 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2474,11 +2474,12 @@ function getActivePamper(companionId) {
   return ap;
 }
 
-// Pick a deterministic-but-varied summary line for a companion.
-function getPamperAfterLine(cardId, companionId, archivedAt) {
+// Pick a deterministic-but-varied summary line for a companion + mode.
+function getPamperAfterLine(cardId, companionId, mode, archivedAt) {
   var card = PAMPER_CARDS[cardId];
   if (!card) return '';
-  var lines = card.afterLines[companionId] || card.afterLines['capy'] || [];
+  var byMode = ((card.afterLines || {})[companionId] || (card.afterLines || {})['capy'] || {});
+  var lines = byMode[mode] || byMode['alone'] || [];
   if (!lines.length) return '';
   // Use date string to vary the line without pure random (stable across renders).
   var seed = archivedAt ? (new Date(archivedAt).getDate() % lines.length) : 0;
@@ -3104,31 +3105,31 @@ const PAMPER_CARDS = {
       },
     },
     afterLines: {
-      bear:   [
-        'היה נעים, היה חמים, ועכשיו חוזרות הביתה לספל שמכיר אותנו אישית.',
-        'ספא זה נחמד מאוד. גם לחזור לשמיכה זה אירוע תרבותי.',
-        'עשינו פינוק, נשמנו קצת, ועכשיו הבית מקבל אותנו בלי לשאול שאלות.',
-      ],
-      cat:    [
-        'הספא היה מוצלח. המוח כמעט לא ניסה לנהל את המקום, וזה כבר הישג שקט.',
-        'יצאנו, התפנקנו, חזרנו עם פרווה מסודרת וקצת פחות רעש בראש.',
-        'היה אלגנטי, היה נעים, ולא נתנו למחשבות לקבל כיסא VIP.',
-      ],
-      forest: [
-        'היה טוב. עטפנו את היום במגבת קטנה וחזרנו למאורה עם עלה בכיס.',
-        'הספא עשה פוף קטן על הלב. לא פתר הכול, אבל פוף זה גם משהו.',
-        'יצאנו לפינוק קטן, חזרנו בשלום, והמשימה הזאת לא נשכה אף אחת.',
-      ],
-      capy:   [
-        'היה טוב וטוב שהיה. עכשיו נחזור הביתה לפני שמישהו מציע פעילות נוספת.',
-        'ספא זה נחמד. בית זה גם נחמד. אני בעד שני הדברים במידה שלא דורשת נעליים.',
-        'התפנקנו, שרדנו את החלק החברתי, וחזרנו עם פנים רגועות באופן חשוד.',
-      ],
-      fox:    [
-        'עשינו יציאה אלגנטית, אספנו פינוק קטן, וחזרנו לפני שהאנרגיה ביקשה חשבונית.',
-        'היה פינוק מוצלח. אפילו ההתנגדות הודתה שזה היה מהלך חכם.',
-        'יצאנו, התפנקנו, חזרנו. תוכנית קטנה, ביצוע יפה, אפס נאומים.',
-      ],
+      bear: {
+        alone:  ['הספא היה נהדר. עכשיו אני והחלוק שלי נכנסות לזוגיות יציבה.'],
+        friend: ['ישבנו, צחקנו, שתינו תה, ואף אחת לא ביקשה מאיתנו להיות יעילות. מרגש.'],
+        sister: ['ספא עם אחות זה מפגש פסגה של שתיים שיודעות בדיוק מי לקחה את המגבת השווה.'],
+      },
+      cat: {
+        alone:  ['הגעתי לספא כדי להירגע. המוח ביקש להצטרף, אז נתתי לו תה ושלחתי אותו לשבת יפה.'],
+        friend: ['צחקנו בשקט של נשים שמבינות אחת את השנייה גם בלי להסביר את כל העונה הקודמת.'],
+        sister: ['אחותי אמרה שאני נראית רגועה. בחרתי להאמין לה, כי הספא עלה נקודות חיבור.'],
+      },
+      forest: {
+        alone:  ['התיישבתי בספא, נשמתי, וגיליתי שהגוף שלי לא נגד הרעיון של להיות נחמדה אליו.'],
+        friend: ['צחקנו על משהו קטן, ואז הלב עשה פוף כאילו מישהו סידר לו כרית.'],
+        sister: ['אחותי הביאה מגבת, אני הבאתי פטריות, וביחד קראנו לזה יום מאורגן.'],
+      },
+      capy: {
+        alone:  ['היה טוב. לא דיברתי עם אף אחד. חמש כוכבות, אשקול לצאת שוב בעוד שנתיים.'],
+        friend: ['החברה הייתה נעימה, הספא היה נעים, ואני עדיין תומכת בזכותי לחזור הביתה בזמן.'],
+        sister: ['אחותי אמרה \'בואי נישאר עוד קצת\'. אני אמרתי \'איזה יופי שיש גבולות\'.'],
+      },
+      fox: {
+        alone:  ['הגעתי לספא, הורדתי הילוך, והגוף שלי העמיד פנים שהוא לא חיכה לזה כל השבוע.'],
+        friend: ['שתינו תה, צחקנו, והיה רגע כזה שבו אפילו הגוף אמר: טוב, זה היה רעיון חכם.'],
+        sister: ['אחותי ואני נרגענו יחד. זה נקרא ניהול משאבים רגשי עם חלוקים יפים.'],
+      },
     },
   },
 };
@@ -6009,9 +6010,9 @@ function selectPamperMode(cardId, mode) {
   var imgId  = picked ? picked.id  : '';
   var imgSrc = picked ? picked.src : '';
 
-  // Pick a summary line (seeded from current hour to be deterministic per session)
-  var lines = (cardDef.afterLines || {})[companionId] || [];
-  var summaryLine = lines.length ? lines[new Date().getHours() % lines.length] : '';
+  // Pick a summary line for this companion + mode combination
+  var modeLines = (((cardDef.afterLines || {})[companionId] || {})[mode] || []);
+  var summaryLine = modeLines.length ? modeLines[Math.floor(Math.random() * modeLines.length)] : '';
 
   pamperState.activePamper = {
     cardId:      cardId,
