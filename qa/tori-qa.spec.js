@@ -989,20 +989,47 @@ test.describe('QA10: Pamper image repair — legacy activePamper migration', () 
     expect(ap.imageId).toMatch(/bear-spa-alone-\d+/);
   });
 
-  test('QA10-E: repair is stable — same image survives a second page load', async ({ page }) => {
+  test('QA10-E: repair is stable — valid imageSrc is not re-randomized on reload', async ({ page, browser }) => {
+    // Phase 1: seed legacy null state, let repair run, capture repaired imageSrc
     await seedLegacyPamperState(page, 'forest', 'alone');
     const state1 = await loadAndGetRepairedState(page);
     const imgSrc1 = state1 && state1.activePamper && state1.activePamper.imageSrc;
-    expect(imgSrc1).toBeTruthy();
+    const imageId1 = state1 && state1.activePamper && state1.activePamper.imageId;
+    expect(imgSrc1, 'repair must produce a valid imageSrc').toBeTruthy();
 
-    // Second load — no re-seed, reads from localStorage already written by repair
-    await page.goto(APP_HTML, { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(1500);
-    const state2 = await page.evaluate(() => {
+    // Phase 2: fresh browser context seeded with the ALREADY REPAIRED state.
+    // This verifies _isPamperSrcValid() accepts it and repairPamperImageRefs() leaves it alone.
+    const ctx2 = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const page2 = await ctx2.newPage();
+    await page2.addInitScript((args) => {
+      try {
+        localStorage.setItem('user:session', JSON.stringify({ expiry: args.expiry }));
+        localStorage.setItem('user:profile', JSON.stringify({ name: 'QA10E', password: '' }));
+        localStorage.setItem('tori_companion_v1.state', JSON.stringify({
+          companionId: 'forest', selectedAt: new Date().toISOString(), switchCount: 1,
+        }));
+        localStorage.setItem('tori_garden_v1.state', JSON.stringify({
+          points: 30, lifetimeConnectionPoints: 30, dedicatedPamperPoints: 15,
+          garden: { plants: [], wild: [], elements: [] },
+          daysJournal: [], todayMood: 'regular', todayActions: [], todayPoints: 0,
+          streakDays: 0, growthCornerUnlocked: false, lastVisit: null,
+          factIdx: 0, factDate: '', wildCooldowns: {},
+        }));
+        localStorage.setItem('tori_pamper_v1.state', JSON.stringify(args.pamperState));
+      } catch (e) {}
+    }, { expiry: Date.now() + 30 * 24 * 60 * 60 * 1000, pamperState: state1 });
+
+    await page2.goto(APP_HTML, { waitUntil: 'domcontentloaded' });
+    await page2.waitForTimeout(1500);
+
+    const state2 = await page2.evaluate(() => {
       try { return JSON.parse(localStorage.getItem('tori_pamper_v1.state')); } catch (e) { return null; }
     });
-    const imgSrc2 = state2 && state2.activePamper && state2.activePamper.imageSrc;
-    expect(imgSrc2, 'same image must survive second load').toBe(imgSrc1);
+    await ctx2.close();
+
+    expect(state2).not.toBeNull();
+    expect(state2.activePamper.imageSrc, 'imageSrc must not change on second load').toBe(imgSrc1);
+    expect(state2.activePamper.imageId,  'imageId must not change on second load').toBe(imageId1);
   });
 
   test('QA10-F: archived pamper with null image is also repaired', async ({ page }) => {
