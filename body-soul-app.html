@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-lamed-fix-2026-05-25-1830 -->
+<!-- Tori version: pamper-multi-2026-05-25-1900 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2357,10 +2357,17 @@ function pickPamperImage(cardId, companionId, mode) {
 
 // ===== PAMPER STATE =====
 let pamperState = {
+  // LEGACY — kept only for safe migration on first load after update.
+  // Migrated into activePampers by migrateLegacyActivePamper(). Do not write here.
   activePamper: null,
-  // activePamper shape: { cardId, companionId, mode, selectedAt, activeUntil, imageId, imageSrc, summaryLine }
+
+  // Per-companion active pampers (one per companionId max).
+  // Shape: { id, cardId, cardTitleSnapshot, companionId, mode,
+  //          selectedAt, activeUntil, imageId, imageSrc, previewImage, summaryLine }
+  activePampers: [],
+
   archivedPamperCards: [],
-  // archivedPamperCards item: same + { archivedAt }
+  // archivedPamperCards item: same as activePampers item + { archivedAt }
   seenPamperImageIds: {},
   // seenPamperImageIds[cardId][companionId][mode] = [imageId, ...]
   // Tracks which pool images were already shown, so the next pick is always fresh.
@@ -2377,8 +2384,58 @@ async function loadPamperState() {
     const raw = await store.get(PAMPER_STATE_KEY);
     if (raw) { const d = JSON.parse(raw); Object.assign(pamperState, d); }
   } catch(e) {}
+  // Ensure array field exists (guard against older saved state that predates this field)
+  if (!Array.isArray(pamperState.activePampers)) pamperState.activePampers = [];
+  migrateLegacyActivePamper();   // one-time: move single activePamper → activePampers
   checkPamperExpiry();
-  repairPamperImageRefs();  // heal legacy records with missing/invalid imageSrc
+  repairPamperImageRefs();       // heal legacy records with missing/invalid imageSrc
+}
+
+// ─── Legacy migration: single activePamper → activePampers array ─────────────
+// Called once per app load (from loadPamperState). Safe to call multiple times.
+// Never deletes or modifies user data beyond converting the shape.
+function migrateLegacyActivePamper() {
+  var ap = pamperState.activePamper;
+  if (!ap) return;  // nothing to migrate
+
+  // Build the canonical object — derive missing fields from PAMPER_CARDS
+  var cardDef = PAMPER_CARDS[ap.cardId] || {};
+  var migrated = Object.assign({}, ap, {
+    id:                'migrated-' + (ap.companionId || 'x') + '-' + (ap.selectedAt || Date.now()),
+    cardTitleSnapshot: ap.cardTitleSnapshot || cardDef.title || ap.cardId || '',
+    previewImage:      ap.previewImage      || cardDef.previewImage || '',
+    summaryLine:       ap.summaryLine       || '',
+  });
+
+  var now = Date.now();
+  var isExpired = migrated.activeUntil <= now;
+
+  if (isExpired) {
+    // Expired legacy pamper → archive (avoid duplicate)
+    var alreadyArchived = (pamperState.archivedPamperCards || []).some(function(a) {
+      return a.companionId === migrated.companionId && a.selectedAt === migrated.selectedAt;
+    });
+    if (!alreadyArchived) {
+      if (!migrated.archivedAt) migrated.archivedAt = new Date(migrated.activeUntil).toISOString();
+      pamperState.archivedPamperCards.unshift(migrated);
+    }
+  } else {
+    // Still valid → move into activePampers (avoid duplicate)
+    var alreadyActive = pamperState.activePampers.some(function(p) {
+      return p.companionId === migrated.companionId && p.selectedAt === migrated.selectedAt;
+    });
+    if (!alreadyActive) {
+      // Remove any same-companion entry that might already be there (defensive)
+      pamperState.activePampers = pamperState.activePampers.filter(function(p) {
+        return p.companionId !== migrated.companionId;
+      });
+      pamperState.activePampers.push(migrated);
+    }
+  }
+
+  // Clear the legacy field so we never process it again
+  pamperState.activePamper = null;
+  savePamperState();
 }
 
 // ─── Pamper image repair ─────────────────────────────────────────────────────
@@ -2409,29 +2466,50 @@ function _isPamperSrcValid(src, cardId, companionId, mode) {
 
 function repairPamperImageRefs() {
   var repaired = false;
+  var now = Date.now();
 
-  // ── Repair activePamper ──────────────────────────────────────────────
-  var ap = pamperState.activePamper;
-  if (ap && Date.now() < ap.activeUntil) {
-    var apNeedsRepair = !ap.imageId
+  // ── Repair activePampers (array) ─────────────────────────────────────
+  (pamperState.activePampers || []).forEach(function(ap) {
+    if (!ap || ap.activeUntil <= now) return;
+
+    // Repair image
+    var imgNeedsRepair = !ap.imageId
       || !_isPamperSrcValid(ap.imageSrc, ap.cardId, ap.companionId, ap.mode);
-    if (apNeedsRepair) {
+    if (imgNeedsRepair) {
       var picked = pickPamperImage(ap.cardId, ap.companionId, ap.mode);
       if (picked) {
         ap.imageId  = picked.id;
         ap.imageSrc = picked.src;
         repaired = true;
-        console.info('[pamper repair] repaired activePamper image', {
-          cardId: ap.cardId, companionId: ap.companionId, mode: ap.mode,
-          imageId: picked.id, imageSrc: picked.src,
-        });
+        console.info('[pamper repair] repaired activePamper image',
+          { cardId: ap.cardId, companionId: ap.companionId, mode: ap.mode, imageId: picked.id });
       }
     }
-  }
+
+    // Repair missing previewImage
+    if (!ap.previewImage) {
+      var cd = PAMPER_CARDS[ap.cardId];
+      if (cd && cd.previewImage) { ap.previewImage = cd.previewImage; repaired = true; }
+    }
+
+    // Repair missing summaryLine — pick first available caption for this combination
+    if (!ap.summaryLine) {
+      var ml = (((((PAMPER_CARDS[ap.cardId] || {}).afterLines || {})[ap.companionId] || {})[ap.mode] || []));
+      if (ml.length) { ap.summaryLine = ml[0]; repaired = true; }
+    }
+
+    // Repair missing id
+    if (!ap.id) { ap.id = 'repaired-' + ap.companionId + '-' + (ap.selectedAt || now); repaired = true; }
+
+    // Repair missing cardTitleSnapshot
+    if (!ap.cardTitleSnapshot) {
+      var cd2 = PAMPER_CARDS[ap.cardId];
+      if (cd2 && cd2.title) { ap.cardTitleSnapshot = cd2.title; repaired = true; }
+    }
+  });
 
   // ── Repair archivedPamperCards ───────────────────────────────────────
-  var archived = pamperState.archivedPamperCards || [];
-  archived.forEach(function(arc, idx) {
+  (pamperState.archivedPamperCards || []).forEach(function(arc, idx) {
     var arcNeedsRepair = !arc.imageId
       || !_isPamperSrcValid(arc.imageSrc, arc.cardId, arc.companionId, arc.mode);
     if (arcNeedsRepair) {
@@ -2440,38 +2518,68 @@ function repairPamperImageRefs() {
         arc.imageId  = picked.id;
         arc.imageSrc = picked.src;
         repaired = true;
-        console.info('[pamper repair] repaired archived pamper image', {
-          idx: idx, cardId: arc.cardId, companionId: arc.companionId, mode: arc.mode,
-          imageId: picked.id, imageSrc: picked.src,
-        });
+        console.info('[pamper repair] repaired archived pamper image',
+          { idx: idx, cardId: arc.cardId, companionId: arc.companionId, mode: arc.mode, imageId: picked.id });
       }
+    }
+    if (!arc.previewImage) {
+      var cd3 = PAMPER_CARDS[arc.cardId];
+      if (cd3 && cd3.previewImage) { arc.previewImage = cd3.previewImage; repaired = true; }
+    }
+    if (!arc.summaryLine) {
+      var ml2 = (((((PAMPER_CARDS[arc.cardId] || {}).afterLines || {})[arc.companionId] || {})[arc.mode] || []));
+      if (ml2.length) { arc.summaryLine = ml2[0]; repaired = true; }
+    }
+    if (!arc.id) { arc.id = 'arc-' + (arc.companionId || idx) + '-' + (arc.selectedAt || idx); repaired = true; }
+    if (!arc.cardTitleSnapshot) {
+      var cd4 = PAMPER_CARDS[arc.cardId];
+      if (cd4 && cd4.title) { arc.cardTitleSnapshot = cd4.title; repaired = true; }
     }
   });
 
   if (repaired) { savePamperState(); }
 }
 
-// Returns true if a pamper just expired (useful for showing the gentle inline message).
+// Scans activePampers for expired items and moves them to archivedPamperCards.
+// Returns true if at least one pamper was archived this call.
+// Safe to call multiple times per render.
 function checkPamperExpiry() {
-  if (!pamperState.activePamper) return false;
-  if (Date.now() >= pamperState.activePamper.activeUntil) {
-    pamperState.archivedPamperCards.unshift(
-      Object.assign({}, pamperState.activePamper, { archivedAt: new Date().toISOString() })
-    );
-    pamperState.activePamper = null;
-    savePamperState();
-    return true;
-  }
-  return false;
+  var aps = pamperState.activePampers || [];
+  if (!aps.length) return false;
+  var now = Date.now();
+  var still = [], expired = [];
+  aps.forEach(function(p) {
+    if (p && p.activeUntil > now) still.push(p);
+    else if (p) expired.push(p);
+  });
+  if (!expired.length) return false;
+  if (!Array.isArray(pamperState.archivedPamperCards)) pamperState.archivedPamperCards = [];
+  expired.forEach(function(p) {
+    // Avoid duplicating archived entries
+    var already = pamperState.archivedPamperCards.some(function(a) {
+      return a.companionId === p.companionId && a.selectedAt === p.selectedAt;
+    });
+    if (!already) {
+      pamperState.archivedPamperCards.unshift(
+        Object.assign({}, p, { archivedAt: new Date().toISOString() })
+      );
+    }
+  });
+  pamperState.activePampers = still;
+  savePamperState();
+  return true;
 }
 
-// Returns the active pamper if it's still valid for the given companion (or any companion if companionId omitted).
+// Returns the active pamper for the given companionId (or the first active one if omitted).
+// Triggers expiry check each call as a safety guard.
 function getActivePamper(companionId) {
   checkPamperExpiry();
-  var ap = pamperState.activePamper;
-  if (!ap) return null;
-  if (companionId && ap.companionId !== companionId) return null;
-  return ap;
+  var now = Date.now();
+  var aps = pamperState.activePampers || [];
+  if (!companionId) {
+    return aps.find(function(p) { return p && p.activeUntil > now; }) || null;
+  }
+  return aps.find(function(p) { return p && p.companionId === companionId && p.activeUntil > now; }) || null;
 }
 
 // Pick a deterministic-but-varied summary line for a companion + mode.
@@ -5779,14 +5887,22 @@ function buildCompanionHeroHTML(c, marks, mood) {
     + '</div>'
     + '</div>';
 
-  // Speech bubble
-  var lineText = (JOURNEY_COMPANION_LINES[c.id] || {})[mood] || '';
+  // Speech bubble — shows pamper summaryLine when active pamper, otherwise companion mood line
+  var lineText;
+  if (_activePamper && _activePamper.summaryLine) {
+    lineText = _activePamper.summaryLine;
+  } else {
+    lineText = (JOURNEY_COMPANION_LINES[c.id] || {})[mood] || '';
+  }
   var bubbleHTML = '<div class="j-bubble" style="margin:0">'
     + '<div class="j-bubble-who">'
     + '<div class="j-bubble-dot" style="background:' + c.accentSoft + ';border:1px solid ' + c.accent + '"></div>'
     + '<span class="j-bubble-name">' + c.name + '</span>'
     + '</div>'
     + '<div class="j-bubble-text">' + lineText + '</div>'
+    + (_activePamper
+        ? '<div style="font-size:11px;color:var(--g-ink-3);margin-top:6px">המאורה מחכה בבית — היום יש לה ספא ביתי.</div>'
+        : '')
     + '</div>';
 
   return buildMCard(homeHTML + bubbleHTML, 'padding:0;overflow:hidden');
@@ -6023,16 +6139,41 @@ function selectPamperMode(cardId, mode) {
   var modeLines = (((cardDef.afterLines || {})[companionId] || {})[mode] || []);
   var summaryLine = modeLines.length ? modeLines[Math.floor(Math.random() * modeLines.length)] : '';
 
-  pamperState.activePamper = {
-    cardId:      cardId,
-    companionId: companionId,
-    mode:        mode,
-    selectedAt:  new Date().toISOString(),
-    activeUntil: now + 24 * 60 * 60 * 1000,   // 24 hours from now
-    imageId:     imgId,
-    imageSrc:    imgSrc,
-    summaryLine: summaryLine,
+  var newPamper = {
+    id:                'pamp-' + now + '-' + Math.random().toString(36).slice(2, 7),
+    cardId:            cardId,
+    cardTitleSnapshot: cardDef.title || cardId,
+    companionId:       companionId,
+    mode:              mode,
+    selectedAt:        new Date().toISOString(),
+    activeUntil:       now + 24 * 60 * 60 * 1000,   // 24 hours from now
+    imageId:           imgId,
+    imageSrc:          imgSrc,
+    previewImage:      cardDef.previewImage || '',
+    summaryLine:       summaryLine,
   };
+
+  // Archive any existing active pamper for this companion before replacing
+  if (!Array.isArray(pamperState.activePampers)) pamperState.activePampers = [];
+  var existingForCompanion = pamperState.activePampers.filter(function(p) {
+    return p && p.companionId === companionId;
+  });
+  existingForCompanion.forEach(function(old) {
+    var alreadyArchived = (pamperState.archivedPamperCards || []).some(function(a) {
+      return a.companionId === old.companionId && a.selectedAt === old.selectedAt;
+    });
+    if (!alreadyArchived) {
+      if (!Array.isArray(pamperState.archivedPamperCards)) pamperState.archivedPamperCards = [];
+      pamperState.archivedPamperCards.unshift(
+        Object.assign({}, old, { archivedAt: new Date().toISOString() })
+      );
+    }
+  });
+  // Remove old companion entries, add new one
+  pamperState.activePampers = pamperState.activePampers.filter(function(p) {
+    return p && p.companionId !== companionId;
+  });
+  pamperState.activePampers.push(newPamper);
 
   if (!PAMPER_TEST_MODE) {
     // Production: dedicate points — do NOT decrement lifetimeConnectionPoints.
@@ -6068,10 +6209,12 @@ function closeMyPampers() {
 }
 
 function _buildMyPampersSheetHTML() {
-  var ap       = pamperState.activePamper;
+  var now      = Date.now();
+  var activeItems = (pamperState.activePampers || []).filter(function(p) {
+    return p && p.activeUntil > now;
+  });
   var archived = pamperState.archivedPamperCards || [];
-  var apActive = ap && Date.now() < ap.activeUntil;
-  var hasAny   = apActive || archived.length > 0;
+  var hasAny   = activeItems.length > 0 || archived.length > 0;
 
   var inner = '<div class="j-myp-handle"></div>'
     + '<div class="j-myp-title">הפינוקים שלי</div>'
@@ -6082,51 +6225,56 @@ function _buildMyPampersSheetHTML() {
       + 'עוד אין כאן פינוקים שמורים. לאט לאט — גם רגעים טובים נאספים בקצב שלהם.</div>';
   }
 
-  // Active pamper item — shows envelope previewImage, not scene imageSrc
-  if (apActive) {
-    var aCard    = PAMPER_CARDS[ap.cardId] || {};
-    var aComp    = COMPANIONS[ap.companionId] || {};
-    var aMode    = (aCard.modeLabels || {})[ap.mode] || ap.mode;
-    var aPreview = aCard.previewImage || '';
-
+  // ── Section A: active pampers — one per companion, envelope preview only ──
+  if (activeItems.length > 0) {
     inner += '<div class="j-myp-section-label">הפינוק של היום</div>';
-    inner += '<div class="j-myp-item">';
-    inner += '<div class="j-myp-thumb">'
-      + (aPreview
-        ? '<img src="' + aPreview + '" alt="' + (aCard.title || 'ספא ביתי') + '" loading="lazy"'
-          + ' onerror="this.onerror=null;this.style.display=\'none\';">'
-        : '🛁')
-      + '</div>';
-    inner += '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:2px">'
-      + (aCard.title || 'ספא ביתי') + ' · ' + aMode + '</div>'
-      + '<div style="font-size:12px;color:var(--g-ink-3);margin-bottom:8px">'
-      + (aComp.name || ap.companionId) + '</div>'
-      + '<button class="j-myp-env-btn" onclick="openPamperEnvelope(\'active\')">לפתוח את המעטפה</button>'
-      + '</div>';
-    inner += '</div>'; // j-myp-item
+    activeItems.forEach(function(ap, idx) {
+      var aCard    = PAMPER_CARDS[ap.cardId] || {};
+      var aComp    = COMPANIONS[ap.companionId] || {};
+      var aMode    = (aCard.modeLabels || {})[ap.mode] || ap.mode;
+      // Use saved previewImage first, fallback to cardDef
+      var aPreview = ap.previewImage || aCard.previewImage || '';
+
+      inner += '<div class="j-myp-item">';
+      inner += '<div class="j-myp-thumb">'
+        + (aPreview
+          ? '<img src="' + aPreview + '" alt="' + (ap.cardTitleSnapshot || aCard.title || 'ספא ביתי') + '" loading="lazy"'
+            + ' onerror="this.onerror=null;this.style.display=\'none\';">'
+          : '🛁')
+        + '</div>';
+      inner += '<div style="flex:1;min-width:0">'
+        + '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:2px">'
+        + (ap.cardTitleSnapshot || aCard.title || 'ספא ביתי') + ' · ' + aMode + '</div>'
+        + '<div style="font-size:12px;color:var(--g-ink-3);margin-bottom:8px">'
+        + (aComp.name || ap.companionId) + '</div>'
+        + '<button class="j-myp-env-btn" onclick="openPamperEnvelope(\'active\',' + idx + ')">לפתוח את המעטפה</button>'
+        + '</div>';
+      inner += '</div>'; // j-myp-item
+    });
   }
 
-  // Archived items — show envelope previewImage for each
+  // ── Section B: archived pampers — all companions, all time ──
   if (archived.length > 0) {
-    inner += '<div class="j-myp-section-label" style="margin-top:' + (apActive ? '16px' : '0') + '">רגעים שנשמרו</div>';
+    var topMargin = activeItems.length > 0 ? '16px' : '0';
+    inner += '<div class="j-myp-section-label" style="margin-top:' + topMargin + '">רגעים שנשמרו</div>';
     archived.forEach(function(item, idx) {
       var iCard    = PAMPER_CARDS[item.cardId] || {};
       var iComp    = COMPANIONS[item.companionId] || {};
       var iMode    = (iCard.modeLabels || {})[item.mode] || item.mode;
       var iDate    = item.selectedAt ? new Date(item.selectedAt).toLocaleDateString('he-IL', {day:'numeric', month:'long'}) : '';
-      var iPreview = iCard.previewImage || '';
+      // Use saved previewImage first, fallback to cardDef
+      var iPreview = item.previewImage || iCard.previewImage || '';
 
       inner += '<div class="j-myp-item">';
       inner += '<div class="j-myp-thumb">'
         + (iPreview
-          ? '<img src="' + iPreview + '" alt="' + (iCard.title || '') + '" loading="lazy"'
+          ? '<img src="' + iPreview + '" alt="' + (item.cardTitleSnapshot || iCard.title || '') + '" loading="lazy"'
             + ' onerror="this.onerror=null;this.style.display=\'none\';">'
           : (iCard.icon || '🛁'))
         + '</div>';
       inner += '<div style="flex:1;min-width:0">'
         + '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:2px">'
-        + (iCard.title || item.cardId) + ' · ' + iMode + '</div>'
+        + (item.cardTitleSnapshot || iCard.title || item.cardId) + ' · ' + iMode + '</div>'
         + '<div style="font-size:12px;color:var(--g-ink-3);margin-bottom:8px">'
         + (iComp.name || item.companionId) + (iDate ? ' · ' + iDate : '') + '</div>'
         + '<button class="j-myp-env-btn" onclick="openPamperEnvelope(\'archived\',' + idx + ')">לפתוח את המעטפה</button>'
@@ -6145,7 +6293,11 @@ function _buildMyPampersSheetHTML() {
 function openPamperEnvelope(sourceType, index) {
   var item;
   if (sourceType === 'active') {
-    item = pamperState.activePamper;
+    var now = Date.now();
+    var activeItems = (pamperState.activePampers || []).filter(function(p) {
+      return p && p.activeUntil > now;
+    });
+    item = activeItems[index || 0];
   } else {
     item = (pamperState.archivedPamperCards || [])[index || 0];
   }
