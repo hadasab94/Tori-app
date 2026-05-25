@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-image-repair-2026-05-25-1400 -->
+<!-- Tori version: pamper-test-mode-2026-05-25-1500 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2959,6 +2959,13 @@ const COMPANION_LAIRS = {
   },
 };
 
+// ===== PAMPER TEST MODE =====
+// TEST MODE ONLY:
+// Pamper cards are currently free to choose for testing.
+// Before production, set PAMPER_TEST_MODE = false
+// so choosing a pamper card dedicates connection points.
+const PAMPER_TEST_MODE = true;
+
 // ===== PAMPER CARDS — מגירת הפינוקים =====
 // imagePaths: relative to site root. Files may not exist yet;
 // the UI falls back to a calm placeholder automatically.
@@ -5764,7 +5771,8 @@ function buildHabitStrengthHTML(habits) {
 function buildPamperDrawerHTML(c) {
   var cardDef   = PAMPER_CARDS['spa-small'];
   var available = getAvailablePamperPoints();
-  var canChoose = available >= cardDef.requiredPoints;
+  // In test mode the card is always chooseable regardless of point balance.
+  var canChoose = PAMPER_TEST_MODE || available >= cardDef.requiredPoints;
   var ap        = getActivePamper(c.id);  // active pamper for THIS companion
   var html      = '<div class="j-pamper-section">';
 
@@ -5923,8 +5931,15 @@ function closePamperModal() {
 function selectPamperMode(cardId, mode) {
   var cardDef = PAMPER_CARDS[cardId];
   if (!cardDef) return;
-  var available = getAvailablePamperPoints();
-  if (available < cardDef.requiredPoints) return; // guard
+
+  if (PAMPER_TEST_MODE) {
+    // TEST MODE ONLY: skip point guard and point dedication.
+    // All pamper behavior (image selection, archiving, etc.) runs normally.
+    // Before production: set PAMPER_TEST_MODE = false.
+  } else {
+    var available = getAvailablePamperPoints();
+    if (available < cardDef.requiredPoints) return; // guard
+  }
 
   var companionId = cs.companionId;
   var now = Date.now();
@@ -5949,12 +5964,14 @@ function selectPamperMode(cardId, mode) {
     summaryLine: summaryLine,
   };
 
-  // Dedicate points — do NOT decrement lifetimeConnectionPoints
-  gs.dedicatedPamperPoints = (gs.dedicatedPamperPoints || 0) + cardDef.requiredPoints;
+  if (!PAMPER_TEST_MODE) {
+    // Production: dedicate points — do NOT decrement lifetimeConnectionPoints.
+    gs.dedicatedPamperPoints = (gs.dedicatedPamperPoints || 0) + cardDef.requiredPoints;
+    saveGardenState();
+  }
 
-  // Persist both
+  // Persist pamper state (always)
   savePamperState();
-  saveGardenState();
 
   closePamperModal();
   _pamperJustActivated = true;  // show confirmation on next render
