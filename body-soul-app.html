@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-copy-2026-05-25-1600 -->
+<!-- Tori version: pamper-ux-fix-2026-05-25-1700 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1252,6 +1252,81 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .j-pamper-confirm-accent {
   font-size:13px; color:var(--g-sage-deep);
   font-style:italic; margin-top:8px; line-height:1.55;
+}
+/* Active pamper status card — compact, no duplicate scene image */
+.j-pamper-status-card {
+  background:linear-gradient(160deg,#F2F7F2 0%,#EAF0EA 100%);
+  border-radius:16px; padding:14px 16px;
+  display:flex; gap:12px; align-items:flex-start;
+  box-shadow:0 1px 0 rgba(45,42,38,0.02),0 4px 14px -8px rgba(45,42,38,0.08);
+}
+.j-pamper-status-thumb {
+  width:58px; height:58px; border-radius:11px; flex-shrink:0;
+  background:linear-gradient(135deg,#E8F0E8,#D4E4D4);
+  overflow:hidden;
+  display:flex; align-items:center; justify-content:center; font-size:22px;
+}
+.j-pamper-status-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+/* My Pampers bottom sheet */
+.j-myp-overlay {
+  position:fixed; inset:0; z-index:210;
+  background:rgba(45,42,38,0.38); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+  display:flex; align-items:flex-end; justify-content:center;
+  padding:0 0 env(safe-area-inset-bottom,0);
+}
+.j-myp-sheet {
+  background:#FFFFFF; border-radius:26px 26px 0 0; width:100%; max-width:480px;
+  max-height:86vh; overflow-y:auto;
+  padding:20px 20px calc(24px + env(safe-area-inset-bottom,0));
+  box-shadow:0 -8px 40px rgba(45,42,38,0.18);
+}
+.j-myp-handle {
+  width:36px; height:4px; border-radius:999px;
+  background:rgba(45,42,38,0.12); margin:0 auto 20px;
+}
+.j-myp-title {
+  font-family:'Frank Ruhl Libre',serif; font-size:22px; font-weight:500;
+  color:var(--g-ink); line-height:1.2; margin-bottom:6px;
+}
+.j-myp-sub { font-size:13px; color:var(--g-ink-3); line-height:1.55; margin-bottom:18px; }
+.j-myp-section-label {
+  font-size:11px; font-weight:700; letter-spacing:0.8px;
+  color:var(--g-ink-3); margin-bottom:10px;
+}
+.j-myp-item {
+  background:#FAFAF8; border-radius:16px; padding:14px;
+  border:1px solid rgba(45,42,38,0.07);
+  display:flex; gap:12px; align-items:flex-start; margin-bottom:10px;
+}
+.j-myp-thumb {
+  width:60px; height:60px; border-radius:12px; flex-shrink:0;
+  background:linear-gradient(135deg,#F0EBE0,#E0D8CC);
+  overflow:hidden;
+  display:flex; align-items:center; justify-content:center; font-size:24px;
+}
+.j-myp-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.j-myp-env-btn {
+  margin-top:8px; padding:7px 14px; border-radius:999px;
+  border:1px solid rgba(45,42,38,0.12);
+  background:#F5F0E8; color:var(--g-ink-2); font-size:12.5px;
+  font-family:'Assistant',sans-serif; cursor:pointer;
+}
+.j-myp-env-btn:active { background:#EDE5D8; }
+.j-myp-close-btn {
+  display:block; width:100%; padding:11px; border:none; background:none;
+  font-size:13.5px; color:var(--g-ink-3); cursor:pointer;
+  font-family:'Assistant',sans-serif; margin-top:8px;
+}
+.j-myp-scene {
+  width:100%; aspect-ratio:1/1; border-radius:16px; overflow:hidden; margin-bottom:14px;
+  background:linear-gradient(135deg,#F0EBE0,#E0D8CC);
+}
+.j-myp-scene img { width:100%; height:100%; object-fit:cover; display:block; }
+.j-myp-back-btn {
+  padding:9px 18px; border-radius:999px;
+  border:1px solid rgba(45,42,38,0.12);
+  background:#F5F0E8; color:var(--g-ink-2); font-size:13px;
+  font-family:'Assistant',sans-serif; cursor:pointer;
 }
 </style>
 <script>
@@ -5782,41 +5857,41 @@ function buildPamperDrawerHTML(c) {
     + 'את דואגת לעצמך, הדמות שלך מתפנקת, והטוב עושה סיבוב חזרה.</div>';
 
   if (ap) {
-    // ── Active pamper state ──
+    // ── Active pamper — compact status card (NO duplicate scene image) ──
+    // activePamper.imageSrc is shown ONLY in the top hero area and inside "הפינוקים שלי".
     var modeLabel = cardDef.modeLabels[ap.mode] || ap.mode;
-    html += '<div class="j-pamper-active-card">';
-    // Active scene image / placeholder
-    html += '<div class="j-pamper-active-scene">';
-    if (ap.imageSrc) {
-      html += '<img src="' + ap.imageSrc + '" alt="' + c.name + ' בספא ביתי" loading="lazy"'
-        + ' onerror="this.onerror=null;this.style.display=\'none\';var ph=this.nextElementSibling;if(ph)ph.style.display=\'flex\';">'
-        + '<div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;'
-        + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
-        + '<span style="font-size:36px">🛁</span><span>ספא ביתי ·' + c.name + '</span></div>';
+    var _nameArticle = c.displayNameWithArticle || ('ה' + c.name);
+    var _previewSrc  = cardDef.previewImage || '';
+
+    html += '<div class="j-pamper-status-card">';
+    // Small envelope thumbnail (preview image, not the scene)
+    html += '<div class="j-pamper-status-thumb">';
+    if (_previewSrc) {
+      html += '<img src="' + _previewSrc + '" alt="ספא ביתי" loading="lazy"'
+        + ' onerror="this.onerror=null;this.style.display=\'none\';">';
     } else {
-      html += '<div style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;'
-        + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
-        + '<span style="font-size:36px">🛁</span><span>ספא ביתי ·' + c.name + '</span></div>';
+      html += '🛁';
     }
     html += '</div>';
-    // Active copy
-    html += '<div style="font-size:11.5px;letter-spacing:0.4px;color:var(--g-ink-3);margin-bottom:4px">הפינוק של היום</div>';
-    html += '<div class="serif" style="font-size:19px;font-weight:500;color:var(--g-ink);line-height:1.2;margin-bottom:8px">ספא ביתי ·' + modeLabel + '</div>';
-    // Just-activated: show full confirmation copy; otherwise show ongoing state copy
+    // Text side
+    html += '<div style="flex:1;min-width:0">';
+    html += '<div style="font-size:11px;font-weight:700;letter-spacing:0.6px;color:var(--g-sage-deep);margin-bottom:3px">הפינוק של היום כבר פתוח</div>';
+    html += '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:4px">ספא ביתי · ' + modeLabel + '</div>';
+
     if (_pamperJustActivated) {
       _pamperJustActivated = false;
-      html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.65">'
-        + 'את בחרת לפנק את ה' + c.name + ' היום.<br>'
+      html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.6">'
+        + 'את בחרת לפנק את ' + _nameArticle + ' היום.<br>'
         + 'זה בזכות רגעים שבהם דאגת גם לעצמך — וזה לא דבר קטן.</div>';
-      html += '<div style="font-size:13px;color:var(--g-sage-deep);line-height:1.55;margin-top:8px">'
-        + 'הספא הביתי שלה יופיע עכשיו בתור הפינוק של היום.</div>';
     } else {
-      html += '<div style="font-size:13.5px;color:var(--g-ink-2);line-height:1.65">'
-        + 'את בחרת לפנק את ה' + c.name + ' היום. המאורה מחכה בבית — היום יש לה ספא ביתי.</div>';
+      html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.6">'
+        + _nameArticle + ' מתפנקת עכשיו. המעטפה תחכה לך גם בהפינוקים שלי.</div>';
     }
-    // Link to gallery
-    html += '<div style="margin-top:10px;font-size:12.5px;color:var(--g-sage-deep);cursor:pointer" onclick="scrollToPamperGallery()">הפינוקים שלי ←</div>';
-    html += '</div>'; // j-pamper-active-card
+    html += '</div>'; // text side
+    html += '</div>'; // j-pamper-status-card
+
+    // Always-visible button to open My Pampers sheet
+    html += '<button class="j-pamper-btn primary" style="margin-top:4px" onclick="openMyPampers()">הפינוקים שלי</button>';
 
   } else {
     // ── Card browser: ספא ביתי ──
@@ -5856,45 +5931,22 @@ function buildPamperDrawerHTML(c) {
     html += '</div>'; // j-pamper-card-wrap
   }
 
-  // ── Gallery "הפינוקים שלי" ──
+  // ── Gentle inline expiry message (12h window) + "הפינוקים שלי" entry button ──
+  // Full gallery is now in the My Pampers sheet (openMyPampers()).
   var archived = pamperState.archivedPamperCards || [];
   if (archived.length > 0) {
-    // Gentle inline message if the most recent was archived in the last 12 hours
     var latest = archived[0];
-    var msAgo = latest.archivedAt ? Date.now() - new Date(latest.archivedAt).getTime() : Infinity;
+    var msAgo  = latest.archivedAt ? Date.now() - new Date(latest.archivedAt).getTime() : Infinity;
     if (msAgo < 12 * 3600 * 1000) {
       html += '<div class="j-pamper-expired-msg">'
         + 'היה ממש כיף. וכמה נעים גם לחזור הביתה.<br>'
         + 'הפינוק נשמר ב״הפינוקים שלי״.'
         + '</div>';
     }
-    html += '<div id="j-pamper-gallery" class="j-pamper-gallery">';
-    html += '<div class="j-eyebrow" style="padding:0 2px">הפינוקים שלי</div>';
-    html += '<div style="font-size:12px;color:var(--g-ink-3);margin-bottom:10px;padding:0 2px">'
-      + 'רגעים קטנים שבחרת לשמור לדמות שלך.</div>';
-    archived.forEach(function(item) {
-      var iCard = PAMPER_CARDS[item.cardId] || {};
-      var iComp = COMPANIONS[item.companionId] || {};
-      var iMode = (iCard.modeLabels || {})[item.mode] || item.mode;
-      var iDate = item.selectedAt ? new Date(item.selectedAt).toLocaleDateString('he-IL', {day:'numeric', month:'long'}) : '';
-      var iLine = getPamperAfterLine(item.cardId, item.companionId, item.archivedAt);
-      html += '<div class="j-pamper-archive-item">';
-      html += '<div class="j-pamper-archive-thumb">'
-        + '<span>' + (iCard.icon||'🛁') + '</span>'
-        + '</div>';
-      html += '<div style="flex:1;min-width:0">'
-        + '<div style="font-size:13.5px;font-weight:600;color:var(--g-ink)">' + (iCard.title||item.cardId) + ' · ' + iMode + '</div>'
-        + '<div style="font-size:11.5px;color:var(--g-ink-3);margin-bottom:4px">'
-        + 'נבחר עבור ' + (iComp.name||item.companionId) + (iDate ? ' · ' + iDate : '') + '</div>'
-        + (iLine ? '<div style="font-size:12.5px;color:var(--g-ink-2);line-height:1.55;font-style:italic">' + iLine + '</div>' : '')
-        + '</div>';
-      html += '</div>'; // archive-item
-    });
-    html += '</div>'; // gallery
-  } else {
-    // Empty state — shown only when no archived pampers yet
-    html += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;padding:0 2px;margin-top:4px">'
-      + 'עוד אין כאן פינוקים שמורים. לאט לאט — גם רגעים טובים נאספים בקצב שלהם.</div>';
+  }
+  if (!ap) {
+    // Show entry button only when no active pamper (active state already has its own button above)
+    html += '<button class="j-pamper-btn" style="background:#F5F0E8;color:var(--g-ink-2);margin-top:2px" onclick="openMyPampers()">הפינוקים שלי</button>';
   }
 
   html += '</div>'; // j-pamper-section
@@ -5986,9 +6038,146 @@ function selectPamperMode(cardId, mode) {
   renderJourneyTab();
 }
 
-function scrollToPamperGallery() {
-  var el = document.getElementById('j-pamper-gallery');
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function scrollToPamperGallery() { openMyPampers(); } // legacy alias
+
+// ── My Pampers sheet ────────────────────────────────────────────────────────
+// Opens a bottom-sheet showing the active pamper and archived pampers.
+// Envelope images (previewImage) are shown in the list.
+// Tapping an envelope reveals the actual scene image (imageSrc) — no re-randomize.
+function openMyPampers() {
+  var existing = document.getElementById('j-myp-overlay');
+  if (existing) existing.remove();
+  var wrapper = document.createElement('div');
+  wrapper.innerHTML = _buildMyPampersSheetHTML();
+  document.body.appendChild(wrapper.firstElementChild);
+}
+
+function closeMyPampers() {
+  var el = document.getElementById('j-myp-overlay');
+  if (el) el.remove();
+}
+
+function _buildMyPampersSheetHTML() {
+  var ap       = pamperState.activePamper;
+  var archived = pamperState.archivedPamperCards || [];
+  var apActive = ap && Date.now() < ap.activeUntil;
+  var hasAny   = apActive || archived.length > 0;
+
+  var inner = '<div class="j-myp-handle"></div>'
+    + '<div class="j-myp-title">הפינוקים שלי</div>'
+    + '<div class="j-myp-sub">רגעים קטנים שבחרת לשמור לדמות שלך.</div>';
+
+  if (!hasAny) {
+    inner += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;padding:8px 0 16px">'
+      + 'עוד אין כאן פינוקים שמורים. לאט לאט — גם רגעים טובים נאספים בקצב שלהם.</div>';
+  }
+
+  // Active pamper item — shows envelope previewImage, not scene imageSrc
+  if (apActive) {
+    var aCard    = PAMPER_CARDS[ap.cardId] || {};
+    var aComp    = COMPANIONS[ap.companionId] || {};
+    var aMode    = (aCard.modeLabels || {})[ap.mode] || ap.mode;
+    var aPreview = aCard.previewImage || '';
+
+    inner += '<div class="j-myp-section-label">הפינוק של היום</div>';
+    inner += '<div class="j-myp-item">';
+    inner += '<div class="j-myp-thumb">'
+      + (aPreview
+        ? '<img src="' + aPreview + '" alt="' + (aCard.title || 'ספא ביתי') + '" loading="lazy"'
+          + ' onerror="this.onerror=null;this.style.display=\'none\';">'
+        : '🛁')
+      + '</div>';
+    inner += '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:2px">'
+      + (aCard.title || 'ספא ביתי') + ' · ' + aMode + '</div>'
+      + '<div style="font-size:12px;color:var(--g-ink-3);margin-bottom:8px">'
+      + (aComp.name || ap.companionId) + '</div>'
+      + '<button class="j-myp-env-btn" onclick="openPamperEnvelope(\'active\')">לפתוח את המעטפה</button>'
+      + '</div>';
+    inner += '</div>'; // j-myp-item
+  }
+
+  // Archived items — show envelope previewImage for each
+  if (archived.length > 0) {
+    inner += '<div class="j-myp-section-label" style="margin-top:' + (apActive ? '16px' : '0') + '">רגעים שנשמרו</div>';
+    archived.forEach(function(item, idx) {
+      var iCard    = PAMPER_CARDS[item.cardId] || {};
+      var iComp    = COMPANIONS[item.companionId] || {};
+      var iMode    = (iCard.modeLabels || {})[item.mode] || item.mode;
+      var iDate    = item.selectedAt ? new Date(item.selectedAt).toLocaleDateString('he-IL', {day:'numeric', month:'long'}) : '';
+      var iPreview = iCard.previewImage || '';
+
+      inner += '<div class="j-myp-item">';
+      inner += '<div class="j-myp-thumb">'
+        + (iPreview
+          ? '<img src="' + iPreview + '" alt="' + (iCard.title || '') + '" loading="lazy"'
+            + ' onerror="this.onerror=null;this.style.display=\'none\';">'
+          : (iCard.icon || '🛁'))
+        + '</div>';
+      inner += '<div style="flex:1;min-width:0">'
+        + '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:2px">'
+        + (iCard.title || item.cardId) + ' · ' + iMode + '</div>'
+        + '<div style="font-size:12px;color:var(--g-ink-3);margin-bottom:8px">'
+        + (iComp.name || item.companionId) + (iDate ? ' · ' + iDate : '') + '</div>'
+        + '<button class="j-myp-env-btn" onclick="openPamperEnvelope(\'archived\',' + idx + ')">לפתוח את המעטפה</button>'
+        + '</div>';
+      inner += '</div>'; // j-myp-item
+    });
+  }
+
+  inner += '<button class="j-myp-close-btn" onclick="closeMyPampers()">סגור</button>';
+
+  return '<div class="j-myp-overlay" id="j-myp-overlay" onclick="closeMyPampers()">'
+    + '<div class="j-myp-sheet" onclick="event.stopPropagation()">' + inner + '</div></div>';
+}
+
+// Opens the envelope detail view — shows actual scene imageSrc. No re-randomize.
+function openPamperEnvelope(sourceType, index) {
+  var item;
+  if (sourceType === 'active') {
+    item = pamperState.activePamper;
+  } else {
+    item = (pamperState.archivedPamperCards || [])[index || 0];
+  }
+  if (!item) return;
+
+  var iCard     = PAMPER_CARDS[item.cardId] || {};
+  var iComp     = COMPANIONS[item.companionId] || {};
+  var iMode     = (iCard.modeLabels || {})[item.mode] || item.mode;
+  var iArticle  = iComp.displayNameWithArticle || ('ה' + (iComp.name || ''));
+  var imgSrc    = item.imageSrc || '';
+  var summaryLine = item.summaryLine || '';
+
+  var sheet = document.querySelector('#j-myp-overlay .j-myp-sheet');
+  if (!sheet) return;
+
+  var inner = '<div class="j-myp-handle"></div>'
+    + '<div class="j-myp-title">המעטפה נפתחה</div>'
+    + '<div class="j-myp-sub">זה הפינוק שבחרת ל' + iArticle + '.</div>';
+
+  if (imgSrc) {
+    inner += '<div class="j-myp-scene">'
+      + '<img src="' + imgSrc + '" alt="' + (iCard.title || 'ספא ביתי') + ' · ' + iMode + '" loading="lazy"'
+      + ' onerror="this.onerror=null;this.style.opacity=\'0.3\';">'
+      + '</div>';
+  }
+
+  inner += '<div style="font-size:15px;font-weight:600;color:var(--g-ink);margin-bottom:6px">'
+    + (iCard.title || 'ספא ביתי') + ' · ' + iMode + '</div>';
+  if (summaryLine) {
+    inner += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.65;margin-bottom:14px;font-style:italic">'
+      + summaryLine + '</div>';
+  }
+  inner += '<button class="j-myp-back-btn" onclick="_myPampersBack()">לחזור לפינוקים שלי</button>';
+  inner += '<button class="j-myp-close-btn" onclick="closeMyPampers()">סגור</button>';
+
+  sheet.innerHTML = inner;
+  sheet.scrollTop = 0;
+}
+
+function _myPampersBack() {
+  closeMyPampers();
+  openMyPampers();
 }
 
 function buildFactCardHTML() {
