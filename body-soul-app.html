@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-captions-2026-05-25-1800 -->
+<!-- Tori version: pamper-lamed-fix-2026-05-25-1830 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2484,6 +2484,15 @@ function getPamperAfterLine(cardId, companionId, mode, archivedAt) {
   // Use date string to vary the line without pure random (stable across renders).
   var seed = archivedAt ? (new Date(archivedAt).getDate() % lines.length) : 0;
   return lines[seed];
+}
+
+// Hebrew grammar helper: ל + ה → ל  (definite article is elided after ל)
+// e.g. 'החפשושית' → 'לחפשושית',  'הדובה' → 'לדובה'
+function withLamed(nameWithArticle) {
+  if (typeof nameWithArticle === 'string' && nameWithArticle.charAt(0) === 'ה') {
+    return 'ל' + nameWithArticle.slice(1);
+  }
+  return 'ל' + (nameWithArticle || '');
 }
 
 // JS-only flag set when the user just activated a pamper this session (shows confirmation).
@@ -5924,9 +5933,9 @@ function buildPamperDrawerHTML(c) {
     // CTA
     var _nameArticle = c.displayNameWithArticle || ('ה' + c.name);
     if (canChoose) {
-      html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'spa-small\',\'' + c.id + '\')">לבחור פינוק ל' + _nameArticle + '</button>';
+      html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'spa-small\',\'' + c.id + '\')">לבחור פינוק ' + withLamed(_nameArticle) + '</button>';
     } else {
-      html += '<button class="j-pamper-btn muted" disabled>לבחור פינוק ל' + _nameArticle + '</button>';
+      html += '<button class="j-pamper-btn muted" disabled>לבחור פינוק ' + withLamed(_nameArticle) + '</button>';
       html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והפינוק הזה ייפתח לבחירה.</div>';
     }
     html += '</div>'; // j-pamper-card-wrap
@@ -6154,7 +6163,7 @@ function openPamperEnvelope(sourceType, index) {
 
   var inner = '<div class="j-myp-handle"></div>'
     + '<div class="j-myp-title">המעטפה נפתחה</div>'
-    + '<div class="j-myp-sub">זה הפינוק שבחרת ל' + iArticle + '.</div>';
+    + '<div class="j-myp-sub">זה הפינוק שבחרת ' + withLamed(iArticle) + '.</div>';
 
   if (imgSrc) {
     inner += '<div class="j-myp-scene">'
