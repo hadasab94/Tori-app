@@ -1,4 +1,4 @@
-<!-- Tori version: pamper-pool-2026-05-25-1000 -->
+<!-- Tori version: spa-images-pool-import-2026-05-25-1200 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2898,6 +2898,7 @@ const PAMPER_CARDS = {
     subtitle: 'את בוחרת לפנק את הדמות שלך ברגע רגוע, כי גם לה מגיע לנוח בזכות זה שדאגת לעצמך.',
     requiredPoints: 15,
     icon: '🛁',
+    previewImage: 'assets/companions/pamper/spa/spa-small-card-preview-01.webp',
     modes: ['alone', 'friend', 'sister'],
     modeLabels: { alone: 'לבד', friend: 'עם חברה', sister: 'עם אחות' },
     // companionImages: pool arrays — add more objects to grow the pool per companion+mode.
@@ -2905,17 +2906,26 @@ const PAMPER_CARDS = {
     // The app randomly picks an unseen image first; repeats only after all have been shown.
     companionImages: {
       bear: {
-        alone:  [{ id:'bear-spa-alone-01',  src:'assets/companions/pamper/spa/bear-spa-alone-01.webp' }],
+        alone:  [
+          { id:'bear-spa-alone-01', src:'assets/companions/pamper/spa/bear-spa-alone-01.webp' },
+          { id:'bear-spa-alone-02', src:'assets/companions/pamper/spa/bear-spa-alone-02.webp' },
+        ],
         friend: [{ id:'bear-spa-friend-01', src:'assets/companions/pamper/spa/bear-spa-friend-01.webp' }],
         sister: [{ id:'bear-spa-sister-01', src:'assets/companions/pamper/spa/bear-spa-sister-01.webp' }],
       },
       cat: {
-        alone:  [{ id:'cat-spa-alone-01',  src:'assets/companions/pamper/spa/cat-spa-alone-01.webp' }],
+        alone:  [
+          { id:'cat-spa-alone-01', src:'assets/companions/pamper/spa/cat-spa-alone-01.webp' },
+          { id:'cat-spa-alone-02', src:'assets/companions/pamper/spa/cat-spa-alone-02.webp' },
+        ],
         friend: [{ id:'cat-spa-friend-01', src:'assets/companions/pamper/spa/cat-spa-friend-01.webp' }],
         sister: [{ id:'cat-spa-sister-01', src:'assets/companions/pamper/spa/cat-spa-sister-01.webp' }],
       },
       forest: {
-        alone:  [{ id:'hafshushit-spa-alone-01',  src:'assets/companions/pamper/spa/hafshushit-spa-alone-01.webp' }],
+        alone:  [
+          { id:'hafshushit-spa-alone-01', src:'assets/companions/pamper/spa/hafshushit-spa-alone-01.webp' },
+          { id:'hafshushit-spa-alone-02', src:'assets/companions/pamper/spa/hafshushit-spa-alone-02.webp' },
+        ],
         friend: [{ id:'hafshushit-spa-friend-01', src:'assets/companions/pamper/spa/hafshushit-spa-friend-01.webp' }],
         sister: [
           { id:'hafshushit-spa-sister-01', src:'assets/companions/pamper/spa/hafshushit-spa-sister-01.webp' },
@@ -2924,12 +2934,18 @@ const PAMPER_CARDS = {
         ],
       },
       capy: {
-        alone:  [{ id:'capy-spa-alone-01',  src:'assets/companions/pamper/spa/capy-spa-alone-01.webp' }],
+        alone:  [
+          { id:'capy-spa-alone-01', src:'assets/companions/pamper/spa/capy-spa-alone-01.webp' },
+          { id:'capy-spa-alone-02', src:'assets/companions/pamper/spa/capy-spa-alone-02.webp' },
+        ],
         friend: [{ id:'capy-spa-friend-01', src:'assets/companions/pamper/spa/capy-spa-friend-01.webp' }],
         sister: [{ id:'capy-spa-sister-01', src:'assets/companions/pamper/spa/capy-spa-sister-01.webp' }],
       },
       fox: {
-        alone:  [{ id:'fox-spa-alone-01',  src:'assets/companions/pamper/spa/fox-spa-alone-01.webp' }],
+        alone:  [
+          { id:'fox-spa-alone-01', src:'assets/companions/pamper/spa/fox-spa-alone-01.webp' },
+          { id:'fox-spa-alone-02', src:'assets/companions/pamper/spa/fox-spa-alone-02.webp' },
+        ],
         friend: [{ id:'fox-spa-friend-01', src:'assets/companions/pamper/spa/fox-spa-friend-01.webp' }],
         sister: [{ id:'fox-spa-sister-01', src:'assets/companions/pamper/spa/fox-spa-sister-01.webp' }],
       },
@@ -5725,12 +5741,20 @@ function buildPamperDrawerHTML(c) {
     // ── Card browser: ספא קטן ──
 
     html += '<div class="j-pamper-card-wrap">';
-    // Image area (placeholder until real images exist)
-    html += '<div class="j-pamper-card-img-area">'
-      + '<div class="j-pamper-placeholder">'
-      + '<div class="j-pamper-placeholder-icon">🛁</div>'
-      + '<div style="font-size:12px;color:var(--g-ink-3)">ספא קטן · ' + c.name + '</div>'
-      + '</div></div>';
+    // Preview image — shows the card scene before the user picks a mode
+    html += '<div class="j-pamper-card-img-area">';
+    if (cardDef.previewImage) {
+      html += '<img src="' + cardDef.previewImage + '" alt="ספא קטן" loading="lazy"'
+        + ' onerror="this.onerror=null;this.style.display=\'none\';var ph=this.nextElementSibling;if(ph)ph.style.display=\'flex\';">'
+        + '<div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;'
+        + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
+        + '<span style="font-size:36px">🛁</span><span>ספא קטן</span></div>';
+    } else {
+      html += '<div style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;'
+        + 'flex-direction:column;gap:6px;color:var(--g-ink-3);font-size:13px;text-align:center;padding:16px">'
+        + '<span style="font-size:36px">🛁</span><span>ספא קטן</span></div>';
+    }
+    html += '</div>';
     // Points row — warm framing, no "cost" language
     html += '<div class="j-pamper-pts-row">'
       + '<span class="j-pamper-pts-chip">נפתח מ־15 נקודות חיבור</span>'
