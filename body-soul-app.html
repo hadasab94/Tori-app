@@ -1,4 +1,4 @@
-<!-- Tori version: coffee-walk-card-2026-05-26-1200 -->
+<!-- Tori version: gentle-habit-panel-2026-05-26-1500 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -794,6 +794,21 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .j-habit-fill { height:100%; background:linear-gradient(90deg,#C9BDA5,#8B7558); border-radius:999px; }
 .j-habit-sublabel { font-size:12px; color:var(--g-ink-3); margin-top:5px; line-height:1.4; }
 
+/* Gentle habit panel */
+.j-sprout-card { display:flex; align-items:flex-start; gap:10px; margin-bottom:12px; padding:10px 12px; background:rgba(155,184,156,0.08); border-radius:12px; }
+.j-sprout-icon { font-size:17px; line-height:1; padding-top:2px; flex-shrink:0; }
+.j-sprout-body { flex:1; }
+.j-sprout-name { font-size:13.5px; font-weight:600; color:var(--g-ink); margin-bottom:2px; }
+.j-sprout-stage { font-size:11.5px; font-weight:600; color:var(--g-sage-deep); margin-bottom:4px; }
+.j-sprout-copy  { font-size:12px; color:var(--g-ink-3); line-height:1.55; }
+.j-micro-box { background:rgba(155,184,156,0.07); border:1px solid rgba(155,184,156,0.22); border-radius:12px; padding:12px; }
+.j-micro-name { font-size:13.5px; font-weight:600; color:var(--g-ink); margin-bottom:4px; }
+.j-micro-hint { font-size:12.5px; color:var(--g-ink-2); line-height:1.65; margin-bottom:8px; }
+.j-micro-btns { display:flex; gap:8px; flex-wrap:wrap; }
+.j-micro-btn-yes { padding:8px 16px; border-radius:999px; background:var(--g-sage-deep); color:#fff; border:none; font-size:12.5px; font-family:inherit; cursor:pointer; font-weight:500; }
+.j-micro-btn-no  { padding:8px 16px; border-radius:999px; background:rgba(70,55,30,0.07); color:var(--g-ink-2); border:none; font-size:12.5px; font-family:inherit; cursor:pointer; }
+.micro-badge { font-size:10px; color:var(--g-sage-deep); display:block; margin-top:2px; font-weight:600; letter-spacing:0.3px; }
+
 /* Points chip */
 .j-pts-badge { font-size:12px; padding:4px 10px; border-radius:999px; font-weight:500; }
 
@@ -1571,6 +1586,32 @@ if('serviceWorker' in navigator){
 
 <script>
 const TASK_IDS = ['breakfast','lunch','dinner','shower','breathing','outside','sleep'];
+
+// Micro-task suggestion map — gentler version of each TASK_ID action
+const MICRO_TASK_LABELS = {
+  breakfast: 'ביס אחד קטן, בלי לקום מהמיטה',
+  lunch:     'משהו קטן לאכול באמצע היום — כל ביס נחשב',
+  dinner:    'ביס אחד קטן לפני השינה',
+  shower:    'לשטוף פנים או להחליף חולצה',
+  breathing: 'נשימה אחת איטית',
+  outside:   'לפתוח חלון ולנשום רגע',
+  sleep:     'לשכב עם שמיכה לעשר דקות',
+};
+
+// Task label display (Hebrew user-facing names per TASK_ID)
+const TASK_DISPLAY_LABELS = {
+  breakfast:'ארוחת בוקר', lunch:'ארוחת צהריים', dinner:'ארוחת ערב',
+  shower:'מקלחת', breathing:'נשימה קצרה', outside:'יציאה לאוויר', sleep:'שינה',
+};
+
+// Companion lines for the gentle habit panel
+const GENTLE_HABIT_COMPANION_LINES = {
+  bear:   'אולי זה פשוט גדול מדי ליום כזה. בואי נחתוך חתיכה קטנה שאפשר להחזיק ביד.',
+  cat:    'אני לא אומרת לוותר. אני אומרת לערוך את המשימה בטוב טעם.',
+  forest: 'לפעמים מתחילים מגרגר קטן. אחר כך הוא נהיה שביל.',
+  capy:   'אני בעד להקטין. קטן זה לא פחות. קטן זה פחות מעצבן.',
+  fox:    'אסטרטגית, משימה שנעשית ב־20 שניות מנצחת משימה מושלמת שלא זזה.',
+};
 
 const TASK_MSGS = {
   breakfast: [
@@ -4408,6 +4449,7 @@ function switchView(v) {
 async function saveDay() {
   await store.set('day:'+s.todayKey, JSON.stringify({tasks:s.tasks,water:s.water,exChosen:s.exChosen,exMode:s.exMode}));
   await recalcStreak(); updateJourney();
+  loadGentleHabitData(); // fire-and-forget — refreshes sprout panel after each save
 }
 async function loadDay() {
   try {
@@ -4460,6 +4502,7 @@ function renderFromState() {
   document.getElementById('ex-sec-title').textContent=isExerciseDay()?'💪 פעילות גופנית (היום!)':'💪 פעילות גופנית (יום מנוחה — רשות!)';
   renderCustomTasks();
   updateProgress();
+  applyMicroTaskOverrides();
 }
 
 // ============================================================
@@ -5711,6 +5754,7 @@ async function init() {
   if (_savedTab && VALID_TABS.indexOf(_savedTab) !== -1 && _savedTab !== 'today') {
     switchView(_savedTab);
   }
+  loadGentleHabitData(); // fire-and-forget — populates sprout panel on first load
 }
 init();
 
@@ -5915,14 +5959,13 @@ function buildFloatingSVG(kind, size) {
 var HEBREW_DAYS = ['ש','א','ב','ג','ד','ה','ו'];
 function getJourneyTrail() { return []; /* removed — trail no longer shown in companion model */}
 
-// ── Habit strength data ──
+// ── Legacy habit strength data (kept for backward compat; panel replaced below) ──
 function getJourneyHabits() {
   var marks = new Set(getJourneyMarks());
   var allKinds = ['water','food','move','breath','rest','hygiene'];
   var result = [];
   allKinds.forEach(function(k){ if(marks.has(k)) result.push({kind:k, pct:100}); });
   if (result.length===0) {
-    // show compassion if that's the mark
     if (marks.has('compassion')) result.push({kind:'compassion', pct:100});
   }
   return result;
@@ -5935,6 +5978,243 @@ function pctLabel(pct) {
   if (pct<=75)  return 'זה כבר קורה יותר מפעם אחת';
   if (pct<=90)  return 'ההרגל מתחיל להיכנס לשגרה';
   return 'זה כבר חלק מהדרך שלך';
+}
+
+// ══════════════════════════════════════════════════════════════
+// GENTLE HABIT PANEL — "מה מתחזק אצלי"
+// Replaces the old percentage/progress-bar "חוזק ההרגל" panel.
+// ══════════════════════════════════════════════════════════════
+
+// State
+var _gentleHabitCache = null;
+// _gentleHabitCache shape:
+// { growing: [{kind, count14}], microCandidate: {kind,label,microLabel}|null }
+
+var _gentleHabitOverrides = {};
+// _gentleHabitOverrides shape:
+// { [actionId]: {originalLabel, microLabel, createdAt, activeUntil, source} }
+
+var _dismissedMicroSuggestions = {};
+// { [actionId]: true }  — session-only, not persisted. Clears on page load.
+
+var GENTLE_HABIT_KEY = 'tori_gentle_habit_v1';
+
+// Growth stage by count in last 14 days
+function getGrowthStageForAction(count14) {
+  if (count14 >= 7) return { label: 'צמח קטן שמחזיק', icon: '🌿', copy: 'זה כבר נהיה קצת יותר מוכר. הגוף מתחיל לסמוך על זה.' };
+  if (count14 >= 4) return { label: 'עלה שמתחזק',      icon: '🌱', copy: 'הגוף מתחיל לזהות את זה. חזרה עדינה עושה את שלה.' };
+  return               { label: 'נבט ראשון',          icon: '🌱', copy: 'זה כבר הופיע אצלך יותר מפעם אחת.' };
+}
+
+// Load 14-day history and compute cache
+async function loadGentleHabitData() {
+  var counts14 = {};
+  var counts7  = {};
+
+  for (var i = 0; i < 14; i++) {
+    var dayKey = getDateKey(-i);
+    try {
+      var raw = await store.get('day:' + dayKey);
+      if (!raw) continue;
+      var d = JSON.parse(raw);
+      var tasks = d.tasks || {};
+      TASK_IDS.forEach(function(id) {
+        if (tasks[id]) {
+          counts14[id] = (counts14[id] || 0) + 1;
+          if (i < 7) counts7[id] = (counts7[id] || 0) + 1;
+        }
+      });
+      if ((d.water || 0) >= 6) {
+        counts14.water = (counts14.water || 0) + 1;
+        if (i < 7) counts7.water = (counts7.water || 0) + 1;
+      }
+    } catch(e) {}
+  }
+
+  // Growing: completed ≥ 2 times in last 14 days, up to 3, sorted by count desc
+  var allTrackable = TASK_IDS.concat(['water']);
+  var growing = allTrackable
+    .filter(function(id) { return (counts14[id] || 0) >= 2; })
+    .map(function(id)    { return { kind: id, count14: counts14[id] }; })
+    .sort(function(a, b) { return b.count14 - a.count14; })
+    .slice(0, 3);
+
+  // Micro-task candidate:
+  // - Has a suggestion label (MICRO_TASK_LABELS)
+  // - 0 completions in last 7 days (not happening this week)
+  // - Not done today
+  // - Pick the one with lowest 14-day count (most absent)
+  var todayTasks = s.tasks || {};
+  var microCandidate = null;
+  var microScore = Infinity;
+  TASK_IDS.forEach(function(id) {
+    if (!MICRO_TASK_LABELS[id]) return;
+    if (todayTasks[id]) return;                   // already done today — not a burden
+    if ((counts7[id] || 0) > 0) return;           // happened this week — not struggling
+    var c14 = counts14[id] || 0;
+    if (c14 < microScore) {
+      microScore = c14;
+      microCandidate = {
+        kind:      id,
+        label:     TASK_DISPLAY_LABELS[id] || id,
+        microLabel: MICRO_TASK_LABELS[id],
+        count14:   c14,
+      };
+    }
+  });
+
+  _gentleHabitCache = { growing: growing, microCandidate: microCandidate };
+
+  // Load overrides from storage
+  try {
+    var rawOv = await store.get(GENTLE_HABIT_KEY);
+    if (rawOv) _gentleHabitOverrides = JSON.parse(rawOv);
+  } catch(e) {}
+
+  // Expire old overrides
+  var now = Date.now();
+  var ovChanged = false;
+  Object.keys(_gentleHabitOverrides).forEach(function(id) {
+    if ((_gentleHabitOverrides[id].activeUntil || 0) < now) {
+      delete _gentleHabitOverrides[id];
+      ovChanged = true;
+    }
+  });
+  if (ovChanged) { try { await store.set(GENTLE_HABIT_KEY, JSON.stringify(_gentleHabitOverrides)); } catch(e) {} }
+
+  // Re-render journey tab if currently visible
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) { renderJourneyTab(); }
+}
+
+// Activate a micro-task override for one week
+async function activateMicroTaskForWeek(actionId, originalLabel, microLabel) {
+  var now = Date.now();
+  _gentleHabitOverrides[actionId] = {
+    originalLabel: originalLabel,
+    microLabel:    microLabel,
+    createdAt:     now,
+    activeUntil:   now + 7 * 24 * 60 * 60 * 1000,
+    source:        'gentle-habit-panel',
+  };
+  try { await store.set(GENTLE_HABIT_KEY, JSON.stringify(_gentleHabitOverrides)); } catch(e) {}
+  applyMicroTaskOverrides();
+  showToast('סגור. השבוע ננסה גרסה קטנה יותר. קטן זה לא פחות — קטן זה יותר אפשרי.');
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) { renderJourneyTab(); }
+}
+
+// Dismiss without storing — suggestion hides for this session only
+function dismissMicroTaskSuggestion(actionId) {
+  _dismissedMicroSuggestions[actionId] = true;
+  showToast('בסדר. אין צורך להחליט כלום עכשיו.');
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) { renderJourneyTab(); }
+}
+
+// Apply active micro-task overrides to Today tab DOM (safe, does not delete original)
+function applyMicroTaskOverrides() {
+  var now = Date.now();
+  Object.keys(_gentleHabitOverrides || {}).forEach(function(id) {
+    var ov = _gentleHabitOverrides[id];
+    if (!ov || (ov.activeUntil || 0) < now) return;
+    var card = document.getElementById('tc-' + id);
+    if (!card) return;
+    var nameEl = card.querySelector('.t-name');
+    if (!nameEl) return;
+    nameEl.textContent = ov.microLabel;
+    if (!card.querySelector('.micro-badge')) {
+      var badge = document.createElement('span');
+      badge.className = 'micro-badge';
+      badge.textContent = 'גרסה קטנה לשבוע';
+      nameEl.parentNode.insertBefore(badge, nameEl.nextSibling);
+    }
+  });
+}
+
+// Build the gentle habit panel HTML
+function buildGentleHabitPanelHTML(c) {
+  var cache   = _gentleHabitCache;
+  var now     = Date.now();
+
+  var content = buildMCardHeader('מה מתחזק אצלי', 'מה מתחזק אצלי');
+  // Subtitle below title
+  content += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;margin-bottom:18px">'
+    + 'גם חזרה קטנה מתחילה להירשם בגוף. לאט לאט, דברים טובים נעשים מוכרים יותר.'
+    + '</div>';
+
+  // ── Section 1: Sprouts growing
+  content += '<div style="font-size:12px;font-weight:700;color:var(--g-ink-2);margin-bottom:10px;letter-spacing:0.4px">נבטים שמתחזקים</div>';
+
+  if (!cache || cache.growing.length === 0) {
+    content += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;margin-bottom:16px;font-style:italic">'
+      + 'עוד אין מספיק סימנים כדי לראות מה מתחזק. זה בסדר — נבטים לא צועקים עליהם לגדול.'
+      + '</div>';
+  } else {
+    cache.growing.forEach(function(item) {
+      var stage = getGrowthStageForAction(item.count14);
+      var label = TASK_DISPLAY_LABELS[item.kind] || JOURNEY_ACTION_LABELS[item.kind] || item.kind;
+      content += '<div class="j-sprout-card">'
+        + '<div class="j-sprout-icon">' + stage.icon + '</div>'
+        + '<div class="j-sprout-body">'
+        + '<div class="j-sprout-name">' + label + '</div>'
+        + '<div class="j-sprout-stage">' + stage.label + '</div>'
+        + '<div class="j-sprout-copy">'  + stage.copy  + '</div>'
+        + '</div></div>';
+    });
+  }
+
+  // ── Section 2: Micro-task suggestion
+  content += '<div style="border-top:1px solid var(--g-hairline);padding-top:14px;margin-bottom:4px">';
+  content += '<div style="font-size:12px;font-weight:700;color:var(--g-ink-2);margin-bottom:8px;letter-spacing:0.4px">אולי נתחיל קטן יותר</div>';
+  content += '<div style="font-size:12.5px;color:var(--g-ink-3);line-height:1.65;margin-bottom:12px">'
+    + 'אם משהו לא קורה, זה לא אומר שאת לא מצליחה. '
+    + 'לפעמים זה רק סימן שהכפתור צריך להיות קטן יותר.'
+    + '</div>';
+
+  var mc = cache && cache.microCandidate;
+  // Respect session-level dismissal
+  if (mc && _dismissedMicroSuggestions[mc.kind]) mc = null;
+
+  if (!mc) {
+    content += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;font-style:italic">'
+      + 'כרגע לא מצאתי פעולה שנראה שהיא גדולה מדי. כל יום הוא עצמו.'
+      + '</div>';
+  } else {
+    var overrideActive = _gentleHabitOverrides[mc.kind] && (_gentleHabitOverrides[mc.kind].activeUntil > now);
+    content += '<div class="j-micro-box">';
+    content += '<div class="j-micro-name">' + mc.label + '</div>';
+    if (overrideActive) {
+      var ov = _gentleHabitOverrides[mc.kind];
+      content += '<div style="font-size:12px;font-weight:600;color:var(--g-sage-deep);margin-bottom:6px">גרסה קטנה לשבוע:</div>';
+      content += '<div class="j-micro-hint">' + ov.microLabel + '</div>';
+      content += '<div style="font-size:11.5px;color:var(--g-ink-3)">גרסה קטנה זמנית — המקורית שמורה ולא נמחקה.</div>';
+    } else {
+      content += '<div class="j-micro-hint">יכול להיות שהכפתור הזה קצת גדול לימים האלה.</div>';
+      content += '<div class="j-micro-hint" style="margin-bottom:10px">רוצה לנסות השבוע גרסה קטנה יותר?<br>'
+        + '<span style="color:var(--g-ink);font-weight:500">' + mc.microLabel + '</span></div>';
+      content += '<div class="j-micro-btns">'
+        + '<button class="j-micro-btn-yes" onclick="activateMicroTaskForWeek(\''
+            + mc.kind + '\',\'' + mc.label.replace(/'/g, '&#39;') + '\',\'' + mc.microLabel.replace(/'/g, '&#39;') + '\')">'
+            + 'כן, להקטין לשבוע</button>'
+        + '<button class="j-micro-btn-no" onclick="dismissMicroTaskSuggestion(\'' + mc.kind + '\')">'
+            + 'לא עכשיו</button>'
+        + '</div>';
+    }
+    content += '</div>';
+  }
+  content += '</div>';
+
+  // ── Companion line
+  var compLine = c && GENTLE_HABIT_COMPANION_LINES[c.id] ? GENTLE_HABIT_COMPANION_LINES[c.id] : '';
+  if (compLine) {
+    content += '<div style="border-top:1px solid var(--g-hairline);margin-top:14px;padding-top:12px;display:flex;align-items:flex-start;gap:8px">'
+      + '<div style="font-size:15px;line-height:1;padding-top:1px;flex-shrink:0">🌿</div>'
+      + '<div style="font-size:12.5px;color:var(--g-ink-2);line-height:1.65;font-style:italic">' + compLine + '</div>'
+      + '</div>';
+  }
+
+  return buildMCard(content);
 }
 
 // ── Along-the-day icon colors ──
@@ -6110,24 +6390,9 @@ function buildPointsCardHTML(points, marks, c) {
   return buildMCard(content);
 }
 
-function buildHabitStrengthHTML(habits) {
-  if (!habits || habits.length===0) return '';
-  var content = buildMCardHeader('התמדה מול עצמך', 'חוזק ההרגל');
-  content += '<div class="j-habit-row">';
-  habits.forEach(function(h){
-    var label = JOURNEY_ACTION_LABELS[h.kind]||h.kind;
-    content += '<div>'
-      +'<div class="j-habit-head">'
-      +'<div style="display:flex;align-items:center;gap:8px">'+buildCarveIconSVG(h.kind,16)+'<span class="j-habit-name">'+label+'</span></div>'
-      +'<span class="j-habit-pct">'+h.pct+'%</span>'
-      +'</div>'
-      +'<div class="j-habit-track"><div class="j-habit-fill" style="width:'+h.pct+'%"></div></div>'
-      +'<div class="j-habit-sublabel">'+pctLabel(h.pct)+'</div>'
-      +'</div>';
-  });
-  content += '</div>';
-  return buildMCard(content);
-}
+// buildHabitStrengthHTML — replaced by buildGentleHabitPanelHTML (gentle-habit-panel-2026-05-26)
+// Kept as empty stub so any surviving call site is harmless.
+function buildHabitStrengthHTML(_habits) { return ''; }
 
 // ── Pamper Drawer — מגירת הפינוקים ──
 // Renders all cards in PAMPER_CARDS. To add a new card, add it to PAMPER_CARDS — no drawer changes needed.
@@ -6710,7 +6975,6 @@ function buildJourneyMainHTML() {
   var marks = getJourneyMarks();
   var mood = deriveCompanionMood();
   var points = gs.lifetimeConnectionPoints || gs.points || 0;
-  var habits = getJourneyHabits();
   // Date label computed directly — no trail dependency
   var todayDateLabel = new Date().toLocaleDateString('he-IL', {weekday:'long', month:'long', day:'numeric'});
 
@@ -6722,7 +6986,7 @@ function buildJourneyMainHTML() {
     buildAlongTheDayHTML(marks, c),
     buildPointsCardHTML(points, marks, c),
     buildPamperDrawerHTML(c),
-    buildHabitStrengthHTML(habits),
+    buildGentleHabitPanelHTML(c),
     buildFactCardHTML(),
   ];
 

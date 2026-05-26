@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v9'; // bumped — coffee-walk card added
+const CACHE = 'body-soul-v10'; // bumped — gentle-habit panel replaces old progress-bar
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
