@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v10'; // bumped — gentle-habit panel replaces old progress-bar
+const CACHE = 'body-soul-v11'; // bumped — gentle-habit panel v1 (4 growth tiers, plant family labels)
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

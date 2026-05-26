@@ -1,4 +1,4 @@
-<!-- Tori version: gentle-habit-panel-2026-05-26-1500 -->
+<!-- Tori version: gentle-habit-v1-2026-05-26-1700 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1611,6 +1611,50 @@ const GENTLE_HABIT_COMPANION_LINES = {
   forest: 'לפעמים מתחילים מגרגר קטן. אחר כך הוא נהיה שביל.',
   capy:   'אני בעד להקטין. קטן זה לא פחות. קטן זה פחות מעצבן.',
   fox:    'אסטרטגית, משימה שנעשית ב־20 שניות מנצחת משימה מושלמת שלא זזה.',
+};
+
+// ── Plant family lookup — keyed by stable English action ID ──
+// Maps each trackable action ID to a plant family key.
+// Intentionally excludes: exercise (composite/sub-option dependent) and
+// custom tasks (free text, unmappable without user input).
+// Do not map by Hebrew label — IDs are canonical.
+const PLANT_FAMILY_BY_ACTION_ID = {
+  breakfast: 'quiet_sprout',   // body nourishment / regulation
+  lunch:     'quiet_sprout',
+  dinner:    'quiet_sprout',
+  shower:    'home_plant',     // basic body/home care
+  breathing: 'quiet_sprout',   // nervous-system calming
+  outside:   'brave_vine',     // friction / leaving / threshold
+  sleep:     'quiet_sprout',   // rest / regulation
+  water:     'quiet_sprout',   // tiny body-awareness action
+  // exercise: excluded — composite card, map by sub-option in a future pass
+  // custom tasks: excluded — free text, let user choose family at creation time
+};
+
+// Hebrew display names for plant family keys
+const PLANT_FAMILY_LABELS = {
+  quiet_sprout:  'הנבט השקט',
+  home_plant:    'הצמח הביתי',
+  brave_vine:    'המטפסה האמיצה',
+  social_bloom:  'הפריחה החברתית',
+  joy_green:     'הירוק המשמח',
+};
+
+// User-facing task labels matching the actual Today-tab DOM text.
+// These intentionally differ from TASK_DISPLAY_LABELS in three places:
+//   breathing  → "רגע שקט"   (DOM says "רגע שקט", not "נשימה קצרה")
+//   outside    → "אוויר צח"  (DOM says "אוויר צח", not "יציאה לאוויר")
+//   sleep      → "כניסה למיטה בשעה סבירה" (DOM full label, not "שינה")
+// Use TASK_UI_LABELS for any user-facing panel text; use IDs for logic.
+const TASK_UI_LABELS = {
+  breakfast: 'ארוחת בוקר',
+  lunch:     'ארוחת צהריים',
+  dinner:    'ארוחת ערב',
+  shower:    'מקלחת',
+  breathing: 'רגע שקט',
+  outside:   'אוויר צח',
+  sleep:     'כניסה למיטה',   // full DOM: "כניסה למיטה בשעה סבירה" — shortened for panel
+  water:     'מים',
 };
 
 const TASK_MSGS = {
@@ -5999,11 +6043,13 @@ var _dismissedMicroSuggestions = {};
 
 var GENTLE_HABIT_KEY = 'tori_gentle_habit_v1';
 
-// Growth stage by count in last 14 days
+// Growth stage by count in last 14 days — 4 tiers, no percentages exposed
+// Thresholds: 2 = minimum to appear in sprouts list (filter in loadGentleHabitData)
 function getGrowthStageForAction(count14) {
-  if (count14 >= 7) return { label: 'צמח קטן שמחזיק', icon: '🌿', copy: 'זה כבר נהיה קצת יותר מוכר. הגוף מתחיל לסמוך על זה.' };
-  if (count14 >= 4) return { label: 'עלה שמתחזק',      icon: '🌱', copy: 'הגוף מתחיל לזהות את זה. חזרה עדינה עושה את שלה.' };
-  return               { label: 'נבט ראשון',          icon: '🌱', copy: 'זה כבר הופיע אצלך יותר מפעם אחת.' };
+  if (count14 >= 10) return { label: 'צמח קטן שמחזיק', icon: '🌿', copy: 'זה כבר נהיה קצת יותר מוכר.' };
+  if (count14 >= 6)  return { label: 'עלה שמתחזק',     icon: '🌱', copy: 'הגוף מתחיל לזהות את זה.' };
+  if (count14 >= 3)  return { label: 'נבט ראשון',      icon: '🌱', copy: 'זה כבר הופיע אצלך יותר מפעם אחת.' };
+  return               { label: 'זרע קטן',            icon: '🌱', copy: 'יש כאן התחלה קטנה.' };
 }
 
 // Load 14-day history and compute cache
@@ -6132,85 +6178,58 @@ function applyMicroTaskOverrides() {
   });
 }
 
-// Build the gentle habit panel HTML
+// Build the gentle habit panel HTML — v1
+// Shows: title, subtitle, sprouts list (up to 3), companion line.
+// Micro-task suggestion intentionally excluded from this version.
+// Exercise and custom tasks intentionally excluded from this version.
 function buildGentleHabitPanelHTML(c) {
-  var cache   = _gentleHabitCache;
-  var now     = Date.now();
+  var cache = _gentleHabitCache;
 
+  // ── Title + subtitle
   var content = buildMCardHeader('מה מתחזק אצלי', 'מה מתחזק אצלי');
-  // Subtitle below title
   content += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;margin-bottom:18px">'
     + 'גם חזרה קטנה מתחילה להירשם בגוף. לאט לאט, דברים טובים נעשים מוכרים יותר.'
     + '</div>';
 
-  // ── Section 1: Sprouts growing
+  // ── Sprouts section
   content += '<div style="font-size:12px;font-weight:700;color:var(--g-ink-2);margin-bottom:10px;letter-spacing:0.4px">נבטים שמתחזקים</div>';
 
   if (!cache || cache.growing.length === 0) {
+    // Early state — not enough history yet
     content += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;margin-bottom:16px;font-style:italic">'
-      + 'עוד אין מספיק סימנים כדי לראות מה מתחזק. זה בסדר — נבטים לא צועקים עליהם לגדול.'
+      + 'עוד מוקדם לדעת מה מתחזק. בינתיים כל סימון קטן הוא התחלה.'
       + '</div>';
   } else {
     cache.growing.forEach(function(item) {
-      var stage = getGrowthStageForAction(item.count14);
-      var label = TASK_DISPLAY_LABELS[item.kind] || JOURNEY_ACTION_LABELS[item.kind] || item.kind;
+      var stage       = getGrowthStageForAction(item.count14);
+      // Use DOM-accurate label; fall back to display label then ID
+      var uiLabel     = TASK_UI_LABELS[item.kind] || TASK_DISPLAY_LABELS[item.kind] || item.kind;
+      // Plant family label — calm secondary line, only if defined
+      var familyKey   = PLANT_FAMILY_BY_ACTION_ID[item.kind];
+      var familyLabel = familyKey ? PLANT_FAMILY_LABELS[familyKey] : '';
+
       content += '<div class="j-sprout-card">'
         + '<div class="j-sprout-icon">' + stage.icon + '</div>'
         + '<div class="j-sprout-body">'
-        + '<div class="j-sprout-name">' + label + '</div>'
+        + '<div class="j-sprout-name">' + uiLabel + '</div>'
+        + (familyLabel
+            ? '<div style="font-size:11px;color:var(--g-sage-deep);margin-bottom:3px;font-weight:500;letter-spacing:0.2px">'
+                + familyLabel + '</div>'
+            : '')
         + '<div class="j-sprout-stage">' + stage.label + '</div>'
         + '<div class="j-sprout-copy">'  + stage.copy  + '</div>'
         + '</div></div>';
     });
   }
 
-  // ── Section 2: Micro-task suggestion
-  content += '<div style="border-top:1px solid var(--g-hairline);padding-top:14px;margin-bottom:4px">';
-  content += '<div style="font-size:12px;font-weight:700;color:var(--g-ink-2);margin-bottom:8px;letter-spacing:0.4px">אולי נתחיל קטן יותר</div>';
-  content += '<div style="font-size:12.5px;color:var(--g-ink-3);line-height:1.65;margin-bottom:12px">'
-    + 'אם משהו לא קורה, זה לא אומר שאת לא מצליחה. '
-    + 'לפעמים זה רק סימן שהכפתור צריך להיות קטן יותר.'
-    + '</div>';
-
-  var mc = cache && cache.microCandidate;
-  // Respect session-level dismissal
-  if (mc && _dismissedMicroSuggestions[mc.kind]) mc = null;
-
-  if (!mc) {
-    content += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;font-style:italic">'
-      + 'כרגע לא מצאתי פעולה שנראה שהיא גדולה מדי. כל יום הוא עצמו.'
-      + '</div>';
-  } else {
-    var overrideActive = _gentleHabitOverrides[mc.kind] && (_gentleHabitOverrides[mc.kind].activeUntil > now);
-    content += '<div class="j-micro-box">';
-    content += '<div class="j-micro-name">' + mc.label + '</div>';
-    if (overrideActive) {
-      var ov = _gentleHabitOverrides[mc.kind];
-      content += '<div style="font-size:12px;font-weight:600;color:var(--g-sage-deep);margin-bottom:6px">גרסה קטנה לשבוע:</div>';
-      content += '<div class="j-micro-hint">' + ov.microLabel + '</div>';
-      content += '<div style="font-size:11.5px;color:var(--g-ink-3)">גרסה קטנה זמנית — המקורית שמורה ולא נמחקה.</div>';
-    } else {
-      content += '<div class="j-micro-hint">יכול להיות שהכפתור הזה קצת גדול לימים האלה.</div>';
-      content += '<div class="j-micro-hint" style="margin-bottom:10px">רוצה לנסות השבוע גרסה קטנה יותר?<br>'
-        + '<span style="color:var(--g-ink);font-weight:500">' + mc.microLabel + '</span></div>';
-      content += '<div class="j-micro-btns">'
-        + '<button class="j-micro-btn-yes" onclick="activateMicroTaskForWeek(\''
-            + mc.kind + '\',\'' + mc.label.replace(/'/g, '&#39;') + '\',\'' + mc.microLabel.replace(/'/g, '&#39;') + '\')">'
-            + 'כן, להקטין לשבוע</button>'
-        + '<button class="j-micro-btn-no" onclick="dismissMicroTaskSuggestion(\'' + mc.kind + '\')">'
-            + 'לא עכשיו</button>'
-        + '</div>';
-    }
-    content += '</div>';
-  }
-  content += '</div>';
-
-  // ── Companion line
+  // ── Companion supportive line
   var compLine = c && GENTLE_HABIT_COMPANION_LINES[c.id] ? GENTLE_HABIT_COMPANION_LINES[c.id] : '';
   if (compLine) {
-    content += '<div style="border-top:1px solid var(--g-hairline);margin-top:14px;padding-top:12px;display:flex;align-items:flex-start;gap:8px">'
+    content += '<div style="border-top:1px solid var(--g-hairline);margin-top:16px;padding-top:12px;'
+      + 'display:flex;align-items:flex-start;gap:8px">'
       + '<div style="font-size:15px;line-height:1;padding-top:1px;flex-shrink:0">🌿</div>'
-      + '<div style="font-size:12.5px;color:var(--g-ink-2);line-height:1.65;font-style:italic">' + compLine + '</div>'
+      + '<div style="font-size:12.5px;color:var(--g-ink-2);line-height:1.65;font-style:italic">'
+        + compLine + '</div>'
       + '</div>';
   }
 
