@@ -1,4 +1,4 @@
-<!-- Tori version: gentle-habit-v1-2026-05-26-1700 -->
+<!-- Tori version: today-redesign-2026-05-26-2000 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1343,6 +1343,92 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   background:#F5F0E8; color:var(--g-ink-2); font-size:13px;
   font-family:'Assistant',sans-serif; cursor:pointer;
 }
+
+/* ── Today tab redesign ── */
+/* Collected section */
+.today-collected-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--radius); padding:13px 14px; margin-bottom:10px;
+}
+.today-collected-title {
+  font-size:12px; font-weight:700; color:var(--text2);
+  letter-spacing:0.4px; margin-bottom:8px;
+}
+.collected-chips-row { display:flex; flex-wrap:wrap; gap:7px; }
+.collected-chip {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(139,174,140,0.13); border:1px solid rgba(139,174,140,0.28);
+  border-radius:999px; padding:5px 11px;
+  font-size:12.5px; color:var(--text); font-weight:500;
+}
+.collected-chip-icon { font-size:14px; line-height:1; }
+.collected-empty {
+  font-size:12.5px; color:var(--text3); line-height:1.6; font-style:italic;
+}
+
+/* Sparkle button */
+.spark-row {
+  margin-bottom:10px; display:flex; flex-direction:column; gap:8px;
+}
+.spark-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:999px; padding:8px 16px 8px 12px;
+  font-size:13px; color:var(--text2); font-family:inherit;
+  cursor:pointer; transition:background 0.15s;
+}
+.spark-btn:active { background:var(--border); }
+.spark-icon { width:22px; height:22px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+.spark-line {
+  background:rgba(139,174,140,0.10); border:1px solid rgba(139,174,140,0.22);
+  border-radius:14px; padding:11px 14px;
+  font-size:13px; color:var(--text); line-height:1.65; font-style:italic;
+}
+
+/* Categories header */
+.today-cats-header {
+  font-size:14px; font-weight:700; color:var(--text);
+  margin:14px 0 3px; letter-spacing:0.2px;
+}
+.today-cats-sub {
+  font-size:12px; color:var(--text3); line-height:1.6; margin-bottom:10px;
+}
+
+/* Category card */
+.cat-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--radius); margin-bottom:9px; overflow:hidden;
+}
+.cat-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:13px 14px; cursor:pointer; gap:10px;
+  transition:background 0.15s;
+}
+.cat-header:active { background:rgba(0,0,0,0.03); }
+.cat-header-text { flex:1; }
+.cat-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.cat-subtitle { font-size:12px; color:var(--text3); line-height:1.45; }
+.cat-toggle {
+  font-size:20px; color:var(--text3); line-height:1;
+  flex-shrink:0; width:24px; text-align:center; font-weight:300;
+  transition:transform 0.2s;
+}
+.cat-toggle.open { transform:rotate(45deg); color:var(--sage); }
+.cat-body { padding:0 12px 12px; border-top:1px solid var(--border); }
+.cat-add-btn {
+  display:block; width:100%; text-align:center;
+  background:none; border:1.5px dashed var(--border);
+  border-radius:10px; padding:9px; margin-top:10px;
+  font-size:12.5px; color:var(--text3); font-family:inherit;
+  cursor:pointer; transition:border-color 0.15s, color 0.15s;
+}
+.cat-add-btn:hover { border-color:var(--sage); color:var(--sage); }
+
+/* Plant stage image in habit panel */
+.j-sprout-img {
+  width:40px; height:40px; object-fit:contain;
+  border-radius:8px; flex-shrink:0;
+}
 </style>
 <script>
 if('serviceWorker' in navigator){
@@ -1419,82 +1505,161 @@ if('serviceWorker' in navigator){
 
 <!-- TODAY VIEW -->
 <div class="view active" id="view-today">
+
+  <!-- Celebration banner (unchanged) -->
   <div class="celebration" id="celebration">
     <span class="celeb-emoji">🎉</span>
     <div class="celeb-title">יום מדהים! השלמת את כל המשימות!</div>
     <div class="celeb-sub">הגוף שלך מרגיש אותך, וזה משנה הכל 💛</div>
   </div>
 
-  <div class="progress-wrap">
-    <div class="progress-row">
-      <span class="progress-label" id="prog-label">0/9 משימות</span>
-      <span class="progress-pct" id="prog-pct">0%</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-    <div class="day-message" id="day-msg"></div>
+  <!-- Hidden progress elements — kept for updateProgress() JS compatibility, not shown -->
+  <div style="display:none" aria-hidden="true">
+    <span id="prog-label"></span>
+    <span id="prog-pct"></span>
+    <div id="prog-fill"></div>
+    <div id="day-msg"></div>
   </div>
 
-  <div class="sec">💧 מים</div>
-  <div class="task-grid">
-    <div class="task-card water-card" id="water-card">
-      <div class="water-info">
-        <div class="water-label">כוסות</div>
-        <div class="water-num" id="water-num">0/8</div>
-        <div style="font-size:9px;color:var(--text3);margin-top:1px">מטרה: 6-8</div>
+  <!-- ── Collected today ── -->
+  <div class="today-collected-card">
+    <div class="today-collected-title">מה כבר נאסף אצלי היום</div>
+    <div id="collected-chips">
+      <div class="collected-empty">עוד לא נאסף כאן משהו היום. אפשר להתחיל ממש קטן, אם זה מתאים.</div>
+    </div>
+  </div>
+
+  <!-- ── Sparkle button ── -->
+  <div class="spark-row" id="spark-row">
+    <button class="spark-btn" onclick="showSparkLine()">
+      <img id="spark-companion-icon" src="" class="spark-icon" alt="" style="display:none">
+      <span id="spark-btn-label">✨ הברקה קטנה</span>
+    </button>
+    <div class="spark-line" id="spark-line-display" style="display:none"></div>
+  </div>
+
+  <!-- ── Categories section ── -->
+  <div class="today-cats-header">מה מתאים לי לפתוח עכשיו?</div>
+  <div class="today-cats-sub">לא צריך לראות הכול בבת אחת. אפשר לפתוח רק את מה שמתאים לרגע הזה.</div>
+
+  <!-- Category 1: גוף והזנה (breakfast, lunch, dinner, water) -->
+  <div class="cat-card" id="cat-body_nourishment">
+    <div class="cat-header" onclick="toggleCategory('body_nourishment')">
+      <div class="cat-header-text">
+        <div class="cat-title">גוף והזנה</div>
+        <div class="cat-subtitle">משהו קטן שהגוף יכול לקבל עכשיו</div>
       </div>
-      <div class="drops-grid" id="drops-grid"></div>
+      <div class="cat-toggle" id="cat-toggle-body_nourishment">+</div>
+    </div>
+    <div class="cat-body" id="cat-body-body_nourishment" style="display:none">
+      <div class="task-grid" style="margin-top:10px">
+        <div class="task-card water-card" id="water-card">
+          <div class="water-info">
+            <div class="water-label">כוסות</div>
+            <div class="water-num" id="water-num">0/8</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:1px">מטרה: 6-8</div>
+          </div>
+          <div class="drops-grid" id="drops-grid"></div>
+        </div>
+      </div>
+      <div class="task-grid">
+        <div class="task-card" id="tc-breakfast" onclick="toggleTask('breakfast')"><div class="check-badge">✓</div><span class="t-icon">🍳</span><div class="t-name">ארוחת בוקר</div><div class="t-sub">הדלק הראשוני</div></div>
+        <div class="task-card" id="tc-lunch"     onclick="toggleTask('lunch')"    ><div class="check-badge">✓</div><span class="t-icon">🥗</span><div class="t-name">ארוחת צהריים</div><div class="t-sub">להמשיך לתדלק</div></div>
+        <div class="task-card" id="tc-dinner"    onclick="toggleTask('dinner')"   ><div class="check-badge">✓</div><span class="t-icon">🍲</span><div class="t-name">ארוחת ערב</div><div class="t-sub">לסגור את היום</div></div>
+      </div>
+      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
     </div>
   </div>
 
-  <div class="sec">🍽️ ארוחות</div>
-  <div class="task-grid">
-    <div class="task-card" id="tc-breakfast" onclick="toggleTask('breakfast')"><div class="check-badge">✓</div><span class="t-icon">🍳</span><div class="t-name">ארוחת בוקר</div><div class="t-sub">הדלק הראשוני</div></div>
-    <div class="task-card" id="tc-lunch" onclick="toggleTask('lunch')"><div class="check-badge">✓</div><span class="t-icon">🥗</span><div class="t-name">ארוחת צהריים</div><div class="t-sub">להמשיך לתדלק</div></div>
-    <div class="task-card" id="tc-dinner" onclick="toggleTask('dinner')"><div class="check-badge">✓</div><span class="t-icon">🍲</span><div class="t-name">ארוחת ערב</div><div class="t-sub">לסגור את היום</div></div>
+  <!-- Category 2: שקט וויסות (breathing, sleep) -->
+  <div class="cat-card" id="cat-quiet_regulation">
+    <div class="cat-header" onclick="toggleCategory('quiet_regulation')">
+      <div class="cat-header-text">
+        <div class="cat-title">שקט וויסות</div>
+        <div class="cat-subtitle">רגע קטן של שקט בתוך היום</div>
+      </div>
+      <div class="cat-toggle" id="cat-toggle-quiet_regulation">+</div>
+    </div>
+    <div class="cat-body" id="cat-body-quiet_regulation" style="display:none">
+      <div class="task-grid" style="margin-top:10px">
+        <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
+        <div class="task-card" id="tc-sleep"     onclick="toggleTask('sleep')"    ><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה בשעה סבירה</div><div class="t-sub">לישון טוב הלילה</div></div>
+      </div>
+      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
+    </div>
   </div>
 
-  <div class="sec">🌿 טיפול עצמי</div>
-  <div class="task-grid">
-    <div class="task-card" id="tc-shower" onclick="toggleTask('shower')"><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
-    <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
-    <div class="task-card" id="tc-outside" onclick="toggleTask('outside')"><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
-    <div class="task-card" id="tc-sleep" onclick="toggleTask('sleep')"><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה בשעה סבירה</div><div class="t-sub">לישון טוב הלילה</div></div>
+  <!-- Category 3: בית וטיפול בסיסי (shower) -->
+  <div class="cat-card" id="cat-home_care">
+    <div class="cat-header" onclick="toggleCategory('home_care')">
+      <div class="cat-header-text">
+        <div class="cat-title">בית וטיפול בסיסי</div>
+        <div class="cat-subtitle">דבר קטן שמחזיר קצת תחושה של בית</div>
+      </div>
+      <div class="cat-toggle" id="cat-toggle-home_care">+</div>
+    </div>
+    <div class="cat-body" id="cat-body-home_care" style="display:none">
+      <div class="task-grid" style="margin-top:10px">
+        <div class="task-card" id="tc-shower" onclick="toggleTask('shower')"><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
+      </div>
+      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
+    </div>
   </div>
 
-  <div class="sec" id="ex-sec-title">💪 פעילות גופנית</div>
-  <div class="task-grid">
-    <div class="exercise-wrap">
-      <div class="exercise-card" id="exercise-card">
-        <div class="exercise-head" onclick="toggleExBox()">
-          <div class="ex-icon-name">
-            <span style="font-size:26px" id="ex-icon">💪</span>
-            <div>
-              <div class="ex-title" id="ex-title">בחרי פעילות להיום</div>
-              <div class="ex-sub" id="ex-sub">לחצי כאן לסגור / לפתוח</div>
+  <!-- Category 4: תנועה ואוויר (outside + exercise) -->
+  <div class="cat-card" id="cat-movement_air">
+    <div class="cat-header" onclick="toggleCategory('movement_air')">
+      <div class="cat-header-text">
+        <div class="cat-title">תנועה ואוויר</div>
+        <div class="cat-subtitle">קצת תנועה, קצת אוויר, בקצב שלך</div>
+      </div>
+      <div class="cat-toggle" id="cat-toggle-movement_air">+</div>
+    </div>
+    <div class="cat-body" id="cat-body-movement_air" style="display:none">
+      <div class="task-grid" style="margin-top:10px">
+        <div class="task-card" id="tc-outside" onclick="toggleTask('outside')"><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
+      </div>
+      <div class="task-grid">
+        <div class="exercise-wrap">
+          <div class="exercise-card" id="exercise-card">
+            <div class="exercise-head" onclick="toggleExBox()">
+              <div class="ex-icon-name">
+                <span style="font-size:26px" id="ex-icon">💪</span>
+                <div>
+                  <div class="ex-title" id="ex-title">בחרי פעילות להיום</div>
+                  <div class="ex-sub" id="ex-sub">לחצי כאן לסגור / לפתוח</div>
+                </div>
+              </div>
+              <div class="mode-toggle">
+                <button class="mode-btn on" id="btn-easy" onclick="event.stopPropagation(); setMode('easy')">קל 🌸</button>
+                <button class="mode-btn" id="btn-hard" onclick="event.stopPropagation(); setMode('hard')">יש כוחות 💪</button>
+              </div>
+            </div>
+            <div id="ex-box" style="overflow:hidden; max-height:400px; transition:max-height 0.4s ease;">
+              <div class="ex-options" id="ex-opts-easy">
+                <div class="ex-opt" id="eopt-walk10"    onclick="chooseEx('walk10','easy')"><span>🚶‍♀️</span> הליכה קלה 10 דקות — בכל קצב שנוח לך</div>
+                <div class="ex-opt" id="eopt-stretch"   onclick="chooseEx('stretch','easy')"><span>🧘‍♀️</span> 5 מתיחות פשוטות בעמידה</div>
+                <div class="ex-opt" id="eopt-breathmove" onclick="chooseEx('breathmove','easy')"><span>🌊</span> 3 נשימות עמוקות + תנועת ידיים</div>
+              </div>
+              <div class="ex-options" id="ex-opts-hard" style="display:none">
+                <div class="ex-opt" id="eopt-walk30" onclick="chooseEx('walk30','hard')"><span>🏃‍♀️</span> הליכה 20-30 דקות בקצב נוח</div>
+                <div class="ex-opt" id="eopt-yoga"   onclick="chooseEx('yoga','hard')"><span>🧘</span> יוגה קלה ביוטיוב — 15 דקות</div>
+                <div class="ex-opt" id="eopt-dance"  onclick="chooseEx('dance','hard')"><span>💃</span> ריקוד חופשי בבית — שיר אחד שאוהבת</div>
+              </div>
             </div>
           </div>
-          <div class="mode-toggle">
-            <button class="mode-btn on" id="btn-easy" onclick="event.stopPropagation(); setMode('easy')">קל 🌸</button>
-            <button class="mode-btn" id="btn-hard" onclick="event.stopPropagation(); setMode('hard')">יש כוחות 💪</button>
-          </div>
-        </div>
-        <!-- OPEN BY DEFAULT -->
-        <div id="ex-box" style="overflow:hidden; max-height:400px; transition:max-height 0.4s ease;">
-          <div class="ex-options" id="ex-opts-easy">
-            <div class="ex-opt" id="eopt-walk10" onclick="chooseEx('walk10','easy')"><span>🚶‍♀️</span> הליכה קלה 10 דקות — בכל קצב שנוח לך</div>
-            <div class="ex-opt" id="eopt-stretch" onclick="chooseEx('stretch','easy')"><span>🧘‍♀️</span> 5 מתיחות פשוטות בעמידה</div>
-            <div class="ex-opt" id="eopt-breathmove" onclick="chooseEx('breathmove','easy')"><span>🌊</span> 3 נשימות עמוקות + תנועת ידיים</div>
-          </div>
-          <div class="ex-options" id="ex-opts-hard" style="display:none">
-            <div class="ex-opt" id="eopt-walk30" onclick="chooseEx('walk30','hard')"><span>🏃‍♀️</span> הליכה 20-30 דקות בקצב נוח</div>
-            <div class="ex-opt" id="eopt-yoga" onclick="chooseEx('yoga','hard')"><span>🧘</span> יוגה קלה ביוטיוב — 15 דקות</div>
-            <div class="ex-opt" id="eopt-dance" onclick="chooseEx('dance','hard')"><span>💃</span> ריקוד חופשי בבית — שיר אחד שאוהבת</div>
-          </div>
         </div>
       </div>
+      <!-- ex-sec-title kept (referenced by renderFromState JS) -->
+      <div id="ex-sec-title" style="display:none"></div>
+      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
     </div>
   </div>
 
+  <!-- Category 5: קשר ורגעים טובים — future-ready, no current tasks, hidden -->
+  <!-- TODO: wire when connection/social tasks are added -->
+
+  <!-- Custom tasks (unchanged behavior, shown below categories) -->
   <div class="sec" id="custom-sec" style="display:none">✨ משימות אישיות</div>
   <div class="task-grid" id="custom-grid"></div>
 </div>
@@ -1656,6 +1821,66 @@ const TASK_UI_LABELS = {
   sleep:     'כניסה למיטה',   // full DOM: "כניסה למיטה בשעה סבירה" — shortened for panel
   water:     'מים',
 };
+
+// ── Companion small UI icons (for sparkle button and future use) ──
+const COMPANION_UI_ICONS = {
+  bear:       'assets/companions/ui-icons/bear-ui-icon.webp',
+  cat:        'assets/companions/ui-icons/cat-ui-icon.webp',
+  hafshushit: 'assets/companions/ui-icons/hafshushit-ui-icon.webp',
+  forest:     'assets/companions/ui-icons/hafshushit-ui-icon.webp', // internal alias
+  capy:       'assets/companions/ui-icons/capy-ui-icon.webp',
+  fox:        'assets/companions/ui-icons/fox-ui-icon.webp',
+};
+
+// ── Plant growth stage icons ──
+const PLANT_STAGE_ICONS = {
+  bud:    'assets/plants/growth-stages/plant-bud.webp',
+  sprout: 'assets/plants/growth-stages/plant-sprout.webp',
+  leaf:   'assets/plants/growth-stages/plant-leaf.webp',
+  full:   'assets/plants/growth-stages/plant-full.webp',
+};
+
+// ── Today sparkle lines — shown only on user request, never automatically ──
+// Companion ID key; forest = internal alias for חפשושית
+const TODAY_SPARK_LINES = {
+  bear: [
+    'לא כל יום צריך להרים עולם. לפעמים מספיק להרים כוס מים.',
+    'אני בעד דברים קטנים שאפשר להחזיק ביד ולא בלוח משימות.',
+    'אם היום כבד, משהו בגודל של פירור עוגייה גם נחשב.',
+    'משהו קטן וטוב עדיין נחשב משהו טוב.',
+    'אני לא ממהרת. יש לי זמן, פרווה, וסבלנות.',
+  ],
+  cat: [
+    'לא חייבים לפתוח הכול. גם חתולות לא נכנסות לכל חדר רק כי הוא קיים.',
+    'אפשר לבחור דבר אחד קטן ולהעמיד פנים שזה היה מתוכנן באלגנטיות.',
+    'אני בעד מינימום מאמץ, מקסימום אפקט.',
+    'לפעמים כל מה שצריך זה משהו קטן שמסדר את הפינה, לא את כל העולם.',
+    'היום לא צריך מצגת. אולי רק שקופית אחת יפה.',
+  ],
+  hafshushit: [
+    'אפשר רק להציץ. הצצה היא לא התחייבות, וזה מאוד מרגיע אותי.',
+    'משהו קטן יכול להיות ממש קטן. אני בדקתי, זה חוקי.',
+    'לפעמים היום פחות קוצני אחרי פעולה אחת בגודל של עלה.',
+    'לא חייבים להיות מוכנות. אפשר להיות קצת מוכנות.',
+    'אני בעד התחלה בגודל שלא עושה רעש.',
+  ],
+  capy: [
+    'אני בעד לפתוח רק מה שלא דורש ממני אישיות מלאה.',
+    'גם כוס מים נחשבת. הגוף לא ביקש נאום, רק שלוק.',
+    'אפשר לעשות דבר קטן ואז לחזור להיות יצור אופקי.',
+    'לא כל פעולה צריכה להפוך לאירוע. תודה לאל.',
+    'אם זה קטן מספיק, אולי אפילו אני בעד.',
+  ],
+  fox: [
+    'מהלך קטן ומדויק עדיף על תוכנית ענקית שמסתכלת עלייך לא יפה.',
+    'אפשר לבחור אפשרות אחת. זה לא ויתור, זו אסטרטגיה.',
+    'היום לא צריך לכבוש. מספיק לסמן פינה אחת טובה.',
+    'משהו פשוט ובר־ביצוע הוא לפעמים הברקה ממש לא מוערכת.',
+    'אני בעד צעד קטן עם יחסי ציבור טובים.',
+  ],
+};
+// Internal alias for forest companion ID
+TODAY_SPARK_LINES.forest = TODAY_SPARK_LINES.hafshushit;
 
 const TASK_MSGS = {
   breakfast: [
@@ -4080,6 +4305,7 @@ async function confirmCompanion() {
   const overlay = document.getElementById('g-companion-overlay');
   if (overlay) overlay.classList.remove('open');
   renderCompanionSection();
+  updateSparkBtn(); // sync Today tab sparkle button to new companion
 }
 
 // ── Hero section rendering ──
@@ -4494,6 +4720,7 @@ async function saveDay() {
   await store.set('day:'+s.todayKey, JSON.stringify({tasks:s.tasks,water:s.water,exChosen:s.exChosen,exMode:s.exMode}));
   await recalcStreak(); updateJourney();
   loadGentleHabitData(); // fire-and-forget — refreshes sprout panel after each save
+  renderCollected();     // keep collected chips in sync
 }
 async function loadDay() {
   try {
@@ -4543,10 +4770,13 @@ function renderFromState() {
     document.getElementById('ex-sub').textContent=bothDone?'עשית קל וגם יותר — מדהים! 💚':'תנועה היא תרופה ממש 💚';
     document.getElementById('ex-icon').textContent=bothDone?'🌟':'✅';
   }
-  document.getElementById('ex-sec-title').textContent=isExerciseDay()?'💪 פעילות גופנית (היום!)':'💪 פעילות גופנית (יום מנוחה — רשות!)';
+  var exSecEl = document.getElementById('ex-sec-title');
+  if (exSecEl) exSecEl.textContent=isExerciseDay()?'💪 פעילות גופנית (היום!)':'💪 פעילות גופנית (יום מנוחה — רשות!)';
   renderCustomTasks();
   updateProgress();
   applyMicroTaskOverrides();
+  renderCollected();    // update "מה כבר נאסף" chips
+  updateSparkBtn();     // sync companion icon + label in sparkle button
 }
 
 // ============================================================
@@ -5529,6 +5759,118 @@ async function saveNewTask() {
 }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeAddTask(); });
 
+// ══════════════════════════════════════════════════════════════
+// TODAY TAB REDESIGN — categories, collected section, sparkle
+// ══════════════════════════════════════════════════════════════
+
+// Category open/close — one category open at a time, in-memory only (not persisted)
+var _CAT_IDS = ['body_nourishment','quiet_regulation','home_care','movement_air'];
+var _openCategories = {};
+
+function toggleCategory(catId) {
+  var wasOpen = !!_openCategories[catId];
+  // Close all
+  _CAT_IDS.forEach(function(id) {
+    _openCategories[id] = false;
+    var body   = document.getElementById('cat-body-' + id);
+    var toggle = document.getElementById('cat-toggle-' + id);
+    if (body)   body.style.display = 'none';
+    if (toggle) { toggle.textContent = '+'; toggle.classList.remove('open'); }
+  });
+  // If was closed, open it now
+  if (!wasOpen) {
+    _openCategories[catId] = true;
+    var body   = document.getElementById('cat-body-' + catId);
+    var toggle = document.getElementById('cat-toggle-' + catId);
+    if (body)   body.style.display = '';
+    if (toggle) { toggle.textContent = '−'; toggle.classList.add('open'); }
+  }
+}
+
+// Render "מה כבר נאסף אצלי היום" chips
+var _COLLECTED_INFO = {
+  breakfast: { icon: '🍳', label: 'ארוחת בוקר' },
+  lunch:     { icon: '🥗', label: 'ארוחת צהריים' },
+  dinner:    { icon: '🍲', label: 'ארוחת ערב' },
+  shower:    { icon: '🚿', label: 'מקלחת' },
+  breathing: { icon: '🌬️', label: 'רגע שקט' },
+  outside:   { icon: '🌤️', label: 'אוויר צח' },
+  sleep:     { icon: '🌙', label: 'כניסה למיטה' },
+};
+
+function renderCollected() {
+  var container = document.getElementById('collected-chips');
+  if (!container) return;
+  var chips = [];
+
+  // Fixed tasks
+  TASK_IDS.forEach(function(id) {
+    if (s.tasks[id] && _COLLECTED_INFO[id]) chips.push(_COLLECTED_INFO[id]);
+  });
+  // Water (threshold ≥ 6)
+  if ((s.water || 0) >= 6) chips.push({ icon: '💧', label: 'מים' });
+  // Exercise
+  if (s.exChosen && (s.exChosen.easy || s.exChosen.hard)) chips.push({ icon: '💪', label: 'תנועה' });
+  // Custom tasks
+  if (customTasks && customTasks.length) {
+    customTasks.forEach(function(t) {
+      if (s.tasks['c:' + t.id]) chips.push({ icon: t.emoji || '✨', label: t.name });
+    });
+  }
+
+  if (chips.length === 0) {
+    container.innerHTML = '<div class="collected-empty">עוד לא נאסף כאן משהו היום. אפשר להתחיל ממש קטן, אם זה מתאים.</div>';
+  } else {
+    container.innerHTML = '<div class="collected-chips-row">'
+      + chips.map(function(ch) {
+          return '<div class="collected-chip">'
+            + '<span class="collected-chip-icon">' + ch.icon + '</span>'
+            + ch.label + '</div>';
+        }).join('')
+      + '</div>';
+  }
+}
+
+// Sparkle button — companion line shown only on click, never automatically
+var _sparkLastIdx = {};
+
+function showSparkLine() {
+  var cId = cs && cs.companionId;
+  var lines = TODAY_SPARK_LINES[cId] || [];
+  if (!lines.length) return;
+  var display = document.getElementById('spark-line-display');
+  if (!display) return;
+  var last = (_sparkLastIdx[cId] !== undefined) ? _sparkLastIdx[cId] : -1;
+  var idx  = Math.floor(Math.random() * lines.length);
+  if (lines.length > 1 && idx === last) idx = (idx + 1) % lines.length;
+  _sparkLastIdx[cId] = idx;
+  display.textContent = lines[idx];
+  display.style.display = '';
+}
+
+// Update sparkle button icon and label to match active companion
+function updateSparkBtn() {
+  var c = cs && COMPANIONS[cs.companionId];
+  var row   = document.getElementById('spark-row');
+  var icon  = document.getElementById('spark-companion-icon');
+  var label = document.getElementById('spark-btn-label');
+  var line  = document.getElementById('spark-line-display');
+  if (!c) { if (row) row.style.display = 'none'; return; }
+  if (icon) {
+    var src = COMPANION_UI_ICONS[c.id] || '';
+    if (src) { icon.src = src; icon.alt = c.name; icon.style.display = ''; }
+    else       icon.style.display = 'none';
+  }
+  if (label) {
+    // "✨ הברקה קטנה מ" + nameWithArticle (e.g. "הדובה") → "מהדובה"
+    var nameWithArticle = c.displayNameWithArticle || c.name;
+    label.textContent = '✨ הברקה קטנה מ' + nameWithArticle;
+  }
+  if (row) row.style.display = '';
+  // Hide any previously shown spark line on companion switch
+  if (line) { line.textContent = ''; line.style.display = 'none'; }
+}
+
 // AUTH
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -6046,10 +6388,10 @@ var GENTLE_HABIT_KEY = 'tori_gentle_habit_v1';
 // Growth stage by count in last 14 days — 4 tiers, no percentages exposed
 // Thresholds: 2 = minimum to appear in sprouts list (filter in loadGentleHabitData)
 function getGrowthStageForAction(count14) {
-  if (count14 >= 10) return { label: 'צמח קטן שמחזיק', icon: '🌿', copy: 'זה כבר נהיה קצת יותר מוכר.' };
-  if (count14 >= 6)  return { label: 'עלה שמתחזק',     icon: '🌱', copy: 'הגוף מתחיל לזהות את זה.' };
-  if (count14 >= 3)  return { label: 'נבט ראשון',      icon: '🌱', copy: 'זה כבר הופיע אצלך יותר מפעם אחת.' };
-  return               { label: 'זרע קטן',            icon: '🌱', copy: 'יש כאן התחלה קטנה.' };
+  if (count14 >= 10) return { label: 'צמח קטן שמחזיק', icon: '🌿', imgSrc: PLANT_STAGE_ICONS.full,   copy: 'זה כבר נהיה קצת יותר מוכר.' };
+  if (count14 >= 6)  return { label: 'עלה שמתחזק',     icon: '🌱', imgSrc: PLANT_STAGE_ICONS.leaf,   copy: 'הגוף מתחיל לזהות את זה.' };
+  if (count14 >= 3)  return { label: 'נבט ראשון',      icon: '🌱', imgSrc: PLANT_STAGE_ICONS.sprout, copy: 'זה כבר הופיע אצלך יותר מפעם אחת.' };
+  return               { label: 'ניצן קטן',           icon: '🌱', imgSrc: PLANT_STAGE_ICONS.bud,    copy: 'יש כאן התחלה קטנה.' };
 }
 
 // Load 14-day history and compute cache
@@ -6208,8 +6550,13 @@ function buildGentleHabitPanelHTML(c) {
       var familyKey   = PLANT_FAMILY_BY_ACTION_ID[item.kind];
       var familyLabel = familyKey ? PLANT_FAMILY_LABELS[familyKey] : '';
 
+      // Use plant stage image if available, fall back to emoji
+      var stageIconHtml = stage.imgSrc
+        ? '<img src="' + stage.imgSrc + '" alt="" class="j-sprout-img">'
+        : '<div class="j-sprout-icon">' + stage.icon + '</div>';
+
       content += '<div class="j-sprout-card">'
-        + '<div class="j-sprout-icon">' + stage.icon + '</div>'
+        + stageIconHtml
         + '<div class="j-sprout-body">'
         + '<div class="j-sprout-name">' + uiLabel + '</div>'
         + (familyLabel

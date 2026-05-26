@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v11'; // bumped — gentle-habit panel v1 (4 growth tiers, plant family labels)
+const CACHE = 'body-soul-v12'; // bumped — Today tab redesign, plant icons, companion icons, sparkle
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
