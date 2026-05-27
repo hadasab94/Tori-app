@@ -1,4 +1,4 @@
-<!-- Tori version: today-ux-fix-2026-05-27-1200 -->
+<!-- Tori version: rollback-stable-2026-05-27-1400 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1429,63 +1429,6 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   width:40px; height:40px; object-fit:contain;
   border-radius:8px; flex-shrink:0;
 }
-
-/* ── Today tab UX — pill categories + inline chooser ── */
-.today-section-label {
-  font-size:13px; font-weight:700; color:var(--text2);
-  letter-spacing:0.4px; margin:0 0 9px;
-}
-.today-add-section { margin-top:4px; }
-.today-cat-pills {
-  display:flex; flex-wrap:wrap; gap:7px; margin-bottom:10px;
-}
-.today-cat-pill {
-  display:inline-flex; align-items:center; gap:4px;
-  background:var(--card); border:1.5px solid var(--border);
-  border-radius:999px; padding:7px 15px;
-  font-size:13px; color:var(--text2); font-family:inherit;
-  cursor:pointer; font-weight:600;
-  transition:background 0.15s, border-color 0.15s, color 0.15s;
-}
-.today-cat-pill:active { background:rgba(0,0,0,0.04); }
-.today-cat-pill.open {
-  background:var(--sage-l); border-color:var(--sage); color:var(--sage);
-}
-.today-chooser {
-  background:var(--card); border:1.5px solid var(--border);
-  border-radius:var(--radius); padding:12px; margin-bottom:10px;
-  display:flex; flex-direction:column; gap:8px;
-}
-.chooser-task-item {
-  display:flex; align-items:center; gap:10px;
-  background:var(--bg); border:1.5px solid var(--border);
-  border-radius:10px; padding:10px 12px;
-  font-size:13.5px; color:var(--text); font-family:inherit;
-  cursor:pointer; width:100%; text-align:right;
-  transition:background 0.15s, border-color 0.15s;
-}
-.chooser-task-item:active { background:rgba(0,0,0,0.04); }
-.chooser-task-item.done {
-  background:var(--sage-l); border-color:var(--sage); color:var(--sage);
-}
-.chooser-task-icon { font-size:18px; flex-shrink:0; }
-.chooser-task-label { flex:1; }
-.chooser-check { font-size:15px; font-weight:700; color:var(--sage); }
-.chooser-water-row {
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  padding:8px 4px;
-}
-.chooser-water-label { font-size:13px; color:var(--text); flex:1; }
-.chooser-drops { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; width:100%; }
-.chooser-drop {
-  background:none; border:none; font-size:20px;
-  opacity:0.25; cursor:pointer; padding:2px; line-height:1;
-  transition:opacity 0.12s, transform 0.12s;
-}
-.chooser-drop.filled { opacity:1; }
-.chooser-drop:active { transform:scale(0.82); }
-.chooser-exercise-slot .exercise-card { margin:0; border-radius:10px; }
-.chooser-custom-btn { margin-top:2px; }
 </style>
 <script>
 if('serviceWorker' in navigator){
@@ -1578,10 +1521,12 @@ if('serviceWorker' in navigator){
     <div id="day-msg"></div>
   </div>
 
-  <!-- ── Collected today (primary content) ── -->
-  <div class="today-section-label">מה כבר נאסף אצלי היום</div>
-  <div id="collected-chips">
-    <div class="collected-empty">עוד לא נאסף כאן משהו היום. אפשר להתחיל ממש קטן, אם זה מתאים.</div>
+  <!-- ── Collected today ── -->
+  <div class="today-collected-card">
+    <div class="today-collected-title">מה כבר נאסף אצלי היום</div>
+    <div id="collected-chips">
+      <div class="collected-empty">עוד לא נאסף כאן משהו היום. אפשר להתחיל ממש קטן, אם זה מתאים.</div>
+    </div>
   </div>
 
   <!-- ── Sparkle button ── -->
@@ -1593,80 +1538,131 @@ if('serviceWorker' in navigator){
     <div class="spark-line" id="spark-line-display" style="display:none"></div>
   </div>
 
-  <!-- ── Add section: compact pill buttons + inline chooser ── -->
-  <div class="today-add-section">
-    <div class="today-cats-header">מה מתאים לי להוסיף עכשיו?</div>
-    <div class="today-cats-sub">לא צריך לראות הכול בבת אחת. אפשר לפתוח רק את מה שמתאים לרגע הזה.</div>
-    <div class="today-cat-pills">
-      <button class="today-cat-pill cat-pill-body_nourishment" onclick="toggleCategoryChooser('body_nourishment')">גוף והזנה +</button>
-      <button class="today-cat-pill cat-pill-quiet_regulation" onclick="toggleCategoryChooser('quiet_regulation')">שקט וויסות +</button>
-      <button class="today-cat-pill cat-pill-home_care" onclick="toggleCategoryChooser('home_care')">בית וטיפול +</button>
-      <button class="today-cat-pill cat-pill-movement_air" onclick="toggleCategoryChooser('movement_air')">תנועה ואוויר +</button>
+  <!-- ── Categories section ── -->
+  <div class="today-cats-header">מה מתאים לי לפתוח עכשיו?</div>
+  <div class="today-cats-sub">לא צריך לראות הכול בבת אחת. אפשר לפתוח רק את מה שמתאים לרגע הזה.</div>
+
+  <!-- Category 1: גוף והזנה (breakfast, lunch, dinner, water) -->
+  <div class="cat-card" id="cat-body_nourishment">
+    <div class="cat-header" onclick="toggleCategory('body_nourishment')">
+      <div class="cat-header-text">
+        <div class="cat-title">גוף והזנה</div>
+        <div class="cat-subtitle">משהו קטן שהגוף יכול לקבל עכשיו</div>
+      </div>
+      <div class="cat-toggle" id="cat-toggle-body_nourishment">+</div>
     </div>
-    <div id="today-chooser-wrap"></div>
+    <div class="cat-body" id="cat-body-body_nourishment" style="display:none">
+      <div class="task-grid" style="margin-top:10px">
+        <div class="task-card water-card" id="water-card">
+          <div class="water-info">
+            <div class="water-label">כוסות</div>
+            <div class="water-num" id="water-num">0/8</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:1px">מטרה: 6-8</div>
+          </div>
+          <div class="drops-grid" id="drops-grid"></div>
+        </div>
+      </div>
+      <div class="task-grid">
+        <div class="task-card" id="tc-breakfast" onclick="toggleTask('breakfast')"><div class="check-badge">✓</div><span class="t-icon">🍳</span><div class="t-name">ארוחת בוקר</div><div class="t-sub">הדלק הראשוני</div></div>
+        <div class="task-card" id="tc-lunch"     onclick="toggleTask('lunch')"    ><div class="check-badge">✓</div><span class="t-icon">🥗</span><div class="t-name">ארוחת צהריים</div><div class="t-sub">להמשיך לתדלק</div></div>
+        <div class="task-card" id="tc-dinner"    onclick="toggleTask('dinner')"   ><div class="check-badge">✓</div><span class="t-icon">🍲</span><div class="t-name">ארוחת ערב</div><div class="t-sub">לסגור את היום</div></div>
+      </div>
+      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
+    </div>
   </div>
 
-  <!-- Custom tasks section -->
-  <div class="sec" id="custom-sec" style="display:none">✨ משימות אישיות</div>
-  <div class="task-grid" id="custom-grid"></div>
-
-  <!-- ── Hidden task pool ── -->
-  <div id="today-task-pool" style="display:none" aria-hidden="true">
-    <div id="cat-body_nourishment" style="display:none"></div>
-    <div id="cat-quiet_regulation" style="display:none"></div>
-    <div id="cat-home_care" style="display:none"></div>
-    <div id="cat-movement_air" style="display:none"></div>
-    <div id="cat-body-body_nourishment" style="display:none"></div>
-    <div id="cat-body-quiet_regulation" style="display:none"></div>
-    <div id="cat-body-home_care" style="display:none"></div>
-    <div id="cat-body-movement_air" style="display:none"></div>
-    <div class="task-card water-card" id="water-card">
-      <div class="water-info">
-        <div class="water-label">כוסות</div>
-        <div class="water-num" id="water-num">0/8</div>
-        <div style="font-size:9px;color:var(--text3);margin-top:1px">מטרה: 6-8</div>
+  <!-- Category 2: שקט וויסות (breathing, sleep) -->
+  <div class="cat-card" id="cat-quiet_regulation">
+    <div class="cat-header" onclick="toggleCategory('quiet_regulation')">
+      <div class="cat-header-text">
+        <div class="cat-title">שקט וויסות</div>
+        <div class="cat-subtitle">רגע קטן של שקט בתוך היום</div>
       </div>
-      <div class="drops-grid" id="drops-grid"></div>
+      <div class="cat-toggle" id="cat-toggle-quiet_regulation">+</div>
     </div>
-    <div class="task-card" id="tc-breakfast" onclick="toggleTask('breakfast')"><div class="check-badge">✓</div><span class="t-icon">🍳</span><div class="t-name">ארוחת בוקר</div></div>
-    <div class="task-card" id="tc-lunch"     onclick="toggleTask('lunch')"    ><div class="check-badge">✓</div><span class="t-icon">🥗</span><div class="t-name">ארוחת צהריים</div></div>
-    <div class="task-card" id="tc-dinner"    onclick="toggleTask('dinner')"   ><div class="check-badge">✓</div><span class="t-icon">🍲</span><div class="t-name">ארוחת ערב</div></div>
-    <div class="task-card" id="tc-shower"    onclick="toggleTask('shower')"   ><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div></div>
-    <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div></div>
-    <div class="task-card" id="tc-outside"   onclick="toggleTask('outside')"  ><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div></div>
-    <div class="task-card" id="tc-sleep"     onclick="toggleTask('sleep')"    ><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה</div></div>
-    <div class="exercise-wrap" id="exercise-wrap-pool">
-      <div class="exercise-card" id="exercise-card">
-        <div class="exercise-head" onclick="toggleExBox()">
-          <div class="ex-icon-name">
-            <span style="font-size:26px" id="ex-icon">💪</span>
-            <div>
-              <div class="ex-title" id="ex-title">בחרי פעילות להיום</div>
-              <div class="ex-sub" id="ex-sub">לחצי כאן לסגור / לפתוח</div>
+    <div class="cat-body" id="cat-body-quiet_regulation" style="display:none">
+      <div class="task-grid" style="margin-top:10px">
+        <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
+        <div class="task-card" id="tc-sleep"     onclick="toggleTask('sleep')"    ><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה בשעה סבירה</div><div class="t-sub">לישון טוב הלילה</div></div>
+      </div>
+      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
+    </div>
+  </div>
+
+  <!-- Category 3: בית וטיפול בסיסי (shower) -->
+  <div class="cat-card" id="cat-home_care">
+    <div class="cat-header" onclick="toggleCategory('home_care')">
+      <div class="cat-header-text">
+        <div class="cat-title">בית וטיפול בסיסי</div>
+        <div class="cat-subtitle">דבר קטן שמחזיר קצת תחושה של בית</div>
+      </div>
+      <div class="cat-toggle" id="cat-toggle-home_care">+</div>
+    </div>
+    <div class="cat-body" id="cat-body-home_care" style="display:none">
+      <div class="task-grid" style="margin-top:10px">
+        <div class="task-card" id="tc-shower" onclick="toggleTask('shower')"><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
+      </div>
+      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
+    </div>
+  </div>
+
+  <!-- Category 4: תנועה ואוויר (outside + exercise) -->
+  <div class="cat-card" id="cat-movement_air">
+    <div class="cat-header" onclick="toggleCategory('movement_air')">
+      <div class="cat-header-text">
+        <div class="cat-title">תנועה ואוויר</div>
+        <div class="cat-subtitle">קצת תנועה, קצת אוויר, בקצב שלך</div>
+      </div>
+      <div class="cat-toggle" id="cat-toggle-movement_air">+</div>
+    </div>
+    <div class="cat-body" id="cat-body-movement_air" style="display:none">
+      <div class="task-grid" style="margin-top:10px">
+        <div class="task-card" id="tc-outside" onclick="toggleTask('outside')"><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
+      </div>
+      <div class="task-grid">
+        <div class="exercise-wrap">
+          <div class="exercise-card" id="exercise-card">
+            <div class="exercise-head" onclick="toggleExBox()">
+              <div class="ex-icon-name">
+                <span style="font-size:26px" id="ex-icon">💪</span>
+                <div>
+                  <div class="ex-title" id="ex-title">בחרי פעילות להיום</div>
+                  <div class="ex-sub" id="ex-sub">לחצי כאן לסגור / לפתוח</div>
+                </div>
+              </div>
+              <div class="mode-toggle">
+                <button class="mode-btn on" id="btn-easy" onclick="event.stopPropagation(); setMode('easy')">קל 🌸</button>
+                <button class="mode-btn" id="btn-hard" onclick="event.stopPropagation(); setMode('hard')">יש כוחות 💪</button>
+              </div>
+            </div>
+            <div id="ex-box" style="overflow:hidden; max-height:400px; transition:max-height 0.4s ease;">
+              <div class="ex-options" id="ex-opts-easy">
+                <div class="ex-opt" id="eopt-walk10"    onclick="chooseEx('walk10','easy')"><span>🚶‍♀️</span> הליכה קלה 10 דקות — בכל קצב שנוח לך</div>
+                <div class="ex-opt" id="eopt-stretch"   onclick="chooseEx('stretch','easy')"><span>🧘‍♀️</span> 5 מתיחות פשוטות בעמידה</div>
+                <div class="ex-opt" id="eopt-breathmove" onclick="chooseEx('breathmove','easy')"><span>🌊</span> 3 נשימות עמוקות + תנועת ידיים</div>
+              </div>
+              <div class="ex-options" id="ex-opts-hard" style="display:none">
+                <div class="ex-opt" id="eopt-walk30" onclick="chooseEx('walk30','hard')"><span>🏃‍♀️</span> הליכה 20-30 דקות בקצב נוח</div>
+                <div class="ex-opt" id="eopt-yoga"   onclick="chooseEx('yoga','hard')"><span>🧘</span> יוגה קלה ביוטיוב — 15 דקות</div>
+                <div class="ex-opt" id="eopt-dance"  onclick="chooseEx('dance','hard')"><span>💃</span> ריקוד חופשי בבית — שיר אחד שאוהבת</div>
+              </div>
             </div>
           </div>
-          <div class="mode-toggle">
-            <button class="mode-btn on" id="btn-easy" onclick="event.stopPropagation(); setMode('easy')">קל 🌸</button>
-            <button class="mode-btn" id="btn-hard" onclick="event.stopPropagation(); setMode('hard')">יש כוחות 💪</button>
-          </div>
-        </div>
-        <div id="ex-box" style="overflow:hidden; max-height:400px; transition:max-height 0.4s ease;">
-          <div class="ex-options" id="ex-opts-easy">
-            <div class="ex-opt" id="eopt-walk10"     onclick="chooseEx('walk10','easy')"><span>🚶‍♀️</span> הליכה קלה 10 דקות — בכל קצב שנוח לך</div>
-            <div class="ex-opt" id="eopt-stretch"    onclick="chooseEx('stretch','easy')"><span>🧘‍♀️</span> 5 מתיחות פשוטות בעמידה</div>
-            <div class="ex-opt" id="eopt-breathmove" onclick="chooseEx('breathmove','easy')"><span>🌊</span> 3 נשימות עמוקות + תנועת ידיים</div>
-          </div>
-          <div class="ex-options" id="ex-opts-hard" style="display:none">
-            <div class="ex-opt" id="eopt-walk30" onclick="chooseEx('walk30','hard')"><span>🏃‍♀️</span> הליכה 20-30 דקות בקצב נוח</div>
-            <div class="ex-opt" id="eopt-yoga"   onclick="chooseEx('yoga','hard')"><span>🧘</span> יוגה קלה ביוטיוב — 15 דקות</div>
-            <div class="ex-opt" id="eopt-dance"  onclick="chooseEx('dance','hard')"><span>💃</span> ריקוד חופשי בבית — שיר אחד שאוהבת</div>
-          </div>
         </div>
       </div>
+      <!-- ex-sec-title kept (referenced by renderFromState JS) -->
+      <div id="ex-sec-title" style="display:none"></div>
+      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
     </div>
-    <div id="ex-sec-title" style="display:none"></div>
   </div>
-</div><!-- /view-today -->
+
+  <!-- Category 5: קשר ורגעים טובים — future-ready, no current tasks, hidden -->
+  <!-- TODO: wire when connection/social tasks are added -->
+
+  <!-- Custom tasks (unchanged behavior, shown below categories) -->
+  <div class="sec" id="custom-sec" style="display:none">✨ משימות אישיות</div>
+  <div class="task-grid" id="custom-grid"></div>
+</div>
 
 <!-- ADD TASK MODAL -->
 <div id="add-task-modal" class="modal-overlay" style="display:none" onclick="closeAddTask(event)">
@@ -4725,7 +4721,6 @@ async function saveDay() {
   await recalcStreak(); updateJourney();
   loadGentleHabitData(); // fire-and-forget — refreshes sprout panel after each save
   renderCollected();     // keep collected chips in sync
-  refreshTodayChooser(); // sync open category chooser
 }
 async function loadDay() {
   try {
@@ -5765,133 +5760,34 @@ async function saveNewTask() {
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeAddTask(); });
 
 // ══════════════════════════════════════════════════════════════
-// TODAY TAB — category chooser, collected section, sparkle
+// TODAY TAB REDESIGN — categories, collected section, sparkle
 // ══════════════════════════════════════════════════════════════
 
-// Category definitions for the chooser drawer
-var TODAY_CATEGORY_DEFS = {
-  body_nourishment: {
-    label: 'גוף והזנה',
-    items: [
-      { type: 'task', id: 'breakfast', icon: '🍳', label: 'ארוחת בוקר' },
-      { type: 'task', id: 'lunch',     icon: '🥗', label: 'ארוחת צהריים' },
-      { type: 'task', id: 'dinner',    icon: '🍲', label: 'ארוחת ערב' },
-      { type: 'water' },
-    ],
-  },
-  quiet_regulation: {
-    label: 'שקט וויסות',
-    items: [
-      { type: 'task', id: 'breathing', icon: '🌬️', label: 'רגע שקט' },
-      { type: 'task', id: 'sleep',     icon: '🌙', label: 'כניסה למיטה' },
-    ],
-  },
-  home_care: {
-    label: 'בית וטיפול',
-    items: [
-      { type: 'task', id: 'shower', icon: '🚿', label: 'מקלחת' },
-    ],
-  },
-  movement_air: {
-    label: 'תנועה ואוויר',
-    items: [
-      { type: 'task', id: 'outside', icon: '🌤️', label: 'אוויר צח' },
-      { type: 'exercise' },
-    ],
-  },
-};
-
-var _openCategoryId = null;
-// Backward-compat: keep old state vars so any existing references don't throw
+// Category open/close — one category open at a time, in-memory only (not persisted)
 var _CAT_IDS = ['body_nourishment','quiet_regulation','home_care','movement_air'];
 var _openCategories = {};
 
-// Ensure exercise card is back in its pool div before any innerHTML wipe
-function _restoreExToPool() {
-  var exWrap = document.getElementById('exercise-wrap-pool');
-  var pool   = document.getElementById('today-task-pool');
-  if (exWrap && pool && !pool.contains(exWrap)) pool.appendChild(exWrap);
-}
-
-function toggleCategoryChooser(catId) {
-  if (_openCategoryId === catId) { closeTodayCategoryChooser(); }
-  else                           { openTodayCategoryChooser(catId); }
-}
-
-// Backward-compat stub — old onclick="toggleCategory(...)" references
-function toggleCategory(catId) { toggleCategoryChooser(catId); }
-
-function openTodayCategoryChooser(catId) {
-  _openCategoryId = catId;
-  document.querySelectorAll('.today-cat-pill').forEach(function(btn) {
-    btn.classList.toggle('open', btn.classList.contains('cat-pill-' + catId));
+function toggleCategory(catId) {
+  var wasOpen = !!_openCategories[catId];
+  // Close all
+  _CAT_IDS.forEach(function(id) {
+    _openCategories[id] = false;
+    var body   = document.getElementById('cat-body-' + id);
+    var toggle = document.getElementById('cat-toggle-' + id);
+    if (body)   body.style.display = 'none';
+    if (toggle) { toggle.textContent = '+'; toggle.classList.remove('open'); }
   });
-  renderTodayCategoryChooser(catId);
+  // If was closed, open it now
+  if (!wasOpen) {
+    _openCategories[catId] = true;
+    var body   = document.getElementById('cat-body-' + catId);
+    var toggle = document.getElementById('cat-toggle-' + catId);
+    if (body)   body.style.display = '';
+    if (toggle) { toggle.textContent = '−'; toggle.classList.add('open'); }
+  }
 }
 
-function closeTodayCategoryChooser() {
-  _restoreExToPool();
-  _openCategoryId = null;
-  document.querySelectorAll('.today-cat-pill').forEach(function(b) { b.classList.remove('open'); });
-  var wrap = document.getElementById('today-chooser-wrap');
-  if (wrap) wrap.innerHTML = '';
-}
-
-function renderTodayCategoryChooser(catId) {
-  _restoreExToPool(); // safety: move exercise card back before innerHTML wipe
-  var wrap = document.getElementById('today-chooser-wrap');
-  if (!wrap) return;
-  var def = TODAY_CATEGORY_DEFS[catId];
-  if (!def) { wrap.innerHTML = ''; return; }
-
-  var html = '<div class="today-chooser">';
-  def.items.forEach(function(item) {
-    if (item.type === 'task') {
-      var done = !!s.tasks[item.id];
-      html += '<button class="chooser-task-item' + (done ? ' done' : '') + '" onclick="chooserToggleTask(\'' + item.id + '\')">'
-            + '<span class="chooser-task-icon">' + item.icon + '</span>'
-            + '<span class="chooser-task-label">' + item.label + '</span>'
-            + (done ? '<span class="chooser-check">✓</span>' : '')
-            + '</button>';
-    } else if (item.type === 'water') {
-      var w = s.water || 0;
-      html += '<div class="chooser-water-row">'
-            + '<span class="chooser-task-icon">💧</span>'
-            + '<span class="chooser-water-label">מים — ' + w + ' מתוך 8 כוסות</span>'
-            + '</div>'
-            + '<div class="chooser-drops">';
-      for (var i = 0; i < 8; i++) {
-        html += '<button class="chooser-drop' + (i < w ? ' filled' : '') + '" onclick="chooserTapDrop(' + i + ')">💧</button>';
-      }
-      html += '</div>';
-    } else if (item.type === 'exercise') {
-      var hasEx = s.exChosen && (s.exChosen.easy || s.exChosen.hard);
-      html += '<div class="chooser-exercise-slot"></div>'; // exercise card appended via DOM after innerHTML
-    }
-  });
-  html += '<button class="cat-add-btn chooser-custom-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>';
-  html += '</div>';
-  wrap.innerHTML = html;
-
-  // Move exercise card DOM node into its slot (safe: was restored to pool above)
-  var slot   = wrap.querySelector('.chooser-exercise-slot');
-  var exWrap = document.getElementById('exercise-wrap-pool');
-  if (slot && exWrap) slot.appendChild(exWrap);
-}
-
-function chooserToggleTask(taskId) {
-  toggleTask(taskId); // toggleTask calls saveDay which calls refreshTodayChooser
-}
-
-function chooserTapDrop(idx) {
-  tapDrop(idx); // tapDrop calls saveDay which calls refreshTodayChooser
-}
-
-function refreshTodayChooser() {
-  if (_openCategoryId) renderTodayCategoryChooser(_openCategoryId);
-}
-
-// ── Render "מה כבר נאסף אצלי היום" ──
+// Render "מה כבר נאסף אצלי היום" chips
 var _COLLECTED_INFO = {
   breakfast: { icon: '🍳', label: 'ארוחת בוקר' },
   lunch:     { icon: '🥗', label: 'ארוחת צהריים' },
@@ -5907,11 +5803,15 @@ function renderCollected() {
   if (!container) return;
   var chips = [];
 
+  // Fixed tasks
   TASK_IDS.forEach(function(id) {
     if (s.tasks[id] && _COLLECTED_INFO[id]) chips.push(_COLLECTED_INFO[id]);
   });
+  // Water (threshold ≥ 6)
   if ((s.water || 0) >= 6) chips.push({ icon: '💧', label: 'מים' });
+  // Exercise
   if (s.exChosen && (s.exChosen.easy || s.exChosen.hard)) chips.push({ icon: '💪', label: 'תנועה' });
+  // Custom tasks
   if (customTasks && customTasks.length) {
     customTasks.forEach(function(t) {
       if (s.tasks['c:' + t.id]) chips.push({ icon: t.emoji || '✨', label: t.name });
@@ -5931,7 +5831,7 @@ function renderCollected() {
   }
 }
 
-// ── Sparkle button ──
+// Sparkle button — companion line shown only on click, never automatically
 var _sparkLastIdx = {};
 
 function showSparkLine() {
@@ -5948,6 +5848,7 @@ function showSparkLine() {
   display.style.display = '';
 }
 
+// Update sparkle button icon and label to match active companion
 function updateSparkBtn() {
   var c = cs && COMPANIONS[cs.companionId];
   var row   = document.getElementById('spark-row');
@@ -5961,10 +5862,12 @@ function updateSparkBtn() {
     else       icon.style.display = 'none';
   }
   if (label) {
+    // "✨ הברקה קטנה מ" + nameWithArticle (e.g. "הדובה") → "מהדובה"
     var nameWithArticle = c.displayNameWithArticle || c.name;
     label.textContent = '✨ הברקה קטנה מ' + nameWithArticle;
   }
   if (row) row.style.display = '';
+  // Hide any previously shown spark line on companion switch
   if (line) { line.textContent = ''; line.style.display = 'none'; }
 }
 

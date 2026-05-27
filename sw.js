@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v13'; // bumped — Today tab UX fix: pill chooser replaces collapsed cards
+const CACHE = 'body-soul-v14'; // bumped — rollback to stable Today redesign (discard broken v13 cache)
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
