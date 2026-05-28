@@ -1,4 +1,4 @@
-<!-- Tori version: companion-feedback-fix-2026-05-28 -->
+<!-- Tori version: cd-sync-frozen-streak-2026-05-28 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -46,6 +46,9 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .app-subtitle { font-size: 11px; color: var(--text2); margin-top: 1px; }
 .streak-pill { background: var(--gold-l); border: 1.5px solid #D4942A; border-radius: 20px; padding: 5px 13px; font-size: 13px; font-weight: 700; color: #8A5A00; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: transform 0.15s; }
 .streak-pill:active { transform: scale(0.95); }
+.streak-pill.frozen { background: linear-gradient(135deg,#EEF5FF 0%,#F0EEFF 100%); border-color: rgba(100,140,220,0.40); color: #3A5A9A; }
+.streak-pill.frozen:active { transform: scale(0.95); }
+.streak-frozen-sub { font-size: 11px; font-weight: 600; opacity: 0.80; }
 .compassion-btn { background: #EDE0FF; border: 1.5px solid #9B72CF; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: #6B4C9A; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: transform 0.15s; font-family: inherit; white-space: nowrap; }
 .compassion-btn:active { transform: scale(0.95); }
 .compassion-btn.active { background: #9B72CF; color: white; border-color: #6B4C9A; }
@@ -1708,7 +1711,7 @@ if('serviceWorker' in navigator){
   </div>
   <div style="display:flex;align-items:center;gap:6px">
     <button class="compassion-btn" id="comp-btn" onclick="openCompassionModal()">🫶 <span id="comp-label">יום חמלה</span></button>
-    <div class="streak-pill" onclick="switchView('journey')">🔥 <span id="hdr-streak">0</span> ימים</div>
+    <div class="streak-pill" id="streak-pill" onclick="switchView('journey')">🔥 <span id="hdr-streak">0</span> ימים</div>
   </div>
 </div>
 
@@ -4483,6 +4486,7 @@ async function confirmCompanion() {
   updateSparkBtn(); // sync Today tab sparkle button to new companion
   renderCompanionFeedback(); // sync feedback line to new companion
   if (cd && cd.active) renderCompassionDay(); // sync CD panel companion on switch
+  updateStreakPillFrozenState(); // update frozen pill companion name on switch
 }
 
 // ── Hero section rendering ──
@@ -4816,7 +4820,9 @@ const TASK_ACTION_MAP = {
 
 function updateJourney() {
   const streak = s.streak||0;
-  document.getElementById('hdr-streak').textContent = streak;
+  // Streak pill: frozen state is set by updateStreakPillFrozenState; just update the number
+  const hdrStreakEl = document.getElementById('hdr-streak');
+  if (hdrStreakEl) hdrStreakEl.textContent = streak;
   document.getElementById('stat-streak').textContent = streak;
   document.getElementById('stat-best').textContent = s.bestStreak||0;
   // legacy hidden els
@@ -4828,6 +4834,7 @@ function updateJourney() {
   syncMoodFromApp();
   renderGardenCards();
   renderMilestones(); renderAchievements();
+  updateStreakPillFrozenState(); // keep frozen/normal state in sync
 }
 
 function renderMilestones() {
@@ -6263,20 +6270,6 @@ function renderCompassionDay() {
     var iconSrc = (typeof COMPANION_UI_ICONS !== 'undefined' && COMPANION_UI_ICONS[c.id]) || '';
     if (iconSrc) compIconHTML = '<img class="cd-comp-icon" src="' + iconSrc + '" alt="' + c.name + '">';
   }
-  // Frozen streak
-  var streakNum = s.streak || 0;
-  var nameArticle = c ? (c.displayNameWithArticle || ('ה' + c.name)) : 'הדמות';
-  var frozenText = nameArticle + ' שלך שמה אותו במקפיא עם גרביים. הוא לא נעלם — הוא פשוט נח.';
-  var frozenHTML = '<div class="frozen-streak-card">'
-    + '<div class="frozen-streak-row">'
-    + '<span class="frozen-streak-ice">❄️</span>'
-    + '<div>'
-    + '<div class="frozen-streak-title">הרצף מוקפא להיום</div>'
-    + '<div class="frozen-streak-text">' + frozenText + '</div>'
-    + (streakNum > 0 ? '<div class="frozen-streak-num">' + streakNum + ' ימים שמורים</div>' : '')
-    + '</div>'
-    + '</div>'
-    + '</div>';
   // Visible wins
   var visibleWins = cd.visibleWins || [];
   var winsHTML = '';
@@ -6328,7 +6321,6 @@ function renderCompassionDay() {
     + '  ' + compIconHTML
     + '  <div class="cd-companion-line">' + compLine + '</div>'
     + '</div>'
-    + frozenHTML
     + '<div class="cd-wins-title">ניצחונות קטנים</div>'
     + '<div class="cd-wins-grid" id="cd-wins-grid">'
     + winsHTML
@@ -6452,10 +6444,8 @@ async function saveCompassionState() {
 
 function openCompassionModal() {
   if(cd.active) {
-    // Show exit confirmation inside the CD panel
-    exitCompassionDayConfirm();
-    var panel = document.getElementById('compassion-day-panel');
-    if (panel) setTimeout(function() { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
+    // CD already active — switch to Today tab so user can see the full CD panel
+    switchView('today');
     return;
   }
   document.getElementById('comp-overlay').classList.add('open');
@@ -6477,6 +6467,25 @@ async function activateCompassionDay() {
   bs.compassionDay = true; updateBotUI(); saveBotData();
 }
 
+function updateStreakPillFrozenState() {
+  var pill = document.getElementById('streak-pill');
+  if (!pill) return;
+  if (cd && cd.active) {
+    pill.classList.add('frozen');
+    var c = cs && COMPANIONS[cs.companionId];
+    var streak = s.streak || 0;
+    var nameArticle = c ? (c.displayNameWithArticle || ('ה' + c.name)) : 'הדמות';
+    pill.innerHTML = '❄️ <span id="hdr-streak">' + streak + '</span>'
+      + ' <span class="streak-frozen-sub">שמור</span>';
+    pill.title = nameArticle + ' שלך שמה אותו במקפיא עם גרביים. הוא לא נעלם — הוא פשוט נח.';
+  } else {
+    pill.classList.remove('frozen');
+    var streak = s.streak || 0;
+    pill.innerHTML = '🔥 <span id="hdr-streak">' + streak + '</span> ימים';
+    pill.title = '';
+  }
+}
+
 function updateCompassionUI() {
   var btn = document.getElementById('comp-btn');
   var lbl = document.getElementById('comp-label');
@@ -6496,6 +6505,7 @@ function updateCompassionUI() {
     if(panel) { panel.style.display = 'none'; panel.innerHTML = ''; }
     _cdExitConfirm = false;
   }
+  updateStreakPillFrozenState();
 }
 
 // ============================================================
@@ -8024,50 +8034,11 @@ function journeyWhatDoneToday() {
   showActionResponse('תזכירי לי מה כבר עשיתי היום', text, resp);
 }
 
-// ── Compassion day explain modal ──
-function journeyCompassionInfo() {
-  // Remove any existing modal
-  var existing = document.getElementById('j-comp-explain-overlay');
-  if (existing) existing.remove();
-
-  var overlay = document.createElement('div');
-  overlay.className = 'j-comp-overlay';
-  overlay.id = 'j-comp-explain-overlay';
-
-  var already = (typeof cd !== 'undefined') && cd.active;
-
-  overlay.innerHTML = '<div class="j-comp-box">'
-    + '<div class="j-comp-title">' + (already ? 'יום חמלה פעיל' : 'יום חמלה') + '</div>'
-    + '<div class="j-comp-body">'
-    + (already
-      ? 'יום חמלה כבר פעיל היום. הסטרייק שמור. את יכולה לבטל אותו דרך הכפתור בראש המסך.'
-      : 'יום חמלה הוא מצב בסיסי יותר ליום עמוס או קשה. לא מבטלים את היום — פשוט מורידים את הרף למשהו שאפשר לעמוד בו: מים, משהו קטן לאכול, ועוד פעולה אחת שתעזור לגוף להבין שאת עדיין איתו.<br><br>הסטרייק מוקפא — הוא לא נשבר ולא עולה. אפשר להפעיל עד שבוע ברצף.')
-    + '</div>'
-    + '<div class="j-comp-btns">'
-    + (already
-      ? '<button class="j-comp-cancel" onclick="closeJourneyCompModal()">סגרי</button>'
-      : '<button class="j-comp-confirm" onclick="activateCompassionFromJourney()">להפעיל יום חמלה</button>'
-        + '<button class="j-comp-cancel" onclick="closeJourneyCompModal()">לא עכשיו</button>')
-    + '</div>'
-    + '</div>';
-
-  // Close on overlay click
-  overlay.addEventListener('click', function(e) {
-    if (e.target === overlay) closeJourneyCompModal();
-  });
-  document.body.appendChild(overlay);
-}
-
-function closeJourneyCompModal() {
-  var el = document.getElementById('j-comp-explain-overlay');
-  if (el) el.remove();
-}
-
-function activateCompassionFromJourney() {
-  closeJourneyCompModal();
-  activateCompassionDay(); // existing function
-  setTimeout(function(){ renderJourneyTab(); }, 150);
-}
+// ── Compassion day chip in Journey — unified: same modal as header button ──
+function journeyCompassionInfo() { openCompassionModal(); }
+// Stubs kept so any old call-sites don't throw
+function closeJourneyCompModal() { closeCompassionModal(); }
+function activateCompassionFromJourney() { activateCompassionDay(); }
 
 // ── Shared: show response bubble ──
 function showActionResponse(label, text, respEl) {

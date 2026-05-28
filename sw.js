@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v18'; // bumped — fix companion feedback line visible on Today load
+const CACHE = 'body-soul-v19'; // bumped — unify CD triggers + frozen streak pill in header
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
