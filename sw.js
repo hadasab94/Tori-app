@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v17'; // bumped — יום חמלה Compassion Day v1
+const CACHE = 'body-soul-v18'; // bumped — fix companion feedback line visible on Today load
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

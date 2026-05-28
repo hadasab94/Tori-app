@@ -1,4 +1,4 @@
-<!-- Tori version: compassion-day-v1-2026-05-28 -->
+<!-- Tori version: companion-feedback-fix-2026-05-28 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -6610,6 +6610,7 @@ async function init() {
   await loadDay(); await loadStreak();
   await loadCompassionState();
   await loadCompassionWins();
+  await loadCompanionState(); // load companion before renderFromState so feedback line is visible on Today
   await loadNotifState();
   renderFromState(); renderMilestones(); renderAchievements(); updateJourney();
   document.getElementById('task-name-input').addEventListener('keydown', e=>{ if(e.key==='Enter') saveNewTask(); });
