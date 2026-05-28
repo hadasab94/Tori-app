@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v14'; // bumped — rollback to stable Today redesign (discard broken v13 cache)
+const CACHE = 'body-soul-v15'; // bumped — restore old rewarding task-card Today layout
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

@@ -1,4 +1,4 @@
-<!-- Tori version: rollback-stable-2026-05-27-1400 -->
+<!-- Tori version: task-cards-restored-2026-05-27-1500 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1505,8 +1505,6 @@ if('serviceWorker' in navigator){
 
 <!-- TODAY VIEW -->
 <div class="view active" id="view-today">
-
-  <!-- Celebration banner (unchanged) -->
   <div class="celebration" id="celebration">
     <span class="celeb-emoji">🎉</span>
     <div class="celeb-title">יום מדהים! השלמת את כל המשימות!</div>
@@ -1521,14 +1519,6 @@ if('serviceWorker' in navigator){
     <div id="day-msg"></div>
   </div>
 
-  <!-- ── Collected today ── -->
-  <div class="today-collected-card">
-    <div class="today-collected-title">מה כבר נאסף אצלי היום</div>
-    <div id="collected-chips">
-      <div class="collected-empty">עוד לא נאסף כאן משהו היום. אפשר להתחיל ממש קטן, אם זה מתאים.</div>
-    </div>
-  </div>
-
   <!-- ── Sparkle button ── -->
   <div class="spark-row" id="spark-row">
     <button class="spark-btn" onclick="showSparkLine()">
@@ -1538,132 +1528,70 @@ if('serviceWorker' in navigator){
     <div class="spark-line" id="spark-line-display" style="display:none"></div>
   </div>
 
-  <!-- ── Categories section ── -->
-  <div class="today-cats-header">מה מתאים לי לפתוח עכשיו?</div>
-  <div class="today-cats-sub">לא צריך לראות הכול בבת אחת. אפשר לפתוח רק את מה שמתאים לרגע הזה.</div>
-
-  <!-- Category 1: גוף והזנה (breakfast, lunch, dinner, water) -->
-  <div class="cat-card" id="cat-body_nourishment">
-    <div class="cat-header" onclick="toggleCategory('body_nourishment')">
-      <div class="cat-header-text">
-        <div class="cat-title">גוף והזנה</div>
-        <div class="cat-subtitle">משהו קטן שהגוף יכול לקבל עכשיו</div>
+  <!-- ── Task sections ── -->
+  <div class="sec">💧 מים</div>
+  <div class="task-grid">
+    <div class="task-card water-card" id="water-card">
+      <div class="water-info">
+        <div class="water-label">כוסות</div>
+        <div class="water-num" id="water-num">0/8</div>
+        <div style="font-size:9px;color:var(--text3);margin-top:1px">מטרה: 6-8</div>
       </div>
-      <div class="cat-toggle" id="cat-toggle-body_nourishment">+</div>
+      <div class="drops-grid" id="drops-grid"></div>
     </div>
-    <div class="cat-body" id="cat-body-body_nourishment" style="display:none">
-      <div class="task-grid" style="margin-top:10px">
-        <div class="task-card water-card" id="water-card">
-          <div class="water-info">
-            <div class="water-label">כוסות</div>
-            <div class="water-num" id="water-num">0/8</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:1px">מטרה: 6-8</div>
+  </div>
+
+  <div class="sec">🍽️ ארוחות</div>
+  <div class="task-grid">
+    <div class="task-card" id="tc-breakfast" onclick="toggleTask('breakfast')"><div class="check-badge">✓</div><span class="t-icon">🍳</span><div class="t-name">ארוחת בוקר</div><div class="t-sub">הדלק הראשוני</div></div>
+    <div class="task-card" id="tc-lunch"     onclick="toggleTask('lunch')"    ><div class="check-badge">✓</div><span class="t-icon">🥗</span><div class="t-name">ארוחת צהריים</div><div class="t-sub">להמשיך לתדלק</div></div>
+    <div class="task-card" id="tc-dinner"    onclick="toggleTask('dinner')"   ><div class="check-badge">✓</div><span class="t-icon">🍲</span><div class="t-name">ארוחת ערב</div><div class="t-sub">לסגור את היום</div></div>
+  </div>
+
+  <div class="sec">🌿 טיפול עצמי</div>
+  <div class="task-grid">
+    <div class="task-card" id="tc-shower"    onclick="toggleTask('shower')"   ><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
+    <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
+    <div class="task-card" id="tc-outside"   onclick="toggleTask('outside')"  ><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
+    <div class="task-card" id="tc-sleep"     onclick="toggleTask('sleep')"    ><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה בשעה סבירה</div><div class="t-sub">לישון טוב הלילה</div></div>
+  </div>
+
+  <div class="sec" id="ex-sec-title">💪 פעילות גופנית</div>
+  <div class="task-grid">
+    <div class="exercise-wrap">
+      <div class="exercise-card" id="exercise-card">
+        <div class="exercise-head" onclick="toggleExBox()">
+          <div class="ex-icon-name">
+            <span style="font-size:26px" id="ex-icon">💪</span>
+            <div>
+              <div class="ex-title" id="ex-title">בחרי פעילות להיום</div>
+              <div class="ex-sub" id="ex-sub">לחצי כאן לסגור / לפתוח</div>
+            </div>
           </div>
-          <div class="drops-grid" id="drops-grid"></div>
+          <div class="mode-toggle">
+            <button class="mode-btn on" id="btn-easy" onclick="event.stopPropagation(); setMode('easy')">קל 🌸</button>
+            <button class="mode-btn" id="btn-hard" onclick="event.stopPropagation(); setMode('hard')">יש כוחות 💪</button>
+          </div>
         </div>
-      </div>
-      <div class="task-grid">
-        <div class="task-card" id="tc-breakfast" onclick="toggleTask('breakfast')"><div class="check-badge">✓</div><span class="t-icon">🍳</span><div class="t-name">ארוחת בוקר</div><div class="t-sub">הדלק הראשוני</div></div>
-        <div class="task-card" id="tc-lunch"     onclick="toggleTask('lunch')"    ><div class="check-badge">✓</div><span class="t-icon">🥗</span><div class="t-name">ארוחת צהריים</div><div class="t-sub">להמשיך לתדלק</div></div>
-        <div class="task-card" id="tc-dinner"    onclick="toggleTask('dinner')"   ><div class="check-badge">✓</div><span class="t-icon">🍲</span><div class="t-name">ארוחת ערב</div><div class="t-sub">לסגור את היום</div></div>
-      </div>
-      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
-    </div>
-  </div>
-
-  <!-- Category 2: שקט וויסות (breathing, sleep) -->
-  <div class="cat-card" id="cat-quiet_regulation">
-    <div class="cat-header" onclick="toggleCategory('quiet_regulation')">
-      <div class="cat-header-text">
-        <div class="cat-title">שקט וויסות</div>
-        <div class="cat-subtitle">רגע קטן של שקט בתוך היום</div>
-      </div>
-      <div class="cat-toggle" id="cat-toggle-quiet_regulation">+</div>
-    </div>
-    <div class="cat-body" id="cat-body-quiet_regulation" style="display:none">
-      <div class="task-grid" style="margin-top:10px">
-        <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
-        <div class="task-card" id="tc-sleep"     onclick="toggleTask('sleep')"    ><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה בשעה סבירה</div><div class="t-sub">לישון טוב הלילה</div></div>
-      </div>
-      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
-    </div>
-  </div>
-
-  <!-- Category 3: בית וטיפול בסיסי (shower) -->
-  <div class="cat-card" id="cat-home_care">
-    <div class="cat-header" onclick="toggleCategory('home_care')">
-      <div class="cat-header-text">
-        <div class="cat-title">בית וטיפול בסיסי</div>
-        <div class="cat-subtitle">דבר קטן שמחזיר קצת תחושה של בית</div>
-      </div>
-      <div class="cat-toggle" id="cat-toggle-home_care">+</div>
-    </div>
-    <div class="cat-body" id="cat-body-home_care" style="display:none">
-      <div class="task-grid" style="margin-top:10px">
-        <div class="task-card" id="tc-shower" onclick="toggleTask('shower')"><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
-      </div>
-      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
-    </div>
-  </div>
-
-  <!-- Category 4: תנועה ואוויר (outside + exercise) -->
-  <div class="cat-card" id="cat-movement_air">
-    <div class="cat-header" onclick="toggleCategory('movement_air')">
-      <div class="cat-header-text">
-        <div class="cat-title">תנועה ואוויר</div>
-        <div class="cat-subtitle">קצת תנועה, קצת אוויר, בקצב שלך</div>
-      </div>
-      <div class="cat-toggle" id="cat-toggle-movement_air">+</div>
-    </div>
-    <div class="cat-body" id="cat-body-movement_air" style="display:none">
-      <div class="task-grid" style="margin-top:10px">
-        <div class="task-card" id="tc-outside" onclick="toggleTask('outside')"><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
-      </div>
-      <div class="task-grid">
-        <div class="exercise-wrap">
-          <div class="exercise-card" id="exercise-card">
-            <div class="exercise-head" onclick="toggleExBox()">
-              <div class="ex-icon-name">
-                <span style="font-size:26px" id="ex-icon">💪</span>
-                <div>
-                  <div class="ex-title" id="ex-title">בחרי פעילות להיום</div>
-                  <div class="ex-sub" id="ex-sub">לחצי כאן לסגור / לפתוח</div>
-                </div>
-              </div>
-              <div class="mode-toggle">
-                <button class="mode-btn on" id="btn-easy" onclick="event.stopPropagation(); setMode('easy')">קל 🌸</button>
-                <button class="mode-btn" id="btn-hard" onclick="event.stopPropagation(); setMode('hard')">יש כוחות 💪</button>
-              </div>
-            </div>
-            <div id="ex-box" style="overflow:hidden; max-height:400px; transition:max-height 0.4s ease;">
-              <div class="ex-options" id="ex-opts-easy">
-                <div class="ex-opt" id="eopt-walk10"    onclick="chooseEx('walk10','easy')"><span>🚶‍♀️</span> הליכה קלה 10 דקות — בכל קצב שנוח לך</div>
-                <div class="ex-opt" id="eopt-stretch"   onclick="chooseEx('stretch','easy')"><span>🧘‍♀️</span> 5 מתיחות פשוטות בעמידה</div>
-                <div class="ex-opt" id="eopt-breathmove" onclick="chooseEx('breathmove','easy')"><span>🌊</span> 3 נשימות עמוקות + תנועת ידיים</div>
-              </div>
-              <div class="ex-options" id="ex-opts-hard" style="display:none">
-                <div class="ex-opt" id="eopt-walk30" onclick="chooseEx('walk30','hard')"><span>🏃‍♀️</span> הליכה 20-30 דקות בקצב נוח</div>
-                <div class="ex-opt" id="eopt-yoga"   onclick="chooseEx('yoga','hard')"><span>🧘</span> יוגה קלה ביוטיוב — 15 דקות</div>
-                <div class="ex-opt" id="eopt-dance"  onclick="chooseEx('dance','hard')"><span>💃</span> ריקוד חופשי בבית — שיר אחד שאוהבת</div>
-              </div>
-            </div>
+        <div id="ex-box" style="overflow:hidden; max-height:400px; transition:max-height 0.4s ease;">
+          <div class="ex-options" id="ex-opts-easy">
+            <div class="ex-opt" id="eopt-walk10"     onclick="chooseEx('walk10','easy')"><span>🚶‍♀️</span> הליכה קלה 10 דקות — בכל קצב שנוח לך</div>
+            <div class="ex-opt" id="eopt-stretch"    onclick="chooseEx('stretch','easy')"><span>🧘‍♀️</span> 5 מתיחות פשוטות בעמידה</div>
+            <div class="ex-opt" id="eopt-breathmove" onclick="chooseEx('breathmove','easy')"><span>🌊</span> 3 נשימות עמוקות + תנועת ידיים</div>
+          </div>
+          <div class="ex-options" id="ex-opts-hard" style="display:none">
+            <div class="ex-opt" id="eopt-walk30" onclick="chooseEx('walk30','hard')"><span>🏃‍♀️</span> הליכה 20-30 דקות בקצב נוח</div>
+            <div class="ex-opt" id="eopt-yoga"   onclick="chooseEx('yoga','hard')"><span>🧘</span> יוגה קלה ביוטיוב — 15 דקות</div>
+            <div class="ex-opt" id="eopt-dance"  onclick="chooseEx('dance','hard')"><span>💃</span> ריקוד חופשי בבית — שיר אחד שאוהבת</div>
           </div>
         </div>
       </div>
-      <!-- ex-sec-title kept (referenced by renderFromState JS) -->
-      <div id="ex-sec-title" style="display:none"></div>
-      <button class="cat-add-btn" onclick="openAddTask()">+ להוסיף משהו קטן משלי</button>
     </div>
   </div>
 
-  <!-- Category 5: קשר ורגעים טובים — future-ready, no current tasks, hidden -->
-  <!-- TODO: wire when connection/social tasks are added -->
-
-  <!-- Custom tasks (unchanged behavior, shown below categories) -->
   <div class="sec" id="custom-sec" style="display:none">✨ משימות אישיות</div>
   <div class="task-grid" id="custom-grid"></div>
 </div>
-
 <!-- ADD TASK MODAL -->
 <div id="add-task-modal" class="modal-overlay" style="display:none" onclick="closeAddTask(event)">
   <div class="modal-card">
