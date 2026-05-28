@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v15'; // bumped — restore old rewarding task-card Today layout
+const CACHE = 'body-soul-v16'; // bumped — companion feedback line in Today tab
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
