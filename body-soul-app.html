@@ -1,4 +1,4 @@
-<!-- Tori version: companion-feedback-2026-05-28 -->
+<!-- Tori version: compassion-day-v1-2026-05-28 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -993,6 +993,227 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   touch-action: manipulation;
 }
 
+/* ===== COMPASSION DAY OVERLAY MODAL (header button) ===== */
+.comp-overlay {
+  position: fixed; inset: 0;
+  background: rgba(45,42,38,0.38);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.comp-overlay.open { display: flex; }
+.comp-box {
+  background: #FFFFFF;
+  border-radius: 22px;
+  padding: 26px 22px 22px;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 30px 80px -20px rgba(45,42,38,0.40);
+}
+.comp-modal-title {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 22px; font-weight: 500;
+  color: #4A2C7A; margin-bottom: 12px; line-height: 1.25;
+}
+.comp-modal-body {
+  font-size: 14px; color: #5A4A6A;
+  line-height: 1.70; margin-bottom: 14px;
+}
+.comp-modal-reassure {
+  font-size: 12.5px; color: #8A7AAA;
+  line-height: 1.55; margin-bottom: 20px;
+  background: #F5EEFF; border-radius: 12px; padding: 10px 13px;
+}
+.comp-modal-btns { display: flex; flex-direction: column; gap: 8px; }
+.comp-modal-confirm {
+  width: 100%; padding: 13px 18px;
+  border-radius: 999px; border: none;
+  background: #6B4C9A; color: #FFFFFF;
+  font-family: 'Assistant', sans-serif;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; touch-action: manipulation;
+}
+.comp-modal-cancel {
+  width: 100%; padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(107,76,154,0.20);
+  background: #F5EEFF; color: #6B4C9A;
+  font-family: 'Assistant', sans-serif;
+  font-size: 14px; cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* ===== COMPASSION DAY ACTIVE — hide regular Today content ===== */
+#view-today.today-compassion-active > .companion-feedback,
+#view-today.today-compassion-active > .spark-row,
+#view-today.today-compassion-active > .celebration,
+#view-today.today-compassion-active > .sec,
+#view-today.today-compassion-active > .task-grid {
+  display: none !important;
+}
+
+/* ===== COMPASSION DAY PANEL ===== */
+.compassion-day-panel {
+  padding: 4px 0 20px;
+}
+.compassion-day-header {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 26px; font-weight: 500;
+  color: #4A2C7A; margin-bottom: 4px;
+}
+.compassion-day-sub {
+  font-size: 13px; color: #8A7AAA;
+  margin-bottom: 16px; line-height: 1.5;
+}
+.cd-companion-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: #F5EEFF; border: 1px solid rgba(107,76,154,0.18);
+  border-radius: 14px; padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.cd-comp-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0; margin-top: 1px;
+}
+.cd-companion-line {
+  font-size: 13px; color: #5A3A8A;
+  line-height: 1.65; font-style: italic;
+}
+.frozen-streak-card {
+  background: linear-gradient(135deg, #EEF5FF 0%, #F0EEFF 100%);
+  border: 1px solid rgba(100,140,220,0.25);
+  border-radius: 14px; padding: 13px 14px;
+  margin-bottom: 16px;
+}
+.frozen-streak-row { display: flex; align-items: flex-start; gap: 10px; }
+.frozen-streak-ice { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+.frozen-streak-title {
+  font-size: 13px; font-weight: 700;
+  color: #3A5A9A; margin-bottom: 4px;
+}
+.frozen-streak-text { font-size: 12.5px; color: #5A6A8A; line-height: 1.6; }
+.frozen-streak-num {
+  display: inline-block; margin-top: 6px;
+  font-size: 11px; font-weight: 700;
+  color: #5A80C0; background: rgba(100,140,220,0.15);
+  border-radius: 999px; padding: 2px 10px;
+}
+.cd-wins-title {
+  font-size: 15px; font-weight: 700;
+  color: #4A2C7A; margin-bottom: 10px;
+}
+.cd-wins-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 12px;
+}
+.compassion-win-card {
+  display: flex; align-items: flex-start; gap: 6px;
+  background: #F0E8FF;
+  border: 1.5px solid rgba(107,76,154,0.18);
+  border-radius: 16px; padding: 10px 14px;
+  font-size: 13px; color: #5A3A8A;
+  font-family: inherit; cursor: pointer;
+  text-align: right; line-height: 1.5;
+  transition: background 0.15s, border-color 0.15s;
+  width: 100%;
+  touch-action: manipulation;
+}
+.compassion-win-card.done {
+  background: #DDD0FF;
+  border-color: rgba(107,76,154,0.35);
+  color: #3A1A6A;
+}
+.cd-win-check {
+  flex-shrink: 0; font-size: 14px;
+  color: #6B4C9A; font-weight: 700;
+  margin-top: 1px;
+}
+.cd-win-text { flex: 1; }
+.compassion-more-btn {
+  width: 100%; padding: 11px 16px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(107,76,154,0.30);
+  background: #F5EEFF; color: #6B4C9A;
+  font-family: inherit; font-size: 13px;
+  cursor: pointer; margin-bottom: 10px;
+  touch-action: manipulation;
+}
+.compassion-add-btn {
+  width: 100%; padding: 11px 16px;
+  border-radius: 999px; border: none;
+  background: #6B4C9A; color: #FFFFFF;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; margin-bottom: 6px;
+  touch-action: manipulation;
+}
+.cd-custom-helper { font-size: 11.5px; color: #9A8ABB; text-align: center; margin-bottom: 20px; }
+.cd-custom-input-area {
+  background: #F5EEFF; border-radius: 14px;
+  padding: 12px; margin-bottom: 10px;
+}
+.cd-custom-input {
+  width: 100%; padding: 10px 12px;
+  border: 1.5px solid rgba(107,76,154,0.30);
+  border-radius: 10px; font-size: 14px;
+  font-family: inherit; color: #3A1A6A;
+  background: #FFFFFF; direction: rtl;
+  box-sizing: border-box; margin-bottom: 8px;
+}
+.cd-custom-input:focus { outline: none; border-color: #9B72CF; }
+.cd-custom-input-btns { display: flex; gap: 8px; }
+.cd-custom-save {
+  flex: 1; padding: 10px; border-radius: 999px;
+  border: none; background: #6B4C9A; color: white;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer;
+}
+.cd-custom-cancel {
+  flex: 1; padding: 10px; border-radius: 999px;
+  border: 1px solid rgba(107,76,154,0.20);
+  background: white; color: #6B4C9A;
+  font-family: inherit; font-size: 13px;
+  cursor: pointer;
+}
+.compassion-exit-btn {
+  width: 100%; padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(107,76,154,0.20);
+  background: transparent; color: #9A8ABB;
+  font-family: inherit; font-size: 12.5px;
+  cursor: pointer; margin-top: 8px;
+  touch-action: manipulation;
+}
+.cd-confirm-area {
+  background: #FBF8FF; border: 1px solid rgba(107,76,154,0.18);
+  border-radius: 16px; padding: 16px; margin-top: 8px;
+}
+.cd-confirm-title {
+  font-size: 14px; font-weight: 700;
+  color: #4A2C7A; margin-bottom: 6px;
+}
+.cd-confirm-body {
+  font-size: 12.5px; color: #7A6A9A;
+  line-height: 1.6; margin-bottom: 14px;
+}
+.cd-confirm-btns { display: flex; flex-direction: column; gap: 8px; }
+.cd-confirm-yes {
+  width: 100%; padding: 11px; border-radius: 999px;
+  border: 1px solid rgba(107,76,154,0.25);
+  background: #F5EEFF; color: #6B4C9A;
+  font-family: inherit; font-size: 13px;
+  cursor: pointer;
+}
+.cd-confirm-no {
+  width: 100%; padding: 11px; border-radius: 999px;
+  border: none; background: #6B4C9A; color: white;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer;
+}
+
 /* ===== COMPANION SWITCH BUTTON ===== */
 .j-switch-btn {
   display: inline-flex;
@@ -1603,6 +1824,8 @@ if('serviceWorker' in navigator){
 
   <div class="sec" id="custom-sec" style="display:none">✨ משימות אישיות</div>
   <div class="task-grid" id="custom-grid"></div>
+  <!-- Compassion Day panel — rendered by renderCompassionDay() -->
+  <div id="compassion-day-panel" class="compassion-day-panel" style="display:none"></div>
 </div>
 <!-- ADD TASK MODAL -->
 <div id="add-task-modal" class="modal-overlay" style="display:none" onclick="closeAddTask(event)">
@@ -1617,6 +1840,18 @@ if('serviceWorker' in navigator){
   </div>
 </div>
 
+<!-- COMPASSION DAY MODAL -->
+<div id="comp-overlay" class="comp-overlay" onclick="closeCompassionModal()">
+  <div class="comp-box" onclick="event.stopPropagation()">
+    <div class="comp-modal-title">יום חמלה</div>
+    <div class="comp-modal-body">היום קשוח? מקובל.<br>ביום חמלה גם &#8220;נשמתי&#8221;, &#8220;פיהקתי&#8221; ו&#8220;לא עניתי להודעה מתוך אחריות אנרגטית&#8221; יכולים להיחשב.</div>
+    <div class="comp-modal-reassure">הרצף שלך לא ייפגע. הדמות שלך שומרת עליו במקפיא עם גרביים.</div>
+    <div class="comp-modal-btns">
+      <button class="comp-modal-confirm" onclick="activateCompassionDay()">כן, יום חמלה היום</button>
+      <button class="comp-modal-cancel" onclick="closeCompassionModal()">לא עכשיו</button>
+    </div>
+  </div>
+</div>
 <!-- JOURNEY VIEW -->
 <div class="view" id="view-journey">
   <!-- New stone + companion journey (rendered by JS) -->
@@ -4247,6 +4482,7 @@ async function confirmCompanion() {
   renderCompanionSection();
   updateSparkBtn(); // sync Today tab sparkle button to new companion
   renderCompanionFeedback(); // sync feedback line to new companion
+  if (cd && cd.active) renderCompassionDay(); // sync CD panel companion on switch
 }
 
 // ── Hero section rendering ──
@@ -5868,6 +6104,243 @@ function renderCompanionFeedback() {
   el.style.display = '';
 }
 
+// ============================================================
+// COMPASSION DAY — WINS + PANEL
+// ============================================================
+
+var COMPASSION_DAY_WINS = ["נשמתי כאילו זו פעולה מתקדמת.","פיהקתי בכבוד.","מצמצתי כמה פעמים. מערכת עובדת.","גללתי בטלפון וחזרתי בלי להגיש דוח.","לא עניתי להודעה מתוך אחריות אנרגטית.","בהיתי בקיר בצורה מקצועית.","החלפתי תנוחה. ריענון מערכת.","קמתי ואז התיישבתי שוב. עלילה.","שכבתי בצורה משכנעת.","עשיתי כלום, אבל עם נוכחות.","לא פתרתי את כל החיים. החלטה נבונה.","דחיתי משהו בלי לפתוח ועדה פנימית.","אמרתי 'אחר כך' ונשארתי בחיים.","מצאתי תנוחה פחות גרועה.","הייתי קיימת. מרשים, בכנות.","שמתי שמיכה כאילו אני בתפקיד רשמי.","הורדתי משהו לא נוח. שיפור תנאים.","לבשתי משהו נוח. ניהול משאבים.","חיפשתי את הטלפון בזמן שהוא היה ביד.","מצאתי מטען. הישרדות מודרנית.","טענתי את הטלפון ולקחתי על זה קרדיט רגשי.","פתחתי אפליקציה ושכחתי למה. קלאסיקה.","לא נכנסתי לוויכוח פנימי של שלוש עונות.","החזקתי כוס כאילו אני דמות בסדרה רגועה.","הסתכלתי החוצה כאילו אני בקליפ של התפתחות אישית.","סגרתי חלון כי גם זה גבול.","שמתי משהו ברקע כדי שהשקט לא יעשה עיניים.","כיביתי משהו ברקע כי גם למוח יש ועד בית.","עשיתי פרצוף לעצמי. תקשורת פנימית.","נאנחתי עמוק. הגוף שלח מייל.","קראתי הודעה ולא עניתי. מצב צפייה מתקדמת.","עניתי להודעה אחת ונשארתי לספר.","עברתי מחדר לחדר ושכחתי למה. טיול פנים.","התכסיתי ואז הוצאתי רגל. איזון אקלימי.","שמתי לב שקשה ועשיתי עם זה פרצוף. לגיטימי.","לא הפכתי את היום הזה למשפט בבית דין פנימי. יפה לי.","נתתי לעצמי להיות במצב טעינה איטית.","נשארתי אופקית מתוך מחויבות למקצוע.","חשבתי על לעשות משהו. שלב מחקר.","פתחתי רשימה וסגרתי אותה. גבולות.","לא קניתי רהיט חדש כדי לפתור רגש. בגרות.","שרדתי רגע לא נעים בלי לתת לו שם של סדרה.","שמתי פנים של 'אני מתפקדת' מול האוויר.","הייתי דרמטית בלב, שקטה בחוץ. רב-תחומיות.","הזזתי חפץ אחד. כמעט שיפוץ.","לא עניתי לעצמי בגסות. שיפור שירות.","לקחתי הפסקה מהפסקה. לגיטימי.","שמרתי על עצמי במינימום תנועה.","עברתי עוד רגע בלי לפתוח טבלת אקסל לרגשות.","הגעתי עד כאן. לא מעט בכלל."];
+
+var COMPASSION_DAY_LINES = {
+  bear:       'ביום חמלה גם שמיכה, נשימה וחצי פיהוק נחשבים לתוכנית פעולה מכובדת.',
+  cat:        'ביום חמלה לא צריך להבריק. מספיק לעבור את היום עם קצת חן ובלי לפתוח ועדת ביקורת.',
+  hafshushit: 'ביום חמלה, אם היום קוצני, הולכות מסביב. גם מסביב זו דרך, ולפעמים היא אפילו יותר חמודה.',
+  capy:       'ביום חמלה אני מאשרת רשמית: בהייה, תנוחה נוחה ונשימה אחת — לגמרי נחשבות.',
+  fox:        'ביום חמלה המהלך החכם הוא להקטין ציפיות, ולהשאיר אותך בדיוק בגודל שלך.',
+};
+COMPASSION_DAY_LINES.forest = COMPASSION_DAY_LINES.hafshushit;
+
+var _cdWinsKey = null;
+var _cdExitConfirm = false;
+var _cdCustomInput = false;
+
+async function loadCompassionWins() {
+  _cdWinsKey = 'compassion:wins:' + s.todayKey;
+  try {
+    var raw = await store.get(_cdWinsKey);
+    if (raw) {
+      var d = JSON.parse(raw);
+      cd.wins        = d.wins        || {};
+      cd.visibleWins = d.visibleWins || [];
+      cd.customWins  = d.customWins  || [];
+    } else {
+      cd.wins = {}; cd.visibleWins = []; cd.customWins = [];
+    }
+  } catch(e) {
+    cd.wins = {}; cd.visibleWins = []; cd.customWins = [];
+  }
+}
+
+async function saveCompassionWins() {
+  if (!_cdWinsKey) _cdWinsKey = 'compassion:wins:' + s.todayKey;
+  await store.set(_cdWinsKey, JSON.stringify({
+    wins:        cd.wins        || {},
+    visibleWins: cd.visibleWins || [],
+    customWins:  cd.customWins  || [],
+  }));
+}
+
+function _initVisibleWins() {
+  var marked = Object.keys(cd.wins || {}).map(Number);
+  var pool = [];
+  for (var i = 0; i < COMPASSION_DAY_WINS.length; i++) {
+    if (marked.indexOf(i) === -1) pool.push(i);
+  }
+  for (var j = pool.length - 1; j > 0; j--) {
+    var k = Math.floor(Math.random() * (j + 1));
+    var tmp = pool[j]; pool[j] = pool[k]; pool[k] = tmp;
+  }
+  cd.visibleWins = pool.slice(0, 12);
+}
+
+function shuffleMoreWins() {
+  var marked = Object.keys(cd.wins || {}).map(Number);
+  var currentVisible = cd.visibleWins || [];
+  // Keep marked wins that are currently visible
+  var keepVisible = currentVisible.filter(function(i) { return marked.indexOf(i) !== -1; });
+  // New pool: wins not in current visible set and not marked
+  var pool = [];
+  for (var i = 0; i < COMPASSION_DAY_WINS.length; i++) {
+    if (currentVisible.indexOf(i) === -1 && marked.indexOf(i) === -1) pool.push(i);
+  }
+  // If pool too small, include current non-marked visible as fallback
+  if (pool.length < (12 - keepVisible.length)) {
+    for (var i = 0; i < COMPASSION_DAY_WINS.length; i++) {
+      if (keepVisible.indexOf(i) === -1 && marked.indexOf(i) === -1 && pool.indexOf(i) === -1) pool.push(i);
+    }
+  }
+  // Shuffle pool
+  for (var j = pool.length - 1; j > 0; j--) {
+    var k = Math.floor(Math.random() * (j + 1));
+    var tmp = pool[j]; pool[j] = pool[k]; pool[k] = tmp;
+  }
+  cd.visibleWins = keepVisible.concat(pool.slice(0, Math.max(1, 12 - keepVisible.length)));
+  saveCompassionWins();
+  renderCompassionDay();
+}
+
+async function tapCompassionWin(idx) {
+  if (!cd.wins) cd.wins = {};
+  if (cd.wins[idx]) { delete cd.wins[idx]; }
+  else               { cd.wins[idx] = true; }
+  await saveCompassionWins();
+  renderCompassionDay();
+}
+
+async function tapCustomCompassionWin(id) {
+  var cw = (cd.customWins || []).find(function(w) { return w.id === id; });
+  if (!cw) return;
+  cw.done = !cw.done;
+  await saveCompassionWins();
+  renderCompassionDay();
+}
+
+function openAddCustomWin() {
+  _cdCustomInput = true;
+  renderCompassionDay();
+  setTimeout(function() { var inp = document.getElementById('cd-custom-input'); if (inp) inp.focus(); }, 60);
+}
+
+function cancelAddCustomWin() {
+  _cdCustomInput = false;
+  renderCompassionDay();
+}
+
+async function saveCustomWinFromInput() {
+  var inp = document.getElementById('cd-custom-input');
+  if (!inp) return;
+  var text = (inp.value || '').trim();
+  if (!text) return;
+  if (!cd.customWins) cd.customWins = [];
+  cd.customWins.push({ id: 'cw' + Date.now(), text: text, done: true });
+  _cdCustomInput = false;
+  await saveCompassionWins();
+  renderCompassionDay();
+}
+
+function exitCompassionDayConfirm() {
+  _cdExitConfirm = true;
+  renderCompassionDay();
+  setTimeout(function() { var ex = document.getElementById('cd-exit-confirm'); if (ex) ex.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+}
+
+function cancelExitCompassionDay() {
+  _cdExitConfirm = false;
+  renderCompassionDay();
+}
+
+async function confirmExitCompassionDay() {
+  cd.active = false;
+  _cdExitConfirm = false;
+  await saveCompassionState();
+  updateCompassionUI();
+  bs.compassionDay = false; updateBotUI(); saveBotData();
+}
+
+function _escH(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderCompassionDay() {
+  var panel = document.getElementById('compassion-day-panel');
+  if (!panel) return;
+  if (!cd.active) { panel.style.display = 'none'; return; }
+  panel.style.display = '';
+  var c = cs && COMPANIONS[cs.companionId];
+  var compLine = '';
+  var compIconHTML = '<span style="font-size:22px">🫶</span>';
+  if (c) {
+    compLine = COMPASSION_DAY_LINES[c.id] || COMPASSION_DAY_LINES[cs.companionId] || '';
+    var iconSrc = (typeof COMPANION_UI_ICONS !== 'undefined' && COMPANION_UI_ICONS[c.id]) || '';
+    if (iconSrc) compIconHTML = '<img class="cd-comp-icon" src="' + iconSrc + '" alt="' + c.name + '">';
+  }
+  // Frozen streak
+  var streakNum = s.streak || 0;
+  var nameArticle = c ? (c.displayNameWithArticle || ('ה' + c.name)) : 'הדמות';
+  var frozenText = nameArticle + ' שלך שמה אותו במקפיא עם גרביים. הוא לא נעלם — הוא פשוט נח.';
+  var frozenHTML = '<div class="frozen-streak-card">'
+    + '<div class="frozen-streak-row">'
+    + '<span class="frozen-streak-ice">❄️</span>'
+    + '<div>'
+    + '<div class="frozen-streak-title">הרצף מוקפא להיום</div>'
+    + '<div class="frozen-streak-text">' + frozenText + '</div>'
+    + (streakNum > 0 ? '<div class="frozen-streak-num">' + streakNum + ' ימים שמורים</div>' : '')
+    + '</div>'
+    + '</div>'
+    + '</div>';
+  // Visible wins
+  var visibleWins = cd.visibleWins || [];
+  var winsHTML = '';
+  visibleWins.forEach(function(idx) {
+    var text = COMPASSION_DAY_WINS[idx] || '';
+    var done = !!(cd.wins || {})[idx];
+    winsHTML += '<button class="compassion-win-card' + (done ? ' done' : '') + '" onclick="tapCompassionWin(' + idx + ')">'
+              + (done ? '<span class="cd-win-check">✓</span>' : '')
+              + '<span class="cd-win-text">' + _escH(text) + '</span>'
+              + '</button>';
+  });
+  // Custom wins
+  var customHTML = '';
+  (cd.customWins || []).forEach(function(cw) {
+    customHTML += '<button class="compassion-win-card done" onclick="tapCustomCompassionWin(\'' + cw.id + '\')">'
+             + '<span class="cd-win-check">✓</span>'
+             + '<span class="cd-win-text">' + _escH(cw.text) + '</span>'
+             + '</button>';
+  });
+  // Custom input area
+  var inputHTML = '';
+  if (_cdCustomInput) {
+    inputHTML = '<div class="cd-custom-input-area">'
+             + '<input type="text" id="cd-custom-input" class="cd-custom-input" placeholder="הניצחון הקטן שלי..." maxlength="60">'
+             + '<div class="cd-custom-input-btns">'
+             + '<button class="cd-custom-save" onclick="saveCustomWinFromInput()">שמרי ✓</button>'
+             + '<button class="cd-custom-cancel" onclick="cancelAddCustomWin()">ביטול</button>'
+             + '</div>'
+             + '</div>';
+  }
+  // Exit area
+  var exitHTML = '';
+  if (_cdExitConfirm) {
+    exitHTML = '<div class="cd-confirm-area" id="cd-exit-confirm">'
+             + '<div class="cd-confirm-title">להחזיר את היום למצב רגיל?</div>'
+             + '<div class="cd-confirm-body">ניצחונות קטנים שסימנת היום יישמרו, אבל מסך היום יחזור למשימות הרגילות.</div>'
+             + '<div class="cd-confirm-btns">'
+             + '<button class="cd-confirm-yes" onclick="confirmExitCompassionDay()">כן, לחזור ליום רגיל</button>'
+             + '<button class="cd-confirm-no" onclick="cancelExitCompassionDay()">להישאר ביום חמלה</button>'
+             + '</div>'
+             + '</div>';
+  } else {
+    exitHTML = '<button class="compassion-exit-btn" onclick="exitCompassionDayConfirm()">לחזור ליום רגיל</button>';
+  }
+  panel.innerHTML =
+      '<div class="compassion-day-header">יום חמלה</div>'
+    + '<div class="compassion-day-sub">ביום כזה משחקים לפי חוקים אחרים.</div>'
+    + '<div class="cd-companion-row">'
+    + '  ' + compIconHTML
+    + '  <div class="cd-companion-line">' + compLine + '</div>'
+    + '</div>'
+    + frozenHTML
+    + '<div class="cd-wins-title">ניצחונות קטנים</div>'
+    + '<div class="cd-wins-grid" id="cd-wins-grid">'
+    + winsHTML
+    + customHTML
+    + '</div>'
+    + '<button class="compassion-more-btn" onclick="shuffleMoreWins()">עוד רעיונות מצחיקים 🎲</button>'
+    + (!_cdCustomInput ? '<button class="compassion-add-btn" onclick="openAddCustomWin()">+ להוסיף ניצחון קטן משלי</button>' : '')
+    + inputHTML
+    + '<div class="cd-custom-helper">כל ניצחון קטן מתקבל פה בכבוד מוגזם.</div>'
+    + exitHTML;
+}
+
 // AUTH
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -5953,7 +6426,7 @@ function showReset() {
 // ============================================================
 // COMPASSION DAY — freeze streak up to 7 days
 // ============================================================
-let cd = { active: false, daysUsed: 0, startDate: null };
+let cd = { active: false, daysUsed: 0, startDate: null, wins: {}, visibleWins: [], customWins: [] };
 
 async function loadCompassionState() {
   try { const raw = await store.get('compassion:state'); if(raw) cd = { ...cd, ...JSON.parse(raw) }; } catch(e) {}
@@ -5979,10 +6452,10 @@ async function saveCompassionState() {
 
 function openCompassionModal() {
   if(cd.active) {
-    // Toggle off
-    cd.active = false; cd.daysUsed = 0; cd.startDate = null;
-    saveCompassionState(); updateCompassionUI();
-    bs.compassionDay = false; updateBotUI(); saveBotData();
+    // Show exit confirmation inside the CD panel
+    exitCompassionDayConfirm();
+    var panel = document.getElementById('compassion-day-panel');
+    if (panel) setTimeout(function() { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
     return;
   }
   document.getElementById('comp-overlay').classList.add('open');
@@ -5994,6 +6467,10 @@ function closeCompassionModal() {
 
 async function activateCompassionDay() {
   cd.active = true; cd.startDate = getTodayKey();
+  // Load any existing wins for today, then init visible set if new
+  await loadCompassionWins();
+  if (!cd.visibleWins || cd.visibleWins.length === 0) _initVisibleWins();
+  await saveCompassionWins();
   await saveCompassionState();
   closeCompassionModal();
   updateCompassionUI();
@@ -6001,15 +6478,23 @@ async function activateCompassionDay() {
 }
 
 function updateCompassionUI() {
-  const btn = document.getElementById('comp-btn');
-  const lbl = document.getElementById('comp-label');
+  var btn = document.getElementById('comp-btn');
+  var lbl = document.getElementById('comp-label');
+  var viewToday = document.getElementById('view-today');
+  var panel     = document.getElementById('compassion-day-panel');
   if(!btn) return;
   if(cd.active) {
     btn.classList.add('active');
-    if(lbl) lbl.textContent = (cd.daysUsed + 1) + '/7';
+    if(lbl) lbl.textContent = 'יום חמלה פעיל';
+    if(viewToday) viewToday.classList.add('today-compassion-active');
+    if(panel) panel.style.display = '';
+    renderCompassionDay();
   } else {
     btn.classList.remove('active');
     if(lbl) lbl.textContent = 'יום חמלה';
+    if(viewToday) viewToday.classList.remove('today-compassion-active');
+    if(panel) { panel.style.display = 'none'; panel.innerHTML = ''; }
+    _cdExitConfirm = false;
   }
 }
 
@@ -6124,6 +6609,7 @@ async function init() {
   await loadPamperState();
   await loadDay(); await loadStreak();
   await loadCompassionState();
+  await loadCompassionWins();
   await loadNotifState();
   renderFromState(); renderMilestones(); renderAchievements(); updateJourney();
   document.getElementById('task-name-input').addEventListener('keydown', e=>{ if(e.key==='Enter') saveNewTask(); });
