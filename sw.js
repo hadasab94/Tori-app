@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v19'; // bumped — unify CD triggers + frozen streak pill in header
+const CACHE = 'body-soul-v20'; // bumped — compassion day visuals: journey images + frozen flame icon
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

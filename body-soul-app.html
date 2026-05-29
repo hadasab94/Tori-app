@@ -1,4 +1,4 @@
-<!-- Tori version: cd-sync-frozen-streak-2026-05-28 -->
+<!-- Tori version: victory-notes-2026-05-29 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1107,35 +1107,38 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 }
 .cd-wins-title {
   font-size: 15px; font-weight: 700;
-  color: #4A2C7A; margin-bottom: 10px;
+  color: #4A2C7A; margin-bottom: 12px;
 }
 .cd-wins-grid {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+  margin-bottom: 14px;
 }
 .compassion-win-card {
-  display: flex; align-items: flex-start; gap: 6px;
-  background: #F0E8FF;
-  border: 1.5px solid rgba(107,76,154,0.18);
-  border-radius: 16px; padding: 10px 14px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  background: #F2ECFF;
+  border: 1px solid rgba(140,110,200,0.14);
+  border-radius: 20px; padding: 14px 12px 10px;
   font-size: 13px; color: #5A3A8A;
   font-family: inherit; cursor: pointer;
-  text-align: right; line-height: 1.5;
-  transition: background 0.15s, border-color 0.15s;
-  width: 100%;
-  touch-action: manipulation;
+  line-height: 1.55;
+  transition: background 0.14s, border-color 0.14s, transform 0.1s;
+  touch-action: manipulation; min-height: 72px;
 }
+.compassion-win-card:active { transform: scale(0.96); }
 .compassion-win-card.done {
-  background: #DDD0FF;
-  border-color: rgba(107,76,154,0.35);
+  background: #D8CCFF;
+  border-color: rgba(107,76,154,0.28);
   color: #3A1A6A;
 }
-.cd-win-check {
-  flex-shrink: 0; font-size: 14px;
-  color: #6B4C9A; font-weight: 700;
-  margin-top: 1px;
+.cd-win-text { font-size: 13px; line-height: 1.55; }
+.cd-win-collected {
+  font-size: 11px; color: #6B4C9A; font-weight: 600;
+  margin-top: 6px; opacity: 0.88;
 }
-.cd-win-text { flex: 1; }
 .compassion-more-btn {
   width: 100%; padding: 11px 16px;
   border-radius: 999px;
@@ -6117,14 +6120,24 @@ function renderCompanionFeedback() {
 
 var COMPASSION_DAY_WINS = ["נשמתי כאילו זו פעולה מתקדמת.","פיהקתי בכבוד.","מצמצתי כמה פעמים. מערכת עובדת.","גללתי בטלפון וחזרתי בלי להגיש דוח.","לא עניתי להודעה מתוך אחריות אנרגטית.","בהיתי בקיר בצורה מקצועית.","החלפתי תנוחה. ריענון מערכת.","קמתי ואז התיישבתי שוב. עלילה.","שכבתי בצורה משכנעת.","עשיתי כלום, אבל עם נוכחות.","לא פתרתי את כל החיים. החלטה נבונה.","דחיתי משהו בלי לפתוח ועדה פנימית.","אמרתי 'אחר כך' ונשארתי בחיים.","מצאתי תנוחה פחות גרועה.","הייתי קיימת. מרשים, בכנות.","שמתי שמיכה כאילו אני בתפקיד רשמי.","הורדתי משהו לא נוח. שיפור תנאים.","לבשתי משהו נוח. ניהול משאבים.","חיפשתי את הטלפון בזמן שהוא היה ביד.","מצאתי מטען. הישרדות מודרנית.","טענתי את הטלפון ולקחתי על זה קרדיט רגשי.","פתחתי אפליקציה ושכחתי למה. קלאסיקה.","לא נכנסתי לוויכוח פנימי של שלוש עונות.","החזקתי כוס כאילו אני דמות בסדרה רגועה.","הסתכלתי החוצה כאילו אני בקליפ של התפתחות אישית.","סגרתי חלון כי גם זה גבול.","שמתי משהו ברקע כדי שהשקט לא יעשה עיניים.","כיביתי משהו ברקע כי גם למוח יש ועד בית.","עשיתי פרצוף לעצמי. תקשורת פנימית.","נאנחתי עמוק. הגוף שלח מייל.","קראתי הודעה ולא עניתי. מצב צפייה מתקדמת.","עניתי להודעה אחת ונשארתי לספר.","עברתי מחדר לחדר ושכחתי למה. טיול פנים.","התכסיתי ואז הוצאתי רגל. איזון אקלימי.","שמתי לב שקשה ועשיתי עם זה פרצוף. לגיטימי.","לא הפכתי את היום הזה למשפט בבית דין פנימי. יפה לי.","נתתי לעצמי להיות במצב טעינה איטית.","נשארתי אופקית מתוך מחויבות למקצוע.","חשבתי על לעשות משהו. שלב מחקר.","פתחתי רשימה וסגרתי אותה. גבולות.","לא קניתי רהיט חדש כדי לפתור רגש. בגרות.","שרדתי רגע לא נעים בלי לתת לו שם של סדרה.","שמתי פנים של 'אני מתפקדת' מול האוויר.","הייתי דרמטית בלב, שקטה בחוץ. רב-תחומיות.","הזזתי חפץ אחד. כמעט שיפוץ.","לא עניתי לעצמי בגסות. שיפור שירות.","לקחתי הפסקה מהפסקה. לגיטימי.","שמרתי על עצמי במינימום תנועה.","עברתי עוד רגע בלי לפתוח טבלת אקסל לרגשות.","הגעתי עד כאן. לא מעט בכלל."];
 
-var COMPASSION_DAY_LINES = {
+var COMPASSION_DAY_COMPANION_LINES = {
   bear:       'ביום חמלה גם שמיכה, נשימה וחצי פיהוק נחשבים לתוכנית פעולה מכובדת.',
   cat:        'ביום חמלה לא צריך להבריק. מספיק לעבור את היום עם קצת חן ובלי לפתוח ועדת ביקורת.',
   hafshushit: 'ביום חמלה, אם היום קוצני, הולכות מסביב. גם מסביב זו דרך, ולפעמים היא אפילו יותר חמודה.',
   capy:       'ביום חמלה אני מאשרת רשמית: בהייה, תנוחה נוחה ונשימה אחת — לגמרי נחשבות.',
-  fox:        'ביום חמלה המהלך החכם הוא להקטין ציפיות, ולהשאיר אותך בדיוק בגודל שלך.',
+  fox:        'ביום חמלה השועלה שלך שומרת על האש במקום בטוח. אין צורך לרוץ כשהיום מבקש להאט.',
 };
-COMPASSION_DAY_LINES.forest = COMPASSION_DAY_LINES.hafshushit;
+COMPASSION_DAY_COMPANION_LINES.forest = COMPASSION_DAY_COMPANION_LINES.hafshushit;
+
+var COMPASSION_DAY_ICON = './assets/compassion/compassion-flame-icon.webp';
+var COMPASSION_JOURNEY_IMAGES = {
+  bear:       './assets/companions/compassion-journey/bear-compassion-journey.webp',
+  cat:        './assets/companions/compassion-journey/cat-compassion-journey.webp',
+  hafshushit: './assets/companions/compassion-journey/hafshushit-compassion-journey.webp',
+  capy:       './assets/companions/compassion-journey/capy-compassion-journey.webp',
+  fox:        './assets/companions/compassion-journey/fox-compassion-journey.webp',
+};
+COMPASSION_JOURNEY_IMAGES.forest = COMPASSION_JOURNEY_IMAGES.hafshushit;
 
 var _cdWinsKey = null;
 var _cdExitConfirm = false;
@@ -6266,7 +6279,7 @@ function renderCompassionDay() {
   var compLine = '';
   var compIconHTML = '<span style="font-size:22px">🫶</span>';
   if (c) {
-    compLine = COMPASSION_DAY_LINES[c.id] || COMPASSION_DAY_LINES[cs.companionId] || '';
+    compLine = COMPASSION_DAY_COMPANION_LINES[c.id] || COMPASSION_DAY_COMPANION_LINES[cs.companionId] || '';
     var iconSrc = (typeof COMPANION_UI_ICONS !== 'undefined' && COMPANION_UI_ICONS[c.id]) || '';
     if (iconSrc) compIconHTML = '<img class="cd-comp-icon" src="' + iconSrc + '" alt="' + c.name + '">';
   }
@@ -6277,16 +6290,16 @@ function renderCompassionDay() {
     var text = COMPASSION_DAY_WINS[idx] || '';
     var done = !!(cd.wins || {})[idx];
     winsHTML += '<button class="compassion-win-card' + (done ? ' done' : '') + '" onclick="tapCompassionWin(' + idx + ')">'
-              + (done ? '<span class="cd-win-check">✓</span>' : '')
-              + '<span class="cd-win-text">' + _escH(text) + '</span>'
+              + '<div class="cd-win-text">' + _escH(text) + '</div>'
+              + (done ? '<div class="cd-win-collected">נאסף ✨</div>' : '')
               + '</button>';
   });
   // Custom wins
   var customHTML = '';
   (cd.customWins || []).forEach(function(cw) {
     customHTML += '<button class="compassion-win-card done" onclick="tapCustomCompassionWin(\'' + cw.id + '\')">'
-             + '<span class="cd-win-check">✓</span>'
-             + '<span class="cd-win-text">' + _escH(cw.text) + '</span>'
+             + '<div class="cd-win-text">' + _escH(cw.text) + '</div>'
+             + '<div class="cd-win-collected">נאסף ✨</div>'
              + '</button>';
   });
   // Custom input area
@@ -6475,7 +6488,10 @@ function updateStreakPillFrozenState() {
     var c = cs && COMPANIONS[cs.companionId];
     var streak = s.streak || 0;
     var nameArticle = c ? (c.displayNameWithArticle || ('ה' + c.name)) : 'הדמות';
-    pill.innerHTML = '❄️ <span id="hdr-streak">' + streak + '</span>'
+    var _cdIconImg = (typeof COMPASSION_DAY_ICON !== 'undefined' && COMPASSION_DAY_ICON)
+      ? '<img src="' + COMPASSION_DAY_ICON + '" style="width:20px;height:20px;vertical-align:middle;margin-left:3px" alt="❄">'
+      : '❄️ ';
+    pill.innerHTML = _cdIconImg + '<span id="hdr-streak">' + streak + '</span>'
       + ' <span class="streak-frozen-sub">שמור</span>';
     pill.title = nameArticle + ' שלך שמה אותו במקפיא עם גרביים. הוא לא נעלם — הוא פשוט נח.';
   } else {
@@ -7142,7 +7158,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
     water:'💧 מים', food:'🍽 אוכל', rest:'😴 מנוחה',
     move:'🏃 תנועה', breath:'🌬 נשימה', hygiene:'🚿 היגיינה', compassion:'🫶 חמלה'
   };
-  var chipMarks = compassion ? ['compassion'] : marks.slice(-3);
+  var chipMarks = compassion ? ['compassion'] : (cd && cd.active ? ['compassion'] : marks.slice(-3));
   var marksHTML = chipMarks.map(function(k) {
     return '<div class="j-home-mark-chip">' + (labelMap[k] || k) + '</div>';
   }).join('');
@@ -7155,6 +7171,12 @@ function buildCompanionHeroHTML(c, marks, mood) {
     imgAlt   = c.name + ' בספא ביתי';
     pillText = 'הפינוק של היום';
     dotColor = c.accent;
+  } else if (cd && cd.active) {
+    // Compassion Day — show companion CD journey image
+    imgSrc   = (typeof COMPASSION_JOURNEY_IMAGES !== 'undefined' && COMPASSION_JOURNEY_IMAGES[c.id]) || (c.homeImg || c.img);
+    imgAlt   = c.name + ' ביום חמלה';
+    pillText = 'יום חמלה';
+    dotColor = '#A593C0';
   } else {
     // Lair image — resolved from COMPANION_LAIRS defaultState; falls back to homeImg
     var lairImg = getActiveLair(c.id);
@@ -7192,6 +7214,8 @@ function buildCompanionHeroHTML(c, marks, mood) {
   var lineText;
   if (_activePamper && _activePamper.summaryLine) {
     lineText = _activePamper.summaryLine;
+  } else if (cd && cd.active) {
+    lineText = (typeof COMPASSION_DAY_COMPANION_LINES !== 'undefined' && COMPASSION_DAY_COMPANION_LINES[c.id]) || '';
   } else {
     lineText = (JOURNEY_COMPANION_LINES[c.id] || {})[mood] || '';
   }
@@ -7203,7 +7227,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
     + '<div class="j-bubble-text">' + lineText + '</div>'
     + (_activePamper
         ? '<div style="font-size:11px;color:var(--g-ink-3);margin-top:6px">המאורה מחכה בבית — היום יש לה ' + (_activePamper.cardTitleSnapshot || 'פינוק') + '.</div>'
-        : '')
+        : (cd && cd.active ? '<div style="font-size:11px;color:#8B6CB0;margin-top:6px">הרצף שלך נח היום. הוא שם, ומחכה.</div>' : ''))
     + '</div>';
 
   return buildMCard(homeHTML + bubbleHTML, 'padding:0;overflow:hidden');
