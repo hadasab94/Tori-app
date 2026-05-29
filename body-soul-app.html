@@ -1,4 +1,4 @@
-<!-- Tori version: paper-notes-2026-05-29 -->
+<!-- Tori version: warm-palette-2026-05-29 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -46,7 +46,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .app-subtitle { font-size: 11px; color: var(--text2); margin-top: 1px; }
 .streak-pill { background: var(--gold-l); border: 1.5px solid #D4942A; border-radius: 20px; padding: 5px 13px; font-size: 13px; font-weight: 700; color: #8A5A00; display: flex; align-items: center; gap: 4px; cursor: pointer; transition: transform 0.15s; }
 .streak-pill:active { transform: scale(0.95); }
-.streak-pill.frozen { background: linear-gradient(135deg,#EEF5FF 0%,#F0EEFF 100%); border-color: rgba(100,140,220,0.40); color: #3A5A9A; }
+.streak-pill.frozen { background: linear-gradient(135deg,#EEF7FF 0%,#E4F2FF 100%); border-color: rgba(88,160,220,0.38); color: #2E607A; }
 .streak-pill.frozen:active { transform: scale(0.95); }
 .streak-frozen-sub { font-size: 11px; font-weight: 600; opacity: 0.80; }
 .compassion-btn { background: #EDE0FF; border: 1.5px solid #9B72CF; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: #6B4C9A; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: transform 0.15s; font-family: inherit; white-space: nowrap; }
@@ -57,7 +57,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .comp-modal { background: white; border-radius: 20px; padding: 24px 20px 20px; max-width: 380px; width: 100%; text-align: center; }
 .comp-modal-title { font-size: 18px; font-weight: 800; color: #6B4C9A; margin-bottom: 12px; }
 .comp-modal-body { font-size: 13px; color: #555; line-height: 1.7; margin-bottom: 20px; }
-.comp-modal-confirm { background: #9B72CF; color: white; border: none; border-radius: 12px; padding: 11px 20px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; width: 100%; margin-bottom: 8px; }
+.comp-modal-confirm { background: #B8A7D8; color: #3F3558; border: none; border-radius: 12px; padding: 11px 20px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; width: 100%; margin-bottom: 8px; }
 .comp-modal-cancel { background: transparent; color: #999; border: none; font-size: 13px; cursor: pointer; font-family: inherit; padding: 4px; }
 
 /* BOTTOM NAV */
@@ -1027,15 +1027,15 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   line-height: 1.70; margin-bottom: 14px;
 }
 .comp-modal-reassure {
-  font-size: 12.5px; color: #8A7AAA;
+  font-size: 12.5px; color: #7A6E5C;
   line-height: 1.55; margin-bottom: 20px;
-  background: #F5EEFF; border-radius: 12px; padding: 10px 13px;
+  background: #FFF8EA; border-radius: 12px; padding: 10px 13px;
 }
 .comp-modal-btns { display: flex; flex-direction: column; gap: 8px; }
 .comp-modal-confirm {
   width: 100%; padding: 13px 18px;
   border-radius: 999px; border: none;
-  background: #6B4C9A; color: #FFFFFF;
+  background: #B8A7D8; color: #3F3558;
   font-family: 'Assistant', sans-serif;
   font-size: 14px; font-weight: 600;
   cursor: pointer; touch-action: manipulation;
@@ -1043,14 +1043,15 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .comp-modal-cancel {
   width: 100%; padding: 12px 18px;
   border-radius: 999px;
-  border: 1px solid rgba(107,76,154,0.20);
-  background: #F5EEFF; color: #6B4C9A;
+  border: 1px solid rgba(185,158,100,0.28);
+  background: #FFF8EA; color: #5A4830;
   font-family: 'Assistant', sans-serif;
   font-size: 14px; cursor: pointer;
   touch-action: manipulation;
 }
 
 /* ===== COMPASSION DAY ACTIVE — hide regular Today content ===== */
+#view-today.today-compassion-active { background: #FFF8EA; }
 #view-today.today-compassion-active > .companion-feedback,
 #view-today.today-compassion-active > .spark-row,
 #view-today.today-compassion-active > .celebration,
@@ -1066,15 +1067,15 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .compassion-day-header {
   font-family: 'Frank Ruhl Libre', serif;
   font-size: 26px; font-weight: 500;
-  color: #4A2C7A; margin-bottom: 4px;
+  color: #4F4638; margin-bottom: 4px;
 }
 .compassion-day-sub {
-  font-size: 13px; color: #8A7AAA;
+  font-size: 13px; color: #7A6E5C;
   margin-bottom: 16px; line-height: 1.5;
 }
 .cd-companion-row {
   display: flex; align-items: flex-start; gap: 10px;
-  background: #F5EEFF; border: 1px solid rgba(107,76,154,0.18);
+  background: #FFFDF7; border: 1px solid rgba(210,190,150,0.50);
   border-radius: 14px; padding: 12px 14px;
   margin-bottom: 12px;
 }
@@ -1083,7 +1084,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   object-fit: cover; flex-shrink: 0; margin-top: 1px;
 }
 .cd-companion-line {
-  font-size: 13px; color: #5A3A8A;
+  font-size: 13px; color: #5A4830;
   line-height: 1.65; font-style: italic;
 }
 .frozen-streak-card {
@@ -1107,7 +1108,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 }
 .cd-wins-title {
   font-size: 15px; font-weight: 700;
-  color: #4A2C7A; margin-bottom: 12px;
+  color: #4F4638; margin-bottom: 12px;
 }
 .cd-wins-grid {
   display: grid;
@@ -1120,14 +1121,14 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   text-align: center;
-  background: #FEF9E8;
-  border: 1px solid rgba(185,158,100,0.22);
+  background: #FFF3C4;
+  border: 1px solid rgba(205,178,70,0.28);
   border-radius: 20px;
   padding: 26px 12px 12px;
-  font-size: 13px; color: #5C4830;
+  font-size: 13px; color: #4F4638;
   font-family: inherit; cursor: pointer;
   line-height: 1.55;
-  box-shadow: 0 2px 6px rgba(140,100,40,0.09), 0 0 0 0.5px rgba(185,158,100,0.10);
+  box-shadow: 0 2px 6px rgba(140,110,20,0.09), 0 0 0 0.5px rgba(205,178,70,0.12);
   transition: background 0.14s, box-shadow 0.14s, transform 0.1s;
   touch-action: manipulation; min-height: 76px;
 }
@@ -1138,98 +1139,98 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   transform: translateX(-50%);
   width: 11px; height: 11px;
   border-radius: 50%;
-  background: #CC8CA0;
-  box-shadow: 0 1px 3px rgba(140,60,80,0.28), inset 0 1px 1px rgba(255,255,255,0.40);
+  background: #D8A7A1;
+  box-shadow: 0 1px 3px rgba(160,80,80,0.22), inset 0 1px 1px rgba(255,255,255,0.45);
 }
 .compassion-win-card:active { transform: scale(0.96); }
 .compassion-win-card.done {
-  background: #FDF0C0;
-  border-color: rgba(185,148,60,0.30);
+  background: #FFE79E;
+  border-color: rgba(185,140,30,0.38);
   color: #4A3818;
-  box-shadow: 0 2px 8px rgba(140,100,20,0.13), 0 0 0 0.5px rgba(185,148,60,0.14);
+  box-shadow: 0 2px 8px rgba(140,100,10,0.12), 0 0 0 0.5px rgba(185,140,30,0.16);
 }
 .cd-win-text { font-size: 13px; line-height: 1.55; }
 .cd-win-collected {
-  font-size: 11px; color: #8A6025; font-weight: 600;
+  font-size: 11px; color: #7A5A2E; font-weight: 600;
   margin-top: 6px; opacity: 0.90;
 }
 .compassion-more-btn {
   width: 100%; padding: 11px 16px;
   border-radius: 999px;
-  border: 1.5px solid rgba(107,76,154,0.30);
-  background: #F5EEFF; color: #6B4C9A;
+  border: 1.5px solid rgba(185,158,100,0.38);
+  background: #FFF8EA; color: #5A4830;
   font-family: inherit; font-size: 13px;
   cursor: pointer; margin-bottom: 10px;
   touch-action: manipulation;
 }
 .compassion-add-btn {
   width: 100%; padding: 11px 16px;
-  border-radius: 999px; border: none;
-  background: #6B4C9A; color: #FFFFFF;
+  border-radius: 999px; border: 1px solid rgba(185,158,100,0.30);
+  background: #C8B9E8; color: #3F3558;
   font-family: inherit; font-size: 13px; font-weight: 600;
   cursor: pointer; margin-bottom: 6px;
   touch-action: manipulation;
 }
-.cd-custom-helper { font-size: 11.5px; color: #9A8ABB; text-align: center; margin-bottom: 20px; }
+.cd-custom-helper { font-size: 11.5px; color: #7A6E5C; text-align: center; margin-bottom: 20px; }
 .cd-custom-input-area {
-  background: #F5EEFF; border-radius: 14px;
+  background: #FFFDF7; border-radius: 14px;
   padding: 12px; margin-bottom: 10px;
 }
 .cd-custom-input {
   width: 100%; padding: 10px 12px;
-  border: 1.5px solid rgba(107,76,154,0.30);
+  border: 1.5px solid rgba(185,158,100,0.35);
   border-radius: 10px; font-size: 14px;
-  font-family: inherit; color: #3A1A6A;
-  background: #FFFFFF; direction: rtl;
+  font-family: inherit; color: #4F4638;
+  background: #FFFEF8; direction: rtl;
   box-sizing: border-box; margin-bottom: 8px;
 }
 .cd-custom-input:focus { outline: none; border-color: #9B72CF; }
 .cd-custom-input-btns { display: flex; gap: 8px; }
 .cd-custom-save {
   flex: 1; padding: 10px; border-radius: 999px;
-  border: none; background: #6B4C9A; color: white;
+  border: none; background: #C8B9E8; color: #3F3558;
   font-family: inherit; font-size: 13px; font-weight: 600;
   cursor: pointer;
 }
 .cd-custom-cancel {
   flex: 1; padding: 10px; border-radius: 999px;
-  border: 1px solid rgba(107,76,154,0.20);
-  background: white; color: #6B4C9A;
+  border: 1px solid rgba(185,158,100,0.30);
+  background: #FFF8EA; color: #5A4830;
   font-family: inherit; font-size: 13px;
   cursor: pointer;
 }
 .compassion-exit-btn {
   width: 100%; padding: 9px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(107,76,154,0.20);
-  background: transparent; color: #9A8ABB;
+  border: 1px solid rgba(185,158,100,0.28);
+  background: transparent; color: #7A6E5C;
   font-family: inherit; font-size: 12.5px;
   cursor: pointer; margin-top: 8px;
   touch-action: manipulation;
 }
 .cd-confirm-area {
-  background: #FBF8FF; border: 1px solid rgba(107,76,154,0.18);
+  background: #FFFDF7; border: 1px solid rgba(210,190,150,0.48);
   border-radius: 16px; padding: 16px; margin-top: 8px;
 }
 .cd-confirm-title {
   font-size: 14px; font-weight: 700;
-  color: #4A2C7A; margin-bottom: 6px;
+  color: #4F4638; margin-bottom: 6px;
 }
 .cd-confirm-body {
-  font-size: 12.5px; color: #7A6A9A;
+  font-size: 12.5px; color: #7A6E5C;
   line-height: 1.6; margin-bottom: 14px;
 }
 .cd-confirm-btns { display: flex; flex-direction: column; gap: 8px; }
 .cd-confirm-yes {
   width: 100%; padding: 11px; border-radius: 999px;
-  border: 1px solid rgba(107,76,154,0.25);
-  background: #F5EEFF; color: #6B4C9A;
+  border: 1px solid rgba(185,158,100,0.32);
+  background: #FFF8EA; color: #5A4830;
   font-family: inherit; font-size: 13px;
   cursor: pointer;
 }
 .cd-confirm-no {
   width: 100%; padding: 11px; border-radius: 999px;
-  border: none; background: #6B4C9A; color: white;
+  border: none; background: #C8B9E8; color: #3F3558;
   font-family: inherit; font-size: 13px; font-weight: 600;
   cursor: pointer;
 }
