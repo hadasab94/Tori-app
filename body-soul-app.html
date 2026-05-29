@@ -1,4 +1,4 @@
-<!-- Tori version: victory-notes-2026-05-29 -->
+<!-- Tori version: paper-notes-2026-05-29 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1112,32 +1112,46 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .cd-wins-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 9px;
+  gap: 10px;
   margin-bottom: 14px;
 }
 .compassion-win-card {
+  position: relative;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   text-align: center;
-  background: #F2ECFF;
-  border: 1px solid rgba(140,110,200,0.14);
-  border-radius: 20px; padding: 14px 12px 10px;
-  font-size: 13px; color: #5A3A8A;
+  background: #FEF9E8;
+  border: 1px solid rgba(185,158,100,0.22);
+  border-radius: 20px;
+  padding: 26px 12px 12px;
+  font-size: 13px; color: #5C4830;
   font-family: inherit; cursor: pointer;
   line-height: 1.55;
-  transition: background 0.14s, border-color 0.14s, transform 0.1s;
-  touch-action: manipulation; min-height: 72px;
+  box-shadow: 0 2px 6px rgba(140,100,40,0.09), 0 0 0 0.5px rgba(185,158,100,0.10);
+  transition: background 0.14s, box-shadow 0.14s, transform 0.1s;
+  touch-action: manipulation; min-height: 76px;
+}
+.compassion-win-card::before {
+  content: "";
+  position: absolute;
+  top: 9px; left: 50%;
+  transform: translateX(-50%);
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #CC8CA0;
+  box-shadow: 0 1px 3px rgba(140,60,80,0.28), inset 0 1px 1px rgba(255,255,255,0.40);
 }
 .compassion-win-card:active { transform: scale(0.96); }
 .compassion-win-card.done {
-  background: #D8CCFF;
-  border-color: rgba(107,76,154,0.28);
-  color: #3A1A6A;
+  background: #FDF0C0;
+  border-color: rgba(185,148,60,0.30);
+  color: #4A3818;
+  box-shadow: 0 2px 8px rgba(140,100,20,0.13), 0 0 0 0.5px rgba(185,148,60,0.14);
 }
 .cd-win-text { font-size: 13px; line-height: 1.55; }
 .cd-win-collected {
-  font-size: 11px; color: #6B4C9A; font-weight: 600;
-  margin-top: 6px; opacity: 0.88;
+  font-size: 11px; color: #8A6025; font-weight: 600;
+  margin-top: 6px; opacity: 0.90;
 }
 .compassion-more-btn {
   width: 100%; padding: 11px 16px;
