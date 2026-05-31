@@ -1,4 +1,4 @@
-<!-- Tori version: win-picker-fix-2026-05-31 -->
+<!-- Tori version: cd-return-note-2026-05-31 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1225,6 +1225,14 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   border-radius: 50%; background: #D8A7A1;
   box-shadow: 0 1px 2px rgba(160,80,80,0.20), inset 0 1px 1px rgba(255,255,255,0.40);
 }
+.cd-collected-remove {
+  display: block; margin-top: 5px; padding: 0;
+  background: none; border: none;
+  font-size: 10.5px; color: #A08060; font-family: inherit;
+  cursor: pointer; opacity: 0.68; touch-action: manipulation;
+  text-decoration: underline; text-underline-offset: 2px; line-height: 1.4;
+}
+.cd-collected-remove:active { opacity: 1; color: #7A5A30; }
 .compassion-more-btn {
   width: 100%; padding: 11px 16px;
   border-radius: 999px;
@@ -6397,6 +6405,22 @@ function skipCurrentCompassionWin() {
   renderCompassionDay();
 }
 
+async function returnBuiltinCompassionWin(idx) {
+  if (!cd.wins) return;
+  delete cd.wins[idx];
+  // If currentSuggestedWin was pointing at a different note, leave it;
+  // the returned note just becomes eligible again via random draw.
+  await saveCompassionWins();
+  renderCompassionDay();
+}
+
+async function returnCustomCompassionWin(id) {
+  if (!cd.customWins) return;
+  cd.customWins = cd.customWins.filter(function(cw) { return cw.id !== id; });
+  await saveCompassionWins();
+  renderCompassionDay();
+}
+
 function renderCompassionDay() {
   var panel = document.getElementById('compassion-day-panel');
   if (!panel) return;
@@ -6442,12 +6466,14 @@ function renderCompassionDay() {
       collectedGridHTML += '<div class="cd-collected-chip">'
         + '<div class="cd-win-text">' + _escH(text) + '</div>'
         + '<div class="cd-win-collected">נאסף ✨</div>'
+        + '<button class="cd-collected-remove" onclick="returnBuiltinCompassionWin(' + idx + ')">להחזיר</button>'
         + '</div>';
     });
     customWins.forEach(function(cw) {
       collectedGridHTML += '<div class="cd-collected-chip">'
         + '<div class="cd-win-text">' + _escH(cw.text) + '</div>'
         + '<div class="cd-win-collected">נאסף ✨</div>'
+        + '<button class="cd-collected-remove" onclick="returnCustomCompassionWin(\'' + cw.id + '\')">להחזיר</button>'
         + '</div>';
     });
   }

@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v21'; // bumped — win-picker JS syntax fix
+const CACHE = 'body-soul-v22'; // bumped — CD collected-note להחזיר undo
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
