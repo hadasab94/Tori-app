@@ -1,4 +1,4 @@
-<!-- Tori version: today-companion-path-2026-05-31 -->
+<!-- Tori version: spark-expand-2026-05-31 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2163,40 +2163,80 @@ const PLANT_STAGE_ICONS = {
 // ── Today sparkle lines — shown only on user request, never automatically ──
 // Companion ID key; forest = internal alias for חפשושית
 const TODAY_SPARK_LINES = {
+  // דובה — warm, patient, soft self-care. 12 lines.
   bear: [
     'לא כל יום צריך להרים עולם. לפעמים מספיק להרים כוס מים.',
     'אני בעד דברים קטנים שאפשר להחזיק ביד ולא בלוח משימות.',
     'אם היום כבד, משהו בגודל של פירור עוגייה גם נחשב.',
     'משהו קטן וטוב עדיין נחשב משהו טוב.',
     'אני לא ממהרת. יש לי זמן, פרווה, וסבלנות.',
+    'מותר לנוח גם אם לא סיימת הכול. הגוף לא עובד לפי חוזה קבלן.',
+    'גרסה שתתה מים היום זה כבר שדרוג. ממש.',
+    'העייפות לא צריכה הוכחות. מספיק שהיא שם.',
+    'לא כל יום צריך להרגיש כמו ניצחון. לפעמים מספיק שהוא לא נגדך.',
+    'ביס, לגימה, נשימה. שלושה דברים, אפס נאומים.',
+    'אני בעדך גם כשאת על מצב סוללה 3%. במיוחד אז.',
+    'הגוף לא ביקש אתגר. הוא ביקש שייזכרו בו.',
   ],
+  // חתולה — observational, elegant, dry wit, low-pressure philosophy. 12 lines.
   cat: [
     'לא חייבים לפתוח הכול. גם חתולות לא נכנסות לכל חדר רק כי הוא קיים.',
     'אפשר לבחור דבר אחד קטן ולהעמיד פנים שזה היה מתוכנן באלגנטיות.',
     'אני בעד מינימום מאמץ, מקסימום אפקט.',
     'לפעמים כל מה שצריך זה משהו קטן שמסדר את הפינה, לא את כל העולם.',
     'היום לא צריך מצגת. אולי רק שקופית אחת יפה.',
+    'לא כל מחשבה שמגיעה עם גלימה דרמטית היא נבואה.',
+    'הסיפור שהראש מספר עכשיו הוא רק טיוטה. מותר לערוך.',
+    'לפעמים הראש עושה זום אין מוגזם. שמת לב?',
+    'מותר להרגיש לא בטוחה ועדיין לעשות צעד קטן. חתולות עושות את זה כל הזמן.',
+    'גם ירח עובד בשלבים. לא הכול נדרש להיות מלא.',
+    'היום לא חייב להיות קסום. ניצוץ קטן שלא עשה רעש — גם הוא נחשב.',
+    'לא קשה לשבת לצד דבר שלא נפתר עכשיו. אני פה, בפינה.',
   ],
+  // חפשושית — gentle, forest-flavored, curious, small-step magic. 12 lines.
   hafshushit: [
     'אפשר רק להציץ. הצצה היא לא התחייבות, וזה מאוד מרגיע אותי.',
     'משהו קטן יכול להיות ממש קטן. אני בדקתי, זה חוקי.',
     'לפעמים היום פחות קוצני אחרי פעולה אחת בגודל של עלה.',
     'לא חייבים להיות מוכנות. אפשר להיות קצת מוכנות.',
     'אני בעד התחלה בגודל שלא עושה רעש.',
+    'הכול מרגיש הרבה? גרגר אחד מהערימה זה תחילה.',
+    'גם להתחיל ואז לעצור — זה מידע. מידע עם נעליים קטנות.',
+    'לא צריך לדעת את כל הדרך. מספיק למצוא אבן אחת שלא מתנדנדת.',
+    'דבר אחד קטן עכשיו. קטן כמו עלה, אבל עלים יודעים להתחיל יער.',
+    'אם היום קשה, אפשר ללכת מסביב. גם מסביב זו דרך, לפעמים יותר חמודה.',
+    'אם אין מוטיבציה, אפשר להשתמש בסקרנות. היא קטנה יותר ופחות רועשת.',
+    'חפשושית יודעת: פינה קטנה של הדבר היא לגמרי כל הדבר.',
   ],
+  // קפיברה — calm, horizontal, no drama, simple pleasures. 12 lines.
   capy: [
     'אני בעד לפתוח רק מה שלא דורש ממני אישיות מלאה.',
     'גם כוס מים נחשבת. הגוף לא ביקש נאום, רק שלוק.',
     'אפשר לעשות דבר קטן ואז לחזור להיות יצור אופקי.',
     'לא כל פעולה צריכה להפוך לאירוע. תודה לאל.',
     'אם זה קטן מספיק, אולי אפילו אני בעד.',
+    'מותר לא לרוץ. גם קפיברה לא רצה ועדיין כולם מתרשמים.',
+    'לפעמים "עשיתי משהו" הוא משפט מאוד מפואר.',
+    'הכול הרבה? יחידה אחת. החיים אוהבים להגזים באריזה.',
+    'הגוף ביקש הפסקה. בקשה לגיטימית, גם בלי טופס.',
+    'פעולה קטנה עם פרצוף רגוע — זה מותג חזק.',
+    'פיג׳מה ופעולה קטנה. שילוב לגיטימי לחלוטין.',
+    'לא צריך אישיות מחודשת. פעולה ישנה מספיק לגמרי.',
   ],
+  // שועלה — precise, warm, elegant, on the user's side. 12 lines.
   fox: [
     'מהלך קטן ומדויק עדיף על תוכנית ענקית שמסתכלת עלייך לא יפה.',
-    'אפשר לבחור אפשרות אחת. זה לא ויתור, זו אסטרטגיה.',
+    'אפשר לבחור אפשרות אחת. זה לא ויתור, זו פשוט בחירה.',
     'היום לא צריך לכבוש. מספיק לסמן פינה אחת טובה.',
     'משהו פשוט ובר־ביצוע הוא לפעמים הברקה ממש לא מוערכת.',
     'אני בעד צעד קטן עם יחסי ציבור טובים.',
+    'ניצחון קטן שאפשר לסמן בלי דרמה — הסוג הכי שמיש.',
+    'הצעד הראשון לא צריך להרשים. הוא רק צריך להיות שם.',
+    'לפעמים פחות כוח ויותר תזמון — זה מה שעובד.',
+    'מומנטום בגודל כף יד. לא צריך מנוע טורבו, רק כיוון.',
+    'לפתוח, לעשות דבר אחד, להמשיך. פשוט ויעיל.',
+    'השועלה בעד: עקבי ונעים, על פני הרבה ומהומה.',
+    'גרסה קצרה של המשימה — לפעמים היא הגרסה העדיפה.',
   ],
 };
 // Internal alias for forest companion ID
@@ -6261,27 +6301,11 @@ var TODAY_COMPANION_FEEDBACK = {
 TODAY_COMPANION_FEEDBACK.forest = TODAY_COMPANION_FEEDBACK.hafshushit;
 
 function renderCompanionFeedback() {
-  var el   = document.getElementById('companion-feedback');
-  var icon = document.getElementById('cf-icon');
-  var line = document.getElementById('cf-line');
-  if (!el) return;
-  var c = cs && COMPANIONS[cs.companionId];
-  if (!c) { el.style.display = 'none'; return; }
-  var phrases = TODAY_COMPANION_FEEDBACK[c.id] || TODAY_COMPANION_FEEDBACK[cs.companionId];
-  if (!phrases) { el.style.display = 'none'; return; }
-  var count = 0;
-  TASK_IDS.forEach(function(id) { if (s.tasks[id]) count++; });
-  if ((s.water || 0) >= 6) count++;
-  if (s.exChosen && (s.exChosen.easy || s.exChosen.hard)) count++;
-  if (customTasks) customTasks.forEach(function(t) { if (s.tasks['c:' + t.id]) count++; });
-  var level = count === 0 ? 'none' : count <= 2 ? 'few' : 'several';
-  if (icon) {
-    var src = COMPANION_UI_ICONS[c.id] || '';
-    if (src) { icon.src = src; icon.alt = c.name; icon.style.display = ''; }
-    else       icon.style.display = 'none';
-  }
-  if (line) line.textContent = phrases[level] || '';
-  el.style.display = '';
+  // Companion feedback is intentionally silenced in Today mode.
+  // The companion speaks only when the user taps "הברקה קטנה".
+  // TODAY_COMPANION_FEEDBACK data and full logic are preserved for future use.
+  var el = document.getElementById('companion-feedback');
+  if (el) el.style.display = 'none';
 }
 
 // ============================================================

@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v23'; // bumped — Today companion path strip
+const CACHE = 'body-soul-v24'; // bumped — silent auto-feedback, expanded spark lines
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
