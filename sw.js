@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v25'; // bumped — water cup UI, 3-sip filling cup
+const CACHE = 'body-soul-v26'; // bumped — spark lines rewritten to positive Hebrew tone
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
