@@ -1,4 +1,4 @@
-<!-- Tori version: warm-palette-2026-05-29 -->
+<!-- Tori version: win-picker-2026-05-31 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1153,6 +1153,77 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .cd-win-collected {
   font-size: 11px; color: #7A5A2E; font-weight: 600;
   margin-top: 6px; opacity: 0.90;
+}
+.cd-wins-subtitle {
+  font-size: 12px; color: #7A6E5C; line-height: 1.5; margin-bottom: 14px;
+}
+.cd-win-picker { margin-bottom: 14px; }
+.cd-win-card-main {
+  position: relative;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  background: #FFF3C4;
+  border: 1px solid rgba(205,178,70,0.28);
+  border-radius: 22px;
+  padding: 32px 20px 16px;
+  font-size: 14.5px; color: #4F4638; line-height: 1.65;
+  box-shadow: 0 3px 10px rgba(140,110,20,0.10), 0 0 0 0.5px rgba(205,178,70,0.14);
+  margin-bottom: 10px; min-height: 96px;
+}
+.cd-win-card-main::before {
+  content: ""; position: absolute; top: 10px; left: 50%;
+  transform: translateX(-50%); width: 12px; height: 12px;
+  border-radius: 50%; background: #D8A7A1;
+  box-shadow: 0 1px 3px rgba(160,80,80,0.22), inset 0 1px 1px rgba(255,255,255,0.45);
+}
+.cd-picker-btns { display: flex; gap: 8px; margin-top: 2px; }
+.cd-collect-btn {
+  flex: 1; padding: 11px 14px; border-radius: 999px; border: none;
+  background: #C8B9E8; color: #3F3558;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; touch-action: manipulation; transition: transform 0.1s;
+}
+.cd-collect-btn:active { transform: scale(0.96); }
+.cd-skip-btn {
+  flex: 1; padding: 11px 14px; border-radius: 999px;
+  border: 1.5px solid rgba(185,158,100,0.38);
+  background: #FFF8EA; color: #5A4830;
+  font-family: inherit; font-size: 13px;
+  cursor: pointer; touch-action: manipulation; transition: transform 0.1s;
+}
+.cd-skip-btn:active { transform: scale(0.96); }
+.cd-all-done {
+  text-align: center; font-size: 13px; color: #7A6E5C; line-height: 1.6;
+  padding: 18px 12px; margin-bottom: 14px;
+  background: #FFFDF7; border-radius: 16px; border: 1px solid rgba(210,190,150,0.40);
+}
+.cd-collected-section { margin-bottom: 14px; }
+.cd-collected-title {
+  font-size: 13px; font-weight: 700; color: #4F4638; margin-bottom: 10px;
+}
+.cd-collected-empty {
+  font-size: 12.5px; color: #7A6E5C; line-height: 1.65; font-style: italic; padding: 4px 0;
+}
+.cd-collected-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+}
+.cd-collected-chip {
+  position: relative;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  background: #FFE79E;
+  border: 1px solid rgba(185,140,30,0.38);
+  border-radius: 16px; padding: 20px 10px 8px;
+  font-size: 12px; color: #4A3818; line-height: 1.5; min-height: 58px;
+  box-shadow: 0 1px 4px rgba(140,100,10,0.09);
+}
+.cd-collected-chip::before {
+  content: ""; position: absolute; top: 7px; left: 50%;
+  transform: translateX(-50%); width: 9px; height: 9px;
+  border-radius: 50%; background: #D8A7A1;
+  box-shadow: 0 1px 2px rgba(160,80,80,0.20), inset 0 1px 1px rgba(255,255,255,0.40);
 }
 .compassion-more-btn {
   width: 100%; padding: 11px 16px;
@@ -6167,6 +6238,7 @@ async function loadCompassionWins() {
       cd.wins        = d.wins        || {};
       cd.visibleWins = d.visibleWins || [];
       cd.customWins  = d.customWins  || [];
+      cd.currentSuggestedWin = (typeof d.currentSuggestedWin === 'number') ? d.currentSuggestedWin : null;
     } else {
       cd.wins = {}; cd.visibleWins = []; cd.customWins = [];
     }
@@ -6178,9 +6250,10 @@ async function loadCompassionWins() {
 async function saveCompassionWins() {
   if (!_cdWinsKey) _cdWinsKey = 'compassion:wins:' + s.todayKey;
   await store.set(_cdWinsKey, JSON.stringify({
-    wins:        cd.wins        || {},
-    visibleWins: cd.visibleWins || [],
-    customWins:  cd.customWins  || [],
+    wins:               cd.wins               || {},
+    visibleWins:        cd.visibleWins        || [],
+    customWins:         cd.customWins         || [],
+    currentSuggestedWin: (typeof cd.currentSuggestedWin === 'number') ? cd.currentSuggestedWin : null,
   }));
 }
 
@@ -6285,6 +6358,45 @@ function _escH(str) {
   return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function drawNextCompassionWin() {
+  var marked = Object.keys(cd.wins || {}).map(Number);
+  var pool = [];
+  for (var i = 0; i < COMPASSION_DAY_WINS.length; i++) {
+    if (marked.indexOf(i) === -1) pool.push(i);
+  }
+  if (pool.length === 0) { cd.currentSuggestedWin = -1; return -1; }
+  // Avoid repeating the same note if alternatives exist
+  var curr = cd.currentSuggestedWin;
+  var filtered = (typeof curr === 'number' && curr >= 0 && pool.length > 1)
+    ? pool.filter(function(i) { return i !== curr; })
+    : pool;
+  var idx = filtered[Math.floor(Math.random() * filtered.length)];
+  cd.currentSuggestedWin = idx;
+  return idx;
+}
+
+function getCurrentCompassionWin() {
+  var marked = Object.keys(cd.wins || {}).map(Number);
+  var curr = cd.currentSuggestedWin;
+  if (typeof curr === 'number' && curr >= 0 && marked.indexOf(curr) === -1) return curr;
+  return drawNextCompassionWin();
+}
+
+async function collectCurrentCompassionWin() {
+  var idx = getCurrentCompassionWin();
+  if (idx < 0) return;
+  if (!cd.wins) cd.wins = {};
+  cd.wins[idx] = true;
+  drawNextCompassionWin();
+  await saveCompassionWins();
+  renderCompassionDay();
+}
+
+function skipCurrentCompassionWin() {
+  drawNextCompassionWin();
+  renderCompassionDay();
+}
+
 function renderCompassionDay() {
   var panel = document.getElementById('compassion-day-panel');
   if (!panel) return;
@@ -6298,50 +6410,81 @@ function renderCompassionDay() {
     var iconSrc = (typeof COMPANION_UI_ICONS !== 'undefined' && COMPANION_UI_ICONS[c.id]) || '';
     if (iconSrc) compIconHTML = '<img class="cd-comp-icon" src="' + iconSrc + '" alt="' + c.name + '">';
   }
-  // Visible wins
-  var visibleWins = cd.visibleWins || [];
-  var winsHTML = '';
-  visibleWins.forEach(function(idx) {
-    var text = COMPASSION_DAY_WINS[idx] || '';
-    var done = !!(cd.wins || {})[idx];
-    winsHTML += '<button class="compassion-win-card' + (done ? ' done' : '') + '" onclick="tapCompassionWin(' + idx + ')">'
-              + '<div class="cd-win-text">' + _escH(text) + '</div>'
-              + (done ? '<div class="cd-win-collected">נאסף ✨</div>' : '')
-              + '</button>';
-  });
-  // Custom wins
-  var customHTML = '';
-  (cd.customWins || []).forEach(function(cw) {
-    customHTML += '<button class="compassion-win-card done" onclick="tapCustomCompassionWin(\'' + cw.id + '\')">'
-             + '<div class="cd-win-text">' + _escH(cw.text) + '</div>'
-             + '<div class="cd-win-collected">נאסף ✨</div>'
-             + '</button>';
-  });
+
+  // Current suggested win (single note picker)
+  var currentIdx = getCurrentCompassionWin();
+  var currentText = currentIdx >= 0 ? (COMPASSION_DAY_WINS[currentIdx] || '') : '';
+  var allCollected = currentIdx < 0;
+
+  var pickerHTML = '';
+  if (allCollected) {
+    pickerHTML = '<div class="cd-all-done">אספת את כל הניצחונות הזמינים להיום ✨<br>אפשר עדיין להוסיף ניצחון משלך.</div>';
+  } else {
+    pickerHTML = '<div class="cd-win-picker">'
+      + '<div class="cd-win-card-main">'
+      + '<div class="cd-win-text">' + _escH(currentText) + '</div>'
+      + '</div>'
+      + '<div class="cd-picker-btns">'
+      + '<button class="cd-collect-btn" onclick="collectCurrentCompassionWin()">נאסף ✨</button>'
+      + '<button class="cd-skip-btn" onclick="skipCurrentCompassionWin()">עוד פתק מצחיק</button>'
+      + '</div>'
+      + '</div>';
+  }
+
+  // Collected wins
+  var collectedKeys = Object.keys(cd.wins || {}).map(Number);
+  var customWins = cd.customWins || [];
+  var hasCollected = collectedKeys.length > 0 || customWins.length > 0;
+  var collectedGridHTML = '';
+  if (hasCollected) {
+    collectedKeys.forEach(function(idx) {
+      var text = COMPASSION_DAY_WINS[idx] || '';
+      collectedGridHTML += '<div class="cd-collected-chip">'
+        + '<div class="cd-win-text">' + _escH(text) + '</div>'
+        + '<div class="cd-win-collected">נאסף ✨</div>'
+        + '</div>';
+    });
+    customWins.forEach(function(cw) {
+      collectedGridHTML += '<div class="cd-collected-chip">'
+        + '<div class="cd-win-text">' + _escH(cw.text) + '</div>'
+        + '<div class="cd-win-collected">נאסף ✨</div>'
+        + '</div>';
+    });
+  }
+  var collectedHTML = '<div class="cd-collected-section">'
+    + '<div class="cd-collected-title">נאסף היום</div>'
+    + (hasCollected
+        ? '<div class="cd-collected-grid">' + collectedGridHTML + '</div>'
+        : '<div class="cd-collected-empty">עוד לא נאסף כאן פתק. אפשר לשלוף אחד, ואם הוא מתאים — לאסוף.</div>')'
+    + '</div>';
+
   // Custom input area
   var inputHTML = '';
   if (_cdCustomInput) {
     inputHTML = '<div class="cd-custom-input-area">'
-             + '<input type="text" id="cd-custom-input" class="cd-custom-input" placeholder="הניצחון הקטן שלי..." maxlength="60">'
-             + '<div class="cd-custom-input-btns">'
-             + '<button class="cd-custom-save" onclick="saveCustomWinFromInput()">שמרי ✓</button>'
-             + '<button class="cd-custom-cancel" onclick="cancelAddCustomWin()">ביטול</button>'
-             + '</div>'
-             + '</div>';
+      + '<input type="text" id="cd-custom-input" class="cd-custom-input" placeholder="הניצחון הקטן שלי..." maxlength="60">'
+      + '<div class="cd-custom-input-btns">'
+      + '<button class="cd-custom-save" onclick="saveCustomWinFromInput()">שמרי ✓</button>'
+      + '<button class="cd-custom-cancel" onclick="cancelAddCustomWin()">ביטול</button>'
+      + '</div>'
+      + '</div>';
   }
+
   // Exit area
   var exitHTML = '';
   if (_cdExitConfirm) {
     exitHTML = '<div class="cd-confirm-area" id="cd-exit-confirm">'
-             + '<div class="cd-confirm-title">להחזיר את היום למצב רגיל?</div>'
-             + '<div class="cd-confirm-body">ניצחונות קטנים שסימנת היום יישמרו, אבל מסך היום יחזור למשימות הרגילות.</div>'
-             + '<div class="cd-confirm-btns">'
-             + '<button class="cd-confirm-yes" onclick="confirmExitCompassionDay()">כן, לחזור ליום רגיל</button>'
-             + '<button class="cd-confirm-no" onclick="cancelExitCompassionDay()">להישאר ביום חמלה</button>'
-             + '</div>'
-             + '</div>';
+      + '<div class="cd-confirm-title">להחזיר את היום למצב רגיל?</div>'
+      + '<div class="cd-confirm-body">ניצחונות קטנים שסימנת היום יישמרו, אבל מסך היום יחזור למשימות הרגילות.</div>'
+      + '<div class="cd-confirm-btns">'
+      + '<button class="cd-confirm-yes" onclick="confirmExitCompassionDay()">כן, לחזור ליום רגיל</button>'
+      + '<button class="cd-confirm-no" onclick="cancelExitCompassionDay()">להישאר ביום חמלה</button>'
+      + '</div>'
+      + '</div>';
   } else {
     exitHTML = '<button class="compassion-exit-btn" onclick="exitCompassionDayConfirm()">לחזור ליום רגיל</button>';
   }
+
   panel.innerHTML =
       '<div class="compassion-day-header">יום חמלה</div>'
     + '<div class="compassion-day-sub">ביום כזה משחקים לפי חוקים אחרים.</div>'
@@ -6350,17 +6493,14 @@ function renderCompassionDay() {
     + '  <div class="cd-companion-line">' + compLine + '</div>'
     + '</div>'
     + '<div class="cd-wins-title">ניצחונות קטנים</div>'
-    + '<div class="cd-wins-grid" id="cd-wins-grid">'
-    + winsHTML
-    + customHTML
-    + '</div>'
-    + '<button class="compassion-more-btn" onclick="shuffleMoreWins()">עוד רעיונות מצחיקים 🎲</button>'
-    + (!_cdCustomInput ? '<button class="compassion-add-btn" onclick="openAddCustomWin()">+ להוסיף ניצחון קטן משלי</button>' : '')
+    + '<div class="cd-wins-subtitle">פתק אחד בכל פעם. בלי רשימות ענק.</div>'
+    + pickerHTML
+    + collectedHTML
+    + (!_cdCustomInput ? '<button class="compassion-add-btn" onclick="openAddCustomWin()">+ להוסיף ניצחון קטן משלי</button>' : '')'
     + inputHTML
     + '<div class="cd-custom-helper">כל ניצחון קטן מתקבל פה בכבוד מוגזם.</div>'
     + exitHTML;
 }
-
 // AUTH
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -6446,7 +6586,7 @@ function showReset() {
 // ============================================================
 // COMPASSION DAY — freeze streak up to 7 days
 // ============================================================
-let cd = { active: false, daysUsed: 0, startDate: null, wins: {}, visibleWins: [], customWins: [] };
+let cd = { active: false, daysUsed: 0, startDate: null, wins: {}, visibleWins: [], customWins: [], currentSuggestedWin: null };
 
 async function loadCompassionState() {
   try { const raw = await store.get('compassion:state'); if(raw) cd = { ...cd, ...JSON.parse(raw) }; } catch(e) {}
