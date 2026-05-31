@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v20'; // bumped — compassion day visuals: journey images + frozen flame icon
+const CACHE = 'body-soul-v21'; // bumped — win-picker JS syntax fix
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

@@ -1,4 +1,4 @@
-<!-- Tori version: win-picker-2026-05-31 -->
+<!-- Tori version: win-picker-fix-2026-05-31 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -6455,7 +6455,7 @@ function renderCompassionDay() {
     + '<div class="cd-collected-title">נאסף היום</div>'
     + (hasCollected
         ? '<div class="cd-collected-grid">' + collectedGridHTML + '</div>'
-        : '<div class="cd-collected-empty">עוד לא נאסף כאן פתק. אפשר לשלוף אחד, ואם הוא מתאים — לאסוף.</div>')'
+        : '<div class="cd-collected-empty">עוד לא נאסף כאן פתק. אפשר לשלוף אחד, ואם הוא מתאים — לאסוף.</div>')
     + '</div>';
 
   // Custom input area
@@ -6496,7 +6496,7 @@ function renderCompassionDay() {
     + '<div class="cd-wins-subtitle">פתק אחד בכל פעם. בלי רשימות ענק.</div>'
     + pickerHTML
     + collectedHTML
-    + (!_cdCustomInput ? '<button class="compassion-add-btn" onclick="openAddCustomWin()">+ להוסיף ניצחון קטן משלי</button>' : '')'
+    + (!_cdCustomInput ? '<button class="compassion-add-btn" onclick="openAddCustomWin()">+ להוסיף ניצחון קטן משלי</button>' : '')
     + inputHTML
     + '<div class="cd-custom-helper">כל ניצחון קטן מתקבל פה בכבוד מוגזם.</div>'
     + exitHTML;
