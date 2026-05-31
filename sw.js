@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v22'; // bumped — CD collected-note להחזיר undo
+const CACHE = 'body-soul-v23'; // bumped — Today companion path strip
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

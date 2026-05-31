@@ -1,4 +1,4 @@
-<!-- Tori version: cd-return-note-2026-05-31 -->
+<!-- Tori version: today-companion-path-2026-05-31 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1052,6 +1052,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 
 /* ===== COMPASSION DAY ACTIVE — hide regular Today content ===== */
 #view-today.today-compassion-active { background: #FFF8EA; }
+#view-today.today-compassion-active > .today-companion-path,
 #view-today.today-compassion-active > .companion-feedback,
 #view-today.today-compassion-active > .spark-row,
 #view-today.today-compassion-active > .celebration,
@@ -1687,6 +1688,36 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   font-size:12.5px; color:var(--text3); line-height:1.6; font-style:italic;
 }
 
+/* Companion path strip */
+.today-companion-path {
+  position: relative; height: 52px;
+  margin: 0 2px 10px;
+}
+.today-path-track {
+  position: absolute; left: 6px; right: 6px;
+  top: 50%; transform: translateY(-50%);
+  height: 9px; border-radius: 999px;
+  background: linear-gradient(to left, #FFE0C4, #D4EDDA, #C8D8EE, #E8D4F0);
+}
+.today-path-dots {
+  position: absolute; left: 6px; right: 6px;
+  top: 50%; transform: translateY(-50%);
+  display: flex; justify-content: space-around; align-items: center;
+  pointer-events: none;
+}
+.today-path-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,0.65); flex-shrink: 0;
+}
+.today-path-icon {
+  position: absolute; width: 32px; height: 32px;
+  border-radius: 50%; object-fit: cover;
+  top: 50%; transform: translateY(-50%);
+  transition: right 0.45s cubic-bezier(0.34, 1.40, 0.64, 1);
+  filter: drop-shadow(0 2px 5px rgba(80,60,40,0.18));
+  z-index: 2;
+}
+
 /* Sparkle button */
 .spark-row {
   margin-bottom:10px; display:flex; flex-direction:column; gap:8px;
@@ -1847,10 +1878,18 @@ if('serviceWorker' in navigator){
     <div id="day-msg"></div>
   </div>
 
-  <!-- ── Companion feedback line ── -->
-  <div class="companion-feedback" id="companion-feedback" style="display:none">
-    <img class="cf-icon" id="cf-icon" src="" alt="">
-    <div class="cf-line" id="cf-line"></div>
+  <!-- ── Today companion path ── -->
+  <div class="today-companion-path" id="today-companion-path">
+    <div class="today-path-track"></div>
+    <div class="today-path-dots">
+      <span class="today-path-dot"></span>
+      <span class="today-path-dot"></span>
+      <span class="today-path-dot"></span>
+      <span class="today-path-dot"></span>
+      <span class="today-path-dot"></span>
+      <span class="today-path-dot"></span>
+    </div>
+    <img id="today-path-icon" src="" alt="" class="today-path-icon">
   </div>
   <!-- ── Sparkle button ── -->
   <div class="spark-row" id="spark-row">
@@ -1859,6 +1898,12 @@ if('serviceWorker' in navigator){
       <span id="spark-btn-label">✨ הברקה קטנה</span>
     </button>
     <div class="spark-line" id="spark-line-display" style="display:none"></div>
+  </div>
+
+  <!-- ── Companion feedback line (secondary, below spark button) ── -->
+  <div class="companion-feedback" id="companion-feedback" style="display:none">
+    <img class="cf-icon" id="cf-icon" src="" alt="">
+    <div class="cf-line" id="cf-line"></div>
   </div>
 
   <!-- ── Task sections ── -->
@@ -4582,6 +4627,7 @@ async function confirmCompanion() {
   renderCompanionSection();
   updateSparkBtn(); // sync Today tab sparkle button to new companion
   renderCompanionFeedback(); // sync feedback line to new companion
+  renderTodayCompanionPath(); // sync path icon to new companion
   if (cd && cd.active) renderCompassionDay(); // sync CD panel companion on switch
   updateStreakPillFrozenState(); // update frozen pill companion name on switch
 }
@@ -5003,6 +5049,7 @@ async function saveDay() {
   loadGentleHabitData(); // fire-and-forget — refreshes sprout panel after each save
   renderCollected();     // keep collected chips in sync
   renderCompanionFeedback(); // update companion line
+  renderTodayCompanionPath(); // update companion path position
 }
 async function loadDay() {
   try {
@@ -5060,6 +5107,7 @@ function renderFromState() {
   renderCollected();    // update "מה כבר נאסף" chips
   updateSparkBtn();     // sync companion icon + label in sparkle button
   renderCompanionFeedback(); // sync companion feedback line
+  renderTodayCompanionPath(); // sync companion path position
 }
 
 // ============================================================
@@ -6152,6 +6200,34 @@ function updateSparkBtn() {
   if (row) row.style.display = '';
   // Hide any previously shown spark line on companion switch
   if (line) { line.textContent = ''; line.style.display = 'none'; }
+}
+
+// ── Today companion path ──
+function getTodayCompletedCountForPath() {
+  var count = 0;
+  TASK_IDS.forEach(function(id) { if (s.tasks[id]) count++; });
+  if ((s.water || 0) >= 6) count++;
+  if (s.exChosen && (s.exChosen.easy || s.exChosen.hard)) count++;
+  if (customTasks) customTasks.forEach(function(t) { if (s.tasks['c:' + t.id]) count++; });
+  return count;
+}
+
+function renderTodayCompanionPath() {
+  var path = document.getElementById('today-companion-path');
+  var icon = document.getElementById('today-path-icon');
+  if (!path || !icon) return;
+  var c = cs && COMPANIONS[cs.companionId];
+  if (!c) { icon.style.display = 'none'; return; }
+  var src = COMPANION_UI_ICONS[c.id] || '';
+  if (src) { icon.src = src; icon.alt = c.name; icon.style.display = ''; }
+  else { icon.style.display = 'none'; return; }
+  var count = getTodayCompletedCountForPath();
+  var MAX_STEPS = 8;
+  var pct = Math.min(count / MAX_STEPS, 1.0);
+  // RTL: icon starts at right (day start) and moves left (more done)
+  // right: 5% (0 tasks) → ~83% (8+ tasks); subtract half icon-width to center
+  var rightPct = 5 + pct * 78;
+  icon.style.right = 'calc(' + rightPct + '% - 16px)';
 }
 
 // ── Companion feedback line ──
