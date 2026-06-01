@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v26'; // bumped — spark lines rewritten to positive Hebrew tone
+const CACHE = 'body-soul-v27'; // bumped — plant family assets imported, PLANT_FAMILY_ASSETS constant added
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
