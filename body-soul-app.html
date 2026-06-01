@@ -1,4 +1,4 @@
-<!-- Tori version: plant-assets-2026-06-01 -->
+<!-- Tori version: habit-panel-visual-2026-06-01 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1818,10 +1818,45 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 }
 .cat-add-btn:hover { border-color:var(--sage); color:var(--sage); }
 
-/* Plant stage image in habit panel */
+/* Plant stage image in habit panel (fallback cards) */
 .j-sprout-img {
   width:40px; height:40px; object-fit:contain;
   border-radius:8px; flex-shrink:0;
+}
+
+/* Plant family card — visual upgrade for מה מתחזק אצלי */
+.j-plant-card {
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:12px; padding:12px 14px;
+  background:#FEFAF5;
+  border-radius:14px;
+  box-shadow:0 1px 7px rgba(80,55,25,0.09);
+  border:1px solid rgba(175,148,100,0.13);
+}
+.j-plant-card-img {
+  width:68px; height:68px; object-fit:contain;
+  flex-shrink:0; border-radius:10px;
+}
+.j-plant-card-body { flex:1; min-width:0; }
+.j-plant-card-family {
+  font-size:11px; font-weight:600; letter-spacing:0.35px;
+  color:var(--g-sage-deep); margin-bottom:2px;
+}
+.j-plant-card-name {
+  font-size:14px; font-weight:700; color:var(--g-ink);
+  margin-bottom:3px; line-height:1.3;
+}
+.j-plant-card-stage {
+  font-size:11.5px; font-weight:600; color:var(--g-sage-deep);
+  margin-bottom:5px;
+}
+.j-plant-card-copy {
+  font-size:12px; color:var(--g-ink-3); line-height:1.55;
+}
+.j-plant-roots-footer {
+  font-size:12px; color:var(--g-ink-3); font-style:italic;
+  text-align:center; margin-top:6px; padding-top:10px;
+  border-top:1px solid var(--g-hairline);
 }
 </style>
 <script>
@@ -2140,30 +2175,32 @@ const GENTLE_HABIT_COMPANION_LINES = {
 };
 
 // ── Plant family lookup — keyed by stable English action ID ──
-// Maps each trackable action ID to a plant family key.
-// Intentionally excludes: exercise (composite/sub-option dependent) and
-// custom tasks (free text, unmappable without user input).
+// Maps each trackable action ID to a PLANT_FAMILY_ASSETS key.
+// Intentionally excludes: exercise (composite/sub-option dependent),
+// breathing (no dedicated plant asset yet), sleep (no plant asset yet),
+// and custom tasks (free text, unmappable without user input).
 // Do not map by Hebrew label — IDs are canonical.
 const PLANT_FAMILY_BY_ACTION_ID = {
-  breakfast: 'quiet_sprout',   // body nourishment / regulation
-  lunch:     'quiet_sprout',
-  dinner:    'quiet_sprout',
-  shower:    'home_plant',     // basic body/home care
-  breathing: 'quiet_sprout',   // nervous-system calming
-  outside:   'brave_vine',     // friction / leaving / threshold
-  sleep:     'quiet_sprout',   // rest / regulation
-  water:     'quiet_sprout',   // tiny body-awareness action
-  // exercise: excluded — composite card, map by sub-option in a future pass
-  // custom tasks: excluded — free text, let user choose family at creation time
+  water:     'water',       // drinking / body awareness
+  breakfast: 'nutrition',   // body nourishment / regulation
+  lunch:     'nutrition',
+  dinner:    'nutrition',
+  shower:    'bodyRefresh', // body refresh / hygiene
+  outside:   'freshAir',   // fresh air / leaving threshold
+  // breathing: unmapped v1 — no dedicated plant asset yet
+  // sleep:     unmapped v1 — no dedicated plant asset yet
+  // exercise:  excluded — composite card, map by sub-option in a future pass
+  // custom:    excluded — free text, let user choose family at creation time
 };
 
-// Hebrew display names for plant family keys
+// Hebrew display names for plant family keys — mirrors PLANT_FAMILY_ASSETS labels
 const PLANT_FAMILY_LABELS = {
-  quiet_sprout:  'הנבט השקט',
-  home_plant:    'הצמח הביתי',
-  brave_vine:    'המטפסה האמיצה',
-  social_bloom:  'הפריחה החברתית',
-  joy_green:     'הירוק המשמח',
+  water:       'שתייה',
+  nutrition:   'הזנה',
+  bodyRefresh: 'רענון גוף',
+  teeth:       'פה ושיניים',
+  movement:    'תנועה',
+  freshAir:    'אוויר צח',
 };
 
 // User-facing task labels matching the actual Today-tab DOM text.
@@ -4181,7 +4218,7 @@ const PLANT_FAMILY_ASSETS = {
 };
 
 const PLANT_GROWTH_COPY = {
-  smallVersionRoots: 'גם גרסא קטנה יודעת להצמיח שורשים.',
+  smallVersionRoots: 'גם גרסה קטנה יודעת להצמיח שורשים.',
   wildBloom: 'כמו שמזכירים במולאן, לפעמים דווקא הפרח שלוקח לו קצת יותר זמן לפרוח — מתגלה כיפה במיוחד.'
 };
 
@@ -7425,8 +7462,10 @@ function applyMicroTaskOverrides() {
   });
 }
 
-// Build the gentle habit panel HTML — v1
-// Shows: title, subtitle, sprouts list (up to 3), companion line.
+// Build the gentle habit panel HTML — v2 (plant family visual upgrade)
+// Shows: title, subtitle, plant cards (up to 3), roots footer, companion line.
+// Mapped actions show plant family image + family label + stage info.
+// Unmapped actions (breathing, sleep) fall back to text card.
 // Micro-task suggestion intentionally excluded from this version.
 // Exercise and custom tasks intentionally excluded from this version.
 function buildGentleHabitPanelHTML(c) {
@@ -7438,8 +7477,10 @@ function buildGentleHabitPanelHTML(c) {
     + 'גם חזרה קטנה מתחילה להירשם בגוף. לאט לאט, דברים טובים נעשים מוכרים יותר.'
     + '</div>';
 
-  // ── Sprouts section
+  // ── Plant cards section
   content += '<div style="font-size:12px;font-weight:700;color:var(--g-ink-2);margin-bottom:10px;letter-spacing:0.4px">נבטים שמתחזקים</div>';
+
+  var hasAnyCard = false;
 
   if (!cache || cache.growing.length === 0) {
     // Early state — not enough history yet
@@ -7447,31 +7488,41 @@ function buildGentleHabitPanelHTML(c) {
       + 'עוד מוקדם לדעת מה מתחזק. בינתיים כל סימון קטן הוא התחלה.'
       + '</div>';
   } else {
+    hasAnyCard = true;
     cache.growing.forEach(function(item) {
       var stage       = getGrowthStageForAction(item.count14);
       // Use DOM-accurate label; fall back to display label then ID
       var uiLabel     = TASK_UI_LABELS[item.kind] || TASK_DISPLAY_LABELS[item.kind] || item.kind;
-      // Plant family label — calm secondary line, only if defined
       var familyKey   = PLANT_FAMILY_BY_ACTION_ID[item.kind];
-      var familyLabel = familyKey ? PLANT_FAMILY_LABELS[familyKey] : '';
+      var familyAsset = familyKey ? PLANT_FAMILY_ASSETS[familyKey] : null;
 
-      // Use plant stage image if available, fall back to emoji
-      var stageIconHtml = stage.imgSrc
-        ? '<img src="' + stage.imgSrc + '" alt="" class="j-sprout-img">'
-        : '<div class="j-sprout-icon">' + stage.icon + '</div>';
-
-      content += '<div class="j-sprout-card">'
-        + stageIconHtml
-        + '<div class="j-sprout-body">'
-        + '<div class="j-sprout-name">' + uiLabel + '</div>'
-        + (familyLabel
-            ? '<div style="font-size:11px;color:var(--g-sage-deep);margin-bottom:3px;font-weight:500;letter-spacing:0.2px">'
-                + familyLabel + '</div>'
-            : '')
-        + '<div class="j-sprout-stage">' + stage.label + '</div>'
-        + '<div class="j-sprout-copy">'  + stage.copy  + '</div>'
-        + '</div></div>';
+      if (familyAsset) {
+        // ── Plant family card: image + family label + action label + stage
+        content += '<div class="j-plant-card">'
+          + '<img src="' + familyAsset.src + '" alt="' + familyAsset.label + '" class="j-plant-card-img">'
+          + '<div class="j-plant-card-body">'
+          + '<div class="j-plant-card-family">' + familyAsset.label + '</div>'
+          + '<div class="j-plant-card-name">' + uiLabel + '</div>'
+          + '<div class="j-plant-card-stage">' + stage.label + '</div>'
+          + '<div class="j-plant-card-copy">'  + stage.copy  + '</div>'
+          + '</div></div>';
+      } else {
+        // ── Text fallback card: for unmapped actions (breathing, sleep)
+        var stageIconHtml = stage.imgSrc
+          ? '<img src="' + stage.imgSrc + '" alt="" class="j-sprout-img">'
+          : '<div class="j-sprout-icon">' + stage.icon + '</div>';
+        content += '<div class="j-sprout-card">'
+          + stageIconHtml
+          + '<div class="j-sprout-body">'
+          + '<div class="j-sprout-name">' + uiLabel + '</div>'
+          + '<div class="j-sprout-stage">' + stage.label + '</div>'
+          + '<div class="j-sprout-copy">'  + stage.copy  + '</div>'
+          + '</div></div>';
+      }
     });
+
+    // ── Roots footer — shown when there is at least one card
+    content += '<div class="j-plant-roots-footer">גם גרסה קטנה יודעת להצמיח שורשים.</div>';
   }
 
   // ── Companion supportive line

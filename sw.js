@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v27'; // bumped — plant family assets imported, PLANT_FAMILY_ASSETS constant added
+const CACHE = 'body-soul-v28'; // bumped — מה מתחזק אצלי visual upgrade with plant family images
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
