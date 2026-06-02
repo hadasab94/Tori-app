@@ -8281,15 +8281,15 @@ function buildAdaptiveSuggestionHTML(cache) {
           + (familyLbl2 ? '<span class="j-adaptive-family-tag">' + _escH(familyLbl2) + '</span>' : '')
           + '</div>';
       }
-      html2 += '<div class="j-adaptive-title">השבוע אנחנו מנסות את:</div>'
-        + '<div class="j-adaptive-selected-label">' + _escH(activeOv.microLabel) + '</div>'
-        + '<div class="j-adaptive-roots">גם גרסה קטנה יודעת להצמיח שורשים.</div>'
+      html2 += '<div class="j-adaptive-selected-label">' + _escH(activeOv.microLabel) + '</div>'
+        + '<div class="j-adaptive-roots">לשבוע הקרוב 🌱</div>'
         + '<div class="j-adaptive-actions">'
-        + '<button class="j-adaptive-btn j-adaptive-btn-main" onclick="keepAdaptiveForWeek()">'
-          + 'להשאיר לשבוע</button>'
         + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
           + ' onclick="cancelAdaptiveOverride(\'' + activeKind + '\')">'
           + 'לחזור ל' + _escH(activeOv.originalLabel) + '</button>'
+        + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
+          + ' onclick="cancelAdaptiveOverride(\'' + activeKind + '\')">'
+          + 'לבחור משהו אחר</button>'
         + '</div>'
         + '</div>';
       return html2;
