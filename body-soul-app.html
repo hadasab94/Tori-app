@@ -2190,7 +2190,16 @@ const PLANT_FAMILY_BY_ACTION_ID = {
   exercise:  'movement',  // any easy/hard selection counts as a movement day
   // breathing: unmapped v1 — no dedicated plant asset yet
   // sleep:     unmapped v1 — no dedicated plant asset yet
-  // teeth:     unmapped — no tracked teeth/brushing action exists yet
+  //
+  // teeth assets (PLANT_FAMILY_ASSETS.teeth + PLANT_STAGE_ASSETS.teeth) are ready,
+  // but teeth is intentionally unmapped for now.
+  // Do NOT add a regular Today brushing task at this stage — it could feel pushy
+  // and add shame/pressure around a sensitive body-care area.
+  // Brushing should enter later through the adaptive "גרסה שמתאימה עכשיו" flow
+  // inside "מה מתחזק אצלי": offered as a smaller same-domain option when
+  // bodyRefresh (shower) has low streaks, not as a new default daily obligation.
+  // Do not add teeth to TASK_IDS until that adaptive micro-task mechanism exists.
+  //
   // custom:    excluded — free text, let user choose family at creation time
 };
 
