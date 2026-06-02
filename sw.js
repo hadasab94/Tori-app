@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v35'; // bumped — plus/library foundation helpers added (no UI yet)
+const CACHE = 'body-soul-v36'; // bumped — להעביר לפלוס בינתיים implemented
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
