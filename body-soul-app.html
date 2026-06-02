@@ -2136,9 +2136,6 @@ if('serviceWorker' in navigator){
 
   <div class="sec" id="custom-sec" style="display:none">✨ משימות אישיות</div>
   <div class="task-grid" id="custom-grid"></div>
-  <!-- Structured plus/library section — rendered by renderStructuredPlusSection() -->
-  <div class="sec" id="structured-plus-sec" style="display:none">🌿 בפלוס בינתיים</div>
-  <div id="structured-plus-list"></div>
   <!-- Compassion Day panel — rendered by renderCompassionDay() -->
   <div id="compassion-day-panel" class="compassion-day-panel" style="display:none"></div>
 </div>
@@ -8324,7 +8321,7 @@ async function moveAdaptiveToPlus(kind) {
   await applyParentTaskToPlus(kind, 'adaptive-plus');
 
   renderStructuredPlusSection();    // show in Today
-  showToast('שמתי את "' + origLabel + '" בפלוס בינתיים 🌿');
+  showToast('שמתי את "' + origLabel + '" בספריית הדאגה העצמית 🌿');
   var jv = document.getElementById('view-journey');
   if (jv && jv.classList.contains('active')) renderJourneyTab();
 }
@@ -8468,42 +8465,15 @@ async function addLibraryItemToPlus(libraryId, parentTask, source) {
   await savePlusLibraryState(st);
 }
 
-// Render (or clear) the structured plus/library section in Today.
+// renderStructuredPlusSection — intentional no-op until the full
+// "ספריית הדאגה העצמית" UI is designed and implemented.
+//
+// Storage (plus:libraryTasks) and all helper functions remain active.
+// Moved parent tasks are stored and restorable via the adaptive Journey card.
+// Do not render a visible section in Today until the full library design is ready.
+// Do not mix structured library items with free-text custom tasks.
 function renderStructuredPlusSection() {
-  var sec  = document.getElementById('structured-plus-sec');
-  var list = document.getElementById('structured-plus-list');
-  if (!sec || !list) return;
-
-  var st = getPlusLibraryState();
-  var hidden = st.hiddenParentTasks || {};
-  var keys = Object.keys(hidden);
-
-  if (keys.length === 0) {
-    sec.style.display = 'none';
-    list.innerHTML = '';
-    return;
-  }
-
-  sec.style.display = '';
-  list.innerHTML = '';
-
-  keys.forEach(function(kind) {
-    var entry = hidden[kind];
-    var familyStr   = entry.family || (SELF_CARE_PARENT_TASK_TO_FAMILY[kind] || '');
-    var familyLabel = SELF_CARE_FAMILY_LABELS[familyStr] || '';
-
-    var card = document.createElement('div');
-    card.className = 'structured-plus-card';
-    card.innerHTML =
-      '<div class="sp-info">'
-        + '<div class="sp-label">' + _escH(entry.originalLabel) + '</div>'
-        + (familyLabel ? '<div class="sp-family">' + _escH(familyLabel) + '</div>' : '')
-      + '</div>'
-      + '<button class="sp-restore-btn"'
-        + ' onclick="restoreFromPlus(\'' + kind + '\')">'
-        + 'להחזיר למסך היום</button>';
-    list.appendChild(card);
-  });
+  // No-op: full library UI is a future design step.
 }
 
 // Restore an original parent task from the plus area.
@@ -8642,7 +8612,7 @@ function buildAdaptiveSuggestionHTML(cache) {
             + 'לבחור משהו אחר</button>'
           + '</div>'
           + (alreadyInPlus
-            ? '<div class="j-adaptive-plus-status">"' + _escH(activeOv.originalLabel) + '" מחכה בפלוס 🌿</div>'
+            ? '<div class="j-adaptive-plus-status">"' + _escH(activeOv.originalLabel) + '" מחכה בספריית הדאגה העצמית 🌿</div>'
             : '<div style="margin-top:6px;padding-top:8px;border-top:1px solid var(--g-hairline)">'
               + '<button class="j-adaptive-link j-adaptive-link-muted"'
                 + ' onclick="moveAdaptiveToPlus(\'' + activeKind + '\')">'
