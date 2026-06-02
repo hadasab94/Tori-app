@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v36'; // bumped — להעביר לפלוס בינתיים implemented
+const CACHE = 'body-soul-v37'; // bumped — ספריית הדאגה העצמית modal UI skeleton
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
