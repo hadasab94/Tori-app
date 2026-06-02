@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v30'; // bumped — habit panel shows stage-specific plant images
+const CACHE = 'body-soul-v31'; // bumped — movement/exercise now tracked in gentle habit panel
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

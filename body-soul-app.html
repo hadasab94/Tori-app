@@ -1,4 +1,4 @@
-<!-- Tori version: stage-images-2026-06-02 -->
+<!-- Tori version: movement-tracking-2026-06-02 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2187,9 +2187,10 @@ const PLANT_FAMILY_BY_ACTION_ID = {
   dinner:    'nutrition',
   shower:    'bodyRefresh', // body refresh / hygiene
   outside:   'freshAir',   // fresh air / leaving threshold
+  exercise:  'movement',  // any easy/hard selection counts as a movement day
   // breathing: unmapped v1 — no dedicated plant asset yet
   // sleep:     unmapped v1 — no dedicated plant asset yet
-  // exercise:  excluded — composite card, map by sub-option in a future pass
+  // teeth:     unmapped — no tracked teeth/brushing action exists yet
   // custom:    excluded — free text, let user choose family at creation time
 };
 
@@ -2218,6 +2219,7 @@ const TASK_UI_LABELS = {
   outside:   'אוויר צח',
   sleep:     'כניסה למיטה',   // full DOM: "כניסה למיטה בשעה סבירה" — shortened for panel
   water:     'מים',
+  exercise:  'תנועה',         // composite card — shown as family label in panel
 };
 
 // ── Companion small UI icons (for sparkle button and future use) ──
@@ -7441,11 +7443,19 @@ async function loadGentleHabitData() {
         counts14.water = (counts14.water || 0) + 1;
         if (i < 7) counts7.water = (counts7.water || 0) + 1;
       }
+      // Exercise: stored separately in d.exChosen (not in d.tasks).
+      // Any selected easy or hard option counts as one movement day.
+      // Storage is not changed — read-only here.
+      var ex = d.exChosen;
+      if (ex && (ex.easy || ex.hard)) {
+        counts14.exercise = (counts14.exercise || 0) + 1;
+        if (i < 7) counts7.exercise = (counts7.exercise || 0) + 1;
+      }
     } catch(e) {}
   }
 
   // Growing: completed ≥ 2 times in last 14 days, up to 3, sorted by count desc
-  var allTrackable = TASK_IDS.concat(['water']);
+  var allTrackable = TASK_IDS.concat(['water', 'exercise']);
   var growing = allTrackable
     .filter(function(id) { return (counts14[id] || 0) >= 2; })
     .map(function(id)    { return { kind: id, count14: counts14[id] }; })
