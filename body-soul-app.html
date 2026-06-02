@@ -1,4 +1,4 @@
-<!-- Tori version: self-care-library-2026-06-02 -->
+<!-- Tori version: adaptive-suggestion-v1-2026-06-02 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -1858,6 +1858,76 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
   text-align:center; margin-top:6px; padding-top:10px;
   border-top:1px solid var(--g-hairline);
 }
+
+/* Adaptive suggestion card — "גרסה שמתאימה עכשיו" */
+.j-adaptive-card {
+  margin-top:14px; padding:14px;
+  background:rgba(200,185,220,0.09);
+  border:1px solid rgba(175,155,210,0.18);
+  border-inline-end:3px solid var(--g-sage-deep);
+  border-radius:14px;
+}
+.j-adaptive-plant-row {
+  display:flex; align-items:center; gap:8px; margin-bottom:10px;
+}
+.j-adaptive-plant-img {
+  width:44px; height:44px; object-fit:contain;
+  border-radius:8px; flex-shrink:0;
+}
+.j-adaptive-family-tag {
+  font-size:11px; font-weight:600; color:var(--g-sage-deep);
+  letter-spacing:0.3px;
+}
+.j-adaptive-title {
+  font-size:13.5px; font-weight:700; color:var(--g-ink);
+  margin-bottom:6px; line-height:1.4;
+}
+.j-adaptive-body {
+  font-size:12.5px; color:var(--g-ink-2); line-height:1.65;
+  margin-bottom:12px;
+}
+.j-adaptive-options {
+  display:flex; flex-direction:column; gap:7px; margin-bottom:10px;
+}
+.j-adaptive-option {
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,0.72);
+  border:1px solid rgba(160,145,190,0.22);
+  border-radius:10px; padding:9px 11px;
+  font-size:13px; color:var(--g-ink);
+  cursor:pointer; text-align:right; width:100%;
+  font-family:inherit;
+}
+.j-adaptive-option:active { background:rgba(200,185,220,0.28); }
+.j-adaptive-opt-icon { font-size:16px; flex-shrink:0; }
+.j-adaptive-opt-label { flex:1; line-height:1.4; }
+.j-adaptive-footer { margin:4px 0 8px; }
+.j-adaptive-secondary { display:flex; gap:12px; flex-wrap:wrap; margin-top:4px; }
+.j-adaptive-link {
+  background:none; border:none; padding:0;
+  font-size:12px; color:var(--g-sage-deep);
+  cursor:pointer; text-decoration:underline; font-family:inherit;
+}
+.j-adaptive-link-muted { color:var(--g-ink-3); }
+.j-adaptive-selected-label {
+  font-size:14.5px; font-weight:700; color:var(--g-ink);
+  margin:6px 0 8px; line-height:1.4;
+}
+.j-adaptive-roots {
+  font-size:12px; color:var(--g-ink-3); font-style:italic;
+  margin-bottom:12px;
+}
+.j-adaptive-actions { display:flex; flex-direction:column; gap:7px; }
+.j-adaptive-btn {
+  border-radius:10px; padding:9px 14px; font-size:13px;
+  cursor:pointer; width:100%; font-family:inherit;
+  border:1px solid rgba(155,140,190,0.3);
+}
+.j-adaptive-btn-main {
+  background:var(--g-sage-deep); color:#fff; font-weight:600;
+  border-color:transparent;
+}
+.j-adaptive-btn-sec { background:rgba(255,255,255,0.72); color:var(--g-ink-2); }
 </style>
 <script>
 if('serviceWorker' in navigator){
@@ -4650,6 +4720,14 @@ const SELF_CARE_TASK_LIBRARY = [
     level: 'micro', parentTask: 'exercise',
     suggestedFor: ['exercise'],
     icon: '🤲', type: 'task'
+  },
+  {
+    id: 'movement-stand-and-move',
+    label: 'לעמוד רגע ולהזיז את הגוף איך שמתאים',
+    family: 'movement', plantFamily: 'movement',
+    level: 'micro', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '🤸', type: 'task'
   },
 
   // ── אוויר צח (fresh air) ──────────────────────────────────────────────
@@ -7836,7 +7914,8 @@ function pctLabel(pct) {
 // State
 var _gentleHabitCache = null;
 // _gentleHabitCache shape:
-// { growing: [{kind, count14}], microCandidate: {kind,label,microLabel}|null }
+// { growing: [{kind, count14}], microCandidate: {kind,label,microLabel}|null,
+//   adaptiveCandidate: {kind}|null }
 
 var _gentleHabitOverrides = {};
 // _gentleHabitOverrides shape:
@@ -7844,6 +7923,34 @@ var _gentleHabitOverrides = {};
 
 var _dismissedMicroSuggestions = {};
 // { [actionId]: true }  — session-only, not persisted. Clears on page load.
+
+// Adaptive suggestion session state — not persisted, resets on page load.
+var _adaptiveSuggestionState = {
+  dismissedKind:    null,  // kind dismissed this session
+  selectedOptionId: null,  // currently selected option ID
+  cycleOffset:      0,     // how many times "more options" was clicked (×3 index)
+};
+
+// Supported parent tasks for adaptive suggestion, in priority order.
+// water/teeth/breathing/sleep excluded from v1 — see comments in PLANT_FAMILY_BY_ACTION_ID.
+var ADAPTIVE_PARENT_PRIORITY = ['breakfast', 'shower', 'exercise', 'outside'];
+
+// Initial 3 suggested options per parent task (IDs from SELF_CARE_TASK_LIBRARY).
+// These are shown first. Cycling shows the rest of the same family.
+var ADAPTIVE_SUGGESTION_OPTIONS = {
+  breakfast: ['food-bite-before-noon', 'food-small-with-coffee', 'food-place-edible-nearby'],
+  shower:    ['body-change-shirt', 'body-wash-face', 'body-place-clean-clothes'],
+  exercise:  ['movement-shoulder-rolls', 'movement-one-stretch', 'movement-stand-and-move'],
+  outside:   ['fresh-air-open-window', 'fresh-air-stand-by-window', 'fresh-air-open-door'],
+};
+
+// Hebrew user-facing label for each supported parent task (used in card body text).
+var ADAPTIVE_PARENT_TASK_LABEL = {
+  breakfast: 'ארוחת בוקר',
+  shower:    'מקלחת',
+  exercise:  'תנועה',
+  outside:   'אוויר צח',
+};
 
 var GENTLE_HABIT_KEY = 'tori_gentle_habit_v1';
 
@@ -7869,6 +7976,8 @@ function getPlantStageKey(count14) {
 async function loadGentleHabitData() {
   var counts14 = {};
   var counts7  = {};
+  var counts5  = {};      // last 5 days — used for adaptive suggestion detection
+  var daysWithData5 = 0; // number of days in last 5 that had any saved data
 
   for (var i = 0; i < 14; i++) {
     var dayKey = getDateKey(-i);
@@ -7876,16 +7985,19 @@ async function loadGentleHabitData() {
       var raw = await store.get('day:' + dayKey);
       if (!raw) continue;
       var d = JSON.parse(raw);
+      if (i < 5) daysWithData5++;   // count days with data in last 5
       var tasks = d.tasks || {};
       TASK_IDS.forEach(function(id) {
         if (tasks[id]) {
           counts14[id] = (counts14[id] || 0) + 1;
           if (i < 7) counts7[id] = (counts7[id] || 0) + 1;
+          if (i < 5) counts5[id] = (counts5[id] || 0) + 1;
         }
       });
       if ((d.water || 0) >= 3) {
         counts14.water = (counts14.water || 0) + 1;
         if (i < 7) counts7.water = (counts7.water || 0) + 1;
+        if (i < 5) counts5.water  = (counts5.water  || 0) + 1;
       }
       // Exercise: stored separately in d.exChosen (not in d.tasks).
       // Any selected easy or hard option counts as one movement day.
@@ -7894,6 +8006,7 @@ async function loadGentleHabitData() {
       if (ex && (ex.easy || ex.hard)) {
         counts14.exercise = (counts14.exercise || 0) + 1;
         if (i < 7) counts7.exercise = (counts7.exercise || 0) + 1;
+        if (i < 5) counts5.exercise = (counts5.exercise || 0) + 1;
       }
     } catch(e) {}
   }
@@ -7930,7 +8043,25 @@ async function loadGentleHabitData() {
     }
   });
 
-  _gentleHabitCache = { growing: growing, microCandidate: microCandidate };
+  // Adaptive suggestion candidate:
+  // Trigger: supported parent task not marked 4+ of last 5 days (counts5 <= 1)
+  // AND that task is not already in the growing list (no need to suggest smaller if growing).
+  // Requires at least 3 days of recorded data in last 5 to avoid false triggers for new users.
+  var adaptiveCandidate = null;
+  if (daysWithData5 >= 3) {
+    var growingKindSet = {};
+    growing.forEach(function(g) { growingKindSet[g.kind] = true; });
+    for (var ai = 0; ai < ADAPTIVE_PARENT_PRIORITY.length; ai++) {
+      var pt = ADAPTIVE_PARENT_PRIORITY[ai];
+      if (growingKindSet[pt]) continue;          // already growing — skip
+      if ((counts5[pt] || 0) <= 1) {             // done 0 or 1 times = struggling
+        adaptiveCandidate = { kind: pt };
+        break;
+      }
+    }
+  }
+
+  _gentleHabitCache = { growing: growing, microCandidate: microCandidate, adaptiveCandidate: adaptiveCandidate };
 
   // Load overrides from storage
   try {
@@ -7979,6 +8110,57 @@ function dismissMicroTaskSuggestion(actionId) {
   if (jv && jv.classList.contains('active')) { renderJourneyTab(); }
 }
 
+// ── Adaptive suggestion helpers ──────────────────────────────────────────────
+
+// Look up a SELF_CARE_TASK_LIBRARY entry by id.
+function getSelfCareTaskById(id) {
+  for (var i = 0; i < SELF_CARE_TASK_LIBRARY.length; i++) {
+    if (SELF_CARE_TASK_LIBRARY[i].id === id) return SELF_CARE_TASK_LIBRARY[i];
+  }
+  return null;
+}
+
+// User selected a suggestion option — show the "selected" state in the card.
+function selectAdaptiveOption(optionId) {
+  _adaptiveSuggestionState.selectedOptionId = optionId;
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) renderJourneyTab();
+}
+
+// Dismiss the adaptive card for this session only (no storage change).
+function dismissAdaptiveSuggestion(kind) {
+  _adaptiveSuggestionState.dismissedKind    = kind;
+  _adaptiveSuggestionState.selectedOptionId = null;
+  _adaptiveSuggestionState.cycleOffset      = 0;
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) renderJourneyTab();
+}
+
+// Cycle to the next batch of options from the same family.
+function cycleAdaptiveOptions(kind) {
+  _adaptiveSuggestionState.cycleOffset     += 3;
+  _adaptiveSuggestionState.selectedOptionId = null;
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) renderJourneyTab();
+}
+
+// Go back to option selection from the "selected" state.
+function clearAdaptiveSelection() {
+  _adaptiveSuggestionState.selectedOptionId = null;
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) renderJourneyTab();
+}
+
+// v1 placeholder — does NOT yet change Today tasks. Full activation in a future pass.
+function tryAdaptiveForWeek(optionId) {
+  showToast('הגרסה הקטנה נשמרת. הפעלה בתוך התפריט היומי תגיע בשלב הבא ✨');
+}
+
+// v1 placeholder — does NOT yet move the task to plus.
+function moveAdaptiveToPlus(kind) {
+  showToast('העברה לפלוס תגיע בשלב הבא 🌱');
+}
+
 // Apply active micro-task overrides to Today tab DOM (safe, does not delete original)
 function applyMicroTaskOverrides() {
   var now = Date.now();
@@ -7997,6 +8179,106 @@ function applyMicroTaskOverrides() {
       nameEl.parentNode.insertBefore(badge, nameEl.nextSibling);
     }
   });
+}
+
+// Build the adaptive suggestion card HTML.
+// Returns '' when no candidate, dismissed this session, or not enough history.
+function buildAdaptiveSuggestionHTML(cache) {
+  var candidate = cache && cache.adaptiveCandidate;
+  if (!candidate) return '';
+
+  var kind = candidate.kind;
+  if (_adaptiveSuggestionState.dismissedKind === kind) return '';
+
+  var taskLabel  = ADAPTIVE_PARENT_TASK_LABEL[kind] || kind;
+  var plantKey   = PLANT_FAMILY_BY_ACTION_ID[kind];       // e.g. 'nutrition'
+  var familyStr  = SELF_CARE_PARENT_TASK_TO_FAMILY[kind]; // e.g. 'food'
+  var familyLabel = SELF_CARE_FAMILY_LABELS[familyStr] || '';
+
+  // Use the bud stage image — signals "beginning, small door"
+  var plantImgSrc = '';
+  if (plantKey && PLANT_STAGE_ASSETS[plantKey] && PLANT_STAGE_ASSETS[plantKey].stages) {
+    plantImgSrc = PLANT_STAGE_ASSETS[plantKey].stages.bud || '';
+  }
+
+  var selectedId   = _adaptiveSuggestionState.selectedOptionId;
+  var selectedTask = selectedId ? getSelfCareTaskById(selectedId) : null;
+
+  // Build ordered option list: initial 3 first, then rest of same family for cycling.
+  var initialIds = ADAPTIVE_SUGGESTION_OPTIONS[kind] || [];
+  var allFamilyTasks = [];
+  initialIds.forEach(function(id) {
+    var t = getSelfCareTaskById(id);
+    if (t) allFamilyTasks.push(t);
+  });
+  SELF_CARE_TASK_LIBRARY.forEach(function(t) {
+    if (t.family === familyStr && initialIds.indexOf(t.id) === -1) allFamilyTasks.push(t);
+  });
+
+  // Determine which 3 to display based on cycleOffset.
+  var total = allFamilyTasks.length;
+  var offset = total > 0 ? (_adaptiveSuggestionState.cycleOffset % total) : 0;
+  var displayTasks = [];
+  for (var si = 0; si < 3 && total > 0; si++) {
+    displayTasks.push(allFamilyTasks[(offset + si) % total]);
+  }
+
+  var html = '<div class="j-adaptive-card">';
+
+  // Plant image + family tag header
+  if (plantImgSrc || familyLabel) {
+    html += '<div class="j-adaptive-plant-row">'
+      + (plantImgSrc ? '<img src="' + plantImgSrc + '" alt="" class="j-adaptive-plant-img">' : '')
+      + (familyLabel ? '<span class="j-adaptive-family-tag">' + _escH(familyLabel) + '</span>' : '')
+      + '</div>';
+  }
+
+  if (selectedTask) {
+    // ── Selected state ──
+    html += '<div class="j-adaptive-title">נבחרה הגרסה:</div>'
+      + '<div class="j-adaptive-selected-label">' + _escH(selectedTask.label) + '</div>'
+      + '<div class="j-adaptive-roots">גם גרסה קטנה יודעת להצמיח שורשים.</div>'
+      + '<div class="j-adaptive-actions">'
+      + '<button class="j-adaptive-btn j-adaptive-btn-main"'
+        + ' onclick="tryAdaptiveForWeek(\'' + selectedTask.id + '\')">'
+        + 'ננסה את זה לשבוע</button>'
+      + '<button class="j-adaptive-btn j-adaptive-btn-sec" onclick="clearAdaptiveSelection()">'
+        + 'לבחור גרסה אחרת</button>'
+      + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
+        + ' onclick="dismissAdaptiveSuggestion(\'' + kind + '\')">'
+        + 'לא עכשיו</button>'
+      + '</div>';
+  } else {
+    // ── Default state: show suggestion options ──
+    html += '<div class="j-adaptive-title">אולי ננסה גרסה שמתאימה עכשיו?</div>'
+      + '<div class="j-adaptive-body">נראה ש״' + _escH(taskLabel) + '״ פחות נוח בימים האחרונים.'
+        + ' אפשר לבחור גרסה קטנה מאותו תחום — כזו שתיתן להרגל מקום להתחיל בלי להעמיס.</div>'
+      + '<div class="j-adaptive-options">';
+
+    displayTasks.forEach(function(t) {
+      html += '<button class="j-adaptive-option" onclick="selectAdaptiveOption(\'' + t.id + '\')">'
+        + '<span class="j-adaptive-opt-icon">' + (t.icon || '🌱') + '</span>'
+        + '<span class="j-adaptive-opt-label">' + _escH(t.label) + '</span>'
+        + '</button>';
+    });
+
+    html += '</div>'
+      + '<div class="j-adaptive-footer">'
+      + '<button class="j-adaptive-link" onclick="cycleAdaptiveOptions(\'' + kind + '\')">'
+        + 'תני לי עוד אפשרות מאותו תחום</button>'
+      + '</div>'
+      + '<div class="j-adaptive-secondary">'
+      + '<button class="j-adaptive-link j-adaptive-link-muted"'
+        + ' onclick="dismissAdaptiveSuggestion(\'' + kind + '\')">'
+        + 'להשאיר כמו שזה</button>'
+      + '<button class="j-adaptive-link j-adaptive-link-muted"'
+        + ' onclick="moveAdaptiveToPlus(\'' + kind + '\')">'
+        + 'להעביר לפלוס בינתיים</button>'
+      + '</div>';
+  }
+
+  html += '</div>';
+  return html;
 }
 
 // Build the gentle habit panel HTML — v2 (plant family visual upgrade)
@@ -8068,6 +8350,9 @@ function buildGentleHabitPanelHTML(c) {
     // ── Roots footer — shown when there is at least one card
     content += '<div class="j-plant-roots-footer">גם גרסה קטנה יודעת להצמיח שורשים.</div>';
   }
+
+  // ── Adaptive suggestion card (if a supported task is struggling this week)
+  content += buildAdaptiveSuggestionHTML(cache);
 
   // ── Companion supportive line
   var compLine = c && GENTLE_HABIT_COMPANION_LINES[c.id] ? GENTLE_HABIT_COMPANION_LINES[c.id] : '';

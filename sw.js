@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v32'; // bumped — SELF_CARE_TASK_LIBRARY added (data only, no UI)
+const CACHE = 'body-soul-v33'; // bumped — adaptive suggestion card in מה מתחזק אצלי
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
