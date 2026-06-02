@@ -2584,6 +2584,11 @@ function dayQualifies(cnt) { return cnt >= Math.ceil(totalTasks() * 0.5); }
 function toggleTask(id) {
   s.tasks[id]=!s.tasks[id];
   document.getElementById('tc-'+id).classList.toggle('done',!!s.tasks[id]);
+  // QA: log once when an adaptive override is active for this task
+  var _ov = _gentleHabitOverrides && _gentleHabitOverrides[id];
+  if (_ov && (_ov.activeUntil||0) > Date.now()) {
+    console.log('[Adaptive override tracked]', 'displayLabel="'+_ov.microLabel+'"', 'parentTask="'+id+'"', 'storedAs="tasks.'+id+'"');
+  }
   if(s.tasks[id]) {
     showToast(pickRandom(TASK_MSGS[id]||ENCOURAGEMENTS));
     const TASK_PTS={breakfast:10,lunch:10,dinner:10,shower:10,breathing:8,sleep:8,outside:8};
