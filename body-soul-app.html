@@ -7934,6 +7934,7 @@ var _adaptiveSuggestionState = {
   dismissedKind:    null,  // kind dismissed this session
   selectedOptionId: null,  // currently selected option ID
   cycleOffset:      0,     // how many times "more options" was clicked (×3 index)
+  switchingKind:    null,  // kind whose picker is currently open (session-only)
 };
 
 // Supported parent tasks for adaptive suggestion, in priority order.
@@ -8224,6 +8225,38 @@ function keepAdaptiveForWeek() {
   showToast('ממשיכות עם הגרסה הקטנה לשבוע 🌱');
 }
 
+// Open the same-domain picker inside the active-override card (session-only).
+function openAdaptivePicker(kind) {
+  _adaptiveSuggestionState.switchingKind = kind;
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) renderJourneyTab();
+}
+
+// Close the picker without changing the active override.
+function closeAdaptivePicker() {
+  _adaptiveSuggestionState.switchingKind = null;
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) renderJourneyTab();
+}
+
+// Switch to a different option within the same active override.
+// Keeps parentTask, originalLabel, activeUntil — only updates the display label and optionId.
+async function switchAdaptiveOption(kind, optionId) {
+  var task = getSelfCareTaskById(optionId);
+  if (!task || !_gentleHabitOverrides[kind]) return;
+
+  _gentleHabitOverrides[kind].microLabel       = task.label;
+  _gentleHabitOverrides[kind].selectedOptionId = task.id;
+  // activeUntil, originalLabel, createdAt, parentTask — intentionally unchanged
+
+  try { await store.set(GENTLE_HABIT_KEY, JSON.stringify(_gentleHabitOverrides)); } catch(e) {}
+  applyMicroTaskOverrides();       // update Today card label immediately
+  _adaptiveSuggestionState.switchingKind = null;
+  showToast('עברתי ל"' + task.label + '" 🌱');
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) renderJourneyTab();
+}
+
 // v1 placeholder — does NOT yet move the task to plus.
 function moveAdaptiveToPlus(kind) {
   showToast('העברה לפלוס תגיע בשלב הבא 🌱');
@@ -8281,17 +8314,53 @@ function buildAdaptiveSuggestionHTML(cache) {
           + (familyLbl2 ? '<span class="j-adaptive-family-tag">' + _escH(familyLbl2) + '</span>' : '')
           + '</div>';
       }
-      html2 += '<div class="j-adaptive-selected-label">' + _escH(activeOv.microLabel) + '</div>'
-        + '<div class="j-adaptive-roots">לשבוע הקרוב 🌱</div>'
-        + '<div class="j-adaptive-actions">'
-        + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
-          + ' onclick="cancelAdaptiveOverride(\'' + activeKind + '\')">'
-          + 'לחזור ל' + _escH(activeOv.originalLabel) + '</button>'
-        + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
-          + ' onclick="cancelAdaptiveOverride(\'' + activeKind + '\')">'
-          + 'לבחור משהו אחר</button>'
-        + '</div>'
-        + '</div>';
+
+      if (_adaptiveSuggestionState.switchingKind === activeKind) {
+        // ── Picker state: choose a different same-domain option ──
+        var pickerIds = ADAPTIVE_SUGGESTION_OPTIONS[activeKind] || [];
+        html2 += '<div class="j-adaptive-title">לבחור גרסה אחרת:</div>'
+          + '<div class="j-adaptive-options">';
+        pickerIds.forEach(function(oid) {
+          var pt = getSelfCareTaskById(oid);
+          if (!pt) return;
+          var isCurrent = (oid === activeOv.selectedOptionId);
+          if (isCurrent) {
+            html2 += '<button class="j-adaptive-option" disabled'
+              + ' style="opacity:0.42;cursor:default">'
+              + '<span class="j-adaptive-opt-icon">' + (pt.icon || '🌱') + '</span>'
+              + '<span class="j-adaptive-opt-label">' + _escH(pt.label) + '</span>'
+              + '</button>';
+          } else {
+            html2 += '<button class="j-adaptive-option"'
+              + ' onclick="switchAdaptiveOption(\'' + activeKind + '\',\'' + pt.id + '\')">'
+              + '<span class="j-adaptive-opt-icon">' + (pt.icon || '🌱') + '</span>'
+              + '<span class="j-adaptive-opt-label">' + _escH(pt.label) + '</span>'
+              + '</button>';
+          }
+        });
+        html2 += '</div>'
+          + '<div class="j-adaptive-actions">'
+          + '<button class="j-adaptive-btn j-adaptive-btn-sec" onclick="closeAdaptivePicker()">'
+            + 'להשאיר את ' + _escH(activeOv.microLabel) + '</button>'
+          + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
+            + ' onclick="cancelAdaptiveOverride(\'' + activeKind + '\')">'
+            + 'לחזור ל' + _escH(activeOv.originalLabel) + '</button>'
+          + '</div>';
+      } else {
+        // ── Compact active state ──
+        html2 += '<div class="j-adaptive-selected-label">' + _escH(activeOv.microLabel) + '</div>'
+          + '<div class="j-adaptive-roots">לשבוע הקרוב 🌱</div>'
+          + '<div class="j-adaptive-actions">'
+          + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
+            + ' onclick="cancelAdaptiveOverride(\'' + activeKind + '\')">'
+            + 'לחזור ל' + _escH(activeOv.originalLabel) + '</button>'
+          + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
+            + ' onclick="openAdaptivePicker(\'' + activeKind + '\')">'
+            + 'לבחור משהו אחר</button>'
+          + '</div>';
+      }
+
+      html2 += '</div>';
       return html2;
     }
   }
