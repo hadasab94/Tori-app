@@ -8214,7 +8214,7 @@ async function cancelAdaptiveOverride(kind) {
   _adaptiveSuggestionState.dismissedKind    = null;
   _adaptiveSuggestionState.selectedOptionId = null;
   _adaptiveSuggestionState.cycleOffset      = 0;
-  showToast('חזרנו לכפתור המקורי 🌿');
+  showToast('החזרתי את הכפתור המקורי 🌿');
   var jv = document.getElementById('view-journey');
   if (jv && jv.classList.contains('active')) renderJourneyTab();
 }
@@ -8289,7 +8289,7 @@ function buildAdaptiveSuggestionHTML(cache) {
           + 'להשאיר לשבוע</button>'
         + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
           + ' onclick="cancelAdaptiveOverride(\'' + activeKind + '\')">'
-          + 'לחזור לכפתור המקורי</button>'
+          + 'לחזור ל' + _escH(activeOv.originalLabel) + '</button>'
         + '</div>'
         + '</div>';
       return html2;
