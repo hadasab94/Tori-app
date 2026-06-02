@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v29'; // bumped — 30 plant stage WebP images + PLANT_STAGE_ASSETS constant
+const CACHE = 'body-soul-v30'; // bumped — habit panel shows stage-specific plant images
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

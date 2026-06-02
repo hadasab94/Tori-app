@@ -1,4 +1,4 @@
-<!-- Tori version: plant-stages-2026-06-02 -->
+<!-- Tori version: stage-images-2026-06-02 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -7410,6 +7410,15 @@ function getGrowthStageForAction(count14) {
   return               { label: 'ניצן קטן',           icon: '🌱', imgSrc: PLANT_STAGE_ICONS.bud,    copy: 'יש כאן התחלה קטנה.' };
 }
 
+// Maps count14 → PLANT_STAGE_ASSETS stage key.
+// wild is intentionally excluded from normal habit flow.
+function getPlantStageKey(count14) {
+  if (count14 >= 10) return 'full';
+  if (count14 >= 6)  return 'growing';
+  if (count14 >= 3)  return 'sprout';
+  return 'bud';
+}
+
 // Load 14-day history and compute cache
 async function loadGentleHabitData() {
   var counts14 = {};
@@ -7571,9 +7580,16 @@ function buildGentleHabitPanelHTML(c) {
       var familyAsset = familyKey ? PLANT_FAMILY_ASSETS[familyKey] : null;
 
       if (familyAsset) {
-        // ── Plant family card: image + family label + action label + stage
+        // Resolve stage-specific image; fall back to family anchor image
+        var stageKey       = getPlantStageKey(item.count14);
+        var stageAssetMap  = PLANT_STAGE_ASSETS[familyKey];
+        var plantImgSrc    = (stageAssetMap && stageAssetMap.stages[stageKey])
+                              ? stageAssetMap.stages[stageKey]
+                              : familyAsset.src;
+
+        // ── Plant family card: stage image + family label + action label + stage
         content += '<div class="j-plant-card">'
-          + '<img src="' + familyAsset.src + '" alt="' + familyAsset.label + '" class="j-plant-card-img">'
+          + '<img src="' + plantImgSrc + '" alt="' + familyAsset.label + '" class="j-plant-card-img">'
           + '<div class="j-plant-card-body">'
           + '<div class="j-plant-card-family">' + familyAsset.label + '</div>'
           + '<div class="j-plant-card-name">' + uiLabel + '</div>'
