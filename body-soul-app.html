@@ -1,4 +1,4 @@
-<!-- Tori version: adaptive-suggestion-v1-2026-06-02 -->
+<!-- Tori version: adaptive-weekly-override-2026-06-02 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -8080,24 +8080,32 @@ async function loadGentleHabitData() {
   });
   if (ovChanged) { try { await store.set(GENTLE_HABIT_KEY, JSON.stringify(_gentleHabitOverrides)); } catch(e) {} }
 
+  // Re-apply overrides to Today DOM — handles the page-reload timing gap
+  // (renderFromState runs before loadGentleHabitData completes on first load).
+  applyMicroTaskOverrides();
+
   // Re-render journey tab if currently visible
   var jv = document.getElementById('view-journey');
   if (jv && jv.classList.contains('active')) { renderJourneyTab(); }
 }
 
-// Activate a micro-task override for one week
-async function activateMicroTaskForWeek(actionId, originalLabel, microLabel) {
+// Activate a micro-task override for one week.
+// selectedOptionId and plantFamily are optional extras used by the adaptive card.
+// customToast: if provided, shown instead of the default toast.
+async function activateMicroTaskForWeek(actionId, originalLabel, microLabel, selectedOptionId, plantFamily, customToast) {
   var now = Date.now();
   _gentleHabitOverrides[actionId] = {
-    originalLabel: originalLabel,
-    microLabel:    microLabel,
-    createdAt:     now,
-    activeUntil:   now + 7 * 24 * 60 * 60 * 1000,
-    source:        'gentle-habit-panel',
+    originalLabel:    originalLabel,
+    microLabel:       microLabel,
+    selectedOptionId: selectedOptionId || null,
+    plantFamily:      plantFamily      || null,
+    createdAt:        now,
+    activeUntil:      now + 7 * 24 * 60 * 60 * 1000,
+    source:           'adaptive-suggestion',
   };
   try { await store.set(GENTLE_HABIT_KEY, JSON.stringify(_gentleHabitOverrides)); } catch(e) {}
   applyMicroTaskOverrides();
-  showToast('סגור. השבוע ננסה גרסה קטנה יותר. קטן זה לא פחות — קטן זה יותר אפשרי.');
+  showToast(customToast || 'סגור. השבוע ננסה גרסה קטנה יותר. קטן זה לא פחות — קטן זה יותר אפשרי.');
   var jv = document.getElementById('view-journey');
   if (jv && jv.classList.contains('active')) { renderJourneyTab(); }
 }
@@ -8151,9 +8159,64 @@ function clearAdaptiveSelection() {
   if (jv && jv.classList.contains('active')) renderJourneyTab();
 }
 
-// v1 placeholder — does NOT yet change Today tasks. Full activation in a future pass.
-function tryAdaptiveForWeek(optionId) {
-  showToast('הגרסה הקטנה נשמרת. הפעלה בתוך התפריט היומי תגיע בשלב הבא ✨');
+// Activate the selected smaller option as a 7-day Today override.
+// Supported parent tasks: breakfast, shower, outside.
+// exercise is deferred — composite card, needs a separate implementation step.
+async function tryAdaptiveForWeek(optionId) {
+  var task = getSelfCareTaskById(optionId);
+  if (!task) { showToast('לא נמצאה הגרסה הנבחרת.'); return; }
+
+  var parentId = task.parentTask;
+  if (!parentId) { showToast('לא ניתן להפעיל — אין משימה הורה.'); return; }
+
+  // exercise is composite (no tc-exercise card) — defer.
+  if (parentId === 'exercise') {
+    showToast('הפעלת גרסת תנועה בתוך Today תגיע בשלב הבא 🌱');
+    return;
+  }
+
+  var originalLabel = TASK_UI_LABELS[parentId] || TASK_DISPLAY_LABELS[parentId] || parentId;
+  var plantFamily   = PLANT_FAMILY_BY_ACTION_ID[parentId] || null;
+
+  await activateMicroTaskForWeek(
+    parentId,
+    originalLabel,
+    task.label,
+    task.id,
+    plantFamily,
+    'שמתי את "' + task.label + '" במסך היום לשבוע הקרוב 🌱'
+  );
+
+  // Clear session selection — Journey will show active-week card instead.
+  _adaptiveSuggestionState.selectedOptionId = null;
+  _adaptiveSuggestionState.dismissedKind    = null;
+}
+
+// Cancel active override — restores original Today label, re-enables suggestion card.
+async function cancelAdaptiveOverride(kind) {
+  if (_gentleHabitOverrides && _gentleHabitOverrides[kind]) {
+    delete _gentleHabitOverrides[kind];
+    try { await store.set(GENTLE_HABIT_KEY, JSON.stringify(_gentleHabitOverrides)); } catch(e) {}
+  }
+  var card = document.getElementById('tc-' + kind);
+  if (card) {
+    var origLabel = TASK_UI_LABELS[kind] || TASK_DISPLAY_LABELS[kind] || kind;
+    var nameEl = card.querySelector('.t-name');
+    if (nameEl) nameEl.textContent = origLabel;
+    var badge = card.querySelector('.micro-badge');
+    if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+  }
+  _adaptiveSuggestionState.dismissedKind    = null;
+  _adaptiveSuggestionState.selectedOptionId = null;
+  _adaptiveSuggestionState.cycleOffset      = 0;
+  showToast('חזרנו לכפתור המקורי 🌿');
+  var jv = document.getElementById('view-journey');
+  if (jv && jv.classList.contains('active')) renderJourneyTab();
+}
+
+// Acknowledge active override in Journey card — affirm without changing state.
+function keepAdaptiveForWeek() {
+  showToast('ממשיכות עם הגרסה הקטנה לשבוע 🌱');
 }
 
 // v1 placeholder — does NOT yet move the task to plus.
@@ -8184,6 +8247,50 @@ function applyMicroTaskOverrides() {
 // Build the adaptive suggestion card HTML.
 // Returns '' when no candidate, dismissed this session, or not enough history.
 function buildAdaptiveSuggestionHTML(cache) {
+  var now = Date.now();
+
+  // ── Active override state: always shown if an override is persisted and live.
+  // Check before looking at adaptiveCandidate — override takes priority.
+  if (_gentleHabitOverrides) {
+    var activeKind = null;
+    var activeOv   = null;
+    Object.keys(_gentleHabitOverrides).forEach(function(k) {
+      var ov = _gentleHabitOverrides[k];
+      if (ov && (ov.activeUntil || 0) > now && !activeKind) {
+        activeKind = k;
+        activeOv   = ov;
+      }
+    });
+    if (activeOv) {
+      var plantKey2   = activeOv.plantFamily || PLANT_FAMILY_BY_ACTION_ID[activeKind];
+      var familyStr2  = SELF_CARE_PARENT_TASK_TO_FAMILY[activeKind] || '';
+      var familyLbl2  = SELF_CARE_FAMILY_LABELS[familyStr2] || '';
+      var imgSrc2     = '';
+      if (plantKey2 && PLANT_STAGE_ASSETS[plantKey2]) {
+        imgSrc2 = PLANT_STAGE_ASSETS[plantKey2].stages.sprout || '';
+      }
+      var html2 = '<div class="j-adaptive-card">';
+      if (imgSrc2 || familyLbl2) {
+        html2 += '<div class="j-adaptive-plant-row">'
+          + (imgSrc2 ? '<img src="' + imgSrc2 + '" alt="" class="j-adaptive-plant-img">' : '')
+          + (familyLbl2 ? '<span class="j-adaptive-family-tag">' + _escH(familyLbl2) + '</span>' : '')
+          + '</div>';
+      }
+      html2 += '<div class="j-adaptive-title">השבוע אנחנו מנסות את:</div>'
+        + '<div class="j-adaptive-selected-label">' + _escH(activeOv.microLabel) + '</div>'
+        + '<div class="j-adaptive-roots">גם גרסה קטנה יודעת להצמיח שורשים.</div>'
+        + '<div class="j-adaptive-actions">'
+        + '<button class="j-adaptive-btn j-adaptive-btn-main" onclick="keepAdaptiveForWeek()">'
+          + 'להשאיר לשבוע</button>'
+        + '<button class="j-adaptive-btn j-adaptive-btn-sec"'
+          + ' onclick="cancelAdaptiveOverride(\'' + activeKind + '\')">'
+          + 'לחזור לכפתור המקורי</button>'
+        + '</div>'
+        + '</div>';
+      return html2;
+    }
+  }
+
   var candidate = cache && cache.adaptiveCandidate;
   if (!candidate) return '';
 

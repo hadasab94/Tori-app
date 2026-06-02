@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v33'; // bumped — adaptive suggestion card in מה מתחזק אצלי
+const CACHE = 'body-soul-v34'; // bumped — adaptive weekly override activates Today card label
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
