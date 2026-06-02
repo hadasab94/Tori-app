@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v28'; // bumped — מה מתחזק אצלי visual upgrade with plant family images
+const CACHE = 'body-soul-v29'; // bumped — 30 plant stage WebP images + PLANT_STAGE_ASSETS constant
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

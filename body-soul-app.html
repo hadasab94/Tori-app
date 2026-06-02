@@ -1,4 +1,4 @@
-<!-- Tori version: habit-panel-visual-2026-06-01 -->
+<!-- Tori version: plant-stages-2026-06-02 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -4220,6 +4220,80 @@ const PLANT_FAMILY_ASSETS = {
 const PLANT_GROWTH_COPY = {
   smallVersionRoots: 'גם גרסה קטנה יודעת להצמיח שורשים.',
   wildBloom: 'כמו שמזכירים במולאן, לפעמים דווקא הפרח שלוקח לו קצת יותר זמן לפרוח — מתגלה כיפה במיוחד.'
+};
+
+// ── Stage label display names
+const PLANT_STAGE_LABELS = {
+  bud:     'ניצן קטן',
+  sprout:  'נבט ראשון',
+  growing: 'צמח מתחזק',
+  full:    'עציץ שמחזיק',
+  wild:    'עציץ פרא מיוחד',
+};
+
+// ── Full 5-stage image map per plant family
+// Not rendered yet — asset preparation only.
+const PLANT_STAGE_ASSETS = {
+  water: {
+    label: 'שתייה',
+    stages: {
+      bud:     './assets/plants/stages/water/water-bud.webp',
+      sprout:  './assets/plants/stages/water/water-sprout.webp',
+      growing: './assets/plants/stages/water/water-growing.webp',
+      full:    './assets/plants/stages/water/water-full.webp',
+      wild:    './assets/plants/stages/water/water-wild.webp',
+    }
+  },
+  nutrition: {
+    label: 'הזנה',
+    stages: {
+      bud:     './assets/plants/stages/nutrition/nutrition-bud.webp',
+      sprout:  './assets/plants/stages/nutrition/nutrition-sprout.webp',
+      growing: './assets/plants/stages/nutrition/nutrition-growing.webp',
+      full:    './assets/plants/stages/nutrition/nutrition-full.webp',
+      wild:    './assets/plants/stages/nutrition/nutrition-wild.webp',
+    }
+  },
+  bodyRefresh: {
+    label: 'רענון גוף',
+    stages: {
+      bud:     './assets/plants/stages/body-refresh/body-refresh-bud.webp',
+      sprout:  './assets/plants/stages/body-refresh/body-refresh-sprout.webp',
+      growing: './assets/plants/stages/body-refresh/body-refresh-growing.webp',
+      full:    './assets/plants/stages/body-refresh/body-refresh-full.webp',
+      wild:    './assets/plants/stages/body-refresh/body-refresh-wild.webp',
+    }
+  },
+  teeth: {
+    label: 'פה ושיניים',
+    stages: {
+      bud:     './assets/plants/stages/teeth/teeth-bud.webp',
+      sprout:  './assets/plants/stages/teeth/teeth-sprout.webp',
+      growing: './assets/plants/stages/teeth/teeth-growing.webp',
+      full:    './assets/plants/stages/teeth/teeth-full.webp',
+      wild:    './assets/plants/stages/teeth/teeth-wild.webp',
+    }
+  },
+  movement: {
+    label: 'תנועה',
+    stages: {
+      bud:     './assets/plants/stages/movement/movement-bud.webp',
+      sprout:  './assets/plants/stages/movement/movement-sprout.webp',
+      growing: './assets/plants/stages/movement/movement-growing.webp',
+      full:    './assets/plants/stages/movement/movement-full.webp',
+      wild:    './assets/plants/stages/movement/movement-wild.webp',
+    }
+  },
+  freshAir: {
+    label: 'אוויר צח',
+    stages: {
+      bud:     './assets/plants/stages/fresh-air/fresh-air-bud.webp',
+      sprout:  './assets/plants/stages/fresh-air/fresh-air-sprout.webp',
+      growing: './assets/plants/stages/fresh-air/fresh-air-growing.webp',
+      full:    './assets/plants/stages/fresh-air/fresh-air-full.webp',
+      wild:    './assets/plants/stages/fresh-air/fresh-air-wild.webp',
+    }
+  },
 };
 
 // ===== COMPANION PHRASE BANKS =====
