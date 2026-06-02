@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v31'; // bumped — movement/exercise now tracked in gentle habit panel
+const CACHE = 'body-soul-v32'; // bumped — SELF_CARE_TASK_LIBRARY added (data only, no UI)
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

@@ -1,4 +1,4 @@
-<!-- Tori version: movement-tracking-2026-06-02 -->
+<!-- Tori version: self-care-library-2026-06-02 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -4305,6 +4305,441 @@ const PLANT_STAGE_ASSETS = {
       wild:    './assets/plants/stages/fresh-air/fresh-air-wild.webp',
     }
   },
+};
+
+// ===== SELF-CARE TASK LIBRARY =====
+// Structured library of suggested self-care tasks for future adaptive use.
+// NOT rendered yet. Will later support:
+//   - "גרסה שמתאימה עכשיו" in "מה מתחזק אצלי"
+//   - moving tasks to the plus/add area
+//   - connecting tasks to plant families and growth stages
+//
+// Field guide:
+//   id           — stable ASCII key (never change once set)
+//   label        — Hebrew user-facing text
+//   family       — self-care domain key (see SELF_CARE_FAMILY_LABELS)
+//   plantFamily  — matches PLANT_STAGE_ASSETS key for image lookup
+//   level        — 'micro' | 'tiny' | 'small' | 'medium' | 'full'
+//   parentTask   — Today action ID this replaces / scales from (null if standalone)
+//   suggestedFor — Today action IDs that could surface this task
+//   icon         — emoji shown in UI
+//   type         — 'task' | 'scalableCounter'
+//
+// IMPORTANT: food family uses user-facing label "אוכל" (not "הזנה").
+// plantFamily: 'nutrition' is kept internally for asset-key compatibility only.
+//
+// IMPORTANT: teeth tasks are library-only.
+// Do NOT add teeth to TASK_IDS. Do NOT show teeth on Today.
+// See product decision comment in PLANT_FAMILY_BY_ACTION_ID.
+
+const SELF_CARE_TASK_LIBRARY = [
+
+  // ── אוכל (food / nutrition) ──────────────────────────────────────────
+  {
+    id: 'food-breakfast-tasty',
+    label: 'ארוחת בוקר טעימה',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'full', parentTask: 'breakfast',
+    suggestedFor: ['breakfast'],
+    icon: '🍳', type: 'task'
+  },
+  {
+    id: 'food-breakfast-small',
+    label: 'ארוחת בוקר קטנה',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'medium', parentTask: 'breakfast',
+    suggestedFor: ['breakfast'],
+    icon: '🥣', type: 'task'
+  },
+  {
+    id: 'food-bite-before-noon',
+    label: 'ביס ממשהו עד 12:00',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'micro', parentTask: 'breakfast',
+    suggestedFor: ['breakfast'],
+    icon: '🍎', type: 'task'
+  },
+  {
+    id: 'food-small-with-coffee',
+    label: 'משהו קטן ליד הקפה / שוקו',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'tiny', parentTask: 'breakfast',
+    suggestedFor: ['breakfast'],
+    icon: '☕', type: 'task'
+  },
+  {
+    id: 'food-place-edible-nearby',
+    label: 'להניח משהו אכיל לידך עד 12:00',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'micro', parentTask: 'breakfast',
+    suggestedFor: ['breakfast'],
+    icon: '🫙', type: 'task'
+  },
+  {
+    id: 'food-choose-for-later',
+    label: 'לבחור משהו קטן שאפשר לאכול אחר כך',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'micro', parentTask: 'breakfast',
+    suggestedFor: ['breakfast', 'lunch'],
+    icon: '🧆', type: 'task'
+  },
+  {
+    id: 'food-open-and-leave-nearby',
+    label: 'לפתוח משהו אכיל ולהשאיר לידך',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'micro', parentTask: 'breakfast',
+    suggestedFor: ['breakfast', 'lunch'],
+    icon: '🫐', type: 'task'
+  },
+  {
+    id: 'food-visible-snack',
+    label: 'לשים פרי / קרקר / יוגורט במקום נראה',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'tiny', parentTask: 'breakfast',
+    suggestedFor: ['breakfast', 'lunch', 'dinner'],
+    icon: '🍇', type: 'task'
+  },
+
+  // ── שתייה (water) ─────────────────────────────────────────────────────
+  // Water uses scalableCounter — the target grows gradually over time.
+  // Do NOT change the current 3-sip cup behavior based on this library yet.
+  {
+    id: 'water-3-sips',
+    label: '3 שלוקים',
+    family: 'water', plantFamily: 'water',
+    level: 'micro', parentTask: 'water',
+    suggestedFor: ['water'],
+    icon: '💧', type: 'scalableCounter'
+  },
+  {
+    id: 'water-4-sips',
+    label: '4 שלוקים',
+    family: 'water', plantFamily: 'water',
+    level: 'tiny', parentTask: 'water',
+    suggestedFor: ['water'],
+    icon: '💧', type: 'scalableCounter'
+  },
+  {
+    id: 'water-5-sips',
+    label: '5 שלוקים',
+    family: 'water', plantFamily: 'water',
+    level: 'small', parentTask: 'water',
+    suggestedFor: ['water'],
+    icon: '💧', type: 'scalableCounter'
+  },
+  {
+    id: 'water-small-cup',
+    label: 'כוס קטנה',
+    family: 'water', plantFamily: 'water',
+    level: 'medium', parentTask: 'water',
+    suggestedFor: ['water'],
+    icon: '🥛', type: 'scalableCounter'
+  },
+  {
+    id: 'water-cup',
+    label: 'כוס מים',
+    family: 'water', plantFamily: 'water',
+    level: 'full', parentTask: 'water',
+    suggestedFor: ['water'],
+    icon: '🥤', type: 'scalableCounter'
+  },
+
+  // ── רענון גוף (body refresh) ──────────────────────────────────────────
+  {
+    id: 'body-nice-shower',
+    label: 'מקלחת מפנקת',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'full', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '🚿', type: 'task'
+  },
+  {
+    id: 'body-short-shower',
+    label: 'מקלחת קצרה',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'medium', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '🚿', type: 'task'
+  },
+  {
+    id: 'body-wash-face-change-shirt',
+    label: 'לשטוף פנים + להחליף חולצה',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'small', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '🧼', type: 'task'
+  },
+  {
+    id: 'body-change-shirt',
+    label: 'להחליף חולצה',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'tiny', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '👕', type: 'task'
+  },
+  {
+    id: 'body-wash-face',
+    label: 'לשטוף פנים',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'tiny', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '🧖', type: 'task'
+  },
+  {
+    id: 'body-place-clean-clothes',
+    label: 'לשים מגבת / בגדים נקיים במקום נוח',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'micro', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '🛁', type: 'task'
+  },
+  {
+    id: 'body-wash-hands',
+    label: 'לשטוף ידיים במים נעימים',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'micro', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '🤲', type: 'task'
+  },
+  {
+    id: 'body-splash-face',
+    label: 'להרטיב פנים במים',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'micro', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '💦', type: 'task'
+  },
+  {
+    id: 'body-prepare-clothes',
+    label: 'להכין בגדים לאחר כך',
+    family: 'bodyRefresh', plantFamily: 'bodyRefresh',
+    level: 'micro', parentTask: 'shower',
+    suggestedFor: ['shower'],
+    icon: '🧺', type: 'task'
+  },
+
+  // ── פה ושיניים (teeth) ────────────────────────────────────────────────
+  // LIBRARY ONLY — do NOT add to Today, do NOT add to TASK_IDS.
+  // Entry point: future "גרסה שמתאימה עכשיו" when bodyRefresh streak is low.
+  {
+    id: 'teeth-brush',
+    label: 'צחצוח שיניים',
+    family: 'teeth', plantFamily: 'teeth',
+    level: 'full', parentTask: null,
+    suggestedFor: ['shower'],
+    icon: '🪥', type: 'task'
+  },
+  {
+    id: 'teeth-brush-wash-face',
+    label: 'צחצוח + שטיפת פנים',
+    family: 'teeth', plantFamily: 'teeth',
+    level: 'full', parentTask: null,
+    suggestedFor: ['shower'],
+    icon: '🪥', type: 'task'
+  },
+  {
+    id: 'teeth-short-brush',
+    label: 'צחצוח קצר',
+    family: 'teeth', plantFamily: 'teeth',
+    level: 'small', parentTask: null,
+    suggestedFor: ['shower'],
+    icon: '🪥', type: 'task'
+  },
+  {
+    id: 'teeth-few-seconds',
+    label: 'צחצוח של כמה שניות',
+    family: 'teeth', plantFamily: 'teeth',
+    level: 'tiny', parentTask: null,
+    suggestedFor: ['shower'],
+    icon: '🪥', type: 'task'
+  },
+  {
+    id: 'teeth-rinse-mouth',
+    label: 'שטיפה קצרה של הפה במים',
+    family: 'teeth', plantFamily: 'teeth',
+    level: 'tiny', parentTask: null,
+    suggestedFor: ['shower'],
+    icon: '💧', type: 'task'
+  },
+  {
+    id: 'teeth-place-brush-paste',
+    label: 'לשים מברשת ומשחה ליד הכיור',
+    family: 'teeth', plantFamily: 'teeth',
+    level: 'micro', parentTask: null,
+    suggestedFor: ['shower'],
+    icon: '🪥', type: 'task'
+  },
+  {
+    id: 'teeth-open-paste',
+    label: 'לפתוח את המשחה',
+    family: 'teeth', plantFamily: 'teeth',
+    level: 'micro', parentTask: null,
+    suggestedFor: ['shower'],
+    icon: '🪥', type: 'task'
+  },
+  {
+    id: 'teeth-hold-brush',
+    label: 'להחזיק את המברשת רגע ביד',
+    family: 'teeth', plantFamily: 'teeth',
+    level: 'micro', parentTask: null,
+    suggestedFor: ['shower'],
+    icon: '🪥', type: 'task'
+  },
+
+  // ── תנועה (movement) ──────────────────────────────────────────────────
+  {
+    id: 'movement-youtube-video',
+    label: 'סרטון מיוטיוב של פעילות לטעמך',
+    family: 'movement', plantFamily: 'movement',
+    level: 'full', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '▶️', type: 'task'
+  },
+  {
+    id: 'movement-5-min',
+    label: '5 דקות תנועה',
+    family: 'movement', plantFamily: 'movement',
+    level: 'medium', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '🤸', type: 'task'
+  },
+  {
+    id: 'movement-2-min',
+    label: '2 דקות תנועה',
+    family: 'movement', plantFamily: 'movement',
+    level: 'small', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '🤸', type: 'task'
+  },
+  {
+    id: 'movement-one-stretch',
+    label: 'מתיחה אחת',
+    family: 'movement', plantFamily: 'movement',
+    level: 'tiny', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '🧘', type: 'task'
+  },
+  {
+    id: 'movement-shoulder-rolls',
+    label: 'לסובב כתפיים',
+    family: 'movement', plantFamily: 'movement',
+    level: 'micro', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '💆', type: 'task'
+  },
+  {
+    id: 'movement-neck-gentle',
+    label: 'להזיז צוואר בעדינות',
+    family: 'movement', plantFamily: 'movement',
+    level: 'micro', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '🧘', type: 'task'
+  },
+  {
+    id: 'movement-open-arms',
+    label: 'לפתוח ידיים לצדדים',
+    family: 'movement', plantFamily: 'movement',
+    level: 'micro', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '🙆', type: 'task'
+  },
+  {
+    id: 'movement-shake-hands',
+    label: 'לנער ידיים כמה שניות',
+    family: 'movement', plantFamily: 'movement',
+    level: 'micro', parentTask: 'exercise',
+    suggestedFor: ['exercise'],
+    icon: '🤲', type: 'task'
+  },
+
+  // ── אוויר צח (fresh air) ──────────────────────────────────────────────
+  {
+    id: 'fresh-air-full',
+    label: 'אוויר צח',
+    family: 'freshAir', plantFamily: 'freshAir',
+    level: 'full', parentTask: 'outside',
+    suggestedFor: ['outside'],
+    icon: '🌳', type: 'task'
+  },
+  {
+    id: 'fresh-air-small-walk',
+    label: 'סיבוב קטן ליד הבית',
+    family: 'freshAir', plantFamily: 'freshAir',
+    level: 'medium', parentTask: 'outside',
+    suggestedFor: ['outside'],
+    icon: '🚶', type: 'task'
+  },
+  {
+    id: 'fresh-air-one-minute-outside',
+    label: 'לצאת לדקה',
+    family: 'freshAir', plantFamily: 'freshAir',
+    level: 'small', parentTask: 'outside',
+    suggestedFor: ['outside'],
+    icon: '🌬️', type: 'task'
+  },
+  {
+    id: 'fresh-air-sit-by-window',
+    label: 'לשבת ליד חלון פתוח',
+    family: 'freshAir', plantFamily: 'freshAir',
+    level: 'small', parentTask: 'outside',
+    suggestedFor: ['outside'],
+    icon: '🪟', type: 'task'
+  },
+  {
+    id: 'fresh-air-stand-by-window',
+    label: 'לעמוד רגע ליד חלון פתוח',
+    family: 'freshAir', plantFamily: 'freshAir',
+    level: 'tiny', parentTask: 'outside',
+    suggestedFor: ['outside'],
+    icon: '🪟', type: 'task'
+  },
+  {
+    id: 'fresh-air-open-door',
+    label: 'לפתוח דלת ולהרגיש אוויר לכמה שניות',
+    family: 'freshAir', plantFamily: 'freshAir',
+    level: 'tiny', parentTask: 'outside',
+    suggestedFor: ['outside'],
+    icon: '🚪', type: 'task'
+  },
+  {
+    id: 'fresh-air-look-outside',
+    label: 'להציץ החוצה',
+    family: 'freshAir', plantFamily: 'freshAir',
+    level: 'micro', parentTask: 'outside',
+    suggestedFor: ['outside'],
+    icon: '👀', type: 'task'
+  },
+  {
+    id: 'fresh-air-open-window',
+    label: 'לפתוח חלון',
+    family: 'freshAir', plantFamily: 'freshAir',
+    level: 'micro', parentTask: 'outside',
+    suggestedFor: ['outside'],
+    icon: '🪟', type: 'task'
+  },
+];
+
+// User-facing family labels for SELF_CARE_TASK_LIBRARY.
+// "אוכל" is the correct user-facing label for the food family. Never "הזנה".
+const SELF_CARE_FAMILY_LABELS = {
+  food:        'אוכל',
+  water:       'שתייה',
+  bodyRefresh: 'רענון גוף',
+  teeth:       'פה ושיניים',
+  movement:    'תנועה',
+  freshAir:    'אוויר צח',
+};
+
+// Maps Today action IDs to their self-care family.
+// teeth is intentionally absent — no Today teeth action exists yet.
+const SELF_CARE_PARENT_TASK_TO_FAMILY = {
+  breakfast: 'food',
+  lunch:     'food',
+  dinner:    'food',
+  water:     'water',
+  shower:    'bodyRefresh',
+  exercise:  'movement',
+  outside:   'freshAir',
 };
 
 // ===== COMPANION PHRASE BANKS =====
