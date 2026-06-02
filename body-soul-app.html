@@ -1,4 +1,4 @@
-<!-- Tori version: adaptive-weekly-override-2026-06-02 -->
+<!-- Tori version: plus-library-foundation-2026-06-02 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -7664,6 +7664,7 @@ async function init() {
     Notification.requestPermission();
   }
   await loadCustomTasks();
+  await loadPlusLibraryState(); // plus/library foundation — no UI effect yet
   await loadBotData();
   await loadJourneyPoints();
   await loadGardenState();
@@ -8260,6 +8261,145 @@ async function switchAdaptiveOption(kind, optionId) {
 // v1 placeholder — does NOT yet move the task to plus.
 function moveAdaptiveToPlus(kind) {
   showToast('העברה לפלוס תגיע בשלב הבא 🌱');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PLUS / LIBRARY FOUNDATION
+// ══════════════════════════════════════════════════════════════
+//
+// Infrastructure for a future structured self-care plus/library area.
+// Separate from free-text `custom:tasks` — do NOT mix the two systems.
+//
+// PRODUCT DECISION — future "להעביר לפלוס בינתיים":
+//   The original parent task (e.g. shower) should be stored here as
+//   "available in plus" — not deleted, not permanently hidden.
+//   The active smaller version (adaptive override label) should remain
+//   visible in Today while the weekly trial is active.
+//   Restoring from plus must be explicit, clear, and reversible.
+//   Never use `custom:tasks` for structured library items.
+//
+// IMPORTANT: nothing is rendered, moved, or hidden here yet.
+// These are pure helpers for future use.
+// ──────────────────────────────────────────────────────────────
+
+var PLUS_LIBRARY_KEY = 'plus:libraryTasks';
+
+// Runtime cache — loaded on init, kept in sync with storage.
+var _plusLibraryState = null;
+// Shape:
+// {
+//   hiddenParentTasks: {
+//     shower: {
+//       parentTask: 'shower',
+//       originalLabel: 'מקלחת',
+//       family: 'bodyRefresh',
+//       plantFamily: 'bodyRefresh',
+//       hiddenAt: 'YYYY-MM-DD',
+//       reason: 'adaptive-plus'
+//     }
+//   },
+//   libraryItems: [
+//     {
+//       type: 'library',
+//       libraryId: 'body-change-shirt',
+//       parentTask: 'shower',
+//       family: 'bodyRefresh',
+//       plantFamily: 'bodyRefresh',
+//       addedAt: 'YYYY-MM-DD',
+//       source: 'adaptive-suggestion'
+//     }
+//   ]
+// }
+
+function _emptyPlusLibraryState() {
+  return { hiddenParentTasks: {}, libraryItems: [] };
+}
+
+async function loadPlusLibraryState() {
+  try {
+    var raw = await store.get(PLUS_LIBRARY_KEY);
+    _plusLibraryState = raw ? JSON.parse(raw) : _emptyPlusLibraryState();
+  } catch(e) {
+    _plusLibraryState = _emptyPlusLibraryState();
+  }
+}
+
+async function savePlusLibraryState(state) {
+  _plusLibraryState = state;
+  try { await store.set(PLUS_LIBRARY_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function getPlusLibraryState() {
+  return _plusLibraryState || _emptyPlusLibraryState();
+}
+
+// Returns true if the given parent task ID is currently in the plus/library area.
+// Used in future rendering to skip or mark parent task cards.
+function isParentTaskInPlus(parentTask) {
+  var st = getPlusLibraryState();
+  return !!(st.hiddenParentTasks && st.hiddenParentTasks[parentTask]);
+}
+
+// Look up a SELF_CARE_TASK_LIBRARY entry by libraryId (alias of getSelfCareTaskById).
+function getLibraryTaskById(libraryId) {
+  return getSelfCareTaskById(libraryId);
+}
+
+// Prepare (but do NOT yet apply) a hiddenParentTask entry for a given parent task.
+// Returns the entry shape without saving — caller decides when to commit.
+// Do not call this automatically; only call when user explicitly chooses to move to plus.
+function buildHiddenParentTaskEntry(parentTask, reason) {
+  var origLabel   = TASK_UI_LABELS[parentTask] || TASK_DISPLAY_LABELS[parentTask] || parentTask;
+  var plantFamily = PLANT_FAMILY_BY_ACTION_ID[parentTask] || null;
+  var familyStr   = SELF_CARE_PARENT_TASK_TO_FAMILY[parentTask] || null;
+  return {
+    parentTask:    parentTask,
+    originalLabel: origLabel,
+    family:        familyStr,
+    plantFamily:   plantFamily,
+    hiddenAt:      getTodayKey ? getTodayKey() : new Date().toISOString().slice(0,10),
+    reason:        reason || 'user-request',
+  };
+}
+
+// Restore a parent task from plus — removes its hiddenParentTasks entry.
+// Does NOT change TASK_IDS, custom:tasks, or Today DOM directly.
+// The caller must re-render if needed.
+async function removeParentTaskFromPlus(parentTask) {
+  var st = getPlusLibraryState();
+  if (st.hiddenParentTasks && st.hiddenParentTasks[parentTask]) {
+    delete st.hiddenParentTasks[parentTask];
+    await savePlusLibraryState(st);
+  }
+}
+
+// Apply a pending hiddenParentTask entry to storage.
+// Not called automatically — only when user explicitly confirms the move.
+async function applyParentTaskToPlus(parentTask, reason) {
+  var st = getPlusLibraryState();
+  st.hiddenParentTasks[parentTask] = buildHiddenParentTaskEntry(parentTask, reason);
+  await savePlusLibraryState(st);
+}
+
+// Apply a pending libraryItem entry to storage.
+// Not called automatically — only when user explicitly adds a library task.
+async function addLibraryItemToPlus(libraryId, parentTask, source) {
+  var task = getLibraryTaskById(libraryId);
+  if (!task) return;
+  var st = getPlusLibraryState();
+  // Avoid duplicates
+  var alreadyAdded = st.libraryItems.some(function(it) { return it.libraryId === libraryId; });
+  if (alreadyAdded) return;
+  st.libraryItems.push({
+    type:        'library',
+    libraryId:   task.id,
+    parentTask:  parentTask || task.parentTask || null,
+    family:      task.family,
+    plantFamily: task.plantFamily,
+    addedAt:     getTodayKey ? getTodayKey() : new Date().toISOString().slice(0,10),
+    source:      source || 'user-request',
+  });
+  await savePlusLibraryState(st);
 }
 
 // Apply active micro-task overrides to Today tab DOM (safe, does not delete original)

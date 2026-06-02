@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v34'; // bumped — adaptive weekly override activates Today card label
+const CACHE = 'body-soul-v35'; // bumped — plus/library foundation helpers added (no UI yet)
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
