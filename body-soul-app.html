@@ -2019,6 +2019,38 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 }
 .lib-active-label { font-size:13px; color:var(--ink); line-height:1.3; }
 .lib-active-status { font-size:11.5px; color:var(--sage); margin-top:3px; font-style:italic; }
+.lib-add-btn {
+  background:var(--sage-l); border:1px solid rgba(100,150,100,0.4);
+  border-radius:8px; padding:5px 10px; font-size:12px;
+  color:var(--sage); cursor:pointer; font-family:inherit; flex-shrink:0;
+}
+.lib-task-item-disabled { opacity:0.5; pointer-events:none; }
+.lib-task-active-status {
+  font-size:12px; color:var(--sage); flex-shrink:0; font-weight:600;
+}
+/* lib-task-item as div (not button) so inner buttons work */
+div.lib-task-item { cursor:default; }
+.lib-add-btn--disabled {
+  background:none; border:1px solid rgba(100,150,100,0.2);
+  border-radius:8px; padding:5px 10px; font-size:12px;
+  color:var(--text2); cursor:default; font-family:inherit; flex-shrink:0; opacity:0.6;
+}
+.lib-active-badge {
+  font-size:12px; color:var(--sage); flex-shrink:0; font-weight:600;
+  background:rgba(155,184,156,0.18); border-radius:8px; padding:5px 10px;
+}
+/* Today: library task card extras */
+.lib-today-family {
+  font-size:10px; color:var(--text2); margin-top:1px; line-height:1.2;
+}
+.lib-return-btn {
+  position:absolute; top:5px; right:5px; width:22px; height:22px;
+  border-radius:50%; background:rgba(100,140,100,0.1);
+  border:none; font-size:11px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--sage); padding:0; line-height:1;
+  -webkit-tap-highlight-color:transparent; font-weight:700;
+}
 </style>
 <script>
 if('serviceWorker' in navigator){
@@ -2206,6 +2238,9 @@ if('serviceWorker' in navigator){
 
   <div class="sec" id="custom-sec" style="display:none">✨ משימות אישיות</div>
   <div class="task-grid" id="custom-grid"></div>
+  <!-- Library tasks section — rendered by renderLibraryTasksInToday(); separate from custom:tasks -->
+  <div class="sec" id="lib-tasks-sec" style="display:none">מהספרייה להיום</div>
+  <div class="task-grid" id="lib-tasks-grid"></div>
   <!-- Compassion Day panel — rendered by renderCompassionDay() -->
   <div id="compassion-day-panel" class="compassion-day-panel" style="display:none"></div>
 </div>
@@ -5993,6 +6028,7 @@ function renderFromState() {
   if (exSecEl) exSecEl.textContent=isExerciseDay()?'💪 פעילות גופנית (היום!)':'💪 פעילות גופנית (יום מנוחה — רשות!)';
   renderCustomTasks();
   renderStructuredPlusSection();
+  renderLibraryTasksInToday();
   updateProgress();
   applyMicroTaskOverrides();
   renderCollected();    // update "מה כבר נאסף" chips
@@ -7141,17 +7177,31 @@ function _buildLibFamilyDetailHTML(familyKey) {
   });
 
   // ── Regular library tasks ─────────────────────────────────
+  var _famSupported = LIBRARY_SUPPORTED_FAMILIES.indexOf(familyKey) !== -1;
   SELF_CARE_TASK_LIBRARY.forEach(function(task) {
     if (task.family !== familyKey) return;
     var levelLabel = LIB_LEVEL_LABELS[task.level] || task.level;
-    html += '<button class="lib-task-item"'
-      + ' onclick="showToast(\'הוספה מהספרייה תגיע בשלב הבא 🌱\')">'
+    var alreadyActive = isLibraryTaskActive(task.id);
+    var actionHTML;
+    if (!_famSupported) {
+      actionHTML = '<button class="lib-add-btn lib-add-btn--disabled"'
+        + ' onclick="event.stopPropagation();showToast(\'הוספה מהמשפחה הזו תגיע בשלב הבא 🌱\')">'
+        + 'בשלב הבא 🌱</button>';
+    } else if (alreadyActive) {
+      actionHTML = '<div class="lib-active-badge">במסך היום 🌿</div>';
+    } else {
+      actionHTML = '<button class="lib-add-btn"'
+        + ' onclick="event.stopPropagation();addLibraryTaskAndRender(\'' + task.id + '\')">'
+        + 'להוסיף למסך היום</button>';
+    }
+    html += '<div class="lib-task-item">'
       + '<span class="lib-task-icon">' + (task.icon || '🌱') + '</span>'
       + '<div class="lib-task-body">'
         + '<div class="lib-task-label">' + _escH(task.label) + '</div>'
         + '<div class="lib-task-level">' + _escH(levelLabel) + '</div>'
       + '</div>'
-      + '</button>';
+      + actionHTML
+      + '</div>';
   });
 
   return html + '</div>';
@@ -7944,6 +7994,7 @@ async function init() {
   }
   await loadCustomTasks();
   await loadPlusLibraryState(); // plus/library foundation — no UI effect yet
+  await loadActiveLibraryTasks(); // user-selected library tasks for Today
   await loadBotData();
   await loadJourneyPoints();
   await loadGardenState();
@@ -8731,6 +8782,128 @@ async function addLibraryItemToPlus(libraryId, parentTask, source) {
 // Do not mix structured library items with free-text custom tasks.
 function renderStructuredPlusSection() {
   // No-op: full library UI is a future design step.
+}
+
+// ──────────────────────────────────────────────────────────────
+// ACTIVE LIBRARY TASKS — user-selected library tasks shown in Today
+// Stored separately from custom:tasks and plus:libraryTasks.
+// Storage key: 'active:libraryTasks'
+// Completion stored as tasks['lib:{libraryId}'] in day:{date}.
+// ──────────────────────────────────────────────────────────────
+
+var ACTIVE_LIBRARY_KEY = 'active:libraryTasks';
+// Families supported for user-adding to Today in this step.
+var LIBRARY_SUPPORTED_FAMILIES = ['food', 'bodyRefresh', 'freshAir'];
+
+var _activeLibraryTasks = [];
+
+async function loadActiveLibraryTasks() {
+  try {
+    var raw = await store.get(ACTIVE_LIBRARY_KEY);
+    _activeLibraryTasks = raw ? JSON.parse(raw) : [];
+  } catch(e) {
+    _activeLibraryTasks = [];
+  }
+}
+
+async function saveActiveLibraryTasks() {
+  try { await store.set(ACTIVE_LIBRARY_KEY, JSON.stringify(_activeLibraryTasks)); } catch(e) {}
+}
+
+function getActiveLibraryTasks() {
+  return _activeLibraryTasks;
+}
+
+function isLibraryTaskActive(libraryId) {
+  for (var i = 0; i < _activeLibraryTasks.length; i++) {
+    if (_activeLibraryTasks[i].libraryId === libraryId) return true;
+  }
+  return false;
+}
+
+async function addLibraryTaskToToday(libraryId) {
+  if (isLibraryTaskActive(libraryId)) return;
+  var task = getSelfCareTaskById(libraryId);
+  if (!task) return;
+  _activeLibraryTasks.push({
+    type: 'library',
+    libraryId: task.id,
+    label: task.label,
+    family: task.family,
+    plantFamily: task.plantFamily,
+    parentTask: task.parentTask || null,
+    addedAt: getTodayKey(),
+    source: 'self-care-library',
+  });
+  await saveActiveLibraryTasks();
+}
+
+async function removeLibraryTaskFromToday(libraryId) {
+  _activeLibraryTasks = _activeLibraryTasks.filter(function(t) {
+    return t.libraryId !== libraryId;
+  });
+  await saveActiveLibraryTasks();
+  // Historical completions in day:{date} are preserved intentionally.
+}
+
+function toggleLibraryTask(libraryId) {
+  var key = 'lib:' + libraryId;
+  s.tasks[key] = !s.tasks[key];
+  var card = document.getElementById('lib-tc-' + libraryId);
+  if (card) card.classList.toggle('done', !!s.tasks[key]);
+  if (s.tasks[key]) {
+    var label = libraryId;
+    for (var i = 0; i < _activeLibraryTasks.length; i++) {
+      if (_activeLibraryTasks[i].libraryId === libraryId) { label = _activeLibraryTasks[i].label; break; }
+    }
+    showToast('✨ ' + label + ' — כל הכבוד! 💙');
+  }
+  saveDay();
+}
+
+async function addLibraryTaskAndRender(libraryId) {
+  var task = getSelfCareTaskById(libraryId);
+  if (!task) return;
+  await addLibraryTaskToToday(libraryId);
+  closeLibModalForce();
+  renderLibraryTasksInToday();
+  showToast('הוספתי את \'' + task.label + '\' למסך היום 🌿');
+}
+
+async function removeLibraryTaskAndRender(libraryId) {
+  var label = libraryId;
+  for (var i = 0; i < _activeLibraryTasks.length; i++) {
+    if (_activeLibraryTasks[i].libraryId === libraryId) { label = _activeLibraryTasks[i].label; break; }
+  }
+  await removeLibraryTaskFromToday(libraryId);
+  renderLibraryTasksInToday();
+  showToast('\'' + label + '\' מחכה בספרייה 🌿');
+}
+
+function renderLibraryTasksInToday() {
+  var grid = document.getElementById('lib-tasks-grid');
+  var sec  = document.getElementById('lib-tasks-sec');
+  if (!grid || !sec) return;
+  var tasks = getActiveLibraryTasks();
+  grid.innerHTML = '';
+  sec.style.display = tasks.length > 0 ? '' : 'none';
+  tasks.forEach(function(t) {
+    var done = !!s.tasks['lib:' + t.libraryId];
+    var libDef = getSelfCareTaskById(t.libraryId);
+    var icon = libDef ? (libDef.icon || '🌱') : '🌱';
+    var familyLabel = SELF_CARE_FAMILY_LABELS[t.family] || t.family;
+    var card = document.createElement('div');
+    card.className = 'task-card lib-today-card' + (done ? ' done' : '');
+    card.id = 'lib-tc-' + t.libraryId;
+    card.onclick = (function(lid) { return function() { toggleLibraryTask(lid); }; })(t.libraryId);
+    card.innerHTML = '<div class="check-badge">✓</div>'
+      + '<button class="lib-return-btn" onclick="event.stopPropagation();removeLibraryTaskAndRender(\''
+      + t.libraryId + '\')" aria-label="להחזיר לספרייה" title="להחזיר לספרייה">←</button>'
+      + '<span class="t-icon">' + icon + '</span>'
+      + '<div class="t-name">' + _escH(t.label) + '</div>'
+      + '<div class="lib-today-family">' + _escH(familyLabel) + '</div>';
+    grid.appendChild(card);
+  });
 }
 
 // Restore an original parent task from the plus area.
