@@ -7365,6 +7365,17 @@ function renderCollected() {
       if (s.tasks['c:' + t.id]) chips.push({ icon: t.emoji || '✨', label: t.name });
     });
   }
+  // Library tasks completed today (lib: prefix).
+  // Shown even if the task was returned to the library later —
+  // the completion happened today and should be recognised.
+  // Does NOT affect points/streak/countDone.
+  Object.keys(s.tasks).forEach(function(k) {
+    if (k.indexOf('lib:') !== 0 || !s.tasks[k]) return;
+    var libId  = k.slice(4);
+    var libDef = getSelfCareTaskById(libId);
+    if (!libDef) return;
+    chips.push({ icon: libDef.icon || '🌱', label: libDef.label });
+  });
 
   if (chips.length === 0) {
     container.innerHTML = '<div class="collected-empty">עוד לא נאסף כאן משהו היום. אפשר להתחיל ממש קטן, אם זה מתאים.</div>';
@@ -7426,6 +7437,12 @@ function getTodayCompletedCountForPath() {
   if ((s.water || 0) >= 3) count++;
   if (s.exChosen && (s.exChosen.easy || s.exChosen.hard)) count++;
   if (customTasks) customTasks.forEach(function(t) { if (s.tasks['c:' + t.id]) count++; });
+  // Active library tasks completed today (lib: prefix in day state).
+  // Counts even if task was returned to library later — completion stands.
+  // Does NOT affect points/streak/countDone.
+  Object.keys(s.tasks).forEach(function(k) {
+    if (k.indexOf('lib:') === 0 && s.tasks[k]) count++;
+  });
   return count;
 }
 
