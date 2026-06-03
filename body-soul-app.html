@@ -2191,14 +2191,14 @@ if('serviceWorker' in navigator){
   </div>
 
   <div class="sec">🍽️ ארוחות</div>
-  <div class="task-grid">
+  <div class="task-grid" id="meals-grid">
     <div class="task-card" id="tc-breakfast" onclick="toggleTask('breakfast')"><div class="check-badge">✓</div><span class="t-icon">🍳</span><div class="t-name">ארוחת בוקר</div><div class="t-sub">הדלק הראשוני</div></div>
     <div class="task-card" id="tc-lunch"     onclick="toggleTask('lunch')"    ><div class="check-badge">✓</div><span class="t-icon">🥗</span><div class="t-name">ארוחת צהריים</div><div class="t-sub">להמשיך לתדלק</div></div>
     <div class="task-card" id="tc-dinner"    onclick="toggleTask('dinner')"   ><div class="check-badge">✓</div><span class="t-icon">🍲</span><div class="t-name">ארוחת ערב</div><div class="t-sub">לסגור את היום</div></div>
   </div>
 
   <div class="sec">🌿 טיפול עצמי</div>
-  <div class="task-grid">
+  <div class="task-grid" id="selfcare-grid">
     <div class="task-card" id="tc-shower"    onclick="toggleTask('shower')"   ><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
     <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
     <div class="task-card" id="tc-outside"   onclick="toggleTask('outside')"  ><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
@@ -8883,21 +8883,34 @@ async function removeLibraryTaskAndRender(libraryId) {
 }
 
 function renderLibraryTasksInToday() {
-  var grid = document.getElementById('lib-tasks-grid');
-  var sec  = document.getElementById('lib-tasks-sec');
-  if (!grid || !sec) return;
+  // Always hide the old separate section — library tasks now live inside the main grids.
+  var oldSec  = document.getElementById('lib-tasks-sec');
+  var oldGrid = document.getElementById('lib-tasks-grid');
+  if (oldSec)  { oldSec.style.display  = 'none'; }
+  if (oldGrid) { oldGrid.style.display = 'none'; oldGrid.innerHTML = ''; }
+
+  // Remove any library cards injected in a previous render pass.
+  document.querySelectorAll('.lib-injected-card').forEach(function(el) { el.remove(); });
+
   var tasks = getActiveLibraryTasks();
-  grid.innerHTML = '';
-  sec.style.display = tasks.length > 0 ? '' : 'none';
+  if (!tasks.length) return;
+
   tasks.forEach(function(t) {
+    // Route each task to the grid that matches its family.
+    // food → meals-grid   |   bodyRefresh / freshAir → selfcare-grid
+    var targetId = (t.family === 'food') ? 'meals-grid' : 'selfcare-grid';
+    var targetGrid = document.getElementById(targetId);
+    if (!targetGrid) return; // safety — grid not in DOM
+
     var done = !!s.tasks['lib:' + t.libraryId];
     var libDef = getSelfCareTaskById(t.libraryId);
-    var icon = libDef ? (libDef.icon || '🌱') : '🌱';
+    var icon        = libDef ? (libDef.icon || '🌱') : '🌱';
     var familyLabel = SELF_CARE_FAMILY_LABELS[t.family] || t.family;
     var levelLabel  = libDef ? (LIB_LEVEL_LABELS[libDef.level] || '') : '';
-    var metaLine = levelLabel ? familyLabel + ' · ' + levelLabel : familyLabel;
+    var metaLine    = levelLabel ? familyLabel + ' · ' + levelLabel : familyLabel;
+
     var card = document.createElement('div');
-    card.className = 'task-card lib-today-card' + (done ? ' done' : '');
+    card.className = 'task-card lib-injected-card' + (done ? ' done' : '');
     card.id = 'lib-tc-' + t.libraryId;
     card.onclick = (function(lid) { return function() { toggleLibraryTask(lid); }; })(t.libraryId);
     card.innerHTML = '<div class="check-badge">✓</div>'
@@ -8906,7 +8919,8 @@ function renderLibraryTasksInToday() {
       + '<div class="lib-today-family">' + _escH(metaLine) + '</div>'
       + '<button class="lib-return-btn" onclick="event.stopPropagation();removeLibraryTaskAndRender(\''
       + t.libraryId + '\')" aria-label="להחזיר לספרייה">להחזיר לספרייה</button>';
-    grid.appendChild(card);
+
+    targetGrid.appendChild(card);
   });
 }
 
