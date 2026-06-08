@@ -271,6 +271,16 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .toast { position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%) translateY(30px); background: #2E1A0E; color: #FDF4E3; padding: 11px 20px; border-radius: 28px; font-size: 14px; font-weight: 600; transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s; z-index: 500; text-align: center; max-width: 320px; width: calc(100% - 40px); opacity: 0; pointer-events: none; direction: rtl; line-height: 1.4; }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+/* COMPLETION NOTE — persistent card for knowledge/regulation notes (quietMoment etc.)
+   Does NOT auto-dismiss. User closes with "נעים לדעת" button.
+   z-index 450: above bottom-nav (200), below toast (500) so toast can overlay if needed. */
+.completion-note-card { position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%) translateY(20px); width: calc(100% - 32px); max-width: 440px; background: var(--card, #fffdf8); border: 1.5px solid var(--border, #e8ddd0); border-radius: 18px; padding: 16px 18px 14px; box-shadow: 0 4px 24px rgba(30,15,5,0.13); z-index: 450; direction: rtl; opacity: 0; pointer-events: none; transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1), opacity 0.25s; }
+.completion-note-card.open { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
+.completion-note-label { font-size: 11px; font-weight: 700; color: var(--sky, #6aabcf); letter-spacing: 0.5px; margin-bottom: 6px; }
+.completion-note-text { font-size: 14px; color: var(--text1, #2e1a0e); line-height: 1.65; }
+.completion-note-close { display: block; margin-top: 14px; width: 100%; background: var(--sky-l, #e8f4fb); color: var(--sky, #4a8ab0); border: none; border-radius: 24px; padding: 9px 0; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.18s; }
+.completion-note-close:hover { background: var(--sky, #6aabcf); color: #fff; }
+
 
 .fact-fab { position: fixed; bottom: 76px; left: 14px; background: var(--sky-l); border: 1.5px solid var(--sky); color: var(--sky); border-radius: 22px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; box-shadow: 0 2px 10px rgba(0,0,0,0.13); z-index: 150; transition: all 0.2s; white-space: nowrap; direction: rtl; }
 .fact-fab:hover { background: var(--sky); color: white; transform: translateY(-2px); }
@@ -2178,6 +2188,13 @@ if('serviceWorker' in navigator){
 
 <!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- COMPLETION NOTE — persistent knowledge/regulation card, no auto-dismiss -->
+<div class="completion-note-card" id="completion-note-card" role="dialog" aria-live="polite" aria-label="הערת השלמה">
+  <div class="completion-note-label">נעים לדעת 🌿</div>
+  <div class="completion-note-text" id="completion-note-text"></div>
+  <button class="completion-note-close" onclick="hideCompletionNote()">נעים לדעת</button>
+</div>
 
 <!-- FACT OVERLAY — notification drawer from top -->
 <div class="fact-overlay" id="fact-overlay" onclick="closeFact(event)">
@@ -6124,6 +6141,21 @@ function showToast(msg) {
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),5500); // accessibility: extended from 3800ms for dyslexic users
 }
 
+// COMPLETION NOTE — persistent card for knowledge/regulation notes.
+// Does NOT auto-dismiss. User closes with "נעים לדעת" button.
+// If called while already open, updates text in place (e.g. completing a second task).
+function showCompletionNote(noteText) {
+  var card = document.getElementById('completion-note-card');
+  var textEl = document.getElementById('completion-note-text');
+  if (!card || !textEl) return;
+  textEl.textContent = noteText;
+  card.classList.add('open');
+}
+function hideCompletionNote() {
+  var card = document.getElementById('completion-note-card');
+  if (card) card.classList.remove('open');
+}
+
 function updateBotBadge() { /* bot tab removed — no-op stub */ }
 
 // NAV
@@ -9209,6 +9241,15 @@ function toggleLibraryTask(libraryId) {
       if (_activeLibraryTasks[i].libraryId === libraryId) { label = _activeLibraryTasks[i].label; break; }
     }
     showToast('✨ ' + label + ' — כל הכבוד! 💙');
+    // Show persistent completion note if the task definition has one.
+    // Uses showCompletionNote (no auto-dismiss) — not showToast — for accessibility.
+    var libDef = getSelfCareTaskById(libraryId);
+    if (libDef && libDef.completionNote) {
+      showCompletionNote(libDef.completionNote);
+    }
+  } else {
+    // Task un-checked — hide any open completion note.
+    hideCompletionNote();
   }
   saveDay();
 }
