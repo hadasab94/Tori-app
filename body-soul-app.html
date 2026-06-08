@@ -274,11 +274,11 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 /* COMPLETION NOTE — persistent card for knowledge/regulation notes (quietMoment etc.)
    Does NOT auto-dismiss. User closes with "נעים לדעת" button.
    z-index 450: above bottom-nav (200), below toast (500) so toast can overlay if needed. */
-.completion-note-card { position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%) translateY(20px); width: calc(100% - 32px); max-width: 440px; background: var(--card, #fffdf8); border: 1.5px solid var(--border, #e8ddd0); border-radius: 18px; padding: 16px 18px 14px; box-shadow: 0 4px 24px rgba(30,15,5,0.13); z-index: 450; direction: rtl; opacity: 0; pointer-events: none; transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1), opacity 0.25s; }
+.completion-note-card { position: fixed; bottom: 132px; left: 50%; transform: translateX(-50%) translateY(20px); width: calc(100% - 32px); max-width: 440px; background: var(--card, #fffdf8); border: 1.5px solid var(--border, #e8ddd0); border-radius: 18px; padding: 16px 18px 14px; box-shadow: 0 4px 24px rgba(30,15,5,0.13); z-index: 450; direction: rtl; opacity: 0; pointer-events: none; transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1), opacity 0.25s; }
 .completion-note-card.open { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
 .completion-note-label { font-size: 11px; font-weight: 700; color: var(--sky, #6aabcf); letter-spacing: 0.5px; margin-bottom: 6px; }
 .completion-note-text { font-size: 14px; color: var(--text1, #2e1a0e); line-height: 1.65; }
-.completion-note-close { display: block; margin-top: 14px; width: 100%; background: var(--sky-l, #e8f4fb); color: var(--sky, #4a8ab0); border: none; border-radius: 24px; padding: 9px 0; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.18s; }
+.completion-note-close { display: block; margin-top: 14px; width: 100%; background: var(--sky-l, #e8f4fb); color: var(--sky, #4a8ab0); border: none; border-radius: 24px; padding: 11px 0; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.18s; }
 .completion-note-close:hover { background: var(--sky, #6aabcf); color: #fff; }
 
 
