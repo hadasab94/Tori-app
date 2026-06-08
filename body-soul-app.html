@@ -9485,6 +9485,10 @@ function buildGentleHabitPanelHTML(c) {
       }
       uiLabel = uiLabel || item.kind; // final fallback: ID (should not happen)
 
+      // Ensure nutrition plantFamily always shows 'אוכל' — never the internal 'הזנה'.
+      // Covers both built-in tasks (breakfast/lunch/dinner) and library food tasks.
+      if (!familyDisplayLabel && familyKey === 'nutrition') familyDisplayLabel = 'אוכל';
+
       var familyAsset = familyKey ? PLANT_FAMILY_ASSETS[familyKey] : null;
       // For library tasks, use the override label; for built-in tasks, use asset label.
       var familyLabel = familyDisplayLabel || (familyAsset ? familyAsset.label : null);
