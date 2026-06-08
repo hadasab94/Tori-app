@@ -5037,17 +5037,87 @@ const SELF_CARE_TASK_LIBRARY = [
     suggestedFor: ['outside'],
     icon: '🪟', type: 'task'
   },
+
+  // ── רגע שקט (quietMoment) ────────────────────────────────────────────────
+  // מיקרו־פעולות של ויסות גופני — נשימה, עיגון, שחרור מתח.
+  // completionNote: שדה לשימוש עתידי בהצגת הסבר פיזיולוגי קצר לאחר השלמה.
+  // אינו מוצג כרגע — ממתין למנגנון completionNote מאושר.
+  {
+    id: 'quiet-one-deep-breath',
+    label: 'נשימה אחת עמוקה ואז לשחרר',
+    family: 'quietMoment', plantFamily: 'quietMoment',
+    level: 'micro',
+    icon: '🫧', type: 'task',
+    completionNote: 'נשימה עמוקה ואז שחרור נותנים לגוף אות קטן של האטה. זה יכול לתמוך בוויסות פנימי, גם אם לא מרגישים שינוי גדול מיד.'
+  },
+  {
+    id: 'quiet-longer-exhale',
+    label: 'נשיפה ארוכה יותר מהשאיפה',
+    family: 'quietMoment', plantFamily: 'quietMoment',
+    level: 'micro',
+    icon: '〰️', type: 'task',
+    completionNote: 'נשיפה ארוכה יכולה לעודד את הגוף לעבור למצב פחות דרוך, בין היתר דרך מערכות שקשורות לעצב הואגוס. זה סימן קטן של ביטחון מבפנים.'
+  },
+  {
+    id: 'quiet-double-breath-release',
+    label: 'שאיפה קטנה נוספת ואז לשחרר',
+    family: 'quietMoment', plantFamily: 'quietMoment',
+    level: 'micro',
+    icon: '🌬️', type: 'task',
+    completionNote: 'הוספת שאיפה קטנה לפני השחרור יכולה לעזור לגוף לפרוק מעט עומס דרך הנשיפה. מיקרו־רגע של אוויר, בלי לעשות מזה פרויקט.'
+  },
+  {
+    id: 'quiet-short-hum',
+    label: 'המהום קצר',
+    family: 'quietMoment', plantFamily: 'quietMoment',
+    level: 'micro',
+    icon: '🎵', type: 'task',
+    completionNote: 'המהום יוצר רטט עדין באזור הגרון והחזה, ויכול לתמוך במערכת הרגיעה של הגוף. הקפיברה מאשרת: לפעמים \'מממ\' קטן הוא פעולה עם מדע מאחוריה.'
+  },
+  {
+    id: 'quiet-release-jaw',
+    label: 'לשחרר לסת',
+    family: 'quietMoment', plantFamily: 'quietMoment',
+    level: 'micro',
+    icon: '🌿', type: 'task',
+    completionNote: 'הלסת מחזיקה הרבה מתח בלי לבקש רשות. שחרור קטן שם יכול לשלוח לגוף מסר של ריכוך ולהוריד מעט עומס.'
+  },
+  {
+    id: 'quiet-drop-shoulders',
+    label: 'להוריד כתפיים',
+    family: 'quietMoment', plantFamily: 'quietMoment',
+    level: 'micro',
+    icon: '🍃', type: 'task',
+    completionNote: 'הכתפיים לא חייבות להחזיק את כל היקום כרגע. הורדה קטנה שלהן יכולה לעזור לגוף להבין שיש קצת יותר מקום.'
+  },
+  {
+    id: 'quiet-feet-on-floor',
+    label: 'שתי רגליים על הרצפה',
+    family: 'quietMoment', plantFamily: 'quietMoment',
+    level: 'micro',
+    icon: '🪨', type: 'task',
+    completionNote: 'מגע יציב עם הרצפה נותן למערכת העצבים נקודת עוגן בכאן ועכשיו. זה לא צריך לפתור הכול — רק להזכיר לגוף איפה הוא נמצא.'
+  },
+  {
+    id: 'quiet-orient-room',
+    label: 'להסתכל סביב ולמצוא דבר בטוח',
+    family: 'quietMoment', plantFamily: 'quietMoment',
+    level: 'micro',
+    icon: '👀', type: 'task',
+    completionNote: 'כשמסתכלים סביב ומזהים משהו בטוח, המוח מקבל מידע עדכני מהסביבה. זה יכול לעזור לגוף להבין שעכשיו הוא כאן, ברגע הזה.'
+  },
 ];
 
 // User-facing family labels for SELF_CARE_TASK_LIBRARY.
 // "אוכל" is the correct user-facing label for the food family. Never "הזנה".
 const SELF_CARE_FAMILY_LABELS = {
-  food:        'אוכל',
-  water:       'שתייה',
-  bodyRefresh: 'רענון גוף',
-  teeth:       'פה ושיניים',
-  movement:    'תנועה',
-  freshAir:    'אוויר צח',
+  food:         'אוכל',
+  water:        'שתייה',
+  bodyRefresh:  'רענון גוף',
+  teeth:        'פה ושיניים',
+  movement:     'תנועה',
+  freshAir:     'אוויר צח',
+  quietMoment:  'רגע שקט',
 };
 
 // Maps Today action IDs to their self-care family.
@@ -7140,8 +7210,9 @@ var LIB_FAMILIES = [
   { key: 'water',       label: 'שתייה',      plantKey: 'water',       emoji: '💧' },
   { key: 'bodyRefresh', label: 'רענון גוף',  plantKey: 'bodyRefresh', emoji: '🚿' },
   { key: 'teeth',       label: 'פה ושיניים', plantKey: 'teeth',       emoji: '🪥' },
-  { key: 'movement',    label: 'תנועה',      plantKey: 'movement',    emoji: '🤸' },
+  { key: 'movement',     label: 'תנועה',      plantKey: 'movement',     emoji: '🤸' },
   { key: 'freshAir',    label: 'אוויר צח',   plantKey: 'freshAir',    emoji: '🌳' },
+  { key: 'quietMoment', label: 'רגע שקט',    plantKey: 'quietMoment', emoji: '🫧' },
 ];
 
 var LIB_LEVEL_LABELS = {
@@ -9074,7 +9145,7 @@ function renderStructuredPlusSection() {
 
 var ACTIVE_LIBRARY_KEY = 'active:libraryTasks';
 // Families supported for user-adding to Today in this step.
-var LIBRARY_SUPPORTED_FAMILIES = ['food', 'bodyRefresh', 'freshAir'];
+var LIBRARY_SUPPORTED_FAMILIES = ['food', 'bodyRefresh', 'freshAir', 'quietMoment'];
 
 var _activeLibraryTasks = [];
 
