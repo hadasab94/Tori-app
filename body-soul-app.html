@@ -8608,6 +8608,21 @@ async function loadGentleHabitData() {
     .sort(function(a, b) { return b.count14 - a.count14; })
     .slice(0, 3);
 
+  // Dedup growing by plantFamily — keep only the highest-count representative per family.
+  // Prevents two visually identical plant cards (same image + same family label) when
+  // multiple lib tasks or a lib task + built-in task share the same plantFamily.
+  // growing is already sorted desc by count14 so first occurrence = highest count.
+  var _seenFamKeys = {};
+  growing = growing.filter(function(item) {
+    var libDef = getSelfCareTaskById(item.kind);
+    var famKey = libDef
+      ? libDef.plantFamily
+      : (PLANT_FAMILY_BY_ACTION_ID[item.kind] || item.kind);
+    if (_seenFamKeys[famKey]) return false;
+    _seenFamKeys[famKey] = true;
+    return true;
+  });
+
   // Micro-task candidate:
   // - Has a suggestion label (MICRO_TASK_LABELS)
   // - 0 completions in last 7 days (not happening this week)
