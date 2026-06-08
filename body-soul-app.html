@@ -8579,11 +8579,29 @@ async function loadGentleHabitData() {
         if (i < 7) counts7.exercise = (counts7.exercise || 0) + 1;
         if (i < 5) counts5.exercise = (counts5.exercise || 0) + 1;
       }
+      // Library tasks (lib: prefix in day state).
+      // Counted even if the task was later returned to the library —
+      // the completion happened and should register in habit history.
+      // Does NOT affect countDone / points / streak / addGardenAction.
+      Object.keys(tasks).forEach(function(k) {
+        if (k.indexOf('lib:') !== 0 || !tasks[k]) return;
+        var libId = k.slice(4); // strip 'lib:' prefix → libraryId
+        counts14[libId] = (counts14[libId] || 0) + 1;
+        if (i < 7) counts7[libId] = (counts7[libId] || 0) + 1;
+        if (i < 5) counts5[libId] = (counts5[libId] || 0) + 1;
+      });
     } catch(e) {}
   }
 
+  // Collect all libraryIds seen across the 14-day window so they can appear
+  // in allTrackable even if the task was returned to the library.
+  var seenLibIds = Object.keys(counts14).filter(function(k) {
+    return k.indexOf('lib:') === -1 && TASK_IDS.indexOf(k) === -1
+           && k !== 'water' && k !== 'exercise' && getSelfCareTaskById(k);
+  });
+
   // Growing: completed ≥ 2 times in last 14 days, up to 3, sorted by count desc
-  var allTrackable = TASK_IDS.concat(['water', 'exercise']);
+  var allTrackable = TASK_IDS.concat(['water', 'exercise']).concat(seenLibIds);
   var growing = allTrackable
     .filter(function(id) { return (counts14[id] || 0) >= 2; })
     .map(function(id)    { return { kind: id, count14: counts14[id] }; })
@@ -9431,11 +9449,30 @@ function buildGentleHabitPanelHTML(c) {
   } else {
     hasAnyCard = true;
     cache.growing.forEach(function(item) {
-      var stage       = getGrowthStageForAction(item.count14);
+      var stage    = getGrowthStageForAction(item.count14);
       // Use DOM-accurate label; fall back to display label then ID
-      var uiLabel     = TASK_UI_LABELS[item.kind] || TASK_DISPLAY_LABELS[item.kind] || item.kind;
-      var familyKey   = PLANT_FAMILY_BY_ACTION_ID[item.kind];
+      var uiLabel  = TASK_UI_LABELS[item.kind] || TASK_DISPLAY_LABELS[item.kind];
+      var familyKey = PLANT_FAMILY_BY_ACTION_ID[item.kind];
+      // User-facing family label override — used for library tasks to avoid
+      // PLANT_FAMILY_ASSETS internal labels (e.g. 'הזנה'). Never exposed to user.
+      var familyDisplayLabel = null;
+
+      // Library task fallback — kind is a libraryId not in TASK_UI_LABELS
+      if (!uiLabel || !familyKey) {
+        var libDef = getSelfCareTaskById(item.kind);
+        if (libDef) {
+          uiLabel  = libDef.label;
+          familyKey = libDef.plantFamily;
+          // Use SELF_CARE_FAMILY_LABELS for user-facing name.
+          // food family → 'אוכל' (never 'הזנה').
+          familyDisplayLabel = SELF_CARE_FAMILY_LABELS[libDef.family] || familyKey;
+        }
+      }
+      uiLabel = uiLabel || item.kind; // final fallback: ID (should not happen)
+
       var familyAsset = familyKey ? PLANT_FAMILY_ASSETS[familyKey] : null;
+      // For library tasks, use the override label; for built-in tasks, use asset label.
+      var familyLabel = familyDisplayLabel || (familyAsset ? familyAsset.label : null);
 
       if (familyAsset) {
         // Resolve stage-specific image; fall back to family anchor image
@@ -9447,9 +9484,9 @@ function buildGentleHabitPanelHTML(c) {
 
         // ── Plant family card: stage image + family label + action label + stage
         content += '<div class="j-plant-card">'
-          + '<img src="' + plantImgSrc + '" alt="' + familyAsset.label + '" class="j-plant-card-img">'
+          + '<img src="' + plantImgSrc + '" alt="' + (familyLabel || '') + '" class="j-plant-card-img">'
           + '<div class="j-plant-card-body">'
-          + '<div class="j-plant-card-family">' + familyAsset.label + '</div>'
+          + '<div class="j-plant-card-family">' + (familyLabel || '') + '</div>'
           + '<div class="j-plant-card-name">' + uiLabel + '</div>'
           + '<div class="j-plant-card-stage">' + stage.label + '</div>'
           + '<div class="j-plant-card-copy">'  + stage.copy  + '</div>'
