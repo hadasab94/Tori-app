@@ -288,7 +288,9 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .feed-card-title { font-size: 16px; font-weight: 800; color: var(--text1); line-height: 1.35; margin-bottom: 9px; }
 .feed-card-text { font-size: 14px; color: var(--text2); line-height: 1.8; }
 .feed-card-img { width: 100%; border-radius: 10px; margin-bottom: 6px; display: block; object-fit: cover; max-height: 200px; }
-.feed-img-attribution { font-size: 10px; color: var(--text3); margin-bottom: 10px; line-height: 1.4; }
+.feed-img-attribution { font-size: 10px; color: var(--text3); margin-top: 4px; margin-bottom: 10px; line-height: 1.5; direction: rtl; }
+.feed-attrib-link { color: var(--text3); text-decoration: underline; text-underline-offset: 2px; }
+.feed-attrib-link:hover { color: var(--text2); }
 .feed-card-footer { margin-top: 12px; display: flex; justify-content: flex-start; }
 .feed-like-btn { background: none; border: 1.5px solid var(--border, #e8ddd0); border-radius: 20px; padding: 6px 14px 6px 12px; font-size: 13px; font-weight: 700; color: var(--text3, #a08c7a); font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: border-color 0.18s, background 0.18s, color 0.18s; direction: rtl; }
 .feed-like-btn:hover { border-color: var(--sky, #6aabcf); color: var(--sky, #6aabcf); background: var(--sky-l, #e8f4fb); }
@@ -9277,13 +9279,29 @@ async function saveNiimNote(libDef) {
 
 // ── SCROLL FEED — "תורי לגלול" static content ────────────────────────────────
 // V1: static array. Text-only cards ship without images.
-// IMAGE POLICY: image renders ONLY when imageApproved === true.
-//   Before setting imageApproved:true, fill ALL image approval fields:
-//   imageSource, imageSourceUrl, imageLicense, imagePhotographer,
-//   imageAttribution (required if license demands it), imageAlt.
-//   Accepted licenses: CC0, Public Domain, Unsplash License, Pexels License,
-//   Pixabay License, or CC-BY with attribution. Avoid NC/ND/unclear sources.
-// visualNeed: true = card's punchline requires an image (don't add to feed without one).
+//
+// IMAGE FIELDS — fill ALL before setting imageApproved: true:
+//   image              — relative or absolute URL
+//   imageAlt           — descriptive alt text (always required)
+//   imageApproved      — MUST be explicitly set to true to render
+//   imageApprovalStatus— 'approved' | 'rejected' | 'pending' | null
+//   imageTitle         — original image title if known
+//   imageCreator       — photographer / artist name
+//   imageSourceName    — display name of source site (e.g. "Wikimedia Commons")
+//   imageSourceUrl     — direct URL to image source page
+//   imageLicense       — license short name (e.g. "CC BY 2.0")
+//   imageLicenseUrl    — URL to full license text
+//   imageModified      — true if image was cropped / resized / altered
+//   imageModificationNote — required if imageModified: true
+//   attributionRequired— true if license requires crediting the creator
+//   imageAttribution   — plain-text description of credit (dev reference only;
+//                        rendered credit is built from structured fields above)
+//
+// Accepted licenses: CC0, Public Domain, Unsplash License, Pexels License,
+//   Pixabay License, CC-BY (any version) with attribution.
+//   Avoid NC, ND, or unclear sources.
+//
+// visualNeed: true = card's punchline requires an image; don't add to feed without one.
 // Do NOT add therapeutic framing, CTAs, or trauma/anxiety language here.
 const SCROLL_FEED_ITEMS = [
   {
@@ -9294,8 +9312,10 @@ const SCROLL_FEED_ITEMS = [
     type: 'fact', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
-    imageSource: null, imageSourceUrl: null, imageLicense: null,
-    imagePhotographer: null, imageAttribution: null,
+    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
+    imageLicense: null, imageLicenseUrl: null,
+    imageModified: false, imageModificationNote: null,
+    attributionRequired: false, imageAttribution: null,
   },
   {
     id: 'feed-octopus-arms-001',
@@ -9305,8 +9325,10 @@ const SCROLL_FEED_ITEMS = [
     type: 'fact', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
-    imageSource: null, imageSourceUrl: null, imageLicense: null,
-    imagePhotographer: null, imageAttribution: null,
+    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
+    imageLicense: null, imageLicenseUrl: null,
+    imageModified: false, imageModificationNote: null,
+    attributionRequired: false, imageAttribution: null,
   },
   {
     id: 'feed-penguin-pebble-001',
@@ -9316,8 +9338,10 @@ const SCROLL_FEED_ITEMS = [
     type: 'fact', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
-    imageSource: null, imageSourceUrl: null, imageLicense: null,
-    imagePhotographer: null, imageAttribution: null,
+    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
+    imageLicense: null, imageLicenseUrl: null,
+    imageModified: false, imageModificationNote: null,
+    attributionRequired: false, imageAttribution: null,
   },
   {
     id: 'feed-clouds-names-001',
@@ -9327,8 +9351,10 @@ const SCROLL_FEED_ITEMS = [
     type: 'fact', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
-    imageSource: null, imageSourceUrl: null, imageLicense: null,
-    imagePhotographer: null, imageAttribution: null,
+    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
+    imageLicense: null, imageLicenseUrl: null,
+    imageModified: false, imageModificationNote: null,
+    attributionRequired: false, imageAttribution: null,
   },
   {
     id: 'feed-tiny-library-001',
@@ -9338,8 +9364,10 @@ const SCROLL_FEED_ITEMS = [
     type: 'tiny_world', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
-    imageSource: null, imageSourceUrl: null, imageLicense: null,
-    imagePhotographer: null, imageAttribution: null,
+    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
+    imageLicense: null, imageLicenseUrl: null,
+    imageModified: false, imageModificationNote: null,
+    attributionRequired: false, imageAttribution: null,
   },
   {
     id: 'feed-plants-slow-001',
@@ -9349,8 +9377,10 @@ const SCROLL_FEED_ITEMS = [
     type: 'fact', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
-    imageSource: null, imageSourceUrl: null, imageLicense: null,
-    imagePhotographer: null, imageAttribution: null,
+    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
+    imageLicense: null, imageLicenseUrl: null,
+    imageModified: false, imageModificationNote: null,
+    attributionRequired: false, imageAttribution: null,
   },
 ];
 
@@ -9440,9 +9470,55 @@ function recordFeedImpression(cardId) {
   });
 }
 
+// Build image + attribution HTML for a single feed card.
+// Returns '' if: no image, not approved, or attribution validation fails.
+// Rules:
+//   1. imageApproved must be === true
+//   2. If attributionRequired, these fields are mandatory:
+//      imageCreator, imageSourceUrl, imageLicense, imageLicenseUrl, imageAttribution
+//   3. If imageModified, imageModificationNote is mandatory
+//   4. Missing required fields → console.warn + return '' (image suppressed)
+//   5. Attribution is rendered as linked HTML from structured fields, NOT from imageAttribution text
+//   6. No attribution block rendered when attributionRequired === false
+function _buildFeedImageHtml(item) {
+  if (!item.image || item.imageApproved !== true) return '';
+  if (item.attributionRequired === true) {
+    var required = ['imageCreator', 'imageSourceUrl', 'imageLicense', 'imageLicenseUrl', 'imageAttribution'];
+    for (var ri = 0; ri < required.length; ri++) {
+      if (!item[required[ri]]) {
+        console.warn('[feed] Image suppressed — missing attribution field "' + required[ri] + '" on card:', item.id);
+        return '';
+      }
+    }
+    if (item.imageModified === true && !item.imageModificationNote) {
+      console.warn('[feed] Image suppressed — imageModified is true but imageModificationNote is missing on card:', item.id);
+      return '';
+    }
+  }
+  var html = '<img src="' + _escH(item.image) + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img">';
+  if (item.attributionRequired === true) {
+    var a = '<div class="feed-img-attribution">';
+    a += 'צילום: ' + _escH(item.imageCreator);
+    if (item.imageSourceName && item.imageSourceUrl) {
+      a += ' · מקור: <a href="' + _escH(item.imageSourceUrl) + '" target="_blank" rel="noopener noreferrer" class="feed-attrib-link">' + _escH(item.imageSourceName) + '</a>';
+    } else if (item.imageSourceUrl) {
+      a += ' · <a href="' + _escH(item.imageSourceUrl) + '" target="_blank" rel="noopener noreferrer" class="feed-attrib-link">מקור</a>';
+    }
+    if (item.imageLicense && item.imageLicenseUrl) {
+      a += ' · רישיון: <a href="' + _escH(item.imageLicenseUrl) + '" target="_blank" rel="noopener noreferrer" class="feed-attrib-link">' + _escH(item.imageLicense) + '</a>';
+    }
+    if (item.imageModified && item.imageModificationNote) {
+      a += ' · ' + _escH(item.imageModificationNote);
+    }
+    a += '</div>';
+    html += a;
+  }
+  return html;
+}
+
 // Render feed cards from SCROLL_FEED_ITEMS into #scroll-feed-section.
 // No async — reads _feedLikes cache (must be loaded before first render).
-// Image renders ONLY when item.imageApproved === true.
+// Image + attribution built via _buildFeedImageHtml (validates attribution fields).
 // Sets up IntersectionObserver for impression tracking after render.
 function renderScrollFeed() {
   var el = document.getElementById('scroll-feed-section');
@@ -9455,14 +9531,7 @@ function renderScrollFeed() {
   var html = '';
   SCROLL_FEED_ITEMS.forEach(function(item) {
     var liked = (_feedLikes[item.id] && _feedLikes[item.id].liked) ? true : false;
-    // Image: only render when explicitly approved
-    var imgHtml = '';
-    if (item.image && item.imageApproved === true) {
-      imgHtml = '<img src="' + _escH(item.image) + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img">';
-      if (item.imageAttribution) {
-        imgHtml += '<div class="feed-img-attribution">' + _escH(item.imageAttribution) + '</div>';
-      }
-    }
+    var imgHtml = _buildFeedImageHtml(item);
     html += '<div class="feed-card" data-card-id="' + _escH(item.id) + '">'
       + '<div class="feed-card-category">' + _escH(item.category) + '</div>'
       + imgHtml
