@@ -287,7 +287,13 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .feed-card-category { font-size: 11px; font-weight: 700; color: var(--sky, #6aabcf); letter-spacing: 0.4px; margin-bottom: 7px; text-transform: none; }
 .feed-card-title { font-size: 16px; font-weight: 800; color: var(--text1); line-height: 1.35; margin-bottom: 9px; }
 .feed-card-text { font-size: 14px; color: var(--text2); line-height: 1.8; }
-.feed-card-img { width: 100%; border-radius: 10px; margin-bottom: 10px; display: block; object-fit: cover; max-height: 200px; }
+.feed-card-img { width: 100%; border-radius: 10px; margin-bottom: 6px; display: block; object-fit: cover; max-height: 200px; }
+.feed-img-attribution { font-size: 10px; color: var(--text3); margin-bottom: 10px; line-height: 1.4; }
+.feed-card-footer { margin-top: 12px; display: flex; justify-content: flex-start; }
+.feed-like-btn { background: none; border: 1.5px solid var(--border, #e8ddd0); border-radius: 20px; padding: 6px 14px 6px 12px; font-size: 13px; font-weight: 700; color: var(--text3, #a08c7a); font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: border-color 0.18s, background 0.18s, color 0.18s; direction: rtl; }
+.feed-like-btn:hover { border-color: var(--sky, #6aabcf); color: var(--sky, #6aabcf); background: var(--sky-l, #e8f4fb); }
+.feed-like-btn.liked { background: var(--sky-l, #e8f4fb); border-color: var(--sky, #6aabcf); color: var(--sky, #4a8ab0); }
+.feed-like-icon { font-size: 15px; line-height: 1; }
 
 /* COMPLETION NOTE — persistent card for knowledge/regulation notes (quietMoment etc.)
    Does NOT auto-dismiss. User closes with "נעים לדעת" button.
@@ -8385,6 +8391,8 @@ async function init() {
   await loadPlusLibraryState();    // plus/library foundation — no UI effect yet
   await loadActiveLibraryTasks();  // user-selected library tasks for Today
   await loadNiimNotes();           // "נעים לדעת" collected cards for תורי לגלול
+  await loadFeedLikes();           // feed like states — tori_feed_likes_v1
+  await loadFeedImpressions();     // feed impression counts — tori_feed_imp_v1
   await loadBotData();
   await loadJourneyPoints();
   await loadGardenState();
@@ -9268,7 +9276,14 @@ async function saveNiimNote(libDef) {
 }
 
 // ── SCROLL FEED — "תורי לגלול" static content ────────────────────────────────
-// V1: static array, text-only cards. image/imageAlt ready for future use.
+// V1: static array. Text-only cards ship without images.
+// IMAGE POLICY: image renders ONLY when imageApproved === true.
+//   Before setting imageApproved:true, fill ALL image approval fields:
+//   imageSource, imageSourceUrl, imageLicense, imagePhotographer,
+//   imageAttribution (required if license demands it), imageAlt.
+//   Accepted licenses: CC0, Public Domain, Unsplash License, Pexels License,
+//   Pixabay License, or CC-BY with attribution. Avoid NC/ND/unclear sources.
+// visualNeed: true = card's punchline requires an image (don't add to feed without one).
 // Do NOT add therapeutic framing, CTAs, or trauma/anxiety language here.
 const SCROLL_FEED_ITEMS = [
   {
@@ -9276,65 +9291,205 @@ const SCROLL_FEED_ITEMS = [
     category: 'חיות עם אופי',
     title: 'קפיברות הן מקצועניות של שכנות טובה',
     text: 'קפיברות ידועות בזה שהן מסתדרות עם מגוון גדול של חיות סביבן. יש משהו מרגיע ביצור שנראה כאילו הוא פשוט הגיע לעולם עם מדיניות של: נעים, לא דחוף, אפשר לשבת יחד.',
-    type: 'fact', image: null, imageAlt: null
+    type: 'fact', visualNeed: false,
+    image: null, imageAlt: null,
+    imageApproved: false, imageApprovalStatus: null,
+    imageSource: null, imageSourceUrl: null, imageLicense: null,
+    imagePhotographer: null, imageAttribution: null,
   },
   {
     id: 'feed-octopus-arms-001',
     category: 'וואלה, לא ידעתי',
     title: 'לתמנון יש מוח די מבוזר',
     text: 'לתמנונים יש מערכת עצבים מרתקת, וחלק גדול מהנוירונים שלהם נמצא בזרועות. כלומר, כל זרוע יודעת לעשות לא מעט בעצמה. יעילות מרשימה.',
-    type: 'fact', image: null, imageAlt: null
+    type: 'fact', visualNeed: false,
+    image: null, imageAlt: null,
+    imageApproved: false, imageApprovalStatus: null,
+    imageSource: null, imageSourceUrl: null, imageLicense: null,
+    imagePhotographer: null, imageAttribution: null,
   },
   {
     id: 'feed-penguin-pebble-001',
     category: 'חיות עם אופי',
     title: 'פינגווינים וחלוקי נחל: מחווה קטנה, דרמה גדולה',
     text: 'אצל חלק ממיני הפינגווינים, חלוקי נחל יכולים להיות חלק מבניית הקן וגם מחיזור. יש משהו מקסים ברעיון שחלוק קטן יכול להיות מחווה רצינית לגמרי. רומנטיקה בגרסת אנטארקטיקה.',
-    type: 'fact', image: null, imageAlt: null
+    type: 'fact', visualNeed: false,
+    image: null, imageAlt: null,
+    imageApproved: false, imageApprovalStatus: null,
+    imageSource: null, imageSourceUrl: null, imageLicense: null,
+    imagePhotographer: null, imageAttribution: null,
   },
   {
     id: 'feed-clouds-names-001',
     category: 'טבע שעושה וואו',
     title: 'לעננים יש שמות שנשמעים כמו יצורים',
     text: 'יש עננים עם שמות כמו קומולוס, צירוס ונימבוסטרטוס. חלקם נראים כמו כבשים, חלקם כמו ציור שנשכח בשמיים. נחמד לדעת שגם לשמיים יש קצת קטגוריות, אבל הם עדיין עושים מה שבא להם.',
-    type: 'fact', image: null, imageAlt: null
+    type: 'fact', visualNeed: false,
+    image: null, imageAlt: null,
+    imageApproved: false, imageApprovalStatus: null,
+    imageSource: null, imageSourceUrl: null, imageLicense: null,
+    imagePhotographer: null, imageAttribution: null,
   },
   {
     id: 'feed-tiny-library-001',
     category: 'דברים קטנים שאנשים יצרו',
     title: 'ספריות קטנות ברחוב הן רעיון ממש יפה',
     text: 'במקומות רבים בעולם יש ספריות קטנות בשכונות: קופסה קטנה עם ספרים, וכל אחד יכול לקחת או להשאיר. זה רעיון פשוט שמזכיר כמה יופי יכול להיכנס לקופסה בגודל סביר.',
-    type: 'tiny_world', image: null, imageAlt: null
+    type: 'tiny_world', visualNeed: false,
+    image: null, imageAlt: null,
+    imageApproved: false, imageApprovalStatus: null,
+    imageSource: null, imageSourceUrl: null, imageLicense: null,
+    imagePhotographer: null, imageAttribution: null,
   },
   {
     id: 'feed-plants-slow-001',
     category: 'צמחים עם סבלנות',
     title: 'צמחים לא ממהרים, ובכל זאת קורים אצלם דברים',
     text: 'הרבה צמחים גדלים בקצב שכמעט אי אפשר לראות בזמן אמת. ואז יום אחד יש עלה חדש.',
-    type: 'fact', image: null, imageAlt: null
+    type: 'fact', visualNeed: false,
+    image: null, imageAlt: null,
+    imageApproved: false, imageApprovalStatus: null,
+    imageSource: null, imageSourceUrl: null, imageLicense: null,
+    imagePhotographer: null, imageAttribution: null,
   },
 ];
 
+// ── FEED ANALYTICS & LIKES ───────────────────────────────────────────────────
+// trackScrollEvent: anonymous analytics stub.
+// Replace the body to wire up a real backend — all call sites remain unchanged.
+// payload: { cardId, category, type, visualNeed, timestamp, ...event-specific }
+// NEVER pass PII. Content-level data only.
+function trackScrollEvent(eventName, payload) {
+  // V1: local-only. Future: POST to anonymous analytics endpoint.
+  // console.log('[feed]', eventName, payload);
+}
+
+var FEED_LIKES_KEY = 'tori_feed_likes_v1';
+var FEED_IMP_KEY   = 'tori_feed_imp_v1';
+// { [cardId]: { liked: bool, likedAt: number|null } }
+var _feedLikes = {};
+// { [cardId]: { count: number, firstAt: number, lastAt: number } }
+var _feedImpressions = {};
+
+async function loadFeedLikes() {
+  try {
+    var raw = await store.get(FEED_LIKES_KEY);
+    _feedLikes = raw ? JSON.parse(raw) : {};
+  } catch(e) { _feedLikes = {}; }
+}
+async function saveFeedLikes() {
+  try { await store.set(FEED_LIKES_KEY, JSON.stringify(_feedLikes)); } catch(e) {}
+}
+async function loadFeedImpressions() {
+  try {
+    var raw = await store.get(FEED_IMP_KEY);
+    _feedImpressions = raw ? JSON.parse(raw) : {};
+  } catch(e) { _feedImpressions = {}; }
+}
+async function saveFeedImpressions() {
+  try { await store.set(FEED_IMP_KEY, JSON.stringify(_feedImpressions)); } catch(e) {}
+}
+
+// Toggle like on a feed card. Updates in-memory cache, persists, patches button DOM.
+function toggleFeedLike(cardId) {
+  var item = SCROLL_FEED_ITEMS.find(function(i) { return i.id === cardId; });
+  if (!item) return;
+  var current = _feedLikes[cardId] || { liked: false, likedAt: null };
+  var nowLiked = !current.liked;
+  _feedLikes[cardId] = { liked: nowLiked, likedAt: nowLiked ? Date.now() : null };
+  saveFeedLikes();
+  var btn = document.getElementById('like-btn-' + cardId);
+  if (btn) {
+    btn.classList.toggle('liked', nowLiked);
+    btn.setAttribute('aria-pressed', String(nowLiked));
+    var icon = btn.querySelector('.feed-like-icon');
+    if (icon) icon.textContent = nowLiked ? '♥' : '♡';
+  }
+  trackScrollEvent(nowLiked ? 'feed_like' : 'feed_unlike', {
+    cardId: cardId,
+    category: item.category,
+    type: item.type,
+    visualNeed: item.visualNeed || false,
+    timestamp: Date.now(),
+  });
+}
+
+// Impression tracker — called by IntersectionObserver, deduped per render cycle.
+var _impressedThisRender = {};
+function recordFeedImpression(cardId) {
+  if (_impressedThisRender[cardId]) return;
+  _impressedThisRender[cardId] = true;
+  var item = SCROLL_FEED_ITEMS.find(function(i) { return i.id === cardId; });
+  if (!item) return;
+  var now = Date.now();
+  if (_feedImpressions[cardId]) {
+    _feedImpressions[cardId].count++;
+    _feedImpressions[cardId].lastAt = now;
+  } else {
+    _feedImpressions[cardId] = { count: 1, firstAt: now, lastAt: now };
+  }
+  saveFeedImpressions();
+  trackScrollEvent('feed_impression', {
+    cardId: cardId,
+    category: item.category,
+    type: item.type,
+    visualNeed: item.visualNeed || false,
+    timestamp: now,
+  });
+}
+
 // Render feed cards from SCROLL_FEED_ITEMS into #scroll-feed-section.
-// No async — static data only. Called by switchView('scroll').
-// Future: if item.image is set, renders <img> with item.imageAlt.
+// No async — reads _feedLikes cache (must be loaded before first render).
+// Image renders ONLY when item.imageApproved === true.
+// Sets up IntersectionObserver for impression tracking after render.
 function renderScrollFeed() {
   var el = document.getElementById('scroll-feed-section');
   if (!el) return;
   if (!SCROLL_FEED_ITEMS || SCROLL_FEED_ITEMS.length === 0) { el.innerHTML = ''; return; }
+  _impressedThisRender = {}; // reset per render — one impression counted per visit
   var html = '';
   SCROLL_FEED_ITEMS.forEach(function(item) {
-    var imgHtml = (item.image)
-      ? '<img src="' + _escH(item.image) + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img">'
-      : '';
-    html += '<div class="feed-card">'
+    var liked = (_feedLikes[item.id] && _feedLikes[item.id].liked) ? true : false;
+    // Image: only render when explicitly approved
+    var imgHtml = '';
+    if (item.image && item.imageApproved === true) {
+      imgHtml = '<img src="' + _escH(item.image) + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img">';
+      if (item.imageAttribution) {
+        imgHtml += '<div class="feed-img-attribution">' + _escH(item.imageAttribution) + '</div>';
+      }
+    }
+    html += '<div class="feed-card" data-card-id="' + _escH(item.id) + '">'
       + '<div class="feed-card-category">' + _escH(item.category) + '</div>'
       + imgHtml
       + '<div class="feed-card-title">' + _escH(item.title) + '</div>'
       + '<div class="feed-card-text">'  + _escH(item.text)  + '</div>'
+      + '<div class="feed-card-footer">'
+      + '<button class="feed-like-btn' + (liked ? ' liked' : '') + '" '
+      + 'id="like-btn-' + _escH(item.id) + '" '
+      + 'onclick="toggleFeedLike(\'' + _escH(item.id) + '\')" '
+      + 'aria-pressed="' + liked + '" aria-label="סמן אהבתי">'
+      + '<span class="feed-like-icon">' + (liked ? '♥' : '♡') + '</span>'
+      + '<span>אהבתי</span>'
+      + '</button>'
+      + '</div>'
       + '</div>';
   });
   el.innerHTML = html;
+  // Impression tracking via IntersectionObserver (50% visibility threshold)
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.getAttribute('data-card-id');
+          if (id) recordFeedImpression(id);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    el.querySelectorAll('.feed-card[data-card-id]').forEach(function(card) {
+      obs.observe(card);
+    });
+  }
 }
 
 // Render "נעים לדעת" section inside view-scroll.
