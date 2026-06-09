@@ -67,6 +67,8 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .nav-label { font-size: 10px; font-weight: 600; color: var(--text3); }
 .nav-item.active .nav-label { color: var(--terra); }
 .nav-item.active .nav-icon { transform: scale(1.15); }
+/* Secondary nav item (תורי לגלול) — subtle separator from core pair */
+.nav-item--secondary { border-inline-start: 1px solid var(--border, #e8ddd0); margin-inline-start: 2px; }
 .bot-badge { position: absolute; top: 2px; right: 12px; background: #E53935; color: white; border-radius: 50%; min-width: 16px; height: 16px; font-size: 10px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 3px; line-height: 1; }
 .bot-badge.show { display: flex; }
 
@@ -2486,18 +2488,19 @@ if('serviceWorker' in navigator){
 <!-- FLOATING הידעת BUTTON -->
 <button class="fact-fab" onclick="openFact()">💡 הידעת?</button>
 
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV
+     RTL visual order (right → left): היום | המסע | ╎ לגלול
+     nav-scroll has border-inline-start separator to signal it's a secondary area -->
 <nav class="bottom-nav" aria-label="ניווט ראשי">
   <div class="nav-item active" id="nav-today" onclick="switchView('today')">
     <div class="nav-icon">📋</div><div class="nav-label">היום</div>
   </div>
-  <div class="nav-item" id="nav-scroll" onclick="switchView('scroll')">
-    <div class="nav-icon">🫧</div><div class="nav-label">לגלול</div>
-  </div>
   <div class="nav-item" id="nav-journey" onclick="switchView('journey')">
     <div class="nav-icon">🌿</div><div class="nav-label">המסע</div>
   </div>
-
+  <div class="nav-item nav-item--secondary" id="nav-scroll" onclick="switchView('scroll')">
+    <div class="nav-icon">🫧</div><div class="nav-label">לגלול</div>
+  </div>
 </nav>
 
 
