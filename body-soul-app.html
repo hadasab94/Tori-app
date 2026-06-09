@@ -287,7 +287,8 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .feed-card-category { font-size: 11px; font-weight: 700; color: var(--sky, #6aabcf); letter-spacing: 0.4px; margin-bottom: 7px; text-transform: none; }
 .feed-card-title { font-size: 16px; font-weight: 800; color: var(--text1); line-height: 1.35; margin-bottom: 9px; }
 .feed-card-text { font-size: 14px; color: var(--text2); line-height: 1.8; }
-.feed-card-img { width: 100%; border-radius: 10px; margin-bottom: 6px; display: block; object-fit: cover; max-height: 200px; }
+.feed-card-img { width: 100%; border-radius: 10px; margin-bottom: 6px; display: block; object-fit: cover; max-height: 220px; }
+.feed-card-video { width: 100%; border-radius: 10px; margin-bottom: 6px; display: block; object-fit: cover; max-height: 260px; background: #000; }
 .feed-img-attribution { font-size: 10px; color: var(--text3); margin-top: 4px; margin-bottom: 10px; line-height: 1.5; direction: rtl; }
 .feed-attrib-link { color: var(--text3); text-decoration: underline; text-underline-offset: 2px; }
 .feed-attrib-link:hover { color: var(--text2); }
@@ -9348,13 +9349,19 @@ const SCROLL_FEED_ITEMS = [
     category: 'טבע שעושה וואו',
     title: 'לעננים יש שמות שנשמעים כמו יצורים',
     text: 'יש עננים עם שמות כמו קומולוס, צירוס ונימבוסטרטוס. חלקם נראים כמו כבשים, חלקם כמו ציור שנשכח בשמיים. נחמד לדעת שגם לשמיים יש קצת קטגוריות, אבל הם עדיין עושים מה שבא להם.',
-    type: 'fact', visualNeed: false,
-    image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
+    type: 'fact', visualNeed: true, mediaType: 'image',
+    image: './assets/scroll-feed/kelvin_helmholtz_waves.jpg',
+    imageAlt: 'ענני קלווין-הלמהולץ — גלי ענן אטמוספריים שנראים כמו גלי ים',
+    imageApproved: true, imageApprovalStatus: 'approved',
+    imageTitle: 'Kelvin-Helmholtz waves',
+    imageCreator: 'Rod Jones Photography',
+    imageSourceName: 'Wikimedia Commons',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Kelvin-Helmholtz_waves.jpg',
+    imageLicense: 'CC BY 2.0',
+    imageLicenseUrl: 'https://creativecommons.org/licenses/by/2.0/',
+    imageModified: true, imageModificationNote: 'נחתכה לתצוגת מובייל',
+    attributionRequired: true,
+    imageAttribution: 'Photo: Rod Jones Photography · Wikimedia Commons · CC BY 2.0',
   },
   {
     id: 'feed-tiny-library-001',
@@ -9470,32 +9477,43 @@ function recordFeedImpression(cardId) {
   });
 }
 
-// Build image + attribution HTML for a single feed card.
-// Returns '' if: no image, not approved, or attribution validation fails.
+// Build image/video + attribution HTML for a single feed card.
+// Supports mediaType: 'image' (default) or 'video'.
+// Video: rendered as <video autoplay muted loop playsinline> — no sound autoplay.
+// Returns '' if: no image/src, not approved, or attribution validation fails.
 // Rules:
 //   1. imageApproved must be === true
 //   2. If attributionRequired, these fields are mandatory:
 //      imageCreator, imageSourceUrl, imageLicense, imageLicenseUrl, imageAttribution
 //   3. If imageModified, imageModificationNote is mandatory
-//   4. Missing required fields → console.warn + return '' (image suppressed)
-//   5. Attribution is rendered as linked HTML from structured fields, NOT from imageAttribution text
-//   6. No attribution block rendered when attributionRequired === false
-function _buildFeedImageHtml(item) {
+//   4. Missing required fields → console.warn + return '' (media suppressed)
+//   5. Attribution rendered as linked HTML from structured fields (not raw imageAttribution text)
+//   6. No attribution block when attributionRequired === false
+function _buildFeedMediaHtml(item) {
   if (!item.image || item.imageApproved !== true) return '';
   if (item.attributionRequired === true) {
     var required = ['imageCreator', 'imageSourceUrl', 'imageLicense', 'imageLicenseUrl', 'imageAttribution'];
     for (var ri = 0; ri < required.length; ri++) {
       if (!item[required[ri]]) {
-        console.warn('[feed] Image suppressed — missing attribution field "' + required[ri] + '" on card:', item.id);
+        console.warn('[feed] Media suppressed — missing attribution field "' + required[ri] + '" on card:', item.id);
         return '';
       }
     }
     if (item.imageModified === true && !item.imageModificationNote) {
-      console.warn('[feed] Image suppressed — imageModified is true but imageModificationNote is missing on card:', item.id);
+      console.warn('[feed] Media suppressed — imageModified is true but imageModificationNote is missing on card:', item.id);
       return '';
     }
   }
-  var html = '<img src="' + _escH(item.image) + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img">';
+  var isVideo = (item.mediaType === 'video');
+  var mediaSrc = _escH(item.image);
+  var mediaHtml;
+  if (isVideo) {
+    mediaHtml = '<video class="feed-card-video" src="' + mediaSrc + '" '
+      + 'autoplay muted loop playsinline preload="metadata" '
+      + 'aria-label="' + _escH(item.imageAlt || '') + '"></video>';
+  } else {
+    mediaHtml = '<img src="' + mediaSrc + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img">';
+  }
   if (item.attributionRequired === true) {
     var a = '<div class="feed-img-attribution">';
     a += 'צילום: ' + _escH(item.imageCreator);
@@ -9511,9 +9529,9 @@ function _buildFeedImageHtml(item) {
       a += ' · ' + _escH(item.imageModificationNote);
     }
     a += '</div>';
-    html += a;
+    mediaHtml += a;
   }
-  return html;
+  return mediaHtml;
 }
 
 // Render feed cards from SCROLL_FEED_ITEMS into #scroll-feed-section.
@@ -9531,7 +9549,7 @@ function renderScrollFeed() {
   var html = '';
   SCROLL_FEED_ITEMS.forEach(function(item) {
     var liked = (_feedLikes[item.id] && _feedLikes[item.id].liked) ? true : false;
-    var imgHtml = _buildFeedImageHtml(item);
+    var imgHtml = _buildFeedMediaHtml(item);
     html += '<div class="feed-card" data-card-id="' + _escH(item.id) + '">'
       + '<div class="feed-card-category">' + _escH(item.category) + '</div>'
       + imgHtml
