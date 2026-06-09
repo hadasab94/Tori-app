@@ -8358,8 +8358,9 @@ async function init() {
     Notification.requestPermission();
   }
   await loadCustomTasks();
-  await loadPlusLibraryState(); // plus/library foundation — no UI effect yet
-  await loadActiveLibraryTasks(); // user-selected library tasks for Today
+  await loadPlusLibraryState();    // plus/library foundation — no UI effect yet
+  await loadActiveLibraryTasks();  // user-selected library tasks for Today
+  await loadNiimNotes();           // "נעים לדעת" collected cards for תורי לגלול
   await loadBotData();
   await loadJourneyPoints();
   await loadGardenState();
@@ -9196,6 +9197,52 @@ var LIBRARY_SUPPORTED_FAMILIES = ['food', 'bodyRefresh', 'freshAir', 'quietMomen
 
 var _activeLibraryTasks = [];
 
+// ──────────────────────────────────────────────────────────────
+// NIIM NOTES — "נעים לדעת" collected cards (tori_niim_v1)
+// Saved when a library task with completionNote is completed.
+// Shown in the future "נעים לדעת" section inside "תורי לגלול".
+// ──────────────────────────────────────────────────────────────
+
+var NIIM_KEY = 'tori_niim_v1';
+var _niimNotes = [];   // runtime cache — loaded on init
+
+async function loadNiimNotes() {
+  try {
+    var raw = await store.get(NIIM_KEY);
+    if (raw) _niimNotes = JSON.parse(raw);
+    else     _niimNotes = [];
+  } catch(e) { _niimNotes = []; }
+}
+
+// Upsert a niim note from a libDef that has a completionNote.
+// Guards: libDef must exist and have completionNote.
+// Dedup by id: updates lastSeenAt + seenCount if already saved.
+async function saveNiimNote(libDef) {
+  if (!libDef || !libDef.completionNote) return;
+  var now = Date.now();
+  var existing = null;
+  for (var i = 0; i < _niimNotes.length; i++) {
+    if (_niimNotes[i].id === libDef.id) { existing = _niimNotes[i]; break; }
+  }
+  if (existing) {
+    existing.lastSeenAt = now;
+    existing.seenCount  = (existing.seenCount || 1) + 1;
+  } else {
+    _niimNotes.push({
+      id:          libDef.id,
+      label:       libDef.label,
+      note:        libDef.completionNote,
+      family:      libDef.family      || null,
+      plantFamily: libDef.plantFamily || null,
+      icon:        libDef.icon        || '🌱',
+      firstSeenAt: now,
+      lastSeenAt:  now,
+      seenCount:   1,
+    });
+  }
+  try { await store.set(NIIM_KEY, JSON.stringify(_niimNotes)); } catch(e) {}
+}
+
 async function loadActiveLibraryTasks() {
   try {
     var raw = await store.get(ACTIVE_LIBRARY_KEY);
@@ -9260,7 +9307,8 @@ function toggleLibraryTask(libraryId) {
     // Uses showCompletionNote (no auto-dismiss) — not showToast — for accessibility.
     var libDef = getSelfCareTaskById(libraryId);
     if (libDef && libDef.completionNote) {
-      showCompletionNote(libDef.completionNote);
+      showCompletionNote(libDef.completionNote); // UI — show persistent card
+      saveNiimNote(libDef);                      // storage — collect for "נעים לדעת"
     }
   } else {
     // Task un-checked — hide any open completion note.
