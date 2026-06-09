@@ -280,7 +280,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .niim-card-label { font-size: 14px; font-weight: 700; color: var(--text1); line-height: 1.3; }
 .niim-card-note { font-size: 13.5px; color: var(--text2); line-height: 1.75; }
 .niim-card-seen { font-size: 11px; color: var(--text3); margin-top: 8px; }
-.niim-empty { font-size: 14px; color: var(--text3); line-height: 1.75; padding: 12px 0 8px; font-style: italic; }
+.niim-empty { font-size: 14px; color: var(--text3); line-height: 1.75; padding: 12px 0 8px; }
 
 /* COMPLETION NOTE — persistent card for knowledge/regulation notes (quietMoment etc.)
    Does NOT auto-dismiss. User closes with "נעים לדעת" button.
@@ -9265,7 +9265,8 @@ function renderNiimSection() {
   if (!el) return;
 
   if (!_niimNotes || _niimNotes.length === 0) {
-    el.innerHTML = '<div class="niim-empty">'
+    el.innerHTML = '<div class="niim-section-title">נעים לדעת</div>'
+      + '<div class="niim-empty">'
       + 'כשתפגשי הסברים קטנים אחרי פעולות, הם יישמרו כאן —'
       + ' לאט לאט ייווצר לך מקום עם ידע שעוזר.'
       + '</div>';
