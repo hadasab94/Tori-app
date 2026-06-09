@@ -9414,8 +9414,10 @@ function toggleFeedLike(cardId) {
   });
 }
 
-// Impression tracker — called by IntersectionObserver, deduped per render cycle.
+// Impression tracker — called after 1-second dwell, deduped per render cycle.
+// _impTimers: pending setTimeout handles keyed by cardId (cancelled if card leaves viewport).
 var _impressedThisRender = {};
+var _impTimers = {};
 function recordFeedImpression(cardId) {
   if (_impressedThisRender[cardId]) return;
   _impressedThisRender[cardId] = true;
@@ -9446,7 +9448,10 @@ function renderScrollFeed() {
   var el = document.getElementById('scroll-feed-section');
   if (!el) return;
   if (!SCROLL_FEED_ITEMS || SCROLL_FEED_ITEMS.length === 0) { el.innerHTML = ''; return; }
-  _impressedThisRender = {}; // reset per render — one impression counted per visit
+  // Cancel timers from any previous render and reset dedup guards
+  Object.keys(_impTimers).forEach(function(id) { clearTimeout(_impTimers[id]); });
+  _impTimers = {};
+  _impressedThisRender = {};
   var html = '';
   SCROLL_FEED_ITEMS.forEach(function(item) {
     var liked = (_feedLikes[item.id] && _feedLikes[item.id].liked) ? true : false;
@@ -9475,14 +9480,28 @@ function renderScrollFeed() {
       + '</div>';
   });
   el.innerHTML = html;
-  // Impression tracking via IntersectionObserver (50% visibility threshold)
+  // Impression tracking: card must be ≥50% visible for ≥1 second, once per render cycle.
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
+        var id = entry.target.getAttribute('data-card-id');
+        if (!id) return;
         if (entry.isIntersecting) {
-          var id = entry.target.getAttribute('data-card-id');
-          if (id) recordFeedImpression(id);
-          obs.unobserve(entry.target);
+          // Start 1-second dwell timer — only if not already pending
+          if (_impTimers[id] === undefined) {
+            var target = entry.target;
+            _impTimers[id] = setTimeout(function() {
+              delete _impTimers[id];
+              recordFeedImpression(id);
+              obs.unobserve(target);
+            }, 1000);
+          }
+        } else {
+          // Card left viewport before 1 second — cancel timer
+          if (_impTimers[id] !== undefined) {
+            clearTimeout(_impTimers[id]);
+            delete _impTimers[id];
+          }
         }
       });
     }, { threshold: 0.5 });
