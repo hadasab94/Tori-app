@@ -288,7 +288,7 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .feed-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px 16px 16px; margin-bottom: 14px; direction: rtl; }
 .feed-card-category { font-size: 11px; font-weight: 700; color: var(--sky, #6aabcf); letter-spacing: 0.4px; margin-bottom: 7px; text-transform: none; }
 .feed-card-title { font-size: 16px; font-weight: 800; color: var(--text1); line-height: 1.35; margin-bottom: 9px; }
-.feed-card-text { font-size: 14px; color: var(--text2); line-height: 1.8; }
+.feed-card-text { font-size: 14px; color: var(--text2); line-height: 1.8; white-space: pre-line; }
 .feed-card-img { width: 100%; border-radius: 10px; margin-bottom: 6px; display: block; object-fit: cover; max-height: 220px; }
 .feed-card-video { width: 100%; border-radius: 10px; margin-bottom: 6px; display: block; object-fit: cover; max-height: 260px; background: #000; }
 .feed-img-attribution { font-size: 10px; color: var(--text3); margin-top: 4px; margin-bottom: 10px; line-height: 1.5; direction: rtl; }
@@ -2418,7 +2418,6 @@ if('serviceWorker' in navigator){
     <div style="font-size:24px;font-weight:800;color:var(--text1);margin-bottom:14px;line-height:1.3;">תורי לגלול</div>
     <div style="font-size:15px;color:var(--text2);line-height:1.85;max-width:420px;">
       הסחות דעת מיטיבות: תוכן קצר, חיובי, מצחיק ומסקרן שנותן למוח מקום קטן לנוח.<br><br>
-      כאן מחכות לך עובדות מפתיעות, חיות עם אופי, טבע שעושה וואו, ודברים קטנים מהעולם שנעים לפגוש באמצע היום.<br><br>
       אפשר פשוט לגלול קצת. התוכן כבר בצד שלך.
     </div>
   </div>
@@ -9325,7 +9324,7 @@ const SCROLL_FEED_ITEMS = [
     id: 'feed-octopus-arms-001',
     category: 'וואלה, לא ידעתי',
     title: 'לתמנון יש מוח די מבוזר',
-    text: 'לתמנונים יש מערכת עצבים מרתקת, וחלק גדול מהנוירונים שלהם נמצא בזרועות. כלומר, כל זרוע יודעת לעשות לא מעט בעצמה. יעילות מרשימה.',
+    text: 'לתמנונים יש מערכת עצבים מרתקת, וחלק גדול מהנוירונים שלהם נמצא בזרועות.\n\nזה אומר שכל זרוע יודעת לעשות לא מעט בעצמה — לחקור, להגיב, ולהסתדר עם העולם מקרוב.\n\nתמנון הוא לא רק חכם.\nהוא חכם בכמה כיוונים במקביל.',
     type: 'fact', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
@@ -9337,8 +9336,8 @@ const SCROLL_FEED_ITEMS = [
   {
     id: 'feed-penguin-pebble-001',
     category: 'חיות עם אופי',
-    title: 'פינגווינים וחלוקי נחל: מחווה קטנה, דרמה גדולה',
-    text: 'אצל חלק ממיני הפינגווינים, חלוקי נחל יכולים להיות חלק מבניית הקן וגם מחיזור. יש משהו מקסים ברעיון שחלוק קטן יכול להיות מחווה רצינית לגמרי. רומנטיקה בגרסת אנטארקטיקה.',
+    title: 'פינגווינים וחלוקי נחל: מחווה קטנה, משמעות גדולה',
+    text: 'אצל חלק ממיני הפינגווינים, חלוקי נחל יכולים להיות חלק מבניית הקן וגם מחיזור.\n\nיש משהו מקסים ברעיון שחלוק קטן יכול להיות מחווה רצינית לגמרי.\n\nרומנטיקה בגרסת אנטארקטיקה.',
     type: 'fact', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
@@ -9350,8 +9349,8 @@ const SCROLL_FEED_ITEMS = [
   {
     id: 'feed-clouds-names-001',
     category: 'טבע שעושה וואו',
-    title: 'לעננים יש שמות שנשמעים כמו יצורים',
-    text: 'יש עננים עם שמות כמו קומולוס, צירוס ונימבוסטרטוס. חלקם נראים כמו כבשים, חלקם כמו ציור שנשכח בשמיים. נחמד לדעת שגם לשמיים יש קצת קטגוריות, אבל הם עדיין עושים מה שבא להם.',
+    title: 'הענן הזה נראה כאילו הים עבר לתקרה',
+    text: 'יש עננים שנראים ממש כמו גלים בים.\n\nקוראים להם ענני קלווין-הלמהולץ, והם נוצרים בתנאים מסוימים של זרימת אוויר.\n\nהשמיים עשו רגע של ים.\nיצא להם יפה.',
     type: 'fact', visualNeed: true, mediaType: 'image',
     image: './assets/scroll-feed/kelvin_helmholtz_waves.jpg',
     imageAlt: 'ענני קלווין-הלמהולץ — גלי ענן אטמוספריים שנראים כמו גלי ים',
@@ -9370,7 +9369,7 @@ const SCROLL_FEED_ITEMS = [
     id: 'feed-tiny-library-001',
     category: 'דברים קטנים שאנשים יצרו',
     title: 'ספריות קטנות ברחוב הן רעיון ממש יפה',
-    text: 'במקומות רבים בעולם יש ספריות קטנות בשכונות: קופסה קטנה עם ספרים, וכל אחד יכול לקחת או להשאיר. זה רעיון פשוט שמזכיר כמה יופי יכול להיכנס לקופסה בגודל סביר.',
+    text: 'במקומות רבים בעולם יש ספריות קטנות ברחוב: קופסה קטנה עם ספרים, וכל אחת יכולה לקחת ספר או להשאיר אחד.\n\nזה רעיון פשוט מאוד.\nובכל זאת, יש בו משהו שמרגיש כמו אמון קטן שמישהו השאיר על המדרכה.',
     type: 'tiny_world', visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
@@ -9380,16 +9379,19 @@ const SCROLL_FEED_ITEMS = [
     attributionRequired: false, imageAttribution: null,
   },
   {
-    id: 'feed-plants-slow-001',
-    category: 'צמחים עם סבלנות',
-    title: 'צמחים לא ממהרים, ובכל זאת קורים אצלם דברים',
-    text: 'הרבה צמחים גדלים בקצב שכמעט אי אפשר לראות בזמן אמת. ואז יום אחד יש עלה חדש.',
-    type: 'fact', visualNeed: false,
-    image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
+    id: 'feed-mimosa-touch-001',
+    category: 'צמחים עם אופי',
+    title: 'צמח שמתבייש ממגע',
+    text: 'יש צמח בשם מימוזה ביישנית, שהעלים שלו נסגרים כשנוגעים בהם.\n\nהוא לא עושה סצנה.\nהוא פשוט אומר:\n"תודה, אני אקח רגע לעצמי."\n\nצמח עם גבולות. מכבדות.',
+    type: 'fact', visualNeed: true, mediaType: 'video',
+    image: './assets/scroll-feed/mimosa_pudica_closing.mp4',
+    imageAlt: 'עלי מימוזה ביישנית נסגרים בתגובה למגע',
+    imageApproved: true, imageApprovalStatus: 'approved',
+    imageTitle: 'מימוזה ביישנית — סגירת עלים',
+    imageCreator: null, imageSourceName: null, imageSourceUrl: null,
     imageLicense: null, imageLicenseUrl: null,
     imageModified: false, imageModificationNote: null,
+    // ⚠️ מקור הסרטון לא אומת — לעדכן creator/source/license לפני שימוש מסחרי
     attributionRequired: false, imageAttribution: null,
   },
 ];
