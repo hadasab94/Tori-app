@@ -9390,13 +9390,17 @@ const SCROLL_FEED_ITEMS = [
     type: 'fact', visualNeed: true, mediaType: 'video',
     image: './assets/scroll-feed/mimosa_pudica_closing.mp4',
     imageAlt: 'עלי מימוזה ביישנית נסגרים בתגובה למגע',
-    // ⛔ imageApproved: false — video source/license not yet verified.
-    // To approve: fill imageCreator, imageSourceName, imageSourceUrl,
-    //             imageLicense, imageLicenseUrl, then set imageApproved: true.
-    imageApproved: false, imageApprovalStatus: 'pending-source-verification',
+    // Pexels License — free for commercial use, no attribution required.
+    // ✅ License verified. Source platform known.
+    // TODO: fill imageCreator + exact imageSourcePageUrl (specific video page on Pexels).
+    //       imageApproved kept false until exact source page is documented.
+    imageApproved: false, imageApprovalStatus: 'approved_pending_exact_source',
     imageTitle: 'מימוזה ביישנית — סגירת עלים',
-    imageCreator: null, imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
+    imageCreator: null,          // TODO: שם היוצר/ת מעמוד הסרטון הספציפי ב-Pexels
+    imageSourceName: 'Pexels',
+    imageSourceUrl: 'https://www.pexels.com/search/videos/mimosa%20pudica/',
+    imageLicense: 'Pexels License',
+    imageLicenseUrl: 'https://www.pexels.com/license/',
     imageModified: false, imageModificationNote: null,
     attributionRequired: false, imageAttribution: null,
   },
