@@ -82,6 +82,14 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .settings-card-arrow { font-size: 16px; color: var(--text3); margin-inline-start: 10px; flex-shrink: 0; }
 .settings-card-badge { font-size: 10px; font-weight: 700; color: var(--text3); background: var(--border); border-radius: 8px; padding: 2px 7px; margin-inline-start: 8px; white-space: nowrap; }
 
+/* FOODS EDIT — view-foods */
+.foods-field-wrap { margin-bottom: 10px; }
+.foods-input { width: 100%; box-sizing: border-box; font-size: 15px; font-family: inherit; color: var(--text1); background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 13px; direction: rtl; transition: border-color 0.15s; outline: none; }
+.foods-input:focus { border-color: var(--sky, #6aabcf); }
+.foods-save-btn { width: 100%; padding: 13px; background: var(--sky, #6aabcf); color: #fff; font-size: 15px; font-weight: 800; font-family: inherit; border: none; border-radius: 12px; cursor: pointer; margin-top: 6px; transition: opacity 0.15s; }
+.foods-save-btn:active { opacity: 0.82; }
+.foods-saved-msg { font-size: 13px; color: var(--sky, #6aabcf); font-weight: 700; text-align: center; margin-top: 10px; min-height: 20px; direction: rtl; }
+
 /* MORE / ABOUT button — top-left of view-today, non-tab helper screen */
 .more-btn { position: absolute; top: 14px; left: 14px; background: none; border: none; font-size: 20px; line-height: 1; padding: 8px; border-radius: 50%; cursor: pointer; color: var(--text3, #a08c7a); transition: background 0.18s, color 0.18s; -webkit-tap-highlight-color: transparent; z-index: 10; }
 .more-btn:hover { background: var(--border, #e8ddd0); color: var(--text1); }
@@ -2440,6 +2448,23 @@ if('serviceWorker' in navigator){
     </div>
   </div>
 </div>
+<!-- FOODS EDIT VIEW — helper screen, not a nav tab, not persisted to localStorage -->
+<div class="view" id="view-foods" style="direction:rtl;">
+  <button class="about-back-btn" onclick="switchView('settings')" aria-label="חזרה להגדרות">← חזרה</button>
+
+  <div style="font-size:22px;font-weight:800;color:var(--text1);margin-bottom:8px;line-height:1.3;">מאכלים קלים</div>
+  <div style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:24px;">רשימה של חמישה מאכלים פשוטים שהדמות תוכל להציע ביום שבו קשה לבחור מה לאכול.</div>
+
+  <div class="foods-field-wrap"><input class="foods-input" id="food-input-0" type="text" inputmode="text" autocomplete="off" placeholder="מאכל 1"></div>
+  <div class="foods-field-wrap"><input class="foods-input" id="food-input-1" type="text" inputmode="text" autocomplete="off" placeholder="מאכל 2"></div>
+  <div class="foods-field-wrap"><input class="foods-input" id="food-input-2" type="text" inputmode="text" autocomplete="off" placeholder="מאכל 3"></div>
+  <div class="foods-field-wrap"><input class="foods-input" id="food-input-3" type="text" inputmode="text" autocomplete="off" placeholder="מאכל 4"></div>
+  <div class="foods-field-wrap"><input class="foods-input" id="food-input-4" type="text" inputmode="text" autocomplete="off" placeholder="מאכל 5"></div>
+
+  <button class="foods-save-btn" onclick="saveFoods()">שמור</button>
+  <div class="foods-saved-msg" id="foods-saved-msg"></div>
+</div>
+
 <!-- SETTINGS / MORE VIEW — helper screen, not a nav tab, not persisted to localStorage -->
 <div class="view" id="view-settings" style="direction:rtl;">
   <button class="about-back-btn" onclick="openSettingsBack()" aria-label="חזרה">← חזרה</button>
@@ -2455,12 +2480,12 @@ if('serviceWorker' in navigator){
     <div class="settings-card-arrow">‹</div>
   </div>
 
-  <div class="settings-card settings-card--disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="מאכלים קלים — בקרוב">
+  <div class="settings-card" onclick="openFoodsView()" role="button" tabindex="0" aria-label="מאכלים קלים">
     <div class="settings-card-body">
       <div class="settings-card-title">מאכלים קלים</div>
       <div class="settings-card-sub">רשימת מאכלים פשוטים לימים שבהם קשה לבחור</div>
     </div>
-    <div class="settings-card-badge">בקרוב</div>
+    <div class="settings-card-arrow">‹</div>
   </div>
 
   <div class="settings-card settings-card--disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="הגדרות תצוגה — בקרוב">
@@ -6419,6 +6444,42 @@ function switchView(v) {
 function openSettingsBack() { switchView(_lastMainTab); }
 // openAboutBack kept as alias in case called from elsewhere; about now always returns to settings.
 function openAboutBack() { switchView('settings'); }
+
+// Save only bp to bot:prefs (lighter than full saveBotData).
+async function saveBotPrefs() {
+  try { await store.set('bot:prefs', JSON.stringify(bp)); } catch(e) { console.warn('[settings] saveBotPrefs failed', e); }
+}
+
+// Open foods view and populate fields from bp.quickFoods.
+function openFoodsView() {
+  switchView('foods');
+  var foods = (bp.quickFoods && Array.isArray(bp.quickFoods)) ? bp.quickFoods : [];
+  for (var i = 0; i < 5; i++) {
+    var el = document.getElementById('food-input-' + i);
+    if (el) el.value = foods[i] || '';
+  }
+  var msg = document.getElementById('foods-saved-msg');
+  if (msg) msg.textContent = '';
+}
+
+// Read fields, update bp.quickFoods, persist.
+async function saveFoods() {
+  var result = [];
+  for (var i = 0; i < 5; i++) {
+    var el = document.getElementById('food-input-' + i);
+    if (el) {
+      var val = el.value.trim();
+      if (val) result.push(val);
+    }
+  }
+  bp.quickFoods = result;
+  await saveBotPrefs();
+  var msg = document.getElementById('foods-saved-msg');
+  if (msg) {
+    msg.textContent = 'שמרתי את המאכלים הקלים.';
+    setTimeout(function() { if (msg) msg.textContent = ''; }, 3000);
+  }
+}
 
 // SAVE / LOAD
 async function saveDay() {
