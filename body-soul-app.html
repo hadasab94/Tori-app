@@ -82,6 +82,85 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .settings-card-arrow { font-size: 16px; color: var(--text3); margin-inline-start: 10px; flex-shrink: 0; }
 .settings-card-badge { font-size: 10px; font-weight: 700; color: var(--text3); background: var(--border); border-radius: 8px; padding: 2px 7px; margin-inline-start: 8px; white-space: nowrap; }
 
+/* DISPLAY SETTINGS — applied via body classes from tori_display_prefs.
+   Changes here must mirror applyDisplayPrefs() in JS. */
+
+/* Font: large (+2px on key content selectors) */
+body.tori-font-large .about-section-text { font-size: 16px; }
+body.tori-font-large .about-section-title { font-size: 15px; }
+body.tori-font-large .feed-card-text { font-size: 16px; }
+body.tori-font-large .feed-card-title { font-size: 18px; }
+body.tori-font-large .feed-card-category { font-size: 13px; }
+body.tori-font-large .settings-card-title { font-size: 17px; }
+body.tori-font-large .settings-card-sub { font-size: 14px; }
+body.tori-font-large .niim-card-label { font-size: 16px; }
+body.tori-font-large .niim-card-note { font-size: 15px; }
+body.tori-font-large .t-name { font-size: 15px; }
+body.tori-font-large .cf-line { font-size: 15px; }
+body.tori-font-large .foods-input, body.tori-font-large .foods-save-btn { font-size: 17px; }
+body.tori-font-large .disp-group-title { font-size: 15px; }
+body.tori-font-large .disp-group-sub { font-size: 13px; }
+body.tori-font-large .disp-option-label { font-size: 15px; }
+
+/* Font: xlarge (+4px) */
+body.tori-font-xlarge .about-section-text { font-size: 18px; }
+body.tori-font-xlarge .about-section-title { font-size: 17px; }
+body.tori-font-xlarge .feed-card-text { font-size: 18px; }
+body.tori-font-xlarge .feed-card-title { font-size: 20px; }
+body.tori-font-xlarge .feed-card-category { font-size: 15px; }
+body.tori-font-xlarge .settings-card-title { font-size: 19px; }
+body.tori-font-xlarge .settings-card-sub { font-size: 16px; }
+body.tori-font-xlarge .niim-card-label { font-size: 18px; }
+body.tori-font-xlarge .niim-card-note { font-size: 17px; }
+body.tori-font-xlarge .t-name { font-size: 17px; }
+body.tori-font-xlarge .cf-line { font-size: 17px; }
+body.tori-font-xlarge .foods-input, body.tori-font-xlarge .foods-save-btn { font-size: 19px; }
+body.tori-font-xlarge .disp-group-title { font-size: 17px; }
+body.tori-font-xlarge .disp-group-sub { font-size: 15px; }
+body.tori-font-xlarge .disp-option-label { font-size: 17px; }
+
+/* Clear text: gentle weight boost on body text (not on headings already ≥700) */
+body.tori-clear-text .about-section-text,
+body.tori-clear-text .feed-card-text,
+body.tori-clear-text .niim-card-note,
+body.tori-clear-text .settings-card-sub,
+body.tori-clear-text .cf-line,
+body.tori-clear-text .foods-input { font-weight: 500; }
+
+/* Reduce motion: kill non-essential animations and transitions */
+body.tori-reduce-motion *, body.tori-reduce-motion *::before, body.tori-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Display settings view UI */
+.disp-group { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; direction: rtl; }
+.disp-group--future { opacity: 0.5; }
+.disp-group-title { font-size: 14px; font-weight: 800; color: var(--text1); margin-bottom: 3px; }
+.disp-group-sub { font-size: 12px; color: var(--text3); line-height: 1.5; margin-bottom: 10px; }
+.disp-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.disp-toggle-row .disp-group-title { margin-bottom: 2px; }
+.disp-toggle-row .disp-group-sub { margin-bottom: 0; }
+.disp-toggle-text { flex: 1; }
+/* Radio / segmented options */
+.disp-options { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.disp-option-label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text2); cursor: pointer; background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 13px; transition: background 0.15s, border-color 0.15s; }
+.disp-option-label input[type="radio"] { display: none; }
+.disp-option-label:has(input:checked) { background: var(--sky-l, #c5dcf0); border-color: var(--sky, #4a7fa0); color: var(--sky, #4a7fa0); font-weight: 700; }
+/* Toggle switch */
+.disp-toggle { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+.disp-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.disp-toggle-track { position: absolute; inset: 0; background: var(--border2, rgba(58,37,21,0.18)); border-radius: 24px; transition: background 0.2s; cursor: pointer; }
+.disp-toggle-track::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff; top: 3px; right: 3px; transition: transform 0.2s; }
+.disp-toggle input:checked + .disp-toggle-track { background: var(--sky, #4a7fa0); }
+.disp-toggle input:checked + .disp-toggle-track::after { transform: translateX(-20px); }
+/* Toast close button */
+.toast-close { background: none; border: none; color: inherit; font-size: 15px; line-height: 1; cursor: pointer; padding: 0; margin-inline-start: 10px; opacity: 0.75; vertical-align: middle; flex-shrink: 0; }
+.toast-close:hover { opacity: 1; }
+.toast { display: flex; align-items: center; justify-content: center; gap: 0; }
+#toast-text { flex: 1; text-align: center; }
+
 /* FOODS EDIT — view-foods */
 .foods-field-wrap { margin-bottom: 10px; }
 .foods-input { width: 100%; box-sizing: border-box; font-size: 15px; font-family: inherit; color: var(--text1); background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 13px; direction: rtl; transition: border-color 0.15s; outline: none; }
@@ -2251,7 +2330,7 @@ if('serviceWorker' in navigator){
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-text"></span><button class="toast-close" id="toast-close-btn" onclick="closeToast()" aria-label="סגור הודעה" style="display:none">✕</button></div>
 
 <!-- COMPLETION NOTE — persistent knowledge/regulation card, no auto-dismiss -->
 <div class="completion-note-card" id="completion-note-card" role="dialog" aria-live="polite" aria-label="הערת השלמה">
@@ -2465,6 +2544,72 @@ if('serviceWorker' in navigator){
   <div class="foods-saved-msg" id="foods-saved-msg"></div>
 </div>
 
+<!-- DISPLAY SETTINGS VIEW — helper screen, not a nav tab, not persisted to localStorage -->
+<div class="view" id="view-display-settings" style="direction:rtl;">
+  <button class="about-back-btn" onclick="switchView('settings')" aria-label="חזרה להגדרות">← חזרה</button>
+  <div style="font-size:22px;font-weight:800;color:var(--text1);margin-bottom:8px;line-height:1.3;">הגדרות תצוגה</div>
+  <div style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:22px;">ההגדרות נשמרות ומוחלות בכל כניסה לאפליקציה.</div>
+
+  <!-- גודל טקסט -->
+  <div class="disp-group">
+    <div class="disp-group-title">גודל טקסט</div>
+    <div class="disp-options" role="radiogroup" aria-label="גודל טקסט">
+      <label class="disp-option-label"><input type="radio" name="disp-font" value="normal"  onchange="setDisplayPref('fontSize','normal')">רגיל</label>
+      <label class="disp-option-label"><input type="radio" name="disp-font" value="large"   onchange="setDisplayPref('fontSize','large')">גדול</label>
+      <label class="disp-option-label"><input type="radio" name="disp-font" value="xlarge"  onchange="setDisplayPref('fontSize','xlarge')">גדול מאוד</label>
+    </div>
+  </div>
+
+  <!-- טקסט ברור יותר -->
+  <div class="disp-group">
+    <div class="disp-toggle-row">
+      <div class="disp-toggle-text">
+        <div class="disp-group-title">טקסט ברור יותר</div>
+        <div class="disp-group-sub" style="margin-bottom:0">משקל טקסט מעט כבד יותר לקריאה נוחה</div>
+      </div>
+      <label class="disp-toggle" aria-label="טקסט ברור יותר">
+        <input type="checkbox" id="disp-clear-text" onchange="setDisplayPref('clearText', this.checked)">
+        <span class="disp-toggle-track"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- פחות תנועה -->
+  <div class="disp-group">
+    <div class="disp-toggle-row">
+      <div class="disp-toggle-text">
+        <div class="disp-group-title">פחות תנועה</div>
+        <div class="disp-group-sub" style="margin-bottom:0">מצמצם אנימציות ומעברים</div>
+      </div>
+      <label class="disp-toggle" aria-label="פחות תנועה">
+        <input type="checkbox" id="disp-reduce-motion" onchange="setDisplayPref('reduceMotion', this.checked)">
+        <span class="disp-toggle-track"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- הודעות נשארות -->
+  <div class="disp-group">
+    <div class="disp-group-title">הודעות נשארות</div>
+    <div class="disp-options" role="radiogroup" aria-label="משך הודעות">
+      <label class="disp-option-label"><input type="radio" name="disp-msg" value="normal" onchange="setDisplayPref('messageDuration','normal')">רגיל</label>
+      <label class="disp-option-label"><input type="radio" name="disp-msg" value="long"   onchange="setDisplayPref('messageDuration','long')">ארוך יותר</label>
+      <label class="disp-option-label"><input type="radio" name="disp-msg" value="manual" onchange="setDisplayPref('messageDuration','manual')">עד שאסגור</label>
+    </div>
+  </div>
+
+  <!-- ניגודיות מוגברת — עתידי -->
+  <div class="disp-group disp-group--future">
+    <div class="disp-toggle-row">
+      <div class="disp-toggle-text">
+        <div class="disp-group-title">ניגודיות מוגברת</div>
+        <div class="disp-group-sub" style="margin-bottom:0">תתווסף בהמשך לאחר בדיקת עיצוב</div>
+      </div>
+      <span class="settings-card-badge">בקרוב</span>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS / MORE VIEW — helper screen, not a nav tab, not persisted to localStorage -->
 <div class="view" id="view-settings" style="direction:rtl;">
   <button class="about-back-btn" onclick="openSettingsBack()" aria-label="חזרה">← חזרה</button>
@@ -2488,12 +2633,12 @@ if('serviceWorker' in navigator){
     <div class="settings-card-arrow">‹</div>
   </div>
 
-  <div class="settings-card settings-card--disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="הגדרות תצוגה — בקרוב">
+  <div class="settings-card" onclick="openDisplaySettings()" role="button" tabindex="0" aria-label="הגדרות תצוגה">
     <div class="settings-card-body">
       <div class="settings-card-title">הגדרות תצוגה</div>
       <div class="settings-card-sub">גודל טקסט, פחות תנועה ועוד התאמות קריאה</div>
     </div>
-    <div class="settings-card-badge">בקרוב</div>
+    <div class="settings-card-arrow">‹</div>
   </div>
 </div>
 
@@ -3056,7 +3201,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'settings-536e39a-2026-06-11';
+const TORI_BUILD = 'display-prefs-2026-06-11';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -6397,8 +6542,18 @@ function closeFact(e) {
 // TOAST
 let toastTimer;
 function showToast(msg) {
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),5500); // accessibility: extended from 3800ms for dyslexic users
+  var t = document.getElementById('toast');
+  var textEl = document.getElementById('toast-text');
+  var closeBtn = document.getElementById('toast-close-btn');
+  if (textEl) textEl.textContent = msg; else t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  var isManual = (_displayPrefs && _displayPrefs.messageDuration === 'manual');
+  if (closeBtn) closeBtn.style.display = isManual ? 'inline-block' : 'none';
+  if (!isManual) {
+    var dur = (typeof getToastDuration === 'function') ? getToastDuration() : 5500;
+    toastTimer = setTimeout(function() { t.classList.remove('show'); }, dur);
+  }
 }
 
 // COMPLETION NOTE — persistent card for knowledge/regulation notes.
@@ -6445,6 +6600,74 @@ function openSettingsBack() { switchView(_lastMainTab); }
 // openAboutBack kept as alias in case called from elsewhere; about now always returns to settings.
 function openAboutBack() { switchView('settings'); }
 
+// ── DISPLAY PREFERENCES ─────────────────────────────────────────────────────
+// Stored in localStorage under 'tori_display_prefs'.
+// Applied via body classes — changes here must mirror the CSS display-settings block.
+var DISPLAY_PREFS_KEY = 'tori_display_prefs';
+var _displayPrefs = {
+  fontSize: 'normal',        // 'normal' | 'large' | 'xlarge'
+  clearText: false,
+  reduceMotion: false,
+  messageDuration: 'normal', // 'normal' | 'long' | 'manual'
+  enhancedContrast: false    // reserved — not active in this version
+};
+
+function loadDisplayPrefs() {
+  try {
+    var raw = localStorage.getItem(DISPLAY_PREFS_KEY);
+    if (raw) _displayPrefs = Object.assign({}, _displayPrefs, JSON.parse(raw));
+  } catch(e) {}
+}
+
+function saveDisplayPrefs() {
+  try { localStorage.setItem(DISPLAY_PREFS_KEY, JSON.stringify(_displayPrefs)); } catch(e) {}
+}
+
+function applyDisplayPrefs() {
+  var b = document.body;
+  b.classList.remove('tori-font-large', 'tori-font-xlarge');
+  if (_displayPrefs.fontSize === 'large')  b.classList.add('tori-font-large');
+  if (_displayPrefs.fontSize === 'xlarge') b.classList.add('tori-font-xlarge');
+  b.classList.toggle('tori-clear-text',    !!_displayPrefs.clearText);
+  b.classList.toggle('tori-reduce-motion', !!_displayPrefs.reduceMotion);
+  // enhancedContrast: never applied in this version
+}
+
+function getToastDuration() {
+  if (_displayPrefs.messageDuration === 'long')   return 12000;
+  if (_displayPrefs.messageDuration === 'manual') return null;
+  return 5500;
+}
+
+function closeToast() {
+  var t = document.getElementById('toast');
+  if (t) { t.classList.remove('show'); clearTimeout(toastTimer); }
+}
+
+// Open display settings view and populate fields from _displayPrefs.
+function openDisplaySettings() {
+  switchView('display-settings');
+  // Font size radios
+  var fsRadios = document.querySelectorAll('input[name="disp-font"]');
+  fsRadios.forEach(function(r) { r.checked = (r.value === _displayPrefs.fontSize); });
+  // Toggles
+  var ct = document.getElementById('disp-clear-text');
+  if (ct) ct.checked = !!_displayPrefs.clearText;
+  var rm = document.getElementById('disp-reduce-motion');
+  if (rm) rm.checked = !!_displayPrefs.reduceMotion;
+  // Message duration radios
+  var mdRadios = document.querySelectorAll('input[name="disp-msg"]');
+  mdRadios.forEach(function(r) { r.checked = (r.value === _displayPrefs.messageDuration); });
+}
+
+// Called on every control change — save + apply immediately (live preview).
+function setDisplayPref(key, value) {
+  _displayPrefs[key] = value;
+  saveDisplayPrefs();
+  applyDisplayPrefs();
+  showToast('הגדרות התצוגה עודכנו.');
+}
+
 // Save only bp to bot:prefs (lighter than full saveBotData).
 async function saveBotPrefs() {
   try { await store.set('bot:prefs', JSON.stringify(bp)); } catch(e) { console.warn('[settings] saveBotPrefs failed', e); }
@@ -6474,11 +6697,7 @@ async function saveFoods() {
   }
   bp.quickFoods = result;
   await saveBotPrefs();
-  var msg = document.getElementById('foods-saved-msg');
-  if (msg) {
-    msg.textContent = 'שמרתי את המאכלים הקלים.';
-    setTimeout(function() { if (msg) msg.textContent = ''; }, 3000);
-  }
+  showToast('שמרתי את המאכלים הקלים.');
 }
 
 // SAVE / LOAD
@@ -8643,6 +8862,9 @@ function _setupLongPress() {
 
 // INIT
 async function init() {
+  // Apply display prefs before first render so classes are set from the start
+  loadDisplayPrefs();
+  applyDisplayPrefs();
   // Request notification permission on first load
   if('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
