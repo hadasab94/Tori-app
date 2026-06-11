@@ -69,6 +69,17 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 .nav-item.active .nav-icon { transform: scale(1.15); }
 /* Secondary nav item (תורי לגלול) — subtle separator from core pair */
 .nav-item--secondary { border-inline-start: 1px solid var(--border, #e8ddd0); margin-inline-start: 2px; }
+
+/* MORE / ABOUT button — top-left of view-today, non-tab helper screen */
+.more-btn { position: absolute; top: 14px; left: 14px; background: none; border: none; font-size: 20px; line-height: 1; padding: 8px; border-radius: 50%; cursor: pointer; color: var(--text3, #a08c7a); transition: background 0.18s, color 0.18s; -webkit-tap-highlight-color: transparent; z-index: 10; }
+.more-btn:hover { background: var(--border, #e8ddd0); color: var(--text1); }
+.more-btn:active { background: var(--border, #e8ddd0); }
+/* view-about: helper screen, not a nav tab */
+.about-back-btn { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; font-size: 14px; font-weight: 700; color: var(--text2); padding: 10px 4px 10px 12px; border-radius: 10px; cursor: pointer; margin-bottom: 18px; -webkit-tap-highlight-color: transparent; transition: color 0.15s; }
+.about-back-btn:hover { color: var(--text1); }
+.about-section { margin-bottom: 26px; }
+.about-section-title { font-size: 13px; font-weight: 800; color: var(--sky, #6aabcf); letter-spacing: 0.3px; margin-bottom: 7px; }
+.about-section-text { font-size: 14px; color: var(--text2); line-height: 1.85; }
 .bot-badge { position: absolute; top: 2px; right: 12px; background: #E53935; color: white; border-radius: 50%; min-width: 16px; height: 16px; font-size: 10px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 3px; line-height: 1; }
 .bot-badge.show { display: flex; }
 
@@ -2246,7 +2257,8 @@ if('serviceWorker' in navigator){
 </div>
 
 <!-- TODAY VIEW -->
-<div class="view active" id="view-today">
+<div class="view active" id="view-today" style="position:relative;">
+  <button class="more-btn" onclick="switchView('about')" aria-label="אודות והגדרות">⚙️</button>
   <div class="celebration" id="celebration">
     <span class="celeb-emoji">🎉</span>
     <div class="celeb-title">יום מדהים! השלמת את כל המשימות!</div>
@@ -2416,6 +2428,57 @@ if('serviceWorker' in navigator){
     </div>
   </div>
 </div>
+<!-- ABOUT / MORE VIEW — helper screen, not a nav tab, not persisted to localStorage -->
+<div class="view" id="view-about" style="direction:rtl;">
+  <button class="about-back-btn" onclick="openAboutBack()" aria-label="חזרה">← חזרה</button>
+
+  <div style="font-size:22px;font-weight:800;color:var(--text1);margin-bottom:6px;line-height:1.3;">אודות תורי</div>
+  <div style="font-size:14px;color:var(--text3);margin-bottom:28px;line-height:1.6;">גרסת פיילוט</div>
+
+  <div class="about-section">
+    <div class="about-section-title">מה זו תורי</div>
+    <div class="about-section-text">תורי היא מקום שמלווה אותך בבנייה של קשר עדין, חומל ומעשי יותר עם עצמך — דרך ידע, הומור, דמות מלווה וצעדים קטנים שמחזירים תחושה של בחירה וקשר.<br><br>
+    תורי לא מחליפה טיפול. היא נועדה להיות מרחב עדין שמסייע לך להיות קצת יותר בצד שלך, ביום־יום.</div>
+  </div>
+
+  <div class="about-section">
+    <div class="about-section-title">היום</div>
+    <div class="about-section-text">המקום שבו בוחרות פעולה קטנה שאפשרית עכשיו.<br>
+    לא "להספיק הכול" — אלא למצוא צעד אחד שמתאים לרגע הזה.<br><br>
+    לימים שבהם גם צעד קטן מרגיש הרבה, יש <strong>יום חמלה</strong> — מצב שמאפשר להישאר בקשר עם תורי בצורה רכה יותר, בלי להפוך את היום לכישלון.</div>
+  </div>
+
+  <div class="about-section">
+    <div class="about-section-title">הדמות המלווה</div>
+    <div class="about-section-text">בתורי יש דמות מלווה קטנה שבחרת.<br>
+    היא לא מטפלת ולא משימה — אלא נוכחות קטנה עם הומור, חום, וקצת תחושת יחד.</div>
+  </div>
+
+  <div class="about-section">
+    <div class="about-section-title">המסע</div>
+    <div class="about-section-text">המקום שבו אפשר לראות את הדרך שנבנית לאורך זמן: מה נאסף, מה התחזק, ואיך צעדים קטנים מצטברים.<br><br>
+    בתוך המסע יש גם <strong>מה מתחזק אצלי</strong> — תזכורת עדינה ליכולות ועוגנים שכבר מתחילים להיבנות. לא כמדד של הצלחה, אלא כראי קטן.<br><br>
+    ו<strong>פינוקים</strong> — חיזוקים קטנים ונעימים שנאספים בדרך. כי מגיע.</div>
+  </div>
+
+  <div class="about-section">
+    <div class="about-section-title">לגלול</div>
+    <div class="about-section-text">פיד של הסחות דעת מיטיבות: תוכן קצר, חיובי, מצחיק ומסקרן — שנותן למוח מקום קטן לנוח.<br><br>
+    בתוך "לגלול" יש גם <strong>נעים לדעת</strong> — ידע קצר ועדין על גוף, נפש, הרגלים והתמדה, שנפתח לאט לאורך הדרך.</div>
+  </div>
+
+  <div class="about-section">
+    <div class="about-section-title">אוכל בימים פחות קלים</div>
+    <div class="about-section-text">תורי מאפשרת לסמן מאכלים פשוטים שאפשרי לאכול גם ביום שאוכל מרגיש מסובך.<br>
+    הרשימה הזו שלך, בשבילך — לא כפרוטוקול, אלא כעוגן קטן.</div>
+  </div>
+
+  <div style="font-size:12px;color:var(--text3);line-height:1.7;margin-top:10px;padding-top:18px;border-top:1px solid var(--border);">
+    תורי היא פרויקט בפיתוח.<br>
+    התוכן, הדמויות והידע — נבנים בכוונה ובזהירות.
+  </div>
+</div>
+
 <!-- SCROLL VIEW — "תורי לגלול" -->
 <div class="view" id="view-scroll" style="direction:rtl;">
   <div style="padding:28px 4px 16px 4px;">
@@ -6212,6 +6275,8 @@ function updateBotBadge() { /* bot tab removed — no-op stub */ }
 
 // NAV
 var VALID_TABS = ['today', 'journey', 'scroll'];
+// Tracks the last persisted (non-about) tab, so "back" from about returns here.
+var _lastMainTab = 'today';
 function switchView(v) {
   if (v === 'bot') v = 'journey'; // bot tab removed — redirect to journey
   if (_editMode && v !== 'today') exitEditMode(); // leave edit mode when switching tabs
@@ -6224,11 +6289,14 @@ function switchView(v) {
   if (navEl)  navEl.classList.add('active');
   if (v==='journey'){updateJourney();setTimeout(checkWildReveal,400);setTimeout(checkAndShowCompanion,50);}
   if (v==='scroll') { renderScrollFeed(); renderNiimSection(); }
-  // Persist the active tab so refresh restores the same view
+  // Persist the active tab — 'about' is a helper screen, not a main tab, so never persisted.
   if (VALID_TABS.indexOf(v) !== -1) {
+    _lastMainTab = v;
     try { localStorage.setItem('tori_active_tab', v); } catch(e) {}
   }
 }
+// Back button inside view-about: returns to last main tab (default: today).
+function openAboutBack() { switchView(_lastMainTab); }
 
 // SAVE / LOAD
 async function saveDay() {
