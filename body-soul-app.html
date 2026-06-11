@@ -70,6 +70,18 @@ body { background: var(--bg); font-family: 'Segoe UI','Arial Hebrew','Helvetica 
 /* Secondary nav item (תורי לגלול) — subtle separator from core pair */
 .nav-item--secondary { border-inline-start: 1px solid var(--border, #e8ddd0); margin-inline-start: 2px; }
 
+/* SETTINGS / MORE — view-settings cards */
+.settings-card { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: background 0.15s; -webkit-tap-highlight-color: transparent; direction: rtl; }
+.settings-card:hover { background: var(--sky-l, #e8f4fb); }
+.settings-card:active { background: var(--sky-l, #e8f4fb); }
+.settings-card--disabled { opacity: 0.5; cursor: default; }
+.settings-card--disabled:hover { background: var(--card); }
+.settings-card-body { flex: 1; }
+.settings-card-title { font-size: 15px; font-weight: 800; color: var(--text1); margin-bottom: 3px; }
+.settings-card-sub { font-size: 12px; color: var(--text3); line-height: 1.5; }
+.settings-card-arrow { font-size: 16px; color: var(--text3); margin-inline-start: 10px; flex-shrink: 0; }
+.settings-card-badge { font-size: 10px; font-weight: 700; color: var(--text3); background: var(--border); border-radius: 8px; padding: 2px 7px; margin-inline-start: 8px; white-space: nowrap; }
+
 /* MORE / ABOUT button — top-left of view-today, non-tab helper screen */
 .more-btn { position: absolute; top: 14px; left: 14px; background: none; border: none; font-size: 20px; line-height: 1; padding: 8px; border-radius: 50%; cursor: pointer; color: var(--text3, #a08c7a); transition: background 0.18s, color 0.18s; -webkit-tap-highlight-color: transparent; z-index: 10; }
 .more-btn:hover { background: var(--border, #e8ddd0); color: var(--text1); }
@@ -2258,7 +2270,7 @@ if('serviceWorker' in navigator){
 
 <!-- TODAY VIEW -->
 <div class="view active" id="view-today" style="position:relative;">
-  <button class="more-btn" onclick="switchView('about')" aria-label="אודות והגדרות">⚙️</button>
+  <button class="more-btn" onclick="switchView('settings')" aria-label="הגדרות ועוד בתורי">⚙️</button>
   <div class="celebration" id="celebration">
     <span class="celeb-emoji">🎉</span>
     <div class="celeb-title">יום מדהים! השלמת את כל המשימות!</div>
@@ -2428,9 +2440,41 @@ if('serviceWorker' in navigator){
     </div>
   </div>
 </div>
+<!-- SETTINGS / MORE VIEW — helper screen, not a nav tab, not persisted to localStorage -->
+<div class="view" id="view-settings" style="direction:rtl;">
+  <button class="about-back-btn" onclick="openSettingsBack()" aria-label="חזרה">← חזרה</button>
+
+  <div style="font-size:22px;font-weight:800;color:var(--text1);margin-bottom:6px;line-height:1.3;">עוד בתורי</div>
+  <div style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px;">כאן אפשר למצוא את אודות תורי, מאכלים קלים והגדרות תצוגה.</div>
+
+  <div class="settings-card" onclick="switchView('about')" role="button" tabindex="0" aria-label="אודות תורי">
+    <div class="settings-card-body">
+      <div class="settings-card-title">אודות תורי</div>
+      <div class="settings-card-sub">למה תורי נוצרה ועל מה היא נשענת</div>
+    </div>
+    <div class="settings-card-arrow">‹</div>
+  </div>
+
+  <div class="settings-card settings-card--disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="מאכלים קלים — בקרוב">
+    <div class="settings-card-body">
+      <div class="settings-card-title">מאכלים קלים</div>
+      <div class="settings-card-sub">רשימת מאכלים פשוטים לימים שבהם קשה לבחור</div>
+    </div>
+    <div class="settings-card-badge">בקרוב</div>
+  </div>
+
+  <div class="settings-card settings-card--disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="הגדרות תצוגה — בקרוב">
+    <div class="settings-card-body">
+      <div class="settings-card-title">הגדרות תצוגה</div>
+      <div class="settings-card-sub">גודל טקסט, פחות תנועה ועוד התאמות קריאה</div>
+    </div>
+    <div class="settings-card-badge">בקרוב</div>
+  </div>
+</div>
+
 <!-- ABOUT / MORE VIEW — helper screen, not a nav tab, not persisted to localStorage -->
 <div class="view" id="view-about" style="direction:rtl;">
-  <button class="about-back-btn" onclick="openAboutBack()" aria-label="חזרה">← חזרה</button>
+  <button class="about-back-btn" onclick="switchView('settings')" aria-label="חזרה להגדרות">← חזרה</button>
 
   <div style="font-size:22px;font-weight:800;color:var(--text1);margin-bottom:24px;line-height:1.3;">אודות תורי</div>
 
@@ -6354,14 +6398,16 @@ function switchView(v) {
   if (navEl)  navEl.classList.add('active');
   if (v==='journey'){updateJourney();setTimeout(checkWildReveal,400);setTimeout(checkAndShowCompanion,50);}
   if (v==='scroll') { renderScrollFeed(); renderNiimSection(); }
-  // Persist the active tab — 'about' is a helper screen, not a main tab, so never persisted.
+  // Persist the active tab — 'settings' and 'about' are helper screens, never persisted.
   if (VALID_TABS.indexOf(v) !== -1) {
     _lastMainTab = v;
     try { localStorage.setItem('tori_active_tab', v); } catch(e) {}
   }
 }
-// Back button inside view-about: returns to last main tab (default: today).
-function openAboutBack() { switchView(_lastMainTab); }
+// Back from view-settings → last main tab.
+function openSettingsBack() { switchView(_lastMainTab); }
+// openAboutBack kept as alias in case called from elsewhere; about now always returns to settings.
+function openAboutBack() { switchView('settings'); }
 
 // SAVE / LOAD
 async function saveDay() {
