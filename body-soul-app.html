@@ -2680,7 +2680,7 @@ if('serviceWorker' in navigator){
   כאן אפשר ללמוד קצת מה כל אזור עושה ומה עומד מאחוריו.</div>
 
   <div class="guide-item" id="guide-today">
-    <div class="guide-item-header" onclick="toggleGuideItem('guide-today')" role="button" aria-expanded="false" aria-controls="guide-today-body">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-today')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleGuideItem('guide-today');}" role="button" tabindex="0" aria-expanded="false" aria-controls="guide-today-body">
       <span class="guide-item-title">היום</span>
       <span class="guide-item-chevron">▼</span>
     </div>
@@ -2692,7 +2692,7 @@ if('serviceWorker' in navigator){
   </div>
 
   <div class="guide-item" id="guide-compassion">
-    <div class="guide-item-header" onclick="toggleGuideItem('guide-compassion')" role="button" aria-expanded="false" aria-controls="guide-compassion-body">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-compassion')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleGuideItem('guide-compassion');}" role="button" tabindex="0" aria-expanded="false" aria-controls="guide-compassion-body">
       <span class="guide-item-title">יום חמלה</span>
       <span class="guide-item-chevron">▼</span>
     </div>
@@ -2704,31 +2704,20 @@ if('serviceWorker' in navigator){
   </div>
 
   <div class="guide-item" id="guide-journey">
-    <div class="guide-item-header" onclick="toggleGuideItem('guide-journey')" role="button" aria-expanded="false" aria-controls="guide-journey-body">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-journey')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleGuideItem('guide-journey');}" role="button" tabindex="0" aria-expanded="false" aria-controls="guide-journey-body">
       <span class="guide-item-title">המסע</span>
       <span class="guide-item-chevron">▼</span>
     </div>
     <div class="guide-item-body" id="guide-journey-body">
       <div class="guide-item-text">ב"המסע" מוצגת הדמות שלך — זו שתבחרי לפי סוג ההומור שאת הכי מתחברת אליו, או פשוט לפי הדמות שהכי מצאה חן בעינייך.<br><br>
       היא באה להיות חברה שלך בתהליך. להגיד מילה טובה כשצריך, להחזיק איתך את זה שאת מנסה, ולהזכיר שכבר עצם הניסיון הוא המון — והוא נספר.<br><br>
-      המסע הוא דרך קטנה ומתמשכת של חזרה לעצמך, בקצב שלך.</div>
-    </div>
-  </div>
-
-  <div class="guide-item" id="guide-companion">
-    <div class="guide-item-header" onclick="toggleGuideItem('guide-companion')" role="button" aria-expanded="false" aria-controls="guide-companion-body">
-      <span class="guide-item-title">דמות מלווה</span>
-      <span class="guide-item-chevron">▼</span>
-    </div>
-    <div class="guide-item-body" id="guide-companion-body">
-      <div class="guide-item-text">הדמות המלווה היא חלק מהדרך שלך בתורי.<br><br>
-      היא מכניסה לתהליך קול קטן, חם ומצחיק, שמלווה אותך ברגעים שבהם קל לשכוח שגם מאמץ קטן הוא מאמץ אמיתי.<br><br>
-      היא חוגגת איתך צעדים קטנים, מזכירה לך שאת מנסה, ועוזרת להפוך את הדאגה לעצמך למשהו קצת פחות בודד.</div>
+      המסע הוא דרך קטנה ומתמשכת של חזרה לעצמך, בקצב שלך.<br><br>
+      הדמות המלווה היא חלק מהדרך הזו. היא מכניסה לתהליך קול קטן, חם ומצחיק, שמלווה אותך ברגעים שבהם קל לשכוח שגם מאמץ קטן הוא מאמץ אמיתי. היא חוגגת איתך צעדים קטנים, מזכירה לך שאת מנסה, ועוזרת להפוך את הדאגה לעצמך למשהו קצת פחות בודד.</div>
     </div>
   </div>
 
   <div class="guide-item" id="guide-scroll">
-    <div class="guide-item-header" onclick="toggleGuideItem('guide-scroll')" role="button" aria-expanded="false" aria-controls="guide-scroll-body">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-scroll')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleGuideItem('guide-scroll');}" role="button" tabindex="0" aria-expanded="false" aria-controls="guide-scroll-body">
       <span class="guide-item-title">לגלול</span>
       <span class="guide-item-chevron">▼</span>
     </div>
@@ -2741,7 +2730,7 @@ if('serviceWorker' in navigator){
   </div>
 
   <div class="guide-item" id="guide-strengthen">
-    <div class="guide-item-header" onclick="toggleGuideItem('guide-strengthen')" role="button" aria-expanded="false" aria-controls="guide-strengthen-body">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-strengthen')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleGuideItem('guide-strengthen');}" role="button" tabindex="0" aria-expanded="false" aria-controls="guide-strengthen-body">
       <span class="guide-item-title">מה מתחזק אצלי</span>
       <span class="guide-item-chevron">▼</span>
     </div>
@@ -3315,7 +3304,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'guide-accordion-2026-06-17';
+const TORI_BUILD = 'guide-accordion-v2-2026-06-17';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
