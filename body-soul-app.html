@@ -3253,7 +3253,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'micro-task-water-exercise-2026-06-17';
+const TORI_BUILD = 'micro-task-loop-fix-2026-06-17';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -9338,8 +9338,7 @@ async function loadGentleHabitData() {
   var todayTasks = s.tasks || {};
   var microCandidate = null;
   var microScore = Infinity;
-  TASK_IDS.forEach(function(id) {
-    if (!MICRO_TASK_LABELS[id]) return;
+  Object.keys(MICRO_TASK_LABELS).forEach(function(id) {
     if (todayTasks[id]) return;                   // already done today — not a burden
     if ((counts7[id] || 0) > 0) return;           // happened this week — not struggling
     var c14 = counts14[id] || 0;
