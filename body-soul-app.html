@@ -169,6 +169,26 @@ body.tori-reduce-motion *, body.tori-reduce-motion *::before, body.tori-reduce-m
 .foods-save-btn:active { opacity: 0.82; }
 .foods-saved-msg { font-size: 13px; color: var(--sky, #6aabcf); font-weight: 700; text-align: center; margin-top: 10px; min-height: 20px; direction: rtl; }
 
+/* GUIDE — view-guide accordion */
+.guide-intro { font-size: 14px; color: var(--text2); line-height: 1.75; margin-bottom: 22px; }
+.guide-item { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; transition: border-color 0.2s; }
+.guide-item.open { border-color: var(--sky, #6aabcf); }
+.guide-item-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; -webkit-tap-highlight-color: transparent; gap: 10px; user-select: none; }
+.guide-item-title { font-size: 15px; font-weight: 800; color: var(--text1); flex: 1; }
+.guide-item-chevron { font-size: 12px; color: var(--text3); transition: transform 0.25s; flex-shrink: 0; }
+.guide-item.open .guide-item-chevron { transform: rotate(180deg); }
+.guide-item-body { max-height: 0; overflow: hidden; transition: max-height 0.32s ease, padding 0.2s; padding: 0 16px; }
+.guide-item.open .guide-item-body { max-height: 700px; padding: 0 16px 16px; }
+.guide-item-text { font-size: 14px; color: var(--text2); line-height: 1.8; }
+body.tori-font-large .guide-item-title { font-size: 17px; }
+body.tori-font-large .guide-item-text { font-size: 16px; }
+body.tori-font-large .guide-intro { font-size: 16px; }
+body.tori-font-xlarge .guide-item-title { font-size: 19px; }
+body.tori-font-xlarge .guide-item-text { font-size: 18px; }
+body.tori-font-xlarge .guide-intro { font-size: 18px; }
+body.tori-clear-text .guide-item-text,
+body.tori-clear-text .guide-intro { font-weight: 500; }
+
 /* MORE / ABOUT button — top-left of view-today, non-tab helper screen */
 .more-btn { position: absolute; top: 14px; left: 14px; background: none; border: none; font-size: 20px; line-height: 1; padding: 8px; border-radius: 50%; cursor: pointer; color: var(--text3, #a08c7a); transition: background 0.18s, color 0.18s; -webkit-tap-highlight-color: transparent; z-index: 10; }
 .more-btn:hover { background: var(--border, #e8ddd0); color: var(--text1); }
@@ -2617,6 +2637,14 @@ if('serviceWorker' in navigator){
   <div style="font-size:22px;font-weight:800;color:var(--text1);margin-bottom:6px;line-height:1.3;">עוד בתורי</div>
   <div style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px;">כאן אפשר למצוא את אודות תורי, מאכלים קלים והגדרות תצוגה.</div>
 
+  <div class="settings-card" onclick="switchView('guide')" role="button" tabindex="0" aria-label="איך להשתמש בתורי">
+    <div class="settings-card-body">
+      <div class="settings-card-title">איך להשתמש בתורי</div>
+      <div class="settings-card-sub">הסבר על כל אזור באפליקציה</div>
+    </div>
+    <div class="settings-card-arrow">‹</div>
+  </div>
+
   <div class="settings-card" onclick="switchView('about')" role="button" tabindex="0" aria-label="אודות תורי">
     <div class="settings-card-body">
       <div class="settings-card-title">אודות תורי</div>
@@ -2639,6 +2667,91 @@ if('serviceWorker' in navigator){
       <div class="settings-card-sub">גודל טקסט, פחות תנועה ועוד התאמות קריאה</div>
     </div>
     <div class="settings-card-arrow">‹</div>
+  </div>
+</div>
+
+<!-- GUIDE VIEW — helper screen, not a nav tab, not persisted to localStorage -->
+<div class="view" id="view-guide" style="direction:rtl;">
+  <button class="about-back-btn" onclick="switchView('settings')" aria-label="חזרה להגדרות">← חזרה</button>
+
+  <div style="font-size:22px;font-weight:800;color:var(--text1);margin-bottom:8px;line-height:1.3;">איך להשתמש בתורי</div>
+
+  <div class="guide-intro">תורי היא אפליקציה שנועדה לעזור לחבר בין גוף לנפש בצעדים קטנים ובטוחים, כאלה שנותנים לך להרגיש גאה בעצמך בדרך, במקום לבקר אותך על מה שעוד לא הספקת היום.<br><br>
+  כאן אפשר ללמוד קצת מה כל אזור עושה ומה עומד מאחוריו.</div>
+
+  <div class="guide-item" id="guide-today">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-today')" role="button" aria-expanded="false" aria-controls="guide-today-body">
+      <span class="guide-item-title">היום</span>
+      <span class="guide-item-chevron">▼</span>
+    </div>
+    <div class="guide-item-body" id="guide-today-body">
+      <div class="guide-item-text">הלשונית "היום" היא המקום שבו תורי פוגשת אותך ביום הנוכחי.<br><br>
+      המסך מתאים את עצמו לפי השימוש שלך, ואפשר גם לבחור משימות באופן ידני דרך ספריית הדאגה העצמית שנמצאת בתחתית העמוד, בתוך כפתור ה־+.<br><br>
+      כאן את מסמנת כל הצלחה קטנה שלך היום, והדמות מתקדמת יחד איתך. כבר באמצע הדרך היא תחגוג לך הצלחה, כי מה שחשוב הוא שהצלחת לעשות — לא כמה הצלחת.</div>
+    </div>
+  </div>
+
+  <div class="guide-item" id="guide-compassion">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-compassion')" role="button" aria-expanded="false" aria-controls="guide-compassion-body">
+      <span class="guide-item-title">יום חמלה</span>
+      <span class="guide-item-chevron">▼</span>
+    </div>
+    <div class="guide-item-body" id="guide-compassion-body">
+      <div class="guide-item-text">ביום קשוח במיוחד, אפשר ללחוץ על כפתור יום חמלה.<br><br>
+      הכפתור מחליף את מסך "היום" למסך רך יותר, מלא בכרטיסיות מצחיקות שאפשר לאסוף.<br><br>
+      המטרה היא להעביר תחושה שגם להיות עם עצמך בתוך יום קשה זה הישג. גם רגע קטן של חמלה, חיוך קטן, נשימה, או עצם זה שנכנסת לכאן — יכולים להיחשב.</div>
+    </div>
+  </div>
+
+  <div class="guide-item" id="guide-journey">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-journey')" role="button" aria-expanded="false" aria-controls="guide-journey-body">
+      <span class="guide-item-title">המסע</span>
+      <span class="guide-item-chevron">▼</span>
+    </div>
+    <div class="guide-item-body" id="guide-journey-body">
+      <div class="guide-item-text">ב"המסע" מוצגת הדמות שלך — זו שתבחרי לפי סוג ההומור שאת הכי מתחברת אליו, או פשוט לפי הדמות שהכי מצאה חן בעינייך.<br><br>
+      היא באה להיות חברה שלך בתהליך. להגיד מילה טובה כשצריך, להחזיק איתך את זה שאת מנסה, ולהזכיר שכבר עצם הניסיון הוא המון — והוא נספר.<br><br>
+      המסע הוא דרך קטנה ומתמשכת של חזרה לעצמך, בקצב שלך.</div>
+    </div>
+  </div>
+
+  <div class="guide-item" id="guide-companion">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-companion')" role="button" aria-expanded="false" aria-controls="guide-companion-body">
+      <span class="guide-item-title">דמות מלווה</span>
+      <span class="guide-item-chevron">▼</span>
+    </div>
+    <div class="guide-item-body" id="guide-companion-body">
+      <div class="guide-item-text">הדמות המלווה היא חלק מהדרך שלך בתורי.<br><br>
+      היא מכניסה לתהליך קול קטן, חם ומצחיק, שמלווה אותך ברגעים שבהם קל לשכוח שגם מאמץ קטן הוא מאמץ אמיתי.<br><br>
+      היא חוגגת איתך צעדים קטנים, מזכירה לך שאת מנסה, ועוזרת להפוך את הדאגה לעצמך למשהו קצת פחות בודד.</div>
+    </div>
+  </div>
+
+  <div class="guide-item" id="guide-scroll">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-scroll')" role="button" aria-expanded="false" aria-controls="guide-scroll-body">
+      <span class="guide-item-title">לגלול</span>
+      <span class="guide-item-chevron">▼</span>
+    </div>
+    <div class="guide-item-body" id="guide-scroll-body">
+      <div class="guide-item-text">הלשונית "לגלול" מציעה אלטרנטיבה להסחת דעת שמציפה בחדשות קשות, השוואות או חיים של אחרים.<br><br>
+      כאן אפשר למצוא תוכן קליל, מצחיק ומסיח דעת, שנותן למוח רגע לנוח.<br><br>
+      לצד זה יש גם מחקרים, הסברים קטנים על למה הגוף מתנהג כפי שהוא, ואיך דאגה לגוף יכולה לעזור לרומם בחזרה את הנפש.<br><br>
+      זו גלילה שנועדה להיות בצד שלך.</div>
+    </div>
+  </div>
+
+  <div class="guide-item" id="guide-strengthen">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-strengthen')" role="button" aria-expanded="false" aria-controls="guide-strengthen-body">
+      <span class="guide-item-title">מה מתחזק אצלי</span>
+      <span class="guide-item-chevron">▼</span>
+    </div>
+    <div class="guide-item-body" id="guide-strengthen-body">
+      <div class="guide-item-text">"מה מתחזק אצלי" הוא הלב של תורי.<br><br>
+      כשנהיה קשה, ותורי מזהה שמשימה מסוימת לא סומנה, היא מציעה לך לבחור מתוך כמה אפשרויות.<br><br>
+      הרעיון הוא לפגוש משימה אפשרית ולא מאיימת, כזו שיכולה לתת תחושת מסוגלות ולחזק אותה.<br><br>
+      עם ההתמדה, הצמח שלך הולך וצומח. בסוף אפשר להעביר אותו למאורת הדמות, ולתת לה במתנה עציץ יפה שהוא תוצר של הדרך שעשית.<br><br>
+      זה סימן קטן לכך שמשהו בך התחזק — כל פעם קצת.</div>
+    </div>
   </div>
 </div>
 
@@ -3202,7 +3315,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'about-opening-v2-2026-06-11';
+const TORI_BUILD = 'guide-accordion-2026-06-17';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -6598,6 +6711,14 @@ function switchView(v) {
 }
 // Back from view-settings → last main tab.
 function openSettingsBack() { switchView(_lastMainTab); }
+
+function toggleGuideItem(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var isOpen = el.classList.toggle('open');
+  var header = el.querySelector('.guide-item-header');
+  if (header) header.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
 // openAboutBack kept as alias in case called from elsewhere; about now always returns to settings.
 function openAboutBack() { switchView('settings'); }
 
