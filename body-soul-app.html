@@ -3274,7 +3274,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'onboarding-v2-pace-selector-2026-06-28';
+const TORI_BUILD = 'qa-fixes-onboarding-pace-2026-06-28';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3332,8 +3332,8 @@ function tapDrop(idx) {
   const prev=s.water; s.water=(idx<s.water)?idx:idx+1;
   updateProgress(); // real-time update before render
   renderDrops();
-  if(s.water===6&&prev<6){showToast('💧 6 כוסות! הכליות שלך כרגע עושות מסיבה 🎉');awardPoints(5);}
-  else if(s.water===8&&prev<8) showToast('💧 8 כוסות שלמות! מערכת העצבים שלך אוהבת אותך כי הצפת אותה — במים 💙');
+  if(s.water===6&&prev<6){showToast('נעים לדעת: מחקרים מצאו שרמות נוזלים תקינות קשורות לריכוז ולהפחתת עייפות. 6 כוסות — צעד טוב. 💧');awardPoints(5);}
+  else if(s.water===8&&prev<8) showToast('8 כוסות. במחקרים על הידרציה נמצא שזה מספיק לרוב האנשים לתמוך בתפקוד יומיומי. 💧');
   // garden water action
   addGardenAction('water');
   saveDay();
@@ -3363,7 +3363,10 @@ function tapWaterSip() {
   s.water = prev + 1;
   renderWaterCup();
   updateProgress();
-  if (s.water === 3 && prev < 3) { showToast('💧 הכוס התמלאה. הגוף שמח.'); awardPoints(5); }
+  if (s.water === 3 && prev < 3) {
+    showToast('נעים לדעת: במחקרים על התייבשות קלה נמצא שגם כמה שלוקים תורמים לריכוז ולמצב רוח. 💧');
+    awardPoints(5);
+  }
   addGardenAction('water');
   renderTodayCompanionPath();
   saveDay();
@@ -7146,13 +7149,13 @@ function _buildPaceSelector() {
         'תורי תפתח את היום בקצב רך ומינימלי, דרך המנגנון הקיים של יום חמלה.')
     + _buildPaceCard('blanket', 'קצב שמיכה', 'קפיברה',
         '"נתחיל מהשמיכה. היא כבר פה, ויש לה גישה מצוינת."',
-        'למשימות קטנות ונינוחות, בקצב שלא ממהר לשום מקום.', '')
+        'טון נינוח וחם. להתחיל ביום בלי דחיפה, בקצב שלא ממהר לשום מקום.', '')
     + _buildPaceCard('enough', 'קצב בדיוק מספיק', 'קיפודה',
         '"כמה משימות בגודל הנכון. כל השאר מוזמנות לשלוח מייל מסודר."',
-        'למשימות בגודל אפשרי, עם מקום גם לך וגם ליום.', '')
+        'טון שמשאיר מקום גם לך. לבחור מה מתאים להיום, בלי לתת לרשימה להשתלט.', '')
     + _buildPaceCard('curiosity', 'קצב סקרנות', 'חפשושית',
         '"ניסוי קטן, בלי חוזה המשך. רק לראות אם משהו זז."',
-        'למשימות שיש בהן קצת יותר תזוזה, ניסיון או התחלה.', '')
+        'טון של ניסוי ותזוזה. להתחיל לנוע — לא בגדול, רק לראות מה קורה.', '')
     + '</div>'
     + '</div>';
 }
@@ -7170,6 +7173,16 @@ function _buildPaceCard(pace, title, character, quote, text, desc) {
 
 async function selectTodayPace(pace) {
   await saveTodayPace(pace);
+
+  // Deactivate compassion day when switching away from it
+  if (pace !== 'compassion' && cd.active) {
+    cd.active = false;
+    await saveCompassionState();
+    updateCompassionUI();          // removes today-compassion-active class + hides panel
+    bs.compassionDay = false;
+    updateBotUI();
+    saveBotData();
+  }
 
   // Connect pace to companion — set companionId to the matching active companion
   var meta = PACE_META[pace];
@@ -9212,6 +9225,14 @@ async function init() {
   }
   await loadTodayPace();    // load daily pace before first render
   loadGentleHabitData();    // fire-and-forget — populates sprout panel on first load
+
+  // Migration: users who used the app before onboarding v2 have isSetup=false
+  // (the old onboarding was never auto-triggered). If a companion is already set,
+  // the user has been using the app — mark them as set up silently.
+  if (!bp.isSetup && cs.companionId) {
+    bp.isSetup = true;
+    saveBotData(); // fire-and-forget
+  }
 
   // Show onboarding for new users only (existing users have bp.isSetup=true)
   // To reset for testing: localStorage.removeItem('bot:prefs'); location.reload();
