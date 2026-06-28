@@ -2934,10 +2934,12 @@ const TASK_DISPLAY_LABELS = {
 
 // Companion lines for the gentle habit panel
 const GENTLE_HABIT_COMPANION_LINES = {
+  capy:   'אני בעד להקטין. קטן זה לא פחות. קטן זה פחות מעצבן.',
+  kipoda: 'קצת הקטנו, קצת דייקנו, ואף משימה לא איבדה את הכבוד העצמי שלה.',
+  forest: 'לפעמים מתחילים מגרגר קטן. אחר כך הוא נהיה שביל.',
+  // inactive — kept as parking-lot
   bear:   'אולי זה פשוט גדול מדי ליום כזה. בואי נחתוך חתיכה קטנה שאפשר להחזיק ביד.',
   cat:    'אני לא אומרת לוותר. אני אומרת לערוך את המשימה בטוב טעם.',
-  forest: 'לפעמים מתחילים מגרגר קטן. אחר כך הוא נהיה שביל.',
-  capy:   'אני בעד להקטין. קטן זה לא פחות. קטן זה פחות מעצבן.',
   fox:    'אסטרטגית, משימה שנעשית ב־20 שניות מנצחת משימה מושלמת שלא זזה.',
 };
 
@@ -3000,11 +3002,13 @@ const TASK_UI_LABELS = {
 
 // ── Companion small UI icons (for sparkle button and future use) ──
 const COMPANION_UI_ICONS = {
-  bear:       'assets/companions/ui-icons/bear-ui-icon.webp',
-  cat:        'assets/companions/ui-icons/cat-ui-icon.webp',
+  capy:       'assets/companions/ui-icons/capy-ui-icon.webp',
+  kipoda:     '', // TODO: add kipoda-ui-icon.webp once illustrated — callers already fall back to '' safely
   hafshushit: 'assets/companions/ui-icons/hafshushit-ui-icon.webp',
   forest:     'assets/companions/ui-icons/hafshushit-ui-icon.webp', // internal alias
-  capy:       'assets/companions/ui-icons/capy-ui-icon.webp',
+  // inactive
+  bear:       'assets/companions/ui-icons/bear-ui-icon.webp',
+  cat:        'assets/companions/ui-icons/cat-ui-icon.webp',
   fox:        'assets/companions/ui-icons/fox-ui-icon.webp',
 };
 
@@ -3063,6 +3067,21 @@ const TODAY_SPARK_LINES = {
     'אם היום קשה, אפשר ללכת מסביב. גם מסביב זו דרך, לפעמים יותר חמודה.',
     'אפשר להשתמש בסקרנות במקום מוטיבציה. היא קטנה יותר ויודעת לפתוח דלתות.',
     'חפשושית יודעת: פינה קטנה של הדבר היא לגמרי כל הדבר.',
+  ],
+  // קיפודה — witty, elegant, boundaried, warm underneath. 12 lines.
+  kipoda: [
+    'כמה משימות בגודל הנכון. כל השאר מוזמנות לשלוח מייל מסודר.',
+    'היום נכניס רק מה שיש לו מקום. זה לא סינון, זו אדריכלות פנים.',
+    'משימה בגודל אפשרי היא עדיין משימה. פשוט עם נימוסים טובים.',
+    'אפשר לבחור מעט. מעט זה לא פחות רציני, הוא רק פחות נדחף.',
+    'היום נשאיר מקום גם לך. רעיון די אלגנטי, אם חושבות על זה.',
+    'לא כל דבר צריך להיכנס עכשיו. חלק מהדברים נראים מצוין מחוץ לדלת.',
+    'נבחר מה מתאים להיום, לא מה מנסה להיראות חשוב.',
+    'גם קוצים יודעים להיות רכים כשהגודל נכון.',
+    'משימות גדולות יכולות לחכות רגע. הן כבר גדולות, יש להן סבלנות.',
+    'היום לא נמדוד הצלחה לפי עומס. כמה חדשני מצדנו.',
+    'נבחר צעד שאפשר להזמין פנימה בלי לפנות את כל הסלון.',
+    'גבול קטן, חיוך קטן, צעד שאפשר באמת לעשות.',
   ],
   // קפיברה — calm, horizontal, no drama, simple pleasures. 12 lines.
   capy: [
@@ -3253,7 +3272,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'micro-task-loop-fix-2026-06-17';
+const TORI_BUILD = 'kipoda-active-team-2026-06-28';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -4591,9 +4610,41 @@ const COMPANIONS = {
     tagline:'הכי רגועה, באופן עקבי',
     bio:'לא ממהרת לשום מקום. מחכה בלי לדחוק.',
     fitsIf:'קצב יציב ובלי דרמה',
+    pace:'קצב שמיכה',
+    mainQuote:'נתחיל מהשמיכה. היא כבר פה, ויש לה גישה מצוינת.',
     personalitySummary:'קפיברה היא החברה הרגועה־יבשה. ההומור שלה דד־פאן, מינימליסטי, רגוע ולא מתרגש. היא מורידה לחץ דרך משפטים פשוטים, יבשים ומדויקים שמחזירים את המשתמשת לפעולה אחת קטנה בלי רעש. היא לא מנסה להלהיב, לא מדרבנת בקול גדול ולא עושה עניין. מתאימה במיוחד למצבים של הצפה, לחץ, עומס משימות, צורך להאט או תחושה שהכול דחוף.',
     accent:'#D9A48A', accentSoft:'rgba(217,164,138,0.18)', sceneTint:'#FBF3EB',
+    active: true,
   },
+  kipoda: {
+    id:'kipoda', name:'קיפודה', species:'קיפודה',
+    displayNameWithArticle:'הקיפודה',
+    // TODO: replace with real asset once illustrated
+    img:'', homeImg:'',
+    tagline:'קצב בדיוק מספיק',
+    bio:'למשימות בגודל אפשרי, עם מקום גם לך וגם ליום.',
+    fitsIf:'לבחור מה נכנס ליום, עם מקום שנשאר גם לך',
+    pace:'קצב בדיוק מספיק',
+    mainQuote:'כמה משימות בגודל הנכון. כל השאר מוזמנות לשלוח מייל מסודר.',
+    personalitySummary:'קיפודה עוזרת לשמור על משימות בגודל שאפשר לחיות איתו. ההומור שלה שנון ואלגנטי, עם גבולות חמים ולא נוזפים. היא לא מלמדת ולא מתקנת — היא בעד לבחור מה נכנס ליום ומה שולחת מייל ומחכה. מתאימה במיוחד כשצריך לצמצם, לדייק, ולהרגיש שיש מקום גם לך.',
+    accent:'#9A8DB0', accentSoft:'rgba(154,141,176,0.18)', sceneTint:'#F0EDF5',
+    active: true,
+  },
+  forest: {
+    id:'forest', name:'חפשושית', species:'חפשושית',
+    displayNameWithArticle:'החפשושית',
+    img:'assets/companions/forest.webp',
+    homeImg:'assets/companions/forest-home.webp',
+    tagline:'הכי קרובה לאדמה',
+    bio:'חייה של תנועה ושורשים. הולכת בקצב שלך.',
+    fitsIf:'לנוע ולהרגיש את הגוף',
+    pace:'קצב סקרנות',
+    mainQuote:'ניסוי קטן, בלי חוזה המשך. רק לראות אם משהו זז.',
+    personalitySummary:'חפשושית היא החברה הפייתית־אבסורדית. ההומור שלה מוזר־מתוק, יערי, קליל ומקטין איום. היא הופכת משימות גדולות למשהו קטן, מצחיק ואפשרי, כאילו המשימה היא מפלצת קטנה עם יחסי ציבור מוגזמים. מתאימה במיוחד למצבים של הימנעות, פחד מהתחלה, משימות ביתיות או תחושה שהכול גדול מדי.',
+    accent:'#8FA679', accentSoft:'rgba(143,166,121,0.18)', sceneTint:'#EFF1E5',
+    active: true,
+  },
+  // ── Inactive / parking-lot characters — kept for future use, not shown in picker ──
   bear: {
     id:'bear', name:'דובה', species:'דובה',
     displayNameWithArticle:'הדובה',
@@ -4604,6 +4655,7 @@ const COMPANIONS = {
     fitsIf:'שקט ומרחב שמוגן',
     personalitySummary:'דובה היא החברה המחבקת־פרקטית. ההומור שלה חם, ביתי ומאמאצחיק — כזה שמזכיר למשתמשת לאכול, לשתות, לנשום ולעשות צעד קטן בלי אשמה. היא לא דוחפת ולא מאתגרת בכוח, אלא מרגיעה דרך דאגה פשוטה לגוף ולרגע הנוכחי. מתאימה במיוחד למצבים של עייפות, עומס, צורך במנוחה, אוכל, מים או פעולה בסיסית.',
     accent:'#B9A0BD', accentSoft:'rgba(185,160,189,0.18)', sceneTint:'#F4ECF4',
+    active: false,
   },
   fox: {
     id:'fox', name:'שועלה', species:'שועלה',
@@ -4615,17 +4667,7 @@ const COMPANIONS = {
     fitsIf:'רוטינות בוקר ופתיחות',
     personalitySummary:'שועלה היא החברה הערמומית־מוטיבציונית. ההומור שלה משחקי, חכם, זריז ומניע לפעולה, אבל בלי להיות קשוח או נוזף. היא עוזרת להתחיל דרך מיני־אתגרים קטנים, עקיפה חכמה של התנגדות ותחושת "עשינו מהלך". מתאימה במיוחד להתחלת משימות, סימון הרגלים, יציאה מתקיעות או כשצריך דחיפה קטנה.',
     accent:'#A8956A', accentSoft:'rgba(168,149,106,0.18)', sceneTint:'#F5EFE0',
-  },
-  forest: {
-    id:'forest', name:'חפשושית', species:'חפשושית',
-    displayNameWithArticle:'החפשושית',
-    img:'assets/companions/forest.webp',
-    homeImg:'assets/companions/forest-home.webp',
-    tagline:'הכי קרובה לאדמה',
-    bio:'חייה של תנועה ושורשים. הולכת בקצב שלך.',
-    fitsIf:'לנוע ולהרגיש את הגוף',
-    personalitySummary:'חפשושית היא החברה הפייתית־אבסורדית. ההומור שלה מוזר־מתוק, יערי, קליל ומקטין איום. היא הופכת משימות גדולות למשהו קטן, מצחיק ואפשרי, כאילו המשימה היא מפלצת קטנה עם יחסי ציבור מוגזמים. מתאימה במיוחד למצבים של הימנעות, פחד מהתחלה, משימות ביתיות או תחושה שהכול גדול מדי.',
-    accent:'#8FA679', accentSoft:'rgba(143,166,121,0.18)', sceneTint:'#EFF1E5',
+    active: false,
   },
   cat: {
     id:'cat', name:'חתולה', species:'חתולה',
@@ -4637,6 +4679,7 @@ const COMPANIONS = {
     fitsIf:'ערב שקט ואור עמום',
     personalitySummary:'חתולה היא החברה השנונה־קסומה. ההומור שלה חכם, אלגנטי וממסגר מחדש מחשבות מלחיצות. היא עוזרת להסתכל על מחשבות, עומס בראש או פרשנות שלילית מזווית קצת פחות מאיימת. היא לא צוחקת על המשתמשת, אלא על המוח כשהוא פותח ישיבות, כותב תסריטים או מתנהג כאילו כל מחשבה היא נבואה. מתאימה למצבים של לופ מחשבתי, ספק, הצפה מנטלית.',
     accent:'#8E89A8', accentSoft:'rgba(142,137,168,0.18)', sceneTint:'#EEEBF1',
+    active: false,
   },
 };
 
@@ -5961,6 +6004,21 @@ function companionAvatarSVG(id, size) {
       +'<circle cx="40.5" cy="50" r="1.5" fill="white"/><circle cx="62.5" cy="50" r="1.5" fill="white"/>'
       +'<ellipse cx="50" cy="65" rx="7" ry="5" fill="#9094B8"/><circle cx="50" cy="65" r="2" fill="#7A7E9C"/>'
       +'</svg>',
+    // קיפודה — placeholder SVG until illustration assets are ready (TODO: replace with real asset)
+    kipoda: '<svg viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'">'
+      +'<ellipse cx="50" cy="78" rx="32" ry="22" fill="#B8AECE"/>'
+      +'<ellipse cx="50" cy="54" rx="26" ry="24" fill="#B8AECE"/>'
+      // spines — short elegant lines radiating from top of head
+      +'<line x1="50" y1="30" x2="50" y2="18" stroke="#7A6E94" stroke-width="2.2" stroke-linecap="round"/>'
+      +'<line x1="40" y1="33" x2="35" y2="21" stroke="#7A6E94" stroke-width="2.2" stroke-linecap="round"/>'
+      +'<line x1="60" y1="33" x2="65" y2="21" stroke="#7A6E94" stroke-width="2.2" stroke-linecap="round"/>'
+      +'<line x1="33" y1="40" x2="26" y2="30" stroke="#9A8DB0" stroke-width="1.8" stroke-linecap="round"/>'
+      +'<line x1="67" y1="40" x2="74" y2="30" stroke="#9A8DB0" stroke-width="1.8" stroke-linecap="round"/>'
+      // face
+      +'<circle cx="40" cy="52" r="3.5" fill="#3D3350"/><circle cx="60" cy="52" r="3.5" fill="#3D3350"/>'
+      +'<circle cx="41.5" cy="50.5" r="1.2" fill="white"/><circle cx="61.5" cy="50.5" r="1.2" fill="white"/>'
+      +'<ellipse cx="50" cy="63" rx="7" ry="5" fill="#9A8DB0"/><circle cx="50" cy="63" r="2" fill="#7A6E94"/>'
+      +'</svg>',
   };
   return avatars[id] || avatars.capy;
 }
@@ -6115,7 +6173,7 @@ function renderCompanionSelect() {
   if (!overlay) return;
   const pending = cs._pendingId || cs.companionId;
 
-  const cardsHTML = Object.values(COMPANIONS).map(comp => {
+  const cardsHTML = Object.values(COMPANIONS).filter(comp => comp.active !== false).map(comp => {
     const isSel = pending===comp.id;
     const avatarSVG = companionAvatarSVG(comp.id, 68);
     return '<div class="cp-card" style="--cp-accent:'+comp.accent+'" data-id="'+comp.id+'" onclick="selectPendingCompanion(this.dataset.id)">'
@@ -11358,7 +11416,7 @@ function renderCompanionSelectDOM(inner) {
   // Card = <div> (not <button>). Hitarea = <button> inside div (valid HTML).
   // Each hitarea has a direct onclick — no delegation, no bubbling required.
   // cs._pendingId is the single source of truth; _jcsSyncVisuals reads it.
-  Object.values(COMPANIONS).forEach(function(c) {
+  Object.values(COMPANIONS).filter(function(c) { return c.active !== false; }).forEach(function(c) {
     var card = document.createElement('div');
     card.className = 'jcc-btn';
     card.setAttribute('data-id', c.id);
@@ -11369,12 +11427,20 @@ function renderCompanionSelectDOM(inner) {
     portrait.className = 'jcc-portrait';
     portrait.style.background = 'radial-gradient(circle at 50% 60%,#FFFFFF 0%,' + c.sceneTint + ' 70%)';
     portrait.style.pointerEvents = 'none';
-    var img = document.createElement('img');
-    img.src = c.img; img.alt = c.species;
-    img.loading = 'lazy'; img.decoding = 'async';
-    img.style.pointerEvents = 'none';
-    img.className = 'idle-' + c.id; // companion idle animation (patch25)
-    portrait.appendChild(img);
+    if (c.img) {
+      var img = document.createElement('img');
+      img.src = c.img; img.alt = c.species;
+      img.loading = 'lazy'; img.decoding = 'async';
+      img.style.pointerEvents = 'none';
+      img.className = 'idle-' + c.id;
+      portrait.appendChild(img);
+    } else {
+      // No image asset yet — render SVG placeholder
+      var svgWrap = document.createElement('div');
+      svgWrap.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;';
+      svgWrap.innerHTML = companionAvatarSVG(c.id, 90);
+      portrait.appendChild(svgWrap);
+    }
     card.appendChild(portrait);
 
     // Text content
