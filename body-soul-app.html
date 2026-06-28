@@ -3274,7 +3274,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'lair-pamper-reframe-2026-06-28';
+const TORI_BUILD = 'lair-pamper-qa-2026-06-28';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -11077,8 +11077,8 @@ function buildCompanionHeroHTML(c, marks, mood) {
   var imgSrc, imgAlt;
   if (_activePamper) {
     imgSrc   = _activePamper.imageSrc || '';
-    imgAlt   = c.name + ' בספא ביתי';
-    pillText = 'הפינוק של היום';
+    imgAlt   = c.name + ' — תוספת למאורה';
+    pillText = 'תוספת של היום';
     dotColor = c.accent;
   } else if (cd && cd.active) {
     // Compassion Day — show companion CD journey image
