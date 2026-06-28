@@ -3274,7 +3274,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-copy-fix-2026-06-28';
+const TORI_BUILD = 'lair-pamper-reframe-2026-06-28';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -4787,7 +4787,7 @@ const PAMPER_CARDS = {
   'spa-small': {
     id: 'spa-small',
     title: 'ספא ביתי',
-    subtitle: 'את בוחרת לפנק את הדמות שלך ברגע רגוע, כי גם לה מגיע לנוח בזכות זה שדאגת לעצמך.',
+    subtitle: 'אפשר להוסיף למאורה רגע שקט ונעים. הטוב שאספת לעצמך יכול לקבל גם פינה קטנה במרחב.',
     requiredPoints: 15,
     icon: '🛁',
     previewImage: 'assets/companions/pamper/spa/spa-home-envelope-01.webp',
@@ -4874,7 +4874,7 @@ const PAMPER_CARDS = {
     id: 'coffee-walk-small',
     title: 'קפה וסיבוב קטן',
     subtitle: 'כוס קטנה, סיבוב קטן, ותזכורת עדינה שלא כל יציאה חייבת להיות פרויקט.',
-    drawerDescription: 'פינוק קטן לדמות שלך: קפה ביד, קצת אוויר, וסיבוב נעים שלא צריך להוכיח כלום.',
+    drawerDescription: 'קפה ביד, קצת אוויר, ורגע קטן שנכנס למאורה. לא כי מישהי צריכה — כי נחמד שיש מקום לטוב שנאסף.',
     requiredPoints: 15,
     icon: '☕',
     previewImage: 'assets/companions/pamper/coffee-walk/coffee-walk-envelope-01.webp',
@@ -11135,7 +11135,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
     + '</div>'
     + '<div class="j-bubble-text">' + lineText + '</div>'
     + (_activePamper
-        ? '<div style="font-size:11px;color:var(--g-ink-3);margin-top:6px">המאורה מחכה בבית — היום יש לה ' + (_activePamper.cardTitleSnapshot || 'פינוק') + '.</div>'
+        ? '<div style="font-size:11px;color:var(--g-ink-3);margin-top:6px">הוספת למאורה: ' + (_activePamper.cardTitleSnapshot || 'תוספת קטנה') + '.</div>'
         : (cd && cd.active ? '<div style="font-size:11px;color:#8B6CB0;margin-top:6px">הרצף שלך נח היום. הוא שם, ומחכה.</div>' : ''))
     + '</div>';
 
@@ -11196,9 +11196,9 @@ function buildPamperDrawerHTML(c) {
   var html         = '<div class="j-pamper-section">';
 
   // ── Section eyebrow + drawer subtitle
-  html += '<div class="j-eyebrow" style="padding:0 2px">מגירת הפינוקים</div>';
+  html += '<div class="j-eyebrow" style="padding:0 2px">תוספות למאורה</div>';
   html += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.6;margin-bottom:12px;padding:0 2px">'
-    + 'את דואגת לעצמך, הדמות שלך מתפנקת, והטוב עושה סיבוב חזרה.</div>';
+    + 'כל פעם שעשית משהו טוב לעצמך, אפשר להכניס רגע כזה גם למרחב של הצוות.</div>';
 
   if (ap) {
     // ── Active pamper — compact status card (NO duplicate scene image) ──
@@ -11221,23 +11221,22 @@ function buildPamperDrawerHTML(c) {
     html += '</div>';
     // Text side
     html += '<div style="flex:1;min-width:0">';
-    html += '<div style="font-size:11px;font-weight:700;letter-spacing:0.6px;color:var(--g-sage-deep);margin-bottom:3px">הפינוק של היום כבר פתוח</div>';
+    html += '<div style="font-size:11px;font-weight:700;letter-spacing:0.6px;color:var(--g-sage-deep);margin-bottom:3px">תוספת של היום כבר פתוחה</div>';
     html += '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:4px">' + _apTitle + ' · ' + _modeLabel + '</div>';
 
     if (_pamperJustActivated) {
       _pamperJustActivated = false;
       html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.6">'
-        + 'את בחרת לפנק את ' + _nameArticle + ' היום.<br>'
-        + 'זה בזכות רגעים שבהם דאגת גם לעצמך — וזה לא דבר קטן.</div>';
+        + 'הכנסת משהו נעים למרחב. המעטפה תחכה לך גם ברגעים שנשמרו.</div>';
     } else {
       html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.6">'
-        + _nameArticle + ' מתפנקת עכשיו. המעטפה תחכה לך גם בהפינוקים שלי.</div>';
+        + 'המרחב קיבל תוספת קטנה. המעטפה תחכה לך גם ברגעים שנשמרו.</div>';
     }
     html += '</div>'; // text side
     html += '</div>'; // j-pamper-status-card
 
     // Always-visible button to open My Pampers sheet
-    html += '<button class="j-pamper-btn primary" style="margin-top:4px" onclick="openMyPampers()">הפינוקים שלי</button>';
+    html += '<button class="j-pamper-btn primary" style="margin-top:4px" onclick="openMyPampers()">רגעים שנשמרו</button>';
 
   } else {
     // ── Card browser: one block per card in PAMPER_CARDS ──
@@ -11273,10 +11272,10 @@ function buildPamperDrawerHTML(c) {
       html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.55;margin-bottom:14px">' + cardDesc + '</div>';
       // CTA
       if (canChoose) {
-        html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'' + cardId + '\',\'' + c.id + '\')">לבחור פינוק ' + withLamed(_nameArticle) + '</button>';
+        html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'' + cardId + '\',\'' + c.id + '\')">להוסיף למאורה</button>';
       } else {
-        html += '<button class="j-pamper-btn muted" disabled>לבחור פינוק ' + withLamed(_nameArticle) + '</button>';
-        html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והפינוק הזה ייפתח לבחירה.</div>';
+        html += '<button class="j-pamper-btn muted" disabled>להוסיף למאורה</button>';
+        html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והתוספת הזאת תיפתח לבחירה.</div>';
       }
       html += '</div>'; // j-pamper-card-wrap
     });
@@ -11297,7 +11296,7 @@ function buildPamperDrawerHTML(c) {
   }
   if (!ap) {
     // Show entry button only when no active pamper (active state already has its own button above)
-    html += '<button class="j-pamper-btn" style="background:#F5F0E8;color:var(--g-ink-2);margin-top:2px" onclick="openMyPampers()">הפינוקים שלי</button>';
+    html += '<button class="j-pamper-btn" style="background:#F5F0E8;color:var(--g-ink-2);margin-top:2px" onclick="openMyPampers()">רגעים שנשמרו</button>';
   }
 
   html += '</div>'; // j-pamper-section
@@ -11313,9 +11312,8 @@ function openPamperModal(cardId, companionId) {
   var comp = COMPANIONS[companionId || cs.companionId] || {};
   // displayNameWithArticle: e.g. "הקפיברה", "הדובה", etc.
   var withArticle = comp.displayNameWithArticle || ('ה' + comp.name);
-  var modalTitle = 'עם מי ' + withArticle + ' שלך רוצה להתפנק היום?';
-  var modalSub   = 'הפינוק הוא של ' + withArticle + ' שלך. את רק בוחרת לה רגע טוב.'
-    + '<br><span style="font-size:12px;color:var(--g-ink-3)">זה לא משימה בשבילך — רק פינוק קטן בשבילה.</span>';
+  var modalTitle = 'איך להכניס את הרגע הזה למאורה?';
+  var modalSub   = 'בוחרים צורה קטנה לרגע שנאסף. משהו נעים למרחב של הצוות, בלי להפוך את זה למשימה.';
   var html = '<div class="j-pamper-modal-overlay" id="j-pamper-modal" onclick="closePamperModal()">'
     + '<div class="j-pamper-modal-box" onclick="event.stopPropagation()">'
     + '<div class="j-pamper-modal-handle"></div>'
@@ -11442,8 +11440,8 @@ function _buildMyPampersSheetHTML() {
   var hasAny   = activeItems.length > 0 || archived.length > 0;
 
   var inner = '<div class="j-myp-handle"></div>'
-    + '<div class="j-myp-title">הפינוקים שלי</div>'
-    + '<div class="j-myp-sub">רגעים קטנים שבחרת לשמור לדמות שלך.</div>';
+    + '<div class="j-myp-title">רגעים שנשמרו</div>'
+    + '<div class="j-myp-sub">רגעים קטנים שהכנסת למרחב המשותף.</div>';
 
   if (!hasAny) {
     inner += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;padding:8px 0 16px">'
@@ -11452,7 +11450,7 @@ function _buildMyPampersSheetHTML() {
 
   // ── Section A: active pampers — one per companion, envelope preview only ──
   if (activeItems.length > 0) {
-    inner += '<div class="j-myp-section-label">הפינוק של היום</div>';
+    inner += '<div class="j-myp-section-label">תוספת של היום</div>';
     activeItems.forEach(function(ap, idx) {
       var aCard    = PAMPER_CARDS[ap.cardId] || {};
       var aComp    = COMPANIONS[ap.companionId] || {};
@@ -11540,7 +11538,7 @@ function openPamperEnvelope(sourceType, index) {
 
   var inner = '<div class="j-myp-handle"></div>'
     + '<div class="j-myp-title">המעטפה נפתחה</div>'
-    + '<div class="j-myp-sub">זה הפינוק שבחרת ' + withLamed(iArticle) + '.</div>';
+    + '<div class="j-myp-sub">זה רגע קטן שהכנסת למרחב.</div>';
 
   if (imgSrc) {
     inner += '<div class="j-myp-scene">'
