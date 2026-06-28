@@ -2758,10 +2758,9 @@ if('serviceWorker' in navigator){
       <span class="guide-item-chevron">▼</span>
     </div>
     <div class="guide-item-body" id="guide-scroll-body">
-      <div class="guide-item-text">הלשונית "לגלול" מציעה מרחב של הסחת דעת מיטיבה.<br><br>
-      כאן אפשר למצוא תוכן קליל, מצחיק ומסיח דעת, שנותן למוח רגע לנוח בלי להיסחף לחדשות קשות, השוואות או עומס מיותר.<br><br>
-      לצד התוכן הקליל יש גם מחקרים והסברים קצרים על הגוף, על הנפש, ועל הקשר ביניהם — למשל למה הגוף מגיב כמו שהוא, ואיך דאגה קטנה לגוף יכולה לעזור גם לנפש להתרומם קצת בחזרה.<br><br>
-      זו גלילה שנועדה להיות בצד שלך.</div>
+      <div class="guide-item-text">"תורי לגלול" היא מקום להסחות דעת מיטיבות — דברים קצרים, נעימים ומסקרנים שאפשר לפגוש בלי להפוך אותם למשימה.<br><br>
+      עובדות מפתיעות, חיות עם אופי, טבע שעושה וואו, ודברים קטנים מהעולם — בלי חפירה, בלי עיבוד, ובלי צורך לעשות עם זה כלום.<br><br>
+      אפשר פשוט לגלול קצת. התוכן כבר בצד שלך.</div>
     </div>
   </div>
 
@@ -2860,6 +2859,7 @@ if('serviceWorker' in navigator){
     <div style="font-size:24px;font-weight:800;color:var(--text1);margin-bottom:14px;line-height:1.3;">תורי לגלול</div>
     <div style="font-size:15px;color:var(--text2);line-height:1.85;max-width:420px;">
       הסחות דעת מיטיבות: תוכן קצר, חיובי, מצחיק ומסקרן שנותן למוח מקום קטן לנוח.<br><br>
+      כאן מחכות לך עובדות מפתיעות, חיות עם אופי, טבע שעושה וואו, ודברים קטנים מהעולם שנעים לפגוש באמצע היום.<br><br>
       אפשר פשוט לגלול קצת. התוכן כבר בצד שלך.
     </div>
   </div>
@@ -3274,7 +3274,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'lair-pamper-qa-2026-06-28';
+const TORI_BUILD = 'scroll-feed-v1-2026-06-28';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -10133,7 +10133,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'חיות עם אופי',
     title: 'קפיברות הן מקצועניות של שכנות טובה',
     text: 'קפיברות ידועות בזה שהן מסתדרות עם מגוון גדול של חיות סביבן. יש משהו מרגיע ביצור שנראה כאילו הוא פשוט הגיע לעולם עם מדיניות של: נעים, לא דחוף, אפשר לשבת יחד.',
-    type: 'fact', visualNeed: false,
+    type: 'fact', gentle: true, visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
     imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
@@ -10146,7 +10146,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'וואלה, לא ידעתי',
     title: 'לתמנון יש מוח די מבוזר',
     text: 'לתמנונים יש מערכת עצבים מרתקת, וחלק גדול מהנוירונים שלהם נמצא בזרועות.\n\nזה אומר שכל זרוע יודעת לעשות לא מעט בעצמה — לחקור, להגיב, ולהסתדר עם העולם מקרוב.\n\nתמנון הוא לא רק חכם.\nהוא חכם בכמה כיוונים במקביל.',
-    type: 'fact', visualNeed: false,
+    type: 'fact', gentle: true, visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
     imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
@@ -10159,7 +10159,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'חיות עם אופי',
     title: 'פינגווינים וחלוקי נחל: מחווה קטנה, משמעות גדולה',
     text: 'אצל חלק ממיני הפינגווינים, חלוקי נחל יכולים להיות חלק מבניית הקן וגם מחיזור.\n\nיש משהו מקסים ברעיון שחלוק קטן יכול להיות מחווה רצינית לגמרי.\n\nרומנטיקה בגרסת אנטארקטיקה.',
-    type: 'fact', visualNeed: false,
+    type: 'fact', gentle: true, visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
     imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
@@ -10172,7 +10172,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'טבע שעושה וואו',
     title: 'הענן הזה נראה כאילו הים עבר לתקרה',
     text: 'יש עננים שנראים ממש כמו גלים בים.\n\nקוראים להם ענני קלווין-הלמהולץ, והם נוצרים בתנאים מסוימים של זרימת אוויר.\n\nהשמיים עשו רגע של ים.\nיצא להם יפה.',
-    type: 'fact', visualNeed: true, mediaType: 'image',
+    type: 'fact', gentle: true, visualNeed: true, mediaType: 'image',
     image: './assets/scroll-feed/kelvin_helmholtz_waves.jpg',
     imageAlt: 'ענני קלווין-הלמהולץ — גלי ענן אטמוספריים שנראים כמו גלי ים',
     imageApproved: true, imageApprovalStatus: 'approved',
@@ -10191,7 +10191,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'דברים קטנים שאנשים יצרו',
     title: 'ספריות קטנות ברחוב הן רעיון ממש יפה',
     text: 'במקומות רבים בעולם יש ספריות קטנות ברחוב: קופסה קטנה עם ספרים, וכל אחת יכולה לקחת ספר או להשאיר אחד.\n\nזה רעיון פשוט מאוד.\nובכל זאת, יש בו משהו שמרגיש כמו אמון קטן שמישהו השאיר על המדרכה.',
-    type: 'tiny_world', visualNeed: false,
+    type: 'tiny_world', gentle: true, visualNeed: false,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
     imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
@@ -10204,7 +10204,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'צמחים עם אופי',
     title: 'צמח שמתבייש ממגע',
     text: 'יש צמח בשם מימוזה ביישנית, שהעלים שלו נסגרים כשנוגעים בהם.\n\nהוא לא עושה סצנה.\nהוא פשוט אומר:\n"תודה, אני אקח רגע לעצמי."\n\nצמח עם גבולות. מכבדות.',
-    type: 'fact', visualNeed: true, mediaType: 'video',
+    type: 'fact', gentle: true, visualNeed: true, mediaType: 'video',
     image: './assets/scroll-feed/mimosa_pudica_closing.mp4',
     imageAlt: 'עלי מימוזה ביישנית נסגרים בתגובה למגע',
     // Pexels License — free for commercial use, no attribution required.
@@ -10223,7 +10223,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'וואלה, לא ידעתי',
     title: 'בננה היא גרגר יער. תות לא.',
     text: 'מבחינה בוטנית, בננה נחשבת לגרגר יער.\nתות, לעומת זאת, לא בדיוק.\n\nהבוטניקה קמה בוקר אחד ואמרה:\n"היום נבדוק מי באמת קוראת את ההגדרות הקטנות."',
-    type: 'fact', visualNeed: false, mediaType: null,
+    type: 'fact', gentle: true, visualNeed: false, mediaType: null,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
     imageTitle: null, imageCreator: null,
@@ -10237,7 +10237,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'וואלה, לא ידעתי',
     title: 'דבש לא ממהר לשום מקום',
     text: 'דבש שנשמר כמו שצריך יכול להחזיק מעמד זמן ממש, ממש ארוך.\n\nלפעמים מוצאים דבש עתיק שנראה כאילו הוא פשוט נשאר באותו מצב צבירה וחיכה שמישהו ישים לב.\n\nהדבש לא ממהר.\nיש לו קצב משלו.',
-    type: 'fact', visualNeed: false, mediaType: null,
+    type: 'fact', gentle: true, visualNeed: false, mediaType: null,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
     imageTitle: null, imageCreator: null,
@@ -10251,7 +10251,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'חיות עם אופי',
     title: 'עורב יכול לזכור פרצוף',
     text: 'עורבים יכולים לזהות פרצופים של אנשים ולזכור אותם לאורך זמן.\n\nכלומר, אם עורב מסתכל עלייך במבט עמוק מדי —\nיכול להיות שהוא פשוט מעדכן תיקייה פנימית.\n\nמסודר. שחור. חד הבחנה. מאוד מקצועי.',
-    type: 'fact', visualNeed: false, mediaType: null,
+    type: 'fact', gentle: true, visualNeed: false, mediaType: null,
     image: null, imageAlt: null,
     imageApproved: false, imageApprovalStatus: null,
     imageTitle: null, imageCreator: null,
@@ -10417,8 +10417,23 @@ function renderScrollFeed() {
   Object.keys(_impTimers).forEach(function(id) { clearTimeout(_impTimers[id]); });
   _impTimers = {};
   _impressedThisRender = {};
+  // Compassion Day mode: soft banner + gentle-first ordering
+  var cdMode = (typeof cd !== 'undefined' && cd && cd.active) ||
+               (typeof _todayPace !== 'undefined' && _todayPace === 'compassion');
   var html = '';
-  SCROLL_FEED_ITEMS.forEach(function(item) {
+  if (cdMode) {
+    html += '<div style="background:#F5F0FF;border:1.5px solid #D4C0F0;border-radius:16px;'
+      + 'padding:14px 16px;margin-bottom:18px;direction:rtl;">'
+      + '<div style="font-size:15px;font-weight:800;color:#6B4C9A;margin-bottom:4px">משהו עדין לגלול ☁️</div>'
+      + '<div style="font-size:13px;color:#7A5AAA;line-height:1.65">יום חמלה — הכול כאן קל מספיק. אפשר לגלול בקצב שלך.</div>'
+      + '</div>';
+  }
+  // In CD mode: gentle items first; otherwise preserve original order
+  var items = SCROLL_FEED_ITEMS.slice();
+  if (cdMode) {
+    items.sort(function(a, b) { return (b.gentle ? 1 : 0) - (a.gentle ? 1 : 0); });
+  }
+  items.forEach(function(item) {
     var liked = (_feedLikes[item.id] && _feedLikes[item.id].liked) ? true : false;
     var imgHtml = _buildFeedMediaHtml(item);
     html += '<div class="feed-card" data-card-id="' + _escH(item.id) + '">'
