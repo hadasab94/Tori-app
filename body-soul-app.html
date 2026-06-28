@@ -465,6 +465,38 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .ob-opt { border: 1.5px solid #ddd; border-radius: 14px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; background: white; color: #444; transition: all 0.15s; }
 .ob-opt.on { border-color: #9B72CF; background: #F3ECFF; color: #6B4C9A; font-weight: 700; }
 .ob-nxt { background: #9B72CF; color: white; border: none; border-radius: 12px; padding: 11px; width: 100%; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 14px; }
+.ob-nxt:disabled { opacity: 0.45; cursor: not-allowed; }
+/* Onboarding v2 — team screen */
+.ob-team-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.ob-team-card { background: #F9F6FF; border: 1.5px solid #D4C4F0; border-radius: 14px; padding: 12px 14px; }
+.ob-team-name { font-size: 14px; font-weight: 800; color: #5A3F8A; }
+.ob-team-label { font-size: 11.5px; color: #8B72B8; }
+.ob-team-text { font-size: 12.5px; color: #444; line-height: 1.55; margin: 6px 0 4px; }
+.ob-team-quote { font-size: 12px; color: #7A5AAA; font-style: italic; }
+/* Onboarding v2 — personalization screen */
+.ob-pers-opt { width: 100%; background: white; border: 1.5px solid #ddd; border-radius: 12px; padding: 10px 14px; text-align: right; cursor: pointer; font-family: inherit; transition: border-color 0.18s, background 0.18s; display: block; }
+.ob-pers-opt.on { border-color: #9B72CF; background: #F3ECFF; }
+.ob-pers-title { font-size: 13.5px; font-weight: 700; color: #333; margin-bottom: 2px; }
+.ob-pers-desc { font-size: 12px; color: #777; line-height: 1.45; }
+/* Pace selector — daily entry */
+.pace-section { padding: 14px 0 6px; }
+.pace-section-title { font-size: 17px; font-weight: 800; color: var(--text1); margin-bottom: 6px; }
+.pace-section-intro { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 14px; }
+.pace-cards { display: flex; flex-direction: column; gap: 10px; }
+.pace-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 13px 15px; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: border-color 0.18s, transform 0.12s; }
+.pace-card:active { transform: scale(0.98); }
+.pace-card.compassion { border-color: #C4A0E8; background: #FAF5FF; }
+.pace-card.blanket    { border-color: #D9A48A; background: #FBF3EB; }
+.pace-card.enough     { border-color: #9A8DB0; background: #F0EDF5; }
+.pace-card.curiosity  { border-color: #8FA679; background: #EFF1E5; }
+.pace-card-title { font-size: 15px; font-weight: 800; color: var(--text1); margin-bottom: 2px; }
+.pace-card-char  { font-size: 11.5px; color: var(--text3); margin-bottom: 5px; }
+.pace-card-quote { font-size: 13px; color: var(--sky, #6aabcf); font-style: italic; line-height: 1.5; margin-bottom: 6px; }
+.pace-card-desc  { font-size: 12.5px; color: var(--text2); line-height: 1.55; }
+/* Pace chip — shown after selection */
+.pace-chip-bar { display: flex; align-items: center; gap: 8px; padding: 9px 14px; background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; margin: 10px 0 4px; }
+.pace-chip-label { font-size: 13px; font-weight: 700; color: var(--text1); flex: 1; }
+.pace-chip-change { font-size: 12px; color: var(--text3); cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; text-decoration: underline; -webkit-tap-highlight-color: transparent; }
 .sys-prompt-wrap { padding: 12px; }
 .sys-prompt-card { background: #1a1a2e; color: #a8d8a8; border-radius: 12px; padding: 14px; font-size: 10px; line-height: 1.7; font-family: monospace; white-space: pre-wrap; overflow-x: auto; direction: ltr; }
 
@@ -2420,6 +2452,9 @@ if('serviceWorker' in navigator){
     <div class="cf-line" id="cf-line"></div>
   </div>
 
+  <!-- ── Daily pace selector — rendered by renderPaceSection() ── -->
+  <div id="today-pace-section"></div>
+
   <!-- ── Edit mode entry + banner ── -->
   <button class="today-edit-entry-btn" id="edit-entry-btn" onclick="toggleEditMode()">לסדר את היום ✏️</button>
   <div class="today-editbar" id="today-editbar">
@@ -2870,14 +2905,9 @@ if('serviceWorker' in navigator){
     <div id="g-picker-backdrop"></div><div id="g-picker-sheet"></div><div id="g-wild-modal"></div>
   </div>
 </div>
-<!-- ONBOARDING -->
+<!-- ONBOARDING v2 — 5-screen flow, content rendered by renderObScreen() -->
 <div class="ob-ov" id="ob-ov">
-  <div class="ob-card">
-    <div style="font-size:32px;margin-bottom:6px">🌱</div>
-    <div class="ob-title">היי! אני תורי</div>
-    <div class="ob-sub">כדי שאדע להציק לך באהבה ולא בצורה מעצבנת, אשאל כמה שאלות קצרות. מבטיחה לא להפוך את זה לטופס קופת חולים.</div>
-    <div id="ob-content"></div>
-  </div>
+  <div class="ob-card" id="ob-card-inner"></div>
 </div>
 
 <!-- SYSTEM PROMPT MODAL -->
@@ -3119,74 +3149,46 @@ TODAY_SPARK_LINES.forest = TODAY_SPARK_LINES.hafshushit;
 
 const TASK_MSGS = {
   breakfast: [
-    'הלבלב שלך הרים לך כוסית. ארוחת בוקר — נרשם! 🍳',
-    'מוח שבע = יום הרבה יותר טוב. ביצה, קוואקר, יוגורט — לא משנה. ✔',
-    'הגוף שלך אסיר תודה על זה. ממש. 🌅',
-    'ארוחת בוקר סגורה! הסוכר בדם מסודר, מערכת העצבים קצת יותר שקטה. 🌿',
-    'ניצחון שקט של הבוקר — גוף שקיבל דלק להתחיל. 💛',
-    'הגוף ידע שתיזכרי בו. הוא מודה לך. 🌸',
-    'בוקר עם אוכל = בוקר שמתחיל מקרקע. זה לא קטן. ✨',
-    'ארוחת בוקר — עוד לבנה. 🌱',
+    'נעים לדעת: אוכל בבוקר נותן לגוף אנרגיה ראשונית. מחקרים קושרים בין ארוחת בוקר לתחושת עירנות ויציבות לאורך הבוקר. 🍳',
+    'ארוחת בוקר — נרשמה. מחקרים מצאו שאכילה מוקדמת עוזרת לגוף לווסת רמות סוכר ואנרגיה. ✔',
+    'במחקרים על ויסות רמות סוכר נמצא שאכילה בבוקר תורמת לפחות עצבנות ועייפות בהמשך היום. 🌅',
+    'ביס בבוקר — גם ביס קטן. הגוף מקבל אות שיש דלק. מחקרים קושרים בין רעב לרמות קורטיזול. 🌿',
   ],
   lunch: [
-    'ארוחת צהריים! הסוכר בדם: "סוף סוף, חשבתי שנשכחת ממני." 🥗',
-    'צהריים הושלמו. מערכת העצבים הרגיעה את עצמה בדיוק עכשיו. ✅',
-    'תידלוק של אמצע יום — אחר הצהריים מרגיש אחרת לגמרי. 🌿',
-    'הגוף שלך קיבל מה שהיה צריך. המוח מרגיש את זה. 💛',
-    'שתי ארוחות היום כבר — זה לא מובן מאליו בכלל. 🌸',
-    'ארוחת צהריים נרשמה. הגוף ממשיך לעבוד בשבילך. ✔',
-    'לאכול בצהריים = להגיד לגוף "אני עדיין איתך." 🌱',
-    'ניצחון שקט של הצהריים. עוד אחת. 💛',
+    'נעים לדעת: אכילה בצהריים עוזרת לגוף לשמור על אנרגיה יציבה. מחקרים מצאו שדילוג על ארוחות קשור לעייפות ולקושי בריכוז. 🥗',
+    'ארוחת צהריים — נרשמה. הגוף מקבל חידוש דלק באמצע היום. ✔',
+    'במחקרים על תזונה ומצב רוח נמצא שאכילה סדירה עוזרת לשמור על יציבות רגשית לאורך היום. 🌿',
+    'אוכל בצהריים — פעולה שתומכת בוויסות הגוף גם בשעות שאחרי. מחקרים קושרים בין רעב למצב רוח. 💛',
   ],
   dinner: [
-    'ארוחת ערב! סגרת את היום בצורה שהגוף אוהב. 🍲',
-    'שלוש ארוחות ביום — הגוף שלך ישן הלילה קצת יותר טוב. 🌙',
-    'טיפלת בעצמך עד סוף היום. זה לא מובן מאליו. 💛',
-    'ארוחת ערב נרשמה. היום סגור בצורה טובה. ✨',
-    'גוף שמקבל ארוחת ערב = גוף שנרגע לקראת הלילה. 🌸',
-    'שלוש ארוחות! הגוף שלך ידע שאת שמה לב אליו היום. 🌟',
-    'ארוחת ערב — עוד לבנה ביום שסגר יפה. 🌿',
-    'נרשם! הגוף מודה לך על הדלק של הלילה. 🌙',
+    'נעים לדעת: ארוחת ערב תורמת לתהליך המעבר לשינה. מחקרים קושרים בין אכילה בשעות ערב לאיכות שינה טובה יותר. 🍲',
+    'ארוחת ערב — נרשמה. הגוף מקבל את מה שצריך לסגור את היום ולהתכונן לשינה. 🌙',
+    'במחקרים על ויסות קצב היממה נמצא שאכילה מסודרת בערב תומכת במחזור שינה-ערות. 🌿',
+    'שלוש ארוחות ביום — במחקרים נמצא שאכילה סדירה קשורה לוויסות גופני ורגשי טוב יותר. 💛',
   ],
   shower: [
-    'מקלחת! עכשיו את רשמית רעננה יותר מלפני 10 דקות. 🚿',
-    'מקלחת = שינוי ממצב הישרדות למצב ביטחון. מדע. 🌸',
-    'חמים + ניקיון = הנוסחה הפשוטה שהגוף אוהב. ✨',
-    'היגיינה קטנה = מסר גדול לגוף: "אני שמה לב אלייך." 💛',
-    'מקלחת נרשמה. הגוף מרגיש את ההבדל. 🌿',
-    'מקלחת סגורה — אחת הפעולות הכי עוצמתיות לשינוי מצב. 🌸',
-    'ניקיון = תחושת שליטה קטנה. וזה חשוב. ✔',
-    'הגוף שלך הרגיש את המים. זה גם גשר חזרה אליו. 💧',
+    'נעים לדעת: מחקרים על מקלחות חמות מצאו שהן עוזרות לגוף לרדת ממצב דריכות, דרך הרפיית שרירים ושינוי בטמפרטורת הגוף. 🚿',
+    'מקלחת — נרשמה. גירוי חושי שמשנה את מצב הגוף. מחקרים מצאו שמים חמים מסייעים בהפחתת מתח שרירי. ✨',
+    'במחקרים על ויסות גופני נמצא שהיגיינה יומיומית קשורה לתחושת בסיס ורגיעה. קטן, אבל מוכח. 🌿',
+    'שינוי גופני קטן. מחקרים מצאו שמים על הגוף יכולים לתרום לתחושת רגיעה ולמעבר בין מצבים. 💧',
   ],
   breathing: [
-    'עצרת לנשום! מערכת העצבים שלך בדיוק עשתה לעצמה קפה. 🌬️',
-    'נשימה עמוקה = מסר לגוף: "אנחנו בטוחות עכשיו." 💙',
-    'הפאראסימפטטי חוגג. ממש. 🧘',
-    'נשימה אחת ביום = שינוי מצטבר במערכת העצבים. לא בדיחה. 🌬️',
-    'עצרת, נשמת, חזרת. זה לא קטן כמו שנדמה. 💙',
-    'מוח שמקבל נשימה = מוח שמוציא רגל מהלחץ. 🌿',
-    'נשימה נרשמה. הגוף מרגיש את ההבדל גם אם לא שמת לב. ✨',
-    'עצב הוואגוס שלך: "תודה!" 🌬️',
+    'נעים לדעת: מחקרים על נשימה עמוקה מצאו שהאטת קצב הנשימה מפעילה את עצב הוואגוס ומפחיתה תגובת לחץ. גם נשימה אחת משנה משהו. 🌬️',
+    'נשימה — נרשמה. במחקרים על ויסות עצמי נמצא שנשימה איטית יכולה להפחית פעילות מערכת הלחץ תוך זמן קצר. 💙',
+    'במחקרים נמצא שנשיפה ארוכה — ספציפית — מפעילה מסלולי רגיעה במוח. קטן, אבל עם בסיס מחקרי. 🌿',
+    'מחקרים על מיקרו-הפסקות מצאו שגם עצירה קצרה ונשימה יכולה לתמוך בחזרה לוויסות. ✨',
   ],
   outside: [
-    'יצאת! השמש אפילו לא ידעה שהיא מרפאה אותך. 🌤️',
-    'אוויר צח — הריאות, הנפש, ומערכת העצבים הגיעו להסכמה. 🚶',
-    '10 דקות בחוץ = שעה של מצב רוח טוב יותר. מחקר, לא בדיחה. 🌳',
-    'יציאה לחוץ = ויסות חושי שעוזר להישאר בכאן ועכשיו. 🌿',
-    'אור יום + תנועה = סרוטונין טבעי. ממש. ☀️',
-    'יצאת לאוויר. הגוף והמוח הרגישו את ההבדל. 🌸',
-    'נרשם! חוץ = הפסקה שהמוח ביקש בלי מילים. 🌤️',
-    'חשיפה לאור יום — אחד הדברים הכי פשוטים ויעילים להחלמה. ✨',
+    'נעים לדעת: מחקרים על חשיפה לאור יום מצאו שגם 10 דקות בחוץ יכולות לתרום לוויסות מצב רוח ולייצוב השעון הביולוגי. 🌤️',
+    'יציאה לחוץ — נרשמה. מחקרים קושרים בין חשיפה לסביבה טבעית לבין הפחתת תחושת עומס ומתח. 🌳',
+    'במחקרים נמצא שאוויר צח ואור טבעי משפיעים על רמות סרוטונין ועל תחושת חיוניות. ☀️',
+    'אוויר צח — הגוף מקבל גירוי חושי אחר. מחקרים מצאו שחשיפה לחוץ עוזרת ל"כאן ועכשיו". 🌿',
   ],
   sleep: [
-    'רשמת שינה! המוח שלך מעבד ומנקה הלילה — בחינם. 🌙',
-    'שינה טובה = ההחלמה הכי יעילה שיש, בלי לעשות שום דבר. 😴',
-    'בשינה המוח מעבד טראומה. ממש. את מחלימה גם תוך כדי שינה. ⭐',
-    'שינה נרשמה. מחר מתחיל קצת יותר קל. 🌙',
-    'שנת REM מנקה זיכרונות כבדים. זה ביולוגיה, לא מיתוס. 💙',
-    'גוף שישן = גוף שמעבד. הכי חשוב ביום. 🌿',
-    'שינה = טיפול ביולוגי. הזמינה אותו — נרשם! ✨',
-    'לישון זה לא לא לעשות כלום. זה לעשות את הדבר הכי חשוב. 🌙',
+    'נעים לדעת: מחקרים על שינה מצאו שבשנת REM המוח מעבד חוויות רגשיות ומפחית את עוצמתן. שינה היא עיבוד פעיל. 🌙',
+    'שינה — נרשמה. במחקרים נמצא שגם שינה חלקית תורמת לוויסות מערכת העצבים ולתחושת חיוניות. 😴',
+    'מחקרים מצאו שמחזורי שינה עקביים קשורים לוויסות רגשי טוב יותר לאורך הזמן. ⭐',
+    'כניסה למיטה — צעד שתומך בשינה. מחקרים מצאו שגם שכיבה ומנוחה ללא שינה מלאה מועילות לגוף. 🌿',
   ],
 };
 
@@ -3272,7 +3274,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'kipoda-active-team-2026-06-28';
+const TORI_BUILD = 'onboarding-v2-pace-selector-2026-06-28';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -6887,6 +6889,7 @@ function renderFromState() {
   updateSparkBtn();     // sync companion icon + label in sparkle button
   renderCompanionFeedback(); // sync companion feedback line
   renderTodayCompanionPath(); // sync companion path position
+  renderPaceSection();  // sync daily pace chip / selector
 }
 
 // ============================================================
@@ -6943,63 +6946,255 @@ const BM = {
   reminder:['שמרתי. אזכיר בעוד שעה-שעתיים 🕐','בסדר, לא שוכחת. תני לעצמך להנשים 🌿'],
 };
 
-// --- ONBOARDING ---
-const OB_STEPS = [
-  { id:'name', q:'איך תרצי שאקרא לך?', type:'text', ph:'השם שלך...', key:'name' },
-  { id:'tone', q:'באיזה טון תרצי שאזכיר לך דברים?', type:'opts', opts:['עדין ורגוע','מצחיק וקליל','ישיר אבל חם','ממש מינימלי'], key:'tone' },
-  { id:'humor', q:'כמה הומור מתאים לך?', type:'opts', opts:['מינימלי — רציני יותר','בינוני — קצת קליל','גבוה — אני אוהבת לצחוק'], key:'humor' },
-  { id:'foods', q:'מה 3–5 מאכלים מהירים שאת יכולה לאכול כשאין כוח? (הפרידי בפסיקים)', type:'text', ph:'למשל: תפוח, יוגורט, טוסט, גבינה...', key:'quickFoods', isArr:true },
-  { id:'easy_move', q:'איזו תנועה קלה אפשרית לך ביום חלש? (אפשר לבחור כמה)', type:'opts', opts:['מתיחת כתפיים','הליכה בבית דקה','נשימה עמוקה','להניח רגליים על הרצפה','לפתוח חלון ולנשום'], key:'easyMovement', multi:true },
-  { id:'quiet', q:'מתי עדיף שלא אשלח הודעות?', type:'opts', opts:['לפני 8:00','אחרי 21:00','אחרי 22:00','אחרי 23:00'], key:'quietLabel' },
-];
-let obStep=0, obAnswers={};
+// --- ONBOARDING v2 — 5-screen flow ---
+// To reset onboarding for testing: open DevTools console and run:
+//   localStorage.removeItem('bot:prefs'); location.reload();
+// Existing users with bp.isSetup=true skip onboarding entirely.
 
-function renderObStep() {
-  const step=OB_STEPS[obStep], total=OB_STEPS.length;
-  const sel=obAnswers[step.key]||(step.multi?[]:null);
-  let h=`<div class="ob-step">שאלה ${obStep+1} מתוך ${total}</div>`;
-  h+=`<div class="ob-q">${step.q}</div>`;
-  if(step.type==='text') {
-    h+=`<input class="ob-inp" id="ob-inp" placeholder="${step.ph}" value="${Array.isArray(sel)?sel.join(', '):(sel||'')}">`;
-  } else {
-    h+=`<div class="ob-opts">`;
-    step.opts.forEach(o=>{
-      const isOn=step.multi?(Array.isArray(sel)&&sel.includes(o)):(sel===o);
-      h+=`<button class="ob-opt ${isOn?'on':''}" onclick="obSelect('${o}',${!!step.multi})">${o}</button>`;
-    });
-    h+=`</div>`;
-  }
-  h+=`<button class="ob-nxt" onclick="obNext()">${obStep===total-1?'בואי נתחיל! 🌱':'המשך →'}</button>`;
-  document.getElementById('ob-content').innerHTML=h;
+var _obScreen = 0;
+var _obPersonalization = null; // 'tori' | 'all' | 'custom'
+var _obGentleAreas = [];       // array of category IDs user wants approached gently
+
+// Categories shown on screen 4 — only IDs supported by the current self-care system.
+// TODO: obGentleAreas should later override daily pace when task-size rendering is
+//       implemented. For now they are stored in bp and available for future use.
+var OB_GENTLE_CATEGORIES = [
+  { id: 'shower',   label: 'היגיינה' },
+  { id: 'food',     label: 'אכילה' },
+  { id: 'water',    label: 'שתייה' },
+  { id: 'outside',  label: 'אוויר ואור' },
+  { id: 'sleep',    label: 'מנוחה' },
+  { id: 'exercise', label: 'תנועה קטנה' },
+];
+
+function renderObScreen() {
+  var inner = document.getElementById('ob-card-inner');
+  if (!inner) return;
+  var renderers = [_obRenderWelcome, _obRenderHow, _obRenderTeam, _obRenderPersonalize, _obRenderReady];
+  var fn = renderers[_obScreen];
+  if (fn) inner.innerHTML = fn();
 }
-function obSelect(opt,multi) {
-  const step=OB_STEPS[obStep];
-  if(multi){
-    if(!Array.isArray(obAnswers[step.key]))obAnswers[step.key]=[];
-    const i=obAnswers[step.key].indexOf(opt);
-    if(i>-1)obAnswers[step.key].splice(i,1); else obAnswers[step.key].push(opt);
-  } else { obAnswers[step.key]=opt; }
-  renderObStep();
+
+function _obRenderWelcome() {
+  return '<div style="font-size:36px;margin-bottom:10px">🌱</div>'
+    + '<div class="ob-title">ברוכה הבאה לתורי</div>'
+    + '<div class="ob-sub">תורי נבנתה על רעיון פשוט: צעדים קטנים, מילים טובות והומור בזמן הנכון יכולים לשנות לאט את הדרך שבה את פוגשת את עצמך ביום־יום.'
+    + '<br><br>כאן לא צריך להתחיל בגדול. גם צעד קטן, מילה טובה אחת, או רגע של יחס טוב לעצמך — נחשבים.</div>'
+    + '<button class="ob-nxt" onclick="_obAdvance()">נתחיל בקטן</button>';
 }
-function obNext() {
-  const step=OB_STEPS[obStep];
-  if(step.type==='text'){
-    const v=document.getElementById('ob-inp')?.value?.trim();
-    if(v) obAnswers[step.key]=step.isArr?v.split(/[,،]+/).map(x=>x.trim()).filter(Boolean):v;
+
+function _obRenderHow() {
+  return '<div style="font-size:32px;margin-bottom:10px">📋</div>'
+    + '<div class="ob-title">איך תורי עובדת?</div>'
+    + '<div class="ob-sub">בכל יום תורי מציעה כמה צעדים קטנים של יחס טוב לעצמך — לגוף, למנוחה, להיגיינה, או לרגע שקט.'
+    + '<br><br>את בוחרת מה מתאים: צעד קטנטן, צעד רגיל, או פשוט לא עכשיו.'
+    + '<br><br>ואם זה יום שצריך בו פחות — אפשר לעבור ליום חמלה.'
+    + '<br><br>ויש גם צוות קטן שמלווה אותך. לכל אחת יש קצב, הומור ודרך אחרת להזכיר לך שאת בעדך.</div>'
+    + '<button class="ob-nxt" onclick="_obAdvance()">נכיר את הצוות</button>';
+}
+
+function _obRenderTeam() {
+  return '<div class="ob-title" style="margin-bottom:6px">הכירי את הצוות של תורי</div>'
+    + '<div class="ob-sub" style="margin-bottom:12px">שלוש חברות קטנות שמלוות אותך בדרכים שונות — עם קצב, הומור וסוג אחר של יחס טוב לעצמך.<br>בכל יום אפשר להתחיל עם מי שהכי מתאימה לרגע שלך, ותמיד אפשר להחליף.</div>'
+    + '<div class="ob-team-list">'
+    + _obTeamCard('קפיברה', 'קצב שמיכה, יחס טוב לעצמך.',
+        'מתאימה לימים שבהם כדאי להתחיל ממש בקטן — משהו לגוף, למנוחה, או לתחושה קצת יותר נעימה.',
+        '"קצב נמוך הוא עדיין קצב. הוא פשוט מגיע עם כרית."')
+    + _obTeamCard('קיפודה', 'בחירה בעצמך, עם חיוך וקוצים.',
+        'מתאימה לימים שבהם צריך קצת יותר מקום, גבול קטן, או תזכורת שמותר לך להיות בצד שלך.',
+        '"תודה שבאתם. הזמנתם מקום מראש?"')
+    + _obTeamCard('חפשושית', 'ניצוץ קטן לתזוזה טובה.',
+        'מתאימה לימים שבהם אפשר לנסות לנוע — לא בגדול, רק למצוא כיוון קטן שאפשר להתחיל ממנו.',
+        '"ניסוי קטן, בלי חוזה המשך. רק לראות אם משהו זז."')
+    + '</div>'
+    + '<button class="ob-nxt" onclick="_obAdvance()">נמשיך להתאים את תורי אלייך</button>';
+}
+
+function _obTeamCard(name, label, text, quote) {
+  return '<div class="ob-team-card">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
+    + '<div><div class="ob-team-name">' + name + '</div><div class="ob-team-label">' + label + '</div></div>'
+    + '</div>'
+    + '<div class="ob-team-text">' + text + '</div>'
+    + '<div class="ob-team-quote">' + quote + '</div>'
+    + '</div>';
+}
+
+function _obRenderPersonalize() {
+  var canContinue = !!_obPersonalization;
+  var h = '<div class="ob-title">איפה תורי תכיר אותך קצת יותר טוב?</div>'
+    + '<div class="ob-sub">אפשר לבחור תחומים שכדאי שניגש אליהם מראש בעדינות, עם חשדנות בריאה כלפי משימות גדולות מדי. ככה תורי תוכל להציע אותם בגודל שמתאים לך יותר.<br>אפשר לשנות את הבחירה גם בהמשך.</div>'
+    + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
+    + _obPersOpt('tori',   'לפי המלצת תורי',    'תורי תשלב בשבילך כמה צעדים קטנים וכמה צעדים רגילים.')
+    + _obPersOpt('all',    'הכול רלוונטי לי',    'תורי תוכל להציע מכל התחומים, בלי להעמיס הכול ביום אחד.')
+    + _obPersOpt('custom', 'אני רוצה לבחור',      'אמשיך לבחירת תחומים בעצמי.')
+    + '</div>'
+    + (_obPersonalization === 'custom' ? _obRenderCategoryChips() : '')
+    + '<button class="ob-nxt" onclick="_obPersonalizeNext()"'
+    + (canContinue ? '' : ' disabled') + '>להמשיך</button>';
+  return h;
+}
+
+function _obPersOpt(val, title, desc) {
+  var on = _obPersonalization === val;
+  return '<button class="ob-pers-opt' + (on ? ' on' : '') + '" onclick="_obSetPersonalization(\'' + val + '\')">'
+    + '<div class="ob-pers-title">' + title + '</div>'
+    + '<div class="ob-pers-desc">' + desc + '</div>'
+    + '</button>';
+}
+
+function _obRenderCategoryChips() {
+  var h = '<div style="margin:4px 0 8px;font-size:12.5px;font-weight:700;color:var(--text2,#7a6a5a)">בחרי תחומים שדורשים גישה עדינה יותר:</div>'
+    + '<div class="ob-opts" style="margin-bottom:10px">';
+  OB_GENTLE_CATEGORIES.forEach(function(cat) {
+    var on = _obGentleAreas.indexOf(cat.id) > -1;
+    h += '<button class="ob-opt' + (on ? ' on' : '') + '" onclick="_obToggleGentleArea(\'' + cat.id + '\')">' + cat.label + '</button>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function _obRenderReady() {
+  return '<div style="font-size:36px;margin-bottom:10px">✨</div>'
+    + '<div class="ob-title">אפשר להתחיל</div>'
+    + '<div class="ob-sub">תורי תציע לך צעדים לפי מה שבחרת, ותמיד אפשר לשנות, להקטין, או לבחור "לא בא לי כרגע".'
+    + '<br><br>נתחיל מהיום, ונראה איזה קצב מתאים לך עכשיו.</div>'
+    + '<button class="ob-nxt" onclick="_obFinish()">לעבור להיום</button>';
+}
+
+function _obAdvance() { _obScreen++; renderObScreen(); }
+
+function _obSetPersonalization(val) {
+  _obPersonalization = val;
+  if (val !== 'custom') _obGentleAreas = [];
+  renderObScreen();
+}
+
+function _obToggleGentleArea(id) {
+  var idx = _obGentleAreas.indexOf(id);
+  if (idx > -1) _obGentleAreas.splice(idx, 1);
+  else _obGentleAreas.push(id);
+  renderObScreen();
+}
+
+function _obPersonalizeNext() {
+  if (!_obPersonalization) return;
+  _obScreen++;
+  renderObScreen();
+}
+
+function _obFinish() {
+  bp.obPersonalization = _obPersonalization || 'tori';
+  bp.obGentleAreas = _obGentleAreas.slice(); // copy
+  // TODO: obGentleAreas should later override daily pace when task-size rendering
+  //       is implemented. For now stored in bp.obGentleAreas for future use.
+  bp.isSetup = true;
+  saveBotData();
+  document.getElementById('ob-ov').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════
+// DAILY PACE SYSTEM
+// Pace is stored per day: store key = 'tori_pace:YYYY-MM-DD'
+// Values: 'compassion' | 'blanket' | 'enough' | 'curiosity' | null
+// ═══════════════════════════════════════════════════════════
+
+var _todayPace = null;
+
+var PACE_META = {
+  compassion: { label: 'יום חמלה',          emoji: '🫶', companionId: 'capy'   },
+  blanket:    { label: 'קצב שמיכה',         emoji: '🛏️', companionId: 'capy'   },
+  enough:     { label: 'קצב בדיוק מספיק',   emoji: '🦔', companionId: 'kipoda' },
+  curiosity:  { label: 'קצב סקרנות',        emoji: '🐛', companionId: 'forest' },
+};
+
+async function loadTodayPace() {
+  try {
+    var raw = await store.get('tori_pace:' + getTodayKey());
+    _todayPace = (raw && raw.length) ? raw : null;
+  } catch(e) { _todayPace = null; }
+}
+
+async function saveTodayPace(pace) {
+  _todayPace = pace;
+  try { await store.set('tori_pace:' + getTodayKey(), pace); } catch(e) {}
+}
+
+function renderPaceSection() {
+  var el = document.getElementById('today-pace-section');
+  if (!el) return;
+  el.innerHTML = _todayPace ? _buildPaceChip() : _buildPaceSelector();
+}
+
+function _buildPaceChip() {
+  var m = PACE_META[_todayPace];
+  if (!m) return '';
+  return '<div class="pace-chip-bar">'
+    + '<span style="font-size:16px">' + m.emoji + '</span>'
+    + '<span class="pace-chip-label">' + m.label + '</span>'
+    + '<button class="pace-chip-change" onclick="clearTodayPace()">שינוי קצב</button>'
+    + '</div>';
+}
+
+function _buildPaceSelector() {
+  return '<div class="pace-section">'
+    + '<div class="pace-section-title">עם איזה קצב נתחיל היום?</div>'
+    + '<div class="pace-section-intro">הקצב שתבחרי יעזור לתורי לבחור את הטון של היום, את הדמות שתלווה אותך, ואת הדרך הכי מתאימה להתחיל.<br>תמיד אפשר להקטין משימה או להחליף קצב.</div>'
+    + '<div class="pace-cards">'
+    + _buildPaceCard('compassion', 'יום חמלה', '', '',
+        'ליום לא פשוט, כשגם להתחיל צריך להיות עדין במיוחד.',
+        'תורי תפתח את היום בקצב רך ומינימלי, דרך המנגנון הקיים של יום חמלה.')
+    + _buildPaceCard('blanket', 'קצב שמיכה', 'קפיברה',
+        '"נתחיל מהשמיכה. היא כבר פה, ויש לה גישה מצוינת."',
+        'למשימות קטנות ונינוחות, בקצב שלא ממהר לשום מקום.', '')
+    + _buildPaceCard('enough', 'קצב בדיוק מספיק', 'קיפודה',
+        '"כמה משימות בגודל הנכון. כל השאר מוזמנות לשלוח מייל מסודר."',
+        'למשימות בגודל אפשרי, עם מקום גם לך וגם ליום.', '')
+    + _buildPaceCard('curiosity', 'קצב סקרנות', 'חפשושית',
+        '"ניסוי קטן, בלי חוזה המשך. רק לראות אם משהו זז."',
+        'למשימות שיש בהן קצת יותר תזוזה, ניסיון או התחלה.', '')
+    + '</div>'
+    + '</div>';
+}
+
+function _buildPaceCard(pace, title, character, quote, text, desc) {
+  return '<div class="pace-card ' + pace + '" onclick="selectTodayPace(\'' + pace + '\')">'
+    + '<div class="pace-card-title">' + title + '</div>'
+    + (character ? '<div class="pace-card-char">' + character + '</div>' : '')
+    + (quote     ? '<div class="pace-card-quote">' + quote + '</div>'     : '')
+    + '<div class="pace-card-desc">' + text
+    + (desc ? '<br><span style="color:var(--text3,#9e8e7e);font-size:12px">' + desc + '</span>' : '')
+    + '</div>'
+    + '</div>';
+}
+
+async function selectTodayPace(pace) {
+  await saveTodayPace(pace);
+
+  // Connect pace to companion — set companionId to the matching active companion
+  var meta = PACE_META[pace];
+  if (meta && meta.companionId) {
+    var comp = COMPANIONS[meta.companionId];
+    if (comp && comp.active !== false) {
+      cs.companionId = meta.companionId;
+      cs.selectedAt  = cs.selectedAt || new Date().toISOString();
+      await saveCompanionState();
+    }
   }
-  if(obStep<OB_STEPS.length-1){ obStep++; renderObStep(); }
-  else {
-    if(obAnswers.name) bp.name=obAnswers.name;
-    if(obAnswers.tone) bp.tone=obAnswers.tone;
-    if(obAnswers.humor) bp.humor=obAnswers.humor;
-    if(obAnswers.quickFoods) bp.quickFoods=obAnswers.quickFoods;
-    if(obAnswers.easyMovement) bp.easyMovement=obAnswers.easyMovement;
-    if(obAnswers.quietLabel) { if(obAnswers.quietLabel.includes('21'))bp.quietStart=21; else if(obAnswers.quietLabel.includes('23'))bp.quietStart=23; else bp.quietStart=22; }
-    bp.isSetup=true;
-    saveBotData();
-    document.getElementById('ob-ov').classList.remove('open');
-    startBotSession();
+
+  // Bridge יום חמלה to the existing compassion day system
+  if (pace === 'compassion' && !cd.active) {
+    await activateCompassionDay();
   }
+
+  renderPaceSection();
+  renderFromState(); // refresh companion display, feedback line, spark button
+}
+
+async function clearTodayPace() {
+  _todayPace = null;
+  try { await store.set('tori_pace:' + getTodayKey(), ''); } catch(e) {}
+  renderPaceSection();
 }
 
 // --- CHAT UI ---
@@ -9015,7 +9210,18 @@ async function init() {
   if (_savedTab && VALID_TABS.indexOf(_savedTab) !== -1 && _savedTab !== 'today') {
     switchView(_savedTab);
   }
-  loadGentleHabitData(); // fire-and-forget — populates sprout panel on first load
+  await loadTodayPace();    // load daily pace before first render
+  loadGentleHabitData();    // fire-and-forget — populates sprout panel on first load
+
+  // Show onboarding for new users only (existing users have bp.isSetup=true)
+  // To reset for testing: localStorage.removeItem('bot:prefs'); location.reload();
+  if (!bp.isSetup) {
+    _obScreen = 0;
+    _obPersonalization = null;
+    _obGentleAreas = [];
+    renderObScreen();
+    document.getElementById('ob-ov').classList.add('open');
+  }
 }
 init();
 
