@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v37'; // bumped — ספריית הדאגה העצמית modal UI skeleton
+const CACHE = 'body-soul-v38'; // bumped — V1 prototype: pace selector, kipoda, lair/pamper, scroll feed
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
