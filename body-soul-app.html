@@ -3110,16 +3110,16 @@ const TODAY_SPARK_LINES = {
   kipoda: [
     'כמה משימות בגודל הנכון. כל השאר מוזמנות לשלוח מייל מסודר.',
     'היום נכניס רק מה שיש לו מקום. זה לא סינון, זו אדריכלות פנים.',
-    'משימה בגודל אפשרי היא עדיין משימה. פשוט עם נימוסים טובים.',
-    'אפשר לבחור מעט. מעט זה לא פחות רציני, הוא רק פחות נדחף.',
     'היום נשאיר מקום גם לך. רעיון די אלגנטי, אם חושבות על זה.',
     'לא כל דבר צריך להיכנס עכשיו. חלק מהדברים נראים מצוין מחוץ לדלת.',
     'נבחר מה מתאים להיום, לא מה מנסה להיראות חשוב.',
-    'גם קוצים יודעים להיות רכים כשהגודל נכון.',
     'משימות גדולות יכולות לחכות רגע. הן כבר גדולות, יש להן סבלנות.',
     'היום לא נמדוד הצלחה לפי עומס. כמה חדשני מצדנו.',
     'נבחר צעד שאפשר להזמין פנימה בלי לפנות את כל הסלון.',
-    'גבול קטן, חיוך קטן, צעד שאפשר באמת לעשות.',
+    'תודה שבאתם. הזמנתם מקום מראש?',
+    'קוצים הם לא קירות. הם יודעים לשמור בחום.',
+    'אפשר להגיד ״לא עכשיו״ בנימוס. הנימוס לא חייב להיות ״כן אחר כך״.',
+    'היום נמדוד בגודל של מה שנכנס, לא מה שנשאר בחוץ.',
   ],
   // קפיברה — calm, horizontal, no drama, simple pleasures. 12 lines.
   capy: [
@@ -3275,7 +3275,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'pace-icons-2026-06-29';
+const TORI_BUILD = 'pamper-sparks-2026-06-29';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -4797,7 +4797,7 @@ const PAMPER_CARDS = {
   'spa-small': {
     id: 'spa-small',
     title: 'ספא ביתי',
-    subtitle: 'אפשר להוסיף למאורה רגע שקט ונעים. הטוב שאספת לעצמך יכול לקבל גם פינה קטנה במרחב.',
+    subtitle: 'אפשר לפנק את הדמות בספא ביתי קטן. הטוב שאספת לך — יכול לעבור לשם.',
     requiredPoints: 15,
     icon: '🛁',
     previewImage: 'assets/companions/pamper/spa/spa-home-envelope-01.webp',
@@ -4884,7 +4884,7 @@ const PAMPER_CARDS = {
     id: 'coffee-walk-small',
     title: 'קפה וסיבוב קטן',
     subtitle: 'כוס קטנה, סיבוב קטן, ותזכורת עדינה שלא כל יציאה חייבת להיות פרויקט.',
-    drawerDescription: 'קפה ביד, קצת אוויר, ורגע קטן שנכנס למאורה. לא כי מישהי צריכה — כי נחמד שיש מקום לטוב שנאסף.',
+    drawerDescription: 'קפה ביד, קצת אוויר, ופינוק קטן לדמות. לא חובה — כי הוא נעים.',
     requiredPoints: 15,
     icon: '☕',
     previewImage: 'assets/companions/pamper/coffee-walk/coffee-walk-envelope-01.webp',
@@ -8504,6 +8504,7 @@ var COMPASSION_DAY_COMPANION_LINES = {
   hafshushit: 'ביום חמלה, אם היום קוצני, הולכות מסביב. גם מסביב זו דרך, ולפעמים היא אפילו יותר חמודה.',
   capy:       'ביום חמלה אני מאשרת רשמית: בהייה, תנוחה נוחה ונשימה אחת — לגמרי נחשבות.',
   fox:        'ביום חמלה השועלה שלך שומרת על האש במקום בטוח. אין צורך לרוץ כשהיום מבקש להאט.',
+  kipoda:     'היום הדלת נפתחת רק למה שבאמת עדין. כל השאר יכול להמתין בחוץ בנימוס.',
 };
 COMPASSION_DAY_COMPANION_LINES.forest = COMPASSION_DAY_COMPANION_LINES.hafshushit;
 
@@ -11115,8 +11116,8 @@ function buildCompanionHeroHTML(c, marks, mood) {
   var imgSrc, imgAlt;
   if (_activePamper) {
     imgSrc   = _activePamper.imageSrc || '';
-    imgAlt   = c.name + ' — תוספת למאורה';
-    pillText = 'תוספת של היום';
+    imgAlt   = c.name + ' — פינוק של היום';
+    pillText = 'הפינוק של היום';
     dotColor = c.accent;
   } else if (cd && cd.active) {
     // Compassion Day — show companion CD journey image
@@ -11173,7 +11174,7 @@ function buildCompanionHeroHTML(c, marks, mood) {
     + '</div>'
     + '<div class="j-bubble-text">' + lineText + '</div>'
     + (_activePamper
-        ? '<div style="font-size:11px;color:var(--g-ink-3);margin-top:6px">הוספת למאורה: ' + (_activePamper.cardTitleSnapshot || 'תוספת קטנה') + '.</div>'
+        ? '<div style="font-size:11px;color:var(--g-ink-3);margin-top:6px">פינוק של היום: ' + (_activePamper.cardTitleSnapshot || 'פינוק קטן') + '.</div>'
         : (cd && cd.active ? '<div style="font-size:11px;color:#8B6CB0;margin-top:6px">הרצף שלך נח היום. הוא שם, ומחכה.</div>' : ''))
     + '</div>';
 
@@ -11234,9 +11235,9 @@ function buildPamperDrawerHTML(c) {
   var html         = '<div class="j-pamper-section">';
 
   // ── Section eyebrow + drawer subtitle
-  html += '<div class="j-eyebrow" style="padding:0 2px">תוספות למאורה</div>';
+  html += '<div class="j-eyebrow" style="padding:0 2px">פינוקים</div>';
   html += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.6;margin-bottom:12px;padding:0 2px">'
-    + 'כל פעם שעשית משהו טוב לעצמך, אפשר להכניס רגע כזה גם למרחב של הצוות.</div>';
+    + 'אפשר לפנק את הדמות במשהו קטן ונעים — רק אם מתחשק. הטוב שאספת יכול לקבל גם פינה קטנה שם.</div>';
 
   if (ap) {
     // ── Active pamper — compact status card (NO duplicate scene image) ──
@@ -11259,22 +11260,22 @@ function buildPamperDrawerHTML(c) {
     html += '</div>';
     // Text side
     html += '<div style="flex:1;min-width:0">';
-    html += '<div style="font-size:11px;font-weight:700;letter-spacing:0.6px;color:var(--g-sage-deep);margin-bottom:3px">תוספת של היום כבר פתוחה</div>';
+    html += '<div style="font-size:11px;font-weight:700;letter-spacing:0.6px;color:var(--g-sage-deep);margin-bottom:3px">הפינוק של היום כבר פתוח</div>';
     html += '<div style="font-size:14px;font-weight:600;color:var(--g-ink);margin-bottom:4px">' + _apTitle + ' · ' + _modeLabel + '</div>';
 
     if (_pamperJustActivated) {
       _pamperJustActivated = false;
       html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.6">'
-        + 'הכנסת משהו נעים למרחב. המעטפה תחכה לך גם ברגעים שנשמרו.</div>';
+        + 'יפה. פינוק קטן נכנס למאורה. המעטפה תחכה לך בפינוקים שלי.</div>';
     } else {
       html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.6">'
-        + 'המרחב קיבל תוספת קטנה. המעטפה תחכה לך גם ברגעים שנשמרו.</div>';
+        + 'הפינוק פתוח. המעטפה תחכה לך בפינוקים שלי.</div>';
     }
     html += '</div>'; // text side
     html += '</div>'; // j-pamper-status-card
 
     // Always-visible button to open My Pampers sheet
-    html += '<button class="j-pamper-btn primary" style="margin-top:4px" onclick="openMyPampers()">רגעים שנשמרו</button>';
+    html += '<button class="j-pamper-btn primary" style="margin-top:4px" onclick="openMyPampers()">הפינוקים שלי</button>';
 
   } else {
     // ── Card browser: one block per card in PAMPER_CARDS ──
@@ -11310,10 +11311,10 @@ function buildPamperDrawerHTML(c) {
       html += '<div style="font-size:13px;color:var(--g-ink-2);line-height:1.55;margin-bottom:14px">' + cardDesc + '</div>';
       // CTA
       if (canChoose) {
-        html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'' + cardId + '\',\'' + c.id + '\')">להוסיף למאורה</button>';
+        html += '<button class="j-pamper-btn primary" onclick="openPamperModal(\'' + cardId + '\',\'' + c.id + '\')">לפנק את ' + _nameArticle + '</button>';
       } else {
-        html += '<button class="j-pamper-btn muted" disabled>להוסיף למאורה</button>';
-        html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והתוספת הזאת תיפתח לבחירה.</div>';
+        html += '<button class="j-pamper-btn muted" disabled>לפנק את ' + _nameArticle + '</button>';
+        html += '<div class="j-pamper-soon">עוד קצת נקודות חיבור, והפינוק הזה ייפתח.</div>';
       }
       html += '</div>'; // j-pamper-card-wrap
     });
@@ -11334,7 +11335,7 @@ function buildPamperDrawerHTML(c) {
   }
   if (!ap) {
     // Show entry button only when no active pamper (active state already has its own button above)
-    html += '<button class="j-pamper-btn" style="background:#F5F0E8;color:var(--g-ink-2);margin-top:2px" onclick="openMyPampers()">רגעים שנשמרו</button>';
+    html += '<button class="j-pamper-btn" style="background:#F5F0E8;color:var(--g-ink-2);margin-top:2px" onclick="openMyPampers()">הפינוקים שלי</button>';
   }
 
   html += '</div>'; // j-pamper-section
@@ -11350,8 +11351,8 @@ function openPamperModal(cardId, companionId) {
   var comp = COMPANIONS[companionId || cs.companionId] || {};
   // displayNameWithArticle: e.g. "הקפיברה", "הדובה", etc.
   var withArticle = comp.displayNameWithArticle || ('ה' + comp.name);
-  var modalTitle = 'איך להכניס את הרגע הזה למאורה?';
-  var modalSub   = 'בוחרים צורה קטנה לרגע שנאסף. משהו נעים למרחב של הצוות, בלי להפוך את זה למשימה.';
+  var modalTitle = 'איך תרצי לפנק את ' + withArticle + '?';
+  var modalSub   = 'בוחרים צורה קטנה. לא כי חייבים — כי מתחשק ויש מה לתת.';
   var html = '<div class="j-pamper-modal-overlay" id="j-pamper-modal" onclick="closePamperModal()">'
     + '<div class="j-pamper-modal-box" onclick="event.stopPropagation()">'
     + '<div class="j-pamper-modal-handle"></div>'
@@ -11478,8 +11479,8 @@ function _buildMyPampersSheetHTML() {
   var hasAny   = activeItems.length > 0 || archived.length > 0;
 
   var inner = '<div class="j-myp-handle"></div>'
-    + '<div class="j-myp-title">רגעים שנשמרו</div>'
-    + '<div class="j-myp-sub">רגעים קטנים שהכנסת למרחב המשותף.</div>';
+    + '<div class="j-myp-title">הפינוקים שלי</div>'
+    + '<div class="j-myp-sub">פינוקים קטנים שבחרת להעביר לדמות שלך.</div>';
 
   if (!hasAny) {
     inner += '<div style="font-size:13px;color:var(--g-ink-3);line-height:1.65;padding:8px 0 16px">'
@@ -11488,7 +11489,7 @@ function _buildMyPampersSheetHTML() {
 
   // ── Section A: active pampers — one per companion, envelope preview only ──
   if (activeItems.length > 0) {
-    inner += '<div class="j-myp-section-label">תוספת של היום</div>';
+    inner += '<div class="j-myp-section-label">הפינוק של היום</div>';
     activeItems.forEach(function(ap, idx) {
       var aCard    = PAMPER_CARDS[ap.cardId] || {};
       var aComp    = COMPANIONS[ap.companionId] || {};
@@ -11517,7 +11518,7 @@ function _buildMyPampersSheetHTML() {
   // ── Section B: archived pampers — all companions, all time ──
   if (archived.length > 0) {
     var topMargin = activeItems.length > 0 ? '16px' : '0';
-    inner += '<div class="j-myp-section-label" style="margin-top:' + topMargin + '">רגעים שנשמרו</div>';
+    inner += '<div class="j-myp-section-label" style="margin-top:' + topMargin + '">הפינוקים שלי</div>';
     archived.forEach(function(item, idx) {
       var iCard    = PAMPER_CARDS[item.cardId] || {};
       var iComp    = COMPANIONS[item.companionId] || {};
@@ -11576,7 +11577,7 @@ function openPamperEnvelope(sourceType, index) {
 
   var inner = '<div class="j-myp-handle"></div>'
     + '<div class="j-myp-title">המעטפה נפתחה</div>'
-    + '<div class="j-myp-sub">זה רגע קטן שהכנסת למרחב.</div>';
+    + '<div class="j-myp-sub">רגע קטן שפינקת בו את הדמות שלך.</div>';
 
   if (imgSrc) {
     inner += '<div class="j-myp-scene">'
