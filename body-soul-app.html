@@ -489,7 +489,9 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .pace-card.blanket    { border-color: #D9A48A; background: #FBF3EB; }
 .pace-card.enough     { border-color: #9A8DB0; background: #F0EDF5; }
 .pace-card.curiosity  { border-color: #8FA679; background: #EFF1E5; }
-.pace-card-title { font-size: 15px; font-weight: 800; color: var(--text1); margin-bottom: 2px; }
+.pace-card-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+.pace-card-icon  { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.pace-card-title { font-size: 15px; font-weight: 800; color: var(--text1); }
 .pace-card-char  { font-size: 11.5px; color: var(--text3); margin-bottom: 5px; }
 .pace-card-quote { font-size: 13px; color: var(--sky, #6aabcf); font-style: italic; line-height: 1.5; margin-bottom: 6px; }
 .pace-card-desc  { font-size: 12.5px; color: var(--text2); line-height: 1.55; }
@@ -3273,7 +3275,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'kipoda-assets-2026-06-29';
+const TORI_BUILD = 'pace-icons-2026-06-29';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -7169,8 +7171,21 @@ function _buildPaceSelector() {
 }
 
 function _buildPaceCard(pace, title, character, quote, text, desc) {
+  // Companion icon: show for companion-linked paces only (not compassion)
+  var iconHTML = '';
+  if (pace !== 'compassion') {
+    var meta = PACE_META[pace];
+    var cId  = meta && meta.companionId;
+    var src  = cId && (typeof COMPANION_UI_ICONS !== 'undefined') && COMPANION_UI_ICONS[cId];
+    if (src) {
+      iconHTML = '<img class="pace-card-icon" src="' + src + '" alt="" aria-hidden="true"'
+        + ' onerror="this.style.display=\'none\'">';
+    }
+  }
   return '<div class="pace-card ' + pace + '" onclick="selectTodayPace(\'' + pace + '\')">'
-    + '<div class="pace-card-title">' + title + '</div>'
+    + (iconHTML
+        ? '<div class="pace-card-title-row">' + iconHTML + '<div class="pace-card-title">' + title + '</div></div>'
+        : '<div class="pace-card-title">' + title + '</div>')
     + (character ? '<div class="pace-card-char">' + character + '</div>' : '')
     + (quote     ? '<div class="pace-card-quote">' + quote + '</div>'     : '')
     + '<div class="pace-card-desc">' + text
