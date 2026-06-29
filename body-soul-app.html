@@ -3033,7 +3033,7 @@ const TASK_UI_LABELS = {
 // ── Companion small UI icons (for sparkle button and future use) ──
 const COMPANION_UI_ICONS = {
   capy:       'assets/companions/ui-icons/capy-ui-icon.webp',
-  kipoda:     '', // TODO: add kipoda-ui-icon.webp once illustrated — callers already fall back to '' safely
+  kipoda:     'assets/companions/קיפודה/קיפודה אייקון.png',
   hafshushit: 'assets/companions/ui-icons/hafshushit-ui-icon.webp',
   forest:     'assets/companions/ui-icons/hafshushit-ui-icon.webp', // internal alias
   // inactive
@@ -3267,7 +3267,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'encouragements-update-2026-06-28';
+const TORI_BUILD = 'kipoda-assets-2026-06-29';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -4617,8 +4617,8 @@ const COMPANIONS = {
   kipoda: {
     id:'kipoda', name:'קיפודה', species:'קיפודה',
     displayNameWithArticle:'הקיפודה',
-    // TODO: replace with real asset once illustrated
-    img:'', homeImg:'',
+    img:'assets/companions/קיפודה/קיפודה תמונת ראשית.png',
+    homeImg:'assets/companions/קיפודה/קיפודה מאורה.png',
     tagline:'קצב בדיוק מספיק',
     bio:'למשימות בגודל אפשרי, עם מקום גם לך וגם ליום.',
     fitsIf:'לבחור מה נכנס ליום, עם מקום שנשאר גם לך',
@@ -4762,6 +4762,15 @@ const COMPANION_LAIRS = {
                 alt: 'שועלה גוללת בטלפון במאורה שלה' },
       phone:  { src: 'assets/companions/lairs/fox-phone.webp',
                 alt: 'שועלה עם פלאפון במאורה שלה, רגועה' },
+    },
+  },
+  kipoda: {
+    id: 'kipoda',
+    hebrewName: 'קיפודה',
+    defaultState: 'home',
+    states: {
+      home: { src: 'assets/companions/קיפודה/קיפודה מאורה.png',
+              alt: 'קיפודה במאורה שלה, שקטה ונינוחה' },
     },
   },
 };
