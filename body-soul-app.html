@@ -241,7 +241,7 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .drop-btn.filled { filter: none; transform: scale(1.08); animation: dropIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 @keyframes dropIn { 0% { transform: scale(0.5); } 100% { transform: scale(1.08); } }
 
-/* WATER CUP — filling cup UI */
+/* WATER CUP — SVG cups UI */
 .water-text-area { flex: 1; display: flex; flex-direction: column; gap: 5px; }
 .water-title { font-size: 14px; font-weight: 700; color: var(--text); }
 .water-sub { font-size: 11.5px; color: var(--text3); line-height: 1.5; }
@@ -253,30 +253,8 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
   align-self: flex-start;
 }
 .water-return-btn:active { opacity: 1; }
-.water-cup-area {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  width: 52px; flex-shrink: 0; padding: 4px 0; gap: 4px;
-}
-.water-step-img { width: 36px; height: 36px; object-fit: contain; }
+.water-cup-area { display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 2px 0; }
 .water-step-label { font-size: 11.5px; font-weight: 700; color: var(--sky, #5AACCE); margin-bottom: 1px; line-height: 1.3; }
-.water-cup {
-  width: 40px; height: 56px; position: relative;
-  border: 2.5px solid #8BBDD0; border-top: none;
-  border-radius: 3px 3px 14px 14px;
-  background: rgba(200,230,248,0.18); overflow: hidden; cursor: pointer;
-}
-.water-cup::after {
-  content: ''; position: absolute;
-  top: -4px; left: -3px; right: -3px; height: 4px;
-  border: 2.5px solid #8BBDD0; border-bottom: none;
-  border-radius: 3px 3px 0 0;
-}
-.water-fill {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to top, #5AACCE, #A8DCF0);
-  transition: height 0.45s cubic-bezier(0.34, 1.30, 0.64, 1);
-  height: 0%; border-radius: 0 0 11px 11px;
-}
 
 /* EXERCISE */
 .exercise-wrap { grid-column: span 2; }
@@ -2487,13 +2465,7 @@ BUILD: <span id="debug-build-val"></span>
                 onclick="event.stopPropagation(); returnWaterSip()"
                 style="display:none">להחזיר</button>
       </div>
-      <div class="water-cup-area">
-        <!-- water-step-img slot: reserved for future cup-step images -->
-        <img id="water-step-img" class="water-step-img" src="" alt="" aria-hidden="true" style="display:none">
-        <div class="water-cup" id="water-cup">
-          <div class="water-fill" id="water-fill"></div>
-        </div>
-      </div>
+      <div class="water-cup-area" id="water-cup-area"></div>
     </div>
   </div>
 
@@ -3280,7 +3252,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-cups-2026-07-01';
+const TORI_BUILD = 'water-svg-cups-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3327,14 +3299,14 @@ function toggleTask(id) {
 
 // ── Water step progression (8 steps, grows gradually across days) ──
 const WATER_STEPS = [
-  { id:0, label:'3 שלוקים / חצי כוס', taps:1, img:'assets/plants/stages/water/water-bud.webp',     toast:'3 שלוקים. הגוף לא ביקש הצהרה, רק התחלה קטנה. 💧' },
-  { id:1, label:'כוס אחת',             taps:1, img:'assets/plants/stages/water/water-sprout.webp',  toast:'כוס שלמה. לפעמים הגוף אוהב שמתחילים בעדינות. 💧' },
-  { id:2, label:'2 כוסות',             taps:2, img:'assets/plants/stages/water/water-sprout.webp',  toast:'שתי כוסות. לא מרוץ — רק תמיכה קטנה בגוף. 💧' },
-  { id:3, label:'3 כוסות',             taps:3, img:'assets/plants/stages/water/water-growing.webp', toast:'שלוש כוסות. התקדמות מתונה — בדיוק הסוג שהגוף יודע לקבל. 💧' },
-  { id:4, label:'4 כוסות',             taps:4, img:'assets/plants/stages/water/water-growing.webp', toast:'נעים לדעת: שתייה לאורך היום עוזרת לגוף לשמור על מצב נוזלים תקין, שקשור לריכוז, ערנות ותפקוד יומיומי. 💧' },
-  { id:5, label:'5 כוסות',             taps:5, img:'assets/plants/stages/water/water-full.webp',   toast:'חמש כוסות. הגוף עובד ברמה טובה. 💧' },
-  { id:6, label:'6 כוסות',             taps:6, img:'assets/plants/stages/water/water-full.webp',   toast:'שש כוסות. הגוף שמח. 💧' },
-  { id:7, label:'7 כוסות',             taps:7, img:'assets/plants/stages/water/water-wild.webp',   toast:'שבע כוסות. הגוף מודה לך על הדאגה. 💧' },
+  { id:0, label:'3 שלוקים / חצי כוס', taps:1,  toast:'3 שלוקים. הגוף לא ביקש הצהרה, רק התחלה קטנה. 💧' },
+  { id:1, label:'כוס אחת',             taps:2,  toast:'כוס שלמה. לפעמים הגוף אוהב שמתחילים בעדינות. 💧' },
+  { id:2, label:'2 כוסות',             taps:4,  toast:'שתי כוסות. לא מרוץ — רק תמיכה קטנה בגוף. 💧' },
+  { id:3, label:'3 כוסות',             taps:6,  toast:'שלוש כוסות. התקדמות מתונה — בדיוק הסוג שהגוף יודע לקבל. 💧' },
+  { id:4, label:'4 כוסות',             taps:8,  toast:'נעים לדעת: שתייה לאורך היום עוזרת לגוף לשמור על מצב נוזלים תקין, שקשור לריכוז, ערנות ותפקוד יומיומי. 💧' },
+  { id:5, label:'5 כוסות',             taps:10, toast:'חמש כוסות. הגוף עובד ברמה טובה. 💧' },
+  { id:6, label:'6 כוסות',             taps:12, toast:'שש כוסות. הגוף שמח. 💧' },
+  { id:7, label:'7 כוסות',             taps:14, toast:'שבע כוסות. הגוף מודה לך על הדאגה. 💧' },
 ];
 function getWaterStep() { return WATER_STEPS[Math.min(gs.waterStepLevel || 0, WATER_STEPS.length - 1)]; }
 function waterStepDone() { return (s.water || 0) >= getWaterStep().taps; }
@@ -3359,27 +3331,86 @@ function tapDrop(idx) {
   saveDay();
 }
 
-// ── Water cup — filling cup UI ──
+// ── Water SVG cups visual ──
+function glassPolyPoints(x, y, tw, bw, h) {
+  var ox = (tw - bw) / 2;
+  return x+','+y+' '+(x+tw)+','+y+' '+(x+tw-ox)+','+(y+h)+' '+(x+ox)+','+(y+h);
+}
+function drawWaterGlass(clipId, x, y, tw, bw, h, fillFrac) {
+  var pts   = glassPolyPoints(x, y, tw, bw, h);
+  var fillH = Math.round(h * Math.max(0, Math.min(1, fillFrac)));
+  var fillY = y + h - fillH;
+  var hlx   = x + Math.round(tw * 0.22);
+  return '<polygon points="'+pts+'" fill="rgba(200,232,248,0.13)" stroke="#8BBDD0" stroke-width="1.5" stroke-linejoin="round"/>'+
+    (fillH > 0 ? '<rect x="'+(x-1)+'" y="'+fillY+'" width="'+(tw+2)+'" height="'+(fillH+1)+
+      '" clip-path="url(#'+clipId+')" fill="url(#wGrd)" opacity="0.88"/>' : '')+
+    '<line x1="'+hlx+'" y1="'+(y+5)+'" x2="'+hlx+'" y2="'+(y+h-8)+
+      '" stroke="rgba(255,255,255,0.55)" stroke-width="1.2" stroke-linecap="round"/>';
+}
+function smallGlassPos(i, row0S, row1S, PAD, BW, BH, SW, SH, GAP, svgW) {
+  if (i < row0S) {
+    return { x: PAD + BW + GAP + i*(SW+GAP), y: PAD + BH - SH };
+  }
+  var r1i   = i - row0S;
+  var r1W   = row1S*SW + (row1S-1)*GAP;
+  var r1x0  = PAD + Math.round((svgW - 2*PAD - r1W) / 2);
+  return { x: r1x0 + r1i*(SW+GAP), y: PAD + BH + GAP };
+}
+function buildWaterCupsSVG(stepId, taps) {
+  var BW=36, BH=50, BBW=26, SW=24, SH=35, SBW=18, GAP=5, PAD=4;
+  var nSmalls = Math.max(0, stepId - 1);
+  var row0S   = Math.min(nSmalls, 3);
+  var row1S   = Math.max(0, nSmalls - 3);
+  var row0W   = BW + row0S*(GAP+SW);
+  var row1W   = row1S>0 ? row1S*SW+(row1S-1)*GAP : 0;
+  var svgW    = Math.max(row0W, BW, row1W) + PAD*2;
+  var svgH    = BH + (row1S>0 ? GAP+SH : 0) + PAD*2;
+  var bigX    = PAD, bigY = PAD;
+
+  var out = '<svg xmlns="http://www.w3.org/2000/svg" width="'+svgW+'" height="'+svgH+
+    '" viewBox="0 0 '+svgW+' '+svgH+'" role="img" aria-hidden="true"><defs>'+
+    '<linearGradient id="wGrd" x1="0" y1="0" x2="0" y2="1">'+
+    '<stop offset="0%" stop-color="#B8E4F4"/><stop offset="100%" stop-color="#5AACCE"/>'+
+    '</linearGradient>'+
+    '<clipPath id="wcB"><polygon points="'+glassPolyPoints(bigX,bigY,BW,BBW,BH)+'"/></clipPath>';
+  for (var i=0; i<nSmalls; i++) {
+    var sp = smallGlassPos(i, row0S, row1S, PAD, BW, BH, SW, SH, GAP, svgW);
+    out += '<clipPath id="wcS'+i+'"><polygon points="'+glassPolyPoints(sp.x,sp.y,SW,SBW,SH)+'"/></clipPath>';
+  }
+  out += '</defs>';
+
+  // big glass: units 1-2 fill it to 50% then 100%
+  out += drawWaterGlass('wcB', bigX, bigY, BW, BBW, BH, taps/2);
+
+  // small glasses i=0..nSmalls-1: units 2*(i+1)+1 and 2*(i+1)+2
+  for (var i=0; i<nSmalls; i++) {
+    var sp    = smallGlassPos(i, row0S, row1S, PAD, BW, BH, SW, SH, GAP, svgW);
+    var sFill = (taps - 2*(i+1)) / 2;
+    out += drawWaterGlass('wcS'+i, sp.x, sp.y, SW, SBW, SH, sFill);
+  }
+  return out + '</svg>';
+}
+
+// ── Water cup render ──
 function renderWaterCup() {
-  var fill      = document.getElementById('water-fill');
+  var wrap      = document.getElementById('water-cup-area');
   var sub       = document.getElementById('water-sub');
   var stepLabel = document.getElementById('water-step-label');
-  var stepImg   = document.getElementById('water-step-img');
   var returnBtn = document.getElementById('water-return-btn');
   var wc        = document.getElementById('water-card');
-  if (!fill) return;
+  if (!wrap) return;
   var step = getWaterStep();
   var w    = s.water || 0;
   var done = w >= step.taps;
-  var pct  = step.taps > 0 ? Math.min(100, Math.round(w / step.taps * 100)) : 0;
-  fill.style.height = pct + '%';
+
+  wrap.innerHTML = buildWaterCupsSVG(step.id, w);
+
   if (stepLabel) stepLabel.textContent = step.label;
-  if (stepImg)   { stepImg.src = step.img; stepImg.style.display = ''; }
   if (sub) {
     if (done) {
       sub.textContent = 'הגוף קיבל. יפה. 💧';
-    } else if (step.taps <= 1) {
-      sub.textContent = 'לחצי כשמוכנה.';
+    } else if (w === 0) {
+      sub.textContent = step.id === 0 ? 'שלוק קטן, אם מתאים.' : 'לחצי כשמוכנה.';
     } else {
       sub.textContent = w + ' / ' + step.taps + ' 💧';
     }
@@ -3922,20 +3953,25 @@ async function loadGardenState() {
   if (lastVisit && lastVisit !== today) {
     // Archive yesterday to journal
     if (gs.todayActions.length > 0 || gs.todayMood !== 'regular') {
+      var _wTaps = gs.todayActions.filter(function(a){return a.kind==='water';}).length;
+      var _wDone = _wTaps >= (WATER_STEPS[gs.waterStepLevel||0].taps);
       gs.daysJournal.unshift({
         date: lastVisit, mood: gs.todayMood,
         points: gs.todayPoints, actions: gs.todayActions.slice(),
         wildFlower: gs.todayWildPending || null,
         fact: GARDEN_FACTS[gs.factIdx % GARDEN_FACTS.length],
+        waterDone: _wDone,
       });
       if (gs.daysJournal.length > 60) gs.daysJournal = gs.daysJournal.slice(0,60);
     }
     // Water step advancement: complete current step on 4 of last 7 days → advance
     if ((gs.waterStepLevel || 0) < WATER_STEPS.length - 1) {
-      var currentStepTaps = WATER_STEPS[gs.waterStepLevel || 0].taps;
+      var _stepTaps = WATER_STEPS[gs.waterStepLevel||0].taps;
       var last7 = gs.daysJournal.slice(0, 7);
       var completedDays = last7.filter(function(d) {
-        return d.actions && d.actions.filter(function(a) { return a.kind === 'water'; }).length >= currentStepTaps;
+        // use stored waterDone flag when available; fall back to action count for old entries
+        if (typeof d.waterDone === 'boolean') return d.waterDone;
+        return d.actions && d.actions.filter(function(a){return a.kind==='water';}).length >= _stepTaps;
       }).length;
       if (completedDays >= 4) {
         gs.waterStepLevel = Math.min((gs.waterStepLevel || 0) + 1, WATER_STEPS.length - 1);

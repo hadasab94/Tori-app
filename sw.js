@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v38'; // bumped — V1 prototype: pace selector, kipoda, lair/pamper, scroll feed
+const CACHE = 'body-soul-v39'; // water SVG cups + half-cup unit progression
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
