@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v40'; // water QA fix: polygon fill SVG, explicit tap button
+const CACHE = 'body-soul-v41'; // water text/visual/logic sync: thirds model, no duplicate fill
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

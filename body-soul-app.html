@@ -2466,7 +2466,7 @@ BUILD: <span id="debug-build-val"></span>
   <div class="task-grid">
     <div class="task-card water-card" id="water-card">
       <div class="water-text-area">
-        <div id="water-step-label" class="water-step-label">3 שלוקים / חצי כוס</div>
+        <div id="water-step-label" class="water-step-label">3 שלוקים של מים</div>
         <div class="water-sub" id="water-sub">שלוק קטן, אם מתאים.</div>
         <div class="water-actions">
           <button class="water-tap-btn" id="water-tap-btn" onclick="tapWaterSip()">עוד שלוק קטן</button>
@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-qa-fix-2026-07-01';
+const TORI_BUILD = 'water-text-visual-sync-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3308,38 +3308,23 @@ function toggleTask(id) {
 }
 
 // ── Water step progression (8 steps, grows gradually across days) ──
+// Each tap = 1 sip. Each glass = 3 sips to fill (thirds).
+// Level 0: 3 sips → 1 big glass fills by thirds → "3 שלוקים של מים"
+// Level 1: 3 sips → 1 big glass (same count, frame advances to "a cup")
+// Levels 2-7: each cup adds 3 more sips and one more visible glass
 const WATER_STEPS = [
-  { id:0, label:'3 שלוקים / חצי כוס', taps:1,  toast:'3 שלוקים. הגוף לא ביקש הצהרה, רק התחלה קטנה. 💧' },
-  { id:1, label:'כוס אחת',             taps:2,  toast:'כוס שלמה. לפעמים הגוף אוהב שמתחילים בעדינות. 💧' },
-  { id:2, label:'2 כוסות',             taps:4,  toast:'שתי כוסות. לא מרוץ — רק תמיכה קטנה בגוף. 💧' },
-  { id:3, label:'3 כוסות',             taps:6,  toast:'שלוש כוסות. התקדמות מתונה — בדיוק הסוג שהגוף יודע לקבל. 💧' },
-  { id:4, label:'4 כוסות',             taps:8,  toast:'נעים לדעת: שתייה לאורך היום עוזרת לגוף לשמור על מצב נוזלים תקין, שקשור לריכוז, ערנות ותפקוד יומיומי. 💧' },
-  { id:5, label:'5 כוסות',             taps:10, toast:'חמש כוסות. הגוף עובד ברמה טובה. 💧' },
-  { id:6, label:'6 כוסות',             taps:12, toast:'שש כוסות. הגוף שמח. 💧' },
-  { id:7, label:'7 כוסות',             taps:14, toast:'שבע כוסות. הגוף מודה לך על הדאגה. 💧' },
+  { id:0, label:'3 שלוקים של מים', taps:3,  toast:'3 שלוקים. הגוף לא ביקש הצהרה, רק התחלה קטנה. 💧' },
+  { id:1, label:'כוס אחת',          taps:3,  toast:'כוס שלמה. לפעמים הגוף אוהב שמתחילים בעדינות. 💧' },
+  { id:2, label:'2 כוסות',          taps:6,  toast:'שתי כוסות. לא מרוץ — רק תמיכה קטנה בגוף. 💧' },
+  { id:3, label:'3 כוסות',          taps:9,  toast:'שלוש כוסות. התקדמות מתונה — בדיוק הסוג שהגוף יודע לקבל. 💧' },
+  { id:4, label:'4 כוסות',          taps:12, toast:'נעים לדעת: שתייה לאורך היום עוזרת לגוף לשמור על מצב נוזלים תקין, שקשור לריכוז, ערנות ותפקוד יומיומי. 💧' },
+  { id:5, label:'5 כוסות',          taps:15, toast:'חמש כוסות. הגוף עובד ברמה טובה. 💧' },
+  { id:6, label:'6 כוסות',          taps:18, toast:'שש כוסות. הגוף שמח. 💧' },
+  { id:7, label:'7 כוסות',          taps:21, toast:'שבע כוסות. הגוף מודה לך על הדאגה. 💧' },
 ];
 function getWaterStep() { return WATER_STEPS[Math.min(gs.waterStepLevel || 0, WATER_STEPS.length - 1)]; }
 function waterStepDone() { return (s.water || 0) >= getWaterStep().taps; }
 
-// WATER
-function renderDrops() {
-  const g=document.getElementById('drops-grid'); g.innerHTML='';
-  for(let i=0;i<8;i++){const d=document.createElement('div');d.className='drop-btn'+(i<s.water?' filled':'');d.textContent='💧';const idx=i;d.onclick=()=>tapDrop(idx);g.appendChild(d);}
-  document.getElementById('water-num').textContent=s.water+'/8';
-  const wc=document.getElementById('water-card');
-  if(s.water>=6){wc.classList.add('done');wc.style.borderColor='var(--sky)';wc.style.background='var(--sky-l)';}
-  else{wc.classList.remove('done');wc.style.borderColor='';wc.style.background='';}
-}
-function tapDrop(idx) {
-  const prev=s.water; s.water=(idx<s.water)?idx:idx+1;
-  updateProgress(); // real-time update before render
-  renderDrops();
-  if(s.water===6&&prev<6){showToast('נעים לדעת: מחקרים קושרים בין מצב נוזלים תקין לבין ריכוז, ערנות ותחושת עייפות נמוכה יותר. 6 כוסות — יפה מאוד. 💧');awardPoints(5);}
-  else if(s.water===8&&prev<8) showToast('נעים לדעת: שתייה לאורך היום עוזרת לגוף לשמור על מצב נוזלים תקין, שקשור לריכוז, ערנות ותפקוד יומיומי. 💧');
-  // garden water action
-  addGardenAction('water');
-  saveDay();
-}
 
 // ── Water SVG cups visual ──
 // Uses polygon-math fill — no clip-path (avoids cross-browser innerHTML SVG issues)
@@ -3360,7 +3345,7 @@ function drawWaterGlass(x, y, tw, bw, h, fillFrac) {
   }
   var hlx = x + Math.round(tw * 0.22);
   return waterHtml +
-    '<polygon points="'+glassPts+'" fill="rgba(200,232,248,0.10)" stroke="#8BBDD0" stroke-width="1.5" stroke-linejoin="round"/>'+
+    '<polygon points="'+glassPts+'" fill="none" stroke="#8BBDD0" stroke-width="1.5" stroke-linejoin="round"/>'+
     '<line x1="'+hlx+'" y1="'+(y+5)+'" x2="'+hlx+'" y2="'+(y+h-8)+'" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round"/>';
 }
 function smallGlassPos(i, row0S, row1S, PAD, BW, BH, SW, SH, GAP, svgW) {
@@ -3388,13 +3373,13 @@ function buildWaterCupsSVG(stepId, taps) {
     '<stop offset="0%" stop-color="#B8E4F4"/><stop offset="100%" stop-color="#5AACCE"/>'+
     '</linearGradient></defs>';
 
-  // Big glass: units 1-2 fill it to 50% then 100%
-  out += drawWaterGlass(PAD, PAD, BW, BBW, BH, taps/2);
+  // Each glass fills over 3 taps (thirds). Glass G (0=big, 1..6=small):
+  // fill(G) = max(0, min(1, (taps - 3*G) / 3))
+  out += drawWaterGlass(PAD, PAD, BW, BBW, BH, taps / 3);
 
-  // Small glasses: each glass i (0-indexed) fills at units 2*(i+1) to 2*(i+2)
   for (var i=0; i<nSmalls; i++) {
     var sp = smallGlassPos(i, row0S, row1S, PAD, BW, BH, SW, SH, GAP, svgW);
-    out += drawWaterGlass(sp.x, sp.y, SW, SBW, SH, (taps - 2*(i+1)) / 2);
+    out += drawWaterGlass(sp.x, sp.y, SW, SBW, SH, (taps - 3*(i+1)) / 3);
   }
   return out + '</svg>';
 }
@@ -3419,9 +3404,9 @@ function renderWaterCup() {
     if (done) {
       sub.textContent = 'הגוף קיבל. יפה. 💧';
     } else if (w === 0) {
-      sub.textContent = step.id === 0 ? 'שלוק קטן, אם מתאים.' : 'לחצי כשמוכנה.';
+      sub.textContent = 'לחצי כשמוכנה.';
     } else {
-      sub.textContent = w + ' / ' + step.taps + ' 💧';
+      sub.textContent = 'שלוק ' + w + ' מתוך ' + step.taps;
     }
   }
   if (tapBtn) {
