@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'rest-lunch-dinner-2026-07-01';
+const TORI_BUILD = 'rest-lunch-dinner-copy-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -5393,7 +5393,7 @@ const SELF_CARE_TASK_LIBRARY = [
   },
   {
     id: 'food-place-lunch-nearby',
-    label: 'לשים משהו אכיל לידך לשעת הצהריים',
+    label: 'להניח משהו לאכול לידך לצהריים',
     family: 'food', plantFamily: 'nutrition',
     level: 'micro', parentTask: 'lunch',
     suggestedFor: ['lunch'],
@@ -5427,7 +5427,7 @@ const SELF_CARE_TASK_LIBRARY = [
   },
   {
     id: 'food-dinner-bite',
-    label: 'ביס קטן לפני השינה',
+    label: 'ביס קטן לערב',
     family: 'food', plantFamily: 'nutrition',
     level: 'micro', parentTask: 'dinner',
     suggestedFor: ['dinner'],
@@ -5435,7 +5435,7 @@ const SELF_CARE_TASK_LIBRARY = [
   },
   {
     id: 'food-place-dinner-nearby',
-    label: 'לשים משהו אכיל לידך לערב',
+    label: 'להניח משהו לאכול לידך לערב',
     family: 'food', plantFamily: 'nutrition',
     level: 'micro', parentTask: 'dinner',
     suggestedFor: ['dinner'],
@@ -5485,7 +5485,7 @@ const SELF_CARE_TASK_LIBRARY = [
   },
   {
     id: 'rest-drop-pause',
-    label: 'להוריד כתפיים ולנשום',
+    label: 'לתת לגוף דקה בלי לעשות כלום',
     family: 'rest', plantFamily: 'rest',
     level: 'micro', parentTask: 'sleep',
     suggestedFor: ['sleep'],
@@ -5915,7 +5915,7 @@ const SELF_CARE_TASK_LIBRARY = [
 // User-facing family labels for SELF_CARE_TASK_LIBRARY.
 // "אוכל" is the correct user-facing label for the food family. Never "הזנה".
 const SELF_CARE_FAMILY_LABELS = {
-  food:         'אוכל',
+  food:         'אכילה',
   water:        'שתייה',
   bodyRefresh:  'רענון גוף',
   teeth:        'פה ושיניים',
@@ -8384,7 +8384,7 @@ var _libModalState = { screen: null, openFamily: null };
 // NOTE: 'food' uses plantKey 'nutrition' for asset lookup internally.
 // User-facing label MUST be "אוכל" — never "הזנה".
 var LIB_FAMILIES = [
-  { key: 'food',        label: 'אוכל',       plantKey: 'nutrition',   emoji: '🍎' },
+  { key: 'food',        label: 'אכילה',      plantKey: 'nutrition',   emoji: '🍎' },
   { key: 'water',       label: 'שתייה',      plantKey: 'water',       emoji: '💧' },
   { key: 'rest',        label: 'מנוחה',      plantKey: 'rest',        emoji: '🛌' },
   { key: 'bodyRefresh', label: 'רענון גוף',  plantKey: 'bodyRefresh', emoji: '🚿' },

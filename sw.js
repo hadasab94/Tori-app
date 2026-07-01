@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v46'; // rest-lunch-dinner: library entries + rest family
+const CACHE = 'body-soul-v47'; // rest-lunch-dinner-copy: label fixes
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
