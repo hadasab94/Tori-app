@@ -254,9 +254,11 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 }
 .water-return-btn:active { opacity: 1; }
 .water-cup-area {
-  display: flex; align-items: center; justify-content: center;
-  width: 52px; flex-shrink: 0; padding: 4px 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 52px; flex-shrink: 0; padding: 4px 0; gap: 4px;
 }
+.water-step-img { width: 36px; height: 36px; object-fit: contain; }
+.water-step-label { font-size: 11.5px; font-weight: 700; color: var(--sky, #5AACCE); margin-bottom: 1px; line-height: 1.3; }
 .water-cup {
   width: 40px; height: 56px; position: relative;
   border: 2.5px solid #8BBDD0; border-top: none;
@@ -2478,13 +2480,15 @@ BUILD: <span id="debug-build-val"></span>
   <div class="task-grid">
     <div class="task-card water-card" id="water-card" onclick="tapWaterSip()">
       <div class="water-text-area">
-        <div class="water-title">מים</div>
+        <div class="water-title">💧 מים</div>
+        <div id="water-step-label" class="water-step-label">3 שלוקים / חצי כוס</div>
         <div class="water-sub" id="water-sub">שלוק קטן, אם מתאים.</div>
         <button class="water-return-btn" id="water-return-btn"
                 onclick="event.stopPropagation(); returnWaterSip()"
-                style="display:none">להחזיר שלוק</button>
+                style="display:none">להחזיר</button>
       </div>
       <div class="water-cup-area">
+        <img id="water-step-img" class="water-step-img" src="assets/plants/stages/water/water-bud.webp" alt="" aria-hidden="true" onerror="this.style.display='none'">
         <div class="water-cup" id="water-cup">
           <div class="water-fill" id="water-fill"></div>
         </div>
@@ -3275,7 +3279,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'pamper-sparks-2026-06-29';
+const TORI_BUILD = 'water-steps-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3295,7 +3299,7 @@ function isExerciseDay() { const d=new Date(); return Math.floor((d-new Date(d.g
 function getHebrewDate() { const wk=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'],mo=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'],d=new Date(); return `יום ${wk[d.getDay()]}, ${d.getDate()} ${mo[d.getMonth()]}`; }
 function getDOY() { const d=new Date(); return Math.floor((d-new Date(d.getFullYear(),0,0))/86400000); }
 function pickRandom(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
-function countDone() { let n=TASK_IDS.filter(t=>s.tasks[t]).length; if(s.water>=3)n++; if(s.exChosen.easy||s.exChosen.hard)n++; return n; }
+function countDone() { let n=TASK_IDS.filter(t=>s.tasks[t]).length; if(waterStepDone())n++; if(s.exChosen.easy||s.exChosen.hard)n++; return n; }
 function totalTasks() { return TASK_IDS.length+2; }
 function dayQualifies(cnt) { return cnt >= Math.ceil(totalTasks() * 0.5); }
 
@@ -3320,6 +3324,20 @@ function toggleTask(id) {
   updateProgress(); saveDay();
 }
 
+// ── Water step progression (8 steps, grows gradually across days) ──
+const WATER_STEPS = [
+  { id:0, label:'3 שלוקים / חצי כוס', taps:1, img:'assets/plants/stages/water/water-bud.webp',     toast:'3 שלוקים. הגוף לא ביקש הצהרה, רק התחלה קטנה. 💧' },
+  { id:1, label:'כוס אחת',             taps:1, img:'assets/plants/stages/water/water-sprout.webp',  toast:'כוס שלמה. לפעמים הגוף אוהב שמתחילים בעדינות. 💧' },
+  { id:2, label:'2 כוסות',             taps:2, img:'assets/plants/stages/water/water-sprout.webp',  toast:'שתי כוסות. לא מרוץ — רק תמיכה קטנה בגוף. 💧' },
+  { id:3, label:'3 כוסות',             taps:3, img:'assets/plants/stages/water/water-growing.webp', toast:'שלוש כוסות. התקדמות מתונה — בדיוק הסוג שהגוף יודע לקבל. 💧' },
+  { id:4, label:'4 כוסות',             taps:4, img:'assets/plants/stages/water/water-growing.webp', toast:'נעים לדעת: שתייה לאורך היום עוזרת לגוף לשמור על מצב נוזלים תקין, שקשור לריכוז, ערנות ותפקוד יומיומי. 💧' },
+  { id:5, label:'5 כוסות',             taps:5, img:'assets/plants/stages/water/water-full.webp',   toast:'חמש כוסות. הגוף עובד ברמה טובה. 💧' },
+  { id:6, label:'6 כוסות',             taps:6, img:'assets/plants/stages/water/water-full.webp',   toast:'שש כוסות. הגוף שמח. 💧' },
+  { id:7, label:'7 כוסות',             taps:7, img:'assets/plants/stages/water/water-wild.webp',   toast:'שבע כוסות. הגוף מודה לך על הדאגה. 💧' },
+];
+function getWaterStep() { return WATER_STEPS[Math.min(gs.waterStepLevel || 0, WATER_STEPS.length - 1)]; }
+function waterStepDone() { return (s.water || 0) >= getWaterStep().taps; }
+
 // WATER
 function renderDrops() {
   const g=document.getElementById('drops-grid'); g.innerHTML='';
@@ -3342,30 +3360,44 @@ function tapDrop(idx) {
 
 // ── Water cup — filling cup UI ──
 function renderWaterCup() {
-  var fill = document.getElementById('water-fill');
-  var sub  = document.getElementById('water-sub');
+  var fill      = document.getElementById('water-fill');
+  var sub       = document.getElementById('water-sub');
+  var stepLabel = document.getElementById('water-step-label');
+  var stepImg   = document.getElementById('water-step-img');
   var returnBtn = document.getElementById('water-return-btn');
-  var wc   = document.getElementById('water-card');
+  var wc        = document.getElementById('water-card');
   if (!fill) return;
-  var w = s.water || 0;
-  // 3 visible stages: 0=empty, 1=low(34%), 2=medium(67%), ≥3=full(100%)
-  var pct = w === 0 ? 0 : w === 1 ? 34 : w === 2 ? 67 : 100;
+  var step = getWaterStep();
+  var w    = s.water || 0;
+  var done = w >= step.taps;
+  var pct  = step.taps > 0 ? Math.min(100, Math.round(w / step.taps * 100)) : 0;
   fill.style.height = pct + '%';
-  if (sub) sub.textContent = w >= 3 ? 'הכוס התמלאה.' : 'שלוק קטן, אם מתאים.';
+  if (stepLabel) stepLabel.textContent = step.label;
+  if (stepImg)   { stepImg.src = step.img; stepImg.style.display = ''; }
+  if (sub) {
+    if (done) {
+      sub.textContent = 'הגוף קיבל. יפה. 💧';
+    } else if (step.taps <= 1) {
+      sub.textContent = 'לחצי כשמוכנה.';
+    } else {
+      sub.textContent = w + ' / ' + step.taps + ' 💧';
+    }
+  }
   if (returnBtn) returnBtn.style.display = w > 0 ? '' : 'none';
   if (wc) {
-    if (w >= 3) { wc.classList.add('done'); wc.style.borderColor = 'var(--sky)'; wc.style.background = 'var(--sky-l)'; }
-    else        { wc.classList.remove('done'); wc.style.borderColor = ''; wc.style.background = ''; }
+    if (done) { wc.classList.add('done'); wc.style.borderColor = 'var(--sky)'; wc.style.background = 'var(--sky-l)'; }
+    else      { wc.classList.remove('done'); wc.style.borderColor = ''; wc.style.background = ''; }
   }
 }
 
 function tapWaterSip() {
+  var step = getWaterStep();
   var prev = s.water || 0;
   s.water = prev + 1;
   renderWaterCup();
   updateProgress();
-  if (s.water === 3 && prev < 3) {
-    showToast('נעים לדעת: במחקרים על התייבשות קלה נמצא שמצב הנוזלים בגוף קשור לריכוז, עייפות ומצב רוח. גם כמה שלוקים הם צעד בכיוון טוב. 💧');
+  if (s.water === step.taps && prev < step.taps) {
+    showToast(step.toast);
     awardPoints(5);
   }
   addGardenAction('water');
@@ -3859,6 +3891,7 @@ let gs = {
   factIdx: 0,
   factDate: '',
   wildCooldowns: {},
+  waterStepLevel: 0,  // 0-7, advances gently as water habit builds
 };
 
 // ---- Storage ----
@@ -3878,6 +3911,8 @@ async function loadGardenState() {
       if (typeof gs.dedicatedPamperPoints !== 'number') {
         gs.dedicatedPamperPoints = 0;
       }
+      // Migration: waterStepLevel
+      if (typeof gs.waterStepLevel !== 'number') gs.waterStepLevel = 0;
     }
   } catch(e){}
   // Day rollover
@@ -3893,6 +3928,16 @@ async function loadGardenState() {
         fact: GARDEN_FACTS[gs.factIdx % GARDEN_FACTS.length],
       });
       if (gs.daysJournal.length > 60) gs.daysJournal = gs.daysJournal.slice(0,60);
+    }
+    // Water step advancement: if 4 of last 7 journal days had any water → gently advance step
+    if ((gs.waterStepLevel || 0) < WATER_STEPS.length - 1) {
+      var last7 = gs.daysJournal.slice(0, 7);
+      var waterDays = last7.filter(function(d) {
+        return d.actions && d.actions.some(function(a) { return a.kind === 'water'; });
+      }).length;
+      if (waterDays >= 4) {
+        gs.waterStepLevel = Math.min((gs.waterStepLevel || 0) + 1, WATER_STEPS.length - 1);
+      }
     }
     gs.todayActions = [];
     gs.todayPoints = 0;
@@ -7306,7 +7351,7 @@ function buildDailyState() {
   const meals=[!!s.tasks.breakfast,!!s.tasks.lunch,!!s.tasks.dinner];
   return {
     hour:h, minute:m, currentTime:`${h}:${m.toString().padStart(2,'0')}`,
-    waterCount:s.water, waterCompleted:s.water>=6,
+    waterCount:s.water, waterCompleted:waterStepDone(),
     breakfastDone:!!s.tasks.breakfast, lunchDone:!!s.tasks.lunch, dinnerDone:!!s.tasks.dinner,
     mealsCount:meals.filter(Boolean).length,
     movementDone:!!(s.exChosen.easy||s.exChosen.hard),
