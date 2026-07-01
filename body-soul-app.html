@@ -2472,7 +2472,7 @@ BUILD: <span id="debug-build-val"></span>
           <button class="water-tap-btn" id="water-tap-btn" onclick="tapWaterSip(event)">עוד שלוק קטן</button>
           <button class="water-return-btn" id="water-return-btn"
                   onclick="returnWaterSip()"
-                  style="display:none">להחזיר</button>
+                  style="display:none">להחזיר שלוק</button>
         </div>
       </div>
       <div class="water-cup-area" id="water-cup-area"></div>
@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-final-qa-2026-07-01';
+const TORI_BUILD = 'water-library-select-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3450,6 +3450,18 @@ function returnWaterSip() {
   updateProgress();
   renderTodayCompanionPath();
   saveDay();
+}
+
+// Select a water step level from the self-care library.
+// Sets gs.waterStepLevel, keeps today's tap count, re-renders cup, closes modal.
+// Today's taps stay — the card re-evaluates completion via waterStepDone().
+function selectWaterStepFromLibrary(level) {
+  gs.waterStepLevel = Math.max(0, Math.min(level, WATER_STEPS.length - 1));
+  saveGardenState();
+  renderWaterCup();
+  updateProgress();
+  closeLibModalForce();
+  showToast('עדכנתי את שלב המים להיום. 💧');
 }
 
 // QA helper — run in DevTools to reset today's water count to 0
@@ -8389,7 +8401,17 @@ function _buildLibFamilyDetailHTML(familyKey) {
     var levelLabel = LIB_LEVEL_LABELS[task.level] || task.level;
     var alreadyActive = isLibraryTaskActive(task.id);
     var actionHTML;
-    if (!_famSupported) {
+    // Water steps use a custom action: set gs.waterStepLevel directly.
+    // No checkbox card is added — uses the existing water mechanism.
+    if (task.family === 'water' && task.id.indexOf('water-step-') === 0) {
+      var stepLevel = parseInt(task.id.replace('water-step-', ''), 10);
+      var isCurrent = (gs.waterStepLevel || 0) === stepLevel;
+      actionHTML = isCurrent
+        ? '<div class="lib-active-badge">היעד הנוכחי 💧</div>'
+        : '<button class="lib-add-btn"'
+          + ' onclick="event.stopPropagation();selectWaterStepFromLibrary(' + stepLevel + ')">'
+          + 'לבחור להיום</button>';
+    } else if (!_famSupported) {
       actionHTML = '<button class="lib-add-btn lib-add-btn--disabled"'
         + ' onclick="event.stopPropagation();showToast(\'הוספה מהמשפחה הזו תגיע בשלב הבא 🌱\')">'
         + 'בשלב הבא 🌱</button>';

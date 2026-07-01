@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v44'; // water-final-qa: fix collected-chips water threshold
+const CACHE = 'body-soul-v45'; // water-library-select: step chooser + undo label
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
