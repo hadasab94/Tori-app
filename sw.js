@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v42'; // water-click-sync: stopPropagation + console reset helper
+const CACHE = 'body-soul-v43'; // water-full-qa: library entries, plant label, text cleanup
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

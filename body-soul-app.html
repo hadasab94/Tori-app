@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-click-sync-2026-07-01';
+const TORI_BUILD = 'water-full-qa-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -5131,7 +5131,7 @@ const PAMPER_CARDS = {
 // Anchor images for each habit family. Not rendered yet — asset preparation only.
 const PLANT_FAMILY_ASSETS = {
   water: {
-    label: 'שתייה',
+    label: 'עציץ מים',
     src: './assets/plants/water/plant-water-cup.webp'
   },
   nutrition: {
@@ -5343,43 +5343,67 @@ const SELF_CARE_TASK_LIBRARY = [
   },
 
   // ── שתייה (water) ─────────────────────────────────────────────────────
-  // Water uses scalableCounter — the target grows gradually over time.
-  // Do NOT change the current 3-sip cup behavior based on this library yet.
+  // One entry per WATER_STEPS level. Labels match exactly.
+  // type: scalableCounter — connects to the existing water tap mechanism.
   {
-    id: 'water-3-sips',
-    label: '3 שלוקים',
+    id: 'water-step-0',
+    label: '3 שלוקים של מים',
     family: 'water', plantFamily: 'water',
     level: 'micro', parentTask: 'water',
     suggestedFor: ['water'],
     icon: '💧', type: 'scalableCounter'
   },
   {
-    id: 'water-4-sips',
-    label: '4 שלוקים',
+    id: 'water-step-1',
+    label: 'כוס אחת',
     family: 'water', plantFamily: 'water',
     level: 'tiny', parentTask: 'water',
     suggestedFor: ['water'],
     icon: '💧', type: 'scalableCounter'
   },
   {
-    id: 'water-5-sips',
-    label: '5 שלוקים',
+    id: 'water-step-2',
+    label: '2 כוסות',
     family: 'water', plantFamily: 'water',
     level: 'small', parentTask: 'water',
     suggestedFor: ['water'],
-    icon: '💧', type: 'scalableCounter'
+    icon: '🥤', type: 'scalableCounter'
   },
   {
-    id: 'water-small-cup',
-    label: 'כוס קטנה',
+    id: 'water-step-3',
+    label: '3 כוסות',
+    family: 'water', plantFamily: 'water',
+    level: 'small', parentTask: 'water',
+    suggestedFor: ['water'],
+    icon: '🥤', type: 'scalableCounter'
+  },
+  {
+    id: 'water-step-4',
+    label: '4 כוסות',
     family: 'water', plantFamily: 'water',
     level: 'medium', parentTask: 'water',
     suggestedFor: ['water'],
-    icon: '🥛', type: 'scalableCounter'
+    icon: '🥤', type: 'scalableCounter'
   },
   {
-    id: 'water-cup',
-    label: 'כוס מים',
+    id: 'water-step-5',
+    label: '5 כוסות',
+    family: 'water', plantFamily: 'water',
+    level: 'medium', parentTask: 'water',
+    suggestedFor: ['water'],
+    icon: '🥤', type: 'scalableCounter'
+  },
+  {
+    id: 'water-step-6',
+    label: '6 כוסות',
+    family: 'water', plantFamily: 'water',
+    level: 'full', parentTask: 'water',
+    suggestedFor: ['water'],
+    icon: '🥤', type: 'scalableCounter'
+  },
+  {
+    id: 'water-step-7',
+    label: '7 כוסות',
     family: 'water', plantFamily: 'water',
     level: 'full', parentTask: 'water',
     suggestedFor: ['water'],
@@ -7542,12 +7566,12 @@ const TR={
     (ds,p)=>`כשגוף מיובש, הכל מרגיש קשה יותר. שלוק מים אחד = לא מיתוס, ממש משנה. אפשרי עכשיו? 💧`,
     (ds,p)=>`מים לא שתית? לא אסון. אפשר להתחיל עכשיו. שלוק אחד = "אני פה". 💧`,
     (ds,p)=>`הגוף שלך בסבירות גבוהה מעדיף שלוק מים על דיון ארוך על שלוק מים. אז — שלוק? 💧`,
-    (ds,p)=>`${ds.waterCount} כוסות עד עכשיו. ${ds.waterCount<3?'עוד כמה שלוקים ואנחנו בדרך לשישה. 💧':'ממשיכים לשישה?'}`,
+    (ds,p)=>`${ds.waterCount} שלוקים עד עכשיו. ${ds.waterCompleted?'השלמת את היעד! 🌟':'ממשיכים? 💧'}`,
     (ds,p)=>`${ds.waterCount||0} כוסות היום עד עכשיו. בואי נוסיף עוד אחת — שלוק. לא דרמה. 💧`,
     (ds,p)=>`מים שכחת? לא כעס, רק שלוק. הגוף מודה לך אפילו על אחד. 💧`,
     (ds,p)=>`קחי כוס, מלאי מים, שתי. ספרתי: 4 שניות. אפשרי? 💧`,
     (ds,p)=>`שלוק מים אחד = "אני שמה לב לעצמי". זה הכל. 💧`,
-    (ds,p)=>`מים לא חייבים להיות 8 כוסות ברגע. שלוק עכשיו + שלוק בעוד כמה דקות = כבר מתחילות. 💧`,
+    (ds,p)=>`מים לא חייבים להגיע בבת אחת. שלוק עכשיו + שלוק בעוד כמה דקות = כבר מתחילות. 💧`,
     (ds,p)=>`הגוף שלך: "תזכרי שאני קיים." שלוק מים = "כן, אני זוכרת." 💧`,
   ],
   chooseForMe:[
@@ -7653,16 +7677,16 @@ const TR={
     (ds,p)=>`הגוף קיבל סימן שהוא לא נשכח. זה הכל מה שהוא ביקש. 🌸`,
   ],
   waterDone:[
-    (ds,p)=>`מים ✔ הגוף שלך: "סוף סוף! חשבתי שנשכחת ממני" 😄 (${ds.waterCount}/8 כוסות)`,
-    (ds,p)=>`שתית מים — מסר לגוף: "אני פה". זה לא קטן. 💧 ${ds.waterCount<6?'עוד '+Math.max(0,6-ds.waterCount)+' ונגיע ל-6!':ds.waterCount+'/8 — נהדר!'}`,
-    (ds,p)=>`מים הגיעו! הכליות שלך כרגע עושות מסיבה קטנה ✨ ${ds.waterCount>=6?'כבר עברת את היעד!':'ממשיכים?'}`,
-    (ds,p)=>`שלוק מים = טיפול גוף. בפשטות. ✔ ${ds.waterCount}/8 כוסות היום. 💧`,
-    (ds,p)=>`נרשם! ${ds.waterCount} כוסות. מערכת העצבים אומרת תודה. 💙`,
+    (ds,p)=>`מים ✔ הגוף שלך: "סוף סוף! חשבתי שנשכחת ממני" 😄`,
+    (ds,p)=>`שתית מים — מסר לגוף: "אני פה". זה לא קטן. 💧`,
+    (ds,p)=>`מים הגיעו! הכליות שלך כרגע עושות מסיבה קטנה ✨ ${ds.waterCompleted?'השלמת את היעד!':'ממשיכים?'}`,
+    (ds,p)=>`שלוק מים = טיפול גוף. בפשטות. ✔ 💧`,
+    (ds,p)=>`נרשם! ${ds.waterCount} שלוקים. מערכת העצבים אומרת תודה. 💙`,
     (ds,p)=>`מים ✔ ממשיכים? הגוף שמח על כל שלוק שמגיע. 💧`,
-    (ds,p)=>`${ds.waterCount}/8 💧 כל שלוק הוא הצהרה: "אני מטפלת בעצמי." נשמע גדול — כי זה כן.`,
-    (ds,p)=>`שתית! הגוף שלך עובד עכשיו ברמה טובה יותר. ${ds.waterCount>=6?'🌟 הגעת ליעד!':'ממשיכים? 💧'}`,
-    (ds,p)=>`מים נרשמו. ${ds.waterCount<4?'עוד קצת ואנחנו שם 💧':ds.waterCount<6?'כמעט ל-6! 💧':'הגעת ליעד המים להיום 🎉'}`,
-    (ds,p)=>`✔ שלוק מים = פעולה שהגוף זוכר. ${ds.waterCount}/8 היום. 💧`,
+    (ds,p)=>`כל שלוק הוא הצהרה: "אני מטפלת בעצמי." נשמע גדול — כי זה כן. 💧`,
+    (ds,p)=>`שתית! הגוף שלך עובד עכשיו ברמה טובה יותר. ${ds.waterCompleted?'🌟 השלמת את היעד!':'ממשיכים? 💧'}`,
+    (ds,p)=>`מים נרשמו. ${ds.waterCompleted?'הגעת ליעד המים להיום 🎉':'עוד קצת ואנחנו שם 💧'}`,
+    (ds,p)=>`✔ שלוק מים = פעולה שהגוף זוכר. 💧`,
   ],
   ateSomething:[
     (ds,p)=>`אכלת! הגוף קיבל מה שהיה צריך. כבוד. 🍎 ${!ds.waterCompleted?'מים לצד זה? 💧':''}`,
