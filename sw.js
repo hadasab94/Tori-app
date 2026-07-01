@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v39'; // water SVG cups + half-cup unit progression
+const CACHE = 'body-soul-v40'; // water QA fix: polygon fill SVG, explicit tap button
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
