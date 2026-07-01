@@ -2348,7 +2348,7 @@ if('serviceWorker' in navigator){
 <div id="debug-build-badge" style="position:fixed;bottom:8px;left:8px;z-index:99999;background:#1a1a2e;color:#00ff88;font-family:monospace;font-size:10px;padding:4px 8px;border-radius:4px;pointer-events:none;opacity:0.85;">
 BUILD: <span id="debug-build-val"></span>
 </div>
-<script>document.getElementById('debug-build-val').textContent = (typeof TORI_BUILD !== 'undefined' ? TORI_BUILD : '???');</script>
+<script>document.addEventListener('DOMContentLoaded', function(){ document.getElementById('debug-build-val').textContent = (typeof TORI_BUILD !== 'undefined' ? TORI_BUILD : '???'); });</script>
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen" class="auth-screen">
