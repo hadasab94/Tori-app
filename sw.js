@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v43'; // water-full-qa: library entries, plant label, text cleanup
+const CACHE = 'body-soul-v44'; // water-final-qa: fix collected-chips water threshold
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

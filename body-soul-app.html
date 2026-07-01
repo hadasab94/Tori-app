@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-full-qa-2026-07-01';
+const TORI_BUILD = 'water-final-qa-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -8467,8 +8467,8 @@ function renderCollected() {
   TASK_IDS.forEach(function(id) {
     if (s.tasks[id] && _COLLECTED_INFO[id]) chips.push(_COLLECTED_INFO[id]);
   });
-  // Water (threshold ≥ 6)
-  if ((s.water || 0) >= 6) chips.push({ icon: '💧', label: 'מים' });
+  // Water — use current step completion, not a hardcoded threshold
+  if (waterStepDone()) chips.push({ icon: '💧', label: 'מים' });
   // Exercise
   if (s.exChosen && (s.exChosen.easy || s.exChosen.hard)) chips.push({ icon: '💪', label: 'תנועה' });
   // Custom tasks
