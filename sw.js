@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v45'; // water-library-select: step chooser + undo label
+const CACHE = 'body-soul-v46'; // rest-lunch-dinner: library entries + rest family
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

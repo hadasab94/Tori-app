@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-library-select-2026-07-01';
+const TORI_BUILD = 'rest-lunch-dinner-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -5169,6 +5169,10 @@ const PLANT_FAMILY_ASSETS = {
   quietMoment: {
     label: 'רגע שקט',
     src: './assets/plants/stages/quiet-moment/quiet-moment-bud.webp'
+  },
+  rest: {
+    label: 'עציץ מנוחה',
+    src: './assets/plants/stages/quiet-moment/quiet-moment-bud.webp'
   }
 };
 
@@ -5352,6 +5356,140 @@ const SELF_CARE_TASK_LIBRARY = [
     level: 'tiny', parentTask: 'breakfast',
     suggestedFor: ['breakfast', 'lunch', 'dinner'],
     icon: '🍇', type: 'task'
+  },
+
+  // ── ארוחת צהריים (lunch) ─────────────────────────────────────────────
+  {
+    id: 'food-lunch-full',
+    label: 'ארוחת צהריים',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'full', parentTask: 'lunch',
+    suggestedFor: ['lunch'],
+    icon: '🥗', type: 'task'
+  },
+  {
+    id: 'food-lunch-small',
+    label: 'משהו קטן לצהריים',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'medium', parentTask: 'lunch',
+    suggestedFor: ['lunch'],
+    icon: '🥣', type: 'task'
+  },
+  {
+    id: 'food-lunch-warm',
+    label: 'משהו חם לצהריים',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'small', parentTask: 'lunch',
+    suggestedFor: ['lunch'],
+    icon: '🍲', type: 'task'
+  },
+  {
+    id: 'food-lunch-bite',
+    label: 'ביס קטן לאמצע היום',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'micro', parentTask: 'lunch',
+    suggestedFor: ['lunch'],
+    icon: '🫙', type: 'task'
+  },
+  {
+    id: 'food-place-lunch-nearby',
+    label: 'לשים משהו אכיל לידך לשעת הצהריים',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'micro', parentTask: 'lunch',
+    suggestedFor: ['lunch'],
+    icon: '🧆', type: 'task'
+  },
+
+  // ── ארוחת ערב (dinner) ───────────────────────────────────────────────
+  {
+    id: 'food-dinner-full',
+    label: 'ארוחת ערב',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'full', parentTask: 'dinner',
+    suggestedFor: ['dinner'],
+    icon: '🍲', type: 'task'
+  },
+  {
+    id: 'food-dinner-small',
+    label: 'משהו קטן לערב',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'medium', parentTask: 'dinner',
+    suggestedFor: ['dinner'],
+    icon: '🥘', type: 'task'
+  },
+  {
+    id: 'food-dinner-warm',
+    label: 'משהו חם לסיום היום',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'small', parentTask: 'dinner',
+    suggestedFor: ['dinner'],
+    icon: '☕', type: 'task'
+  },
+  {
+    id: 'food-dinner-bite',
+    label: 'ביס קטן לפני השינה',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'micro', parentTask: 'dinner',
+    suggestedFor: ['dinner'],
+    icon: '🫙', type: 'task'
+  },
+  {
+    id: 'food-place-dinner-nearby',
+    label: 'לשים משהו אכיל לידך לערב',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'micro', parentTask: 'dinner',
+    suggestedFor: ['dinner'],
+    icon: '🫐', type: 'task'
+  },
+
+  // ── מנוחה (rest) ─────────────────────────────────────────────────────
+  {
+    id: 'rest-lie-down',
+    label: 'לשכב רגע ולהניח את הגוף',
+    family: 'rest', plantFamily: 'rest',
+    level: 'full', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '🛌', type: 'task'
+  },
+  {
+    id: 'rest-sit-with-blanket',
+    label: 'לשבת עם שמיכה לכמה דקות',
+    family: 'rest', plantFamily: 'rest',
+    level: 'medium', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '🧸', type: 'task'
+  },
+  {
+    id: 'rest-eyes-closed',
+    label: 'לעצום עיניים לדקה',
+    family: 'rest', plantFamily: 'rest',
+    level: 'small', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '😌', type: 'task'
+  },
+  {
+    id: 'rest-lean-back',
+    label: 'להישען לאחור לרגע',
+    family: 'rest', plantFamily: 'rest',
+    level: 'tiny', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '🌙', type: 'task'
+  },
+  {
+    id: 'rest-pause-now',
+    label: 'לעצור לשנייה ולא לעשות כלום',
+    family: 'rest', plantFamily: 'rest',
+    level: 'micro', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '🌿', type: 'task'
+  },
+  {
+    id: 'rest-drop-pause',
+    label: 'להוריד כתפיים ולנשום',
+    family: 'rest', plantFamily: 'rest',
+    level: 'micro', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '🍃', type: 'task'
   },
 
   // ── שתייה (water) ─────────────────────────────────────────────────────
@@ -5784,6 +5922,7 @@ const SELF_CARE_FAMILY_LABELS = {
   movement:     'תנועה',
   freshAir:     'אוויר צח',
   quietMoment:  'רגע שקט',
+  rest:         'מנוחה',
 };
 
 // Maps Today action IDs to their self-care family.
@@ -8247,6 +8386,7 @@ var _libModalState = { screen: null, openFamily: null };
 var LIB_FAMILIES = [
   { key: 'food',        label: 'אוכל',       plantKey: 'nutrition',   emoji: '🍎' },
   { key: 'water',       label: 'שתייה',      plantKey: 'water',       emoji: '💧' },
+  { key: 'rest',        label: 'מנוחה',      plantKey: 'rest',        emoji: '🛌' },
   { key: 'bodyRefresh', label: 'רענון גוף',  plantKey: 'bodyRefresh', emoji: '🚿' },
   { key: 'teeth',       label: 'פה ושיניים', plantKey: 'teeth',       emoji: '🪥' },
   { key: 'movement',     label: 'תנועה',      plantKey: 'movement',     emoji: '🤸' },
@@ -10219,7 +10359,7 @@ function renderStructuredPlusSection() {
 
 var ACTIVE_LIBRARY_KEY = 'active:libraryTasks';
 // Families supported for user-adding to Today in this step.
-var LIBRARY_SUPPORTED_FAMILIES = ['food', 'bodyRefresh', 'freshAir', 'quietMoment'];
+var LIBRARY_SUPPORTED_FAMILIES = ['food', 'rest', 'bodyRefresh', 'freshAir', 'quietMoment'];
 
 var _activeLibraryTasks = [];
 
