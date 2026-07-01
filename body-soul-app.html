@@ -2488,7 +2488,8 @@ BUILD: <span id="debug-build-val"></span>
                 style="display:none">להחזיר</button>
       </div>
       <div class="water-cup-area">
-        <img id="water-step-img" class="water-step-img" src="assets/plants/stages/water/water-bud.webp" alt="" aria-hidden="true" onerror="this.style.display='none'">
+        <!-- water-step-img slot: reserved for future cup-step images -->
+        <img id="water-step-img" class="water-step-img" src="" alt="" aria-hidden="true" style="display:none">
         <div class="water-cup" id="water-cup">
           <div class="water-fill" id="water-fill"></div>
         </div>
@@ -3279,7 +3280,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-steps-2026-07-01';
+const TORI_BUILD = 'water-cups-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3929,13 +3930,14 @@ async function loadGardenState() {
       });
       if (gs.daysJournal.length > 60) gs.daysJournal = gs.daysJournal.slice(0,60);
     }
-    // Water step advancement: if 4 of last 7 journal days had any water → gently advance step
+    // Water step advancement: complete current step on 4 of last 7 days → advance
     if ((gs.waterStepLevel || 0) < WATER_STEPS.length - 1) {
+      var currentStepTaps = WATER_STEPS[gs.waterStepLevel || 0].taps;
       var last7 = gs.daysJournal.slice(0, 7);
-      var waterDays = last7.filter(function(d) {
-        return d.actions && d.actions.some(function(a) { return a.kind === 'water'; });
+      var completedDays = last7.filter(function(d) {
+        return d.actions && d.actions.filter(function(a) { return a.kind === 'water'; }).length >= currentStepTaps;
       }).length;
-      if (waterDays >= 4) {
+      if (completedDays >= 4) {
         gs.waterStepLevel = Math.min((gs.waterStepLevel || 0) + 1, WATER_STEPS.length - 1);
       }
     }
