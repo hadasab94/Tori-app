@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v41'; // water text/visual/logic sync: thirds model, no duplicate fill
+const CACHE = 'body-soul-v42'; // water-click-sync: stopPropagation + console reset helper
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

@@ -2469,7 +2469,7 @@ BUILD: <span id="debug-build-val"></span>
         <div id="water-step-label" class="water-step-label">3 שלוקים של מים</div>
         <div class="water-sub" id="water-sub">שלוק קטן, אם מתאים.</div>
         <div class="water-actions">
-          <button class="water-tap-btn" id="water-tap-btn" onclick="tapWaterSip()">עוד שלוק קטן</button>
+          <button class="water-tap-btn" id="water-tap-btn" onclick="tapWaterSip(event)">עוד שלוק קטן</button>
           <button class="water-return-btn" id="water-return-btn"
                   onclick="returnWaterSip()"
                   style="display:none">להחזיר</button>
@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-text-visual-sync-2026-07-01';
+const TORI_BUILD = 'water-click-sync-2026-07-01';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3427,7 +3427,8 @@ function renderWaterCup() {
   }
 }
 
-function tapWaterSip() {
+function tapWaterSip(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
   var step = getWaterStep();
   var prev = s.water || 0;
   s.water = prev + 1;
@@ -3450,6 +3451,15 @@ function returnWaterSip() {
   renderTodayCompanionPath();
   saveDay();
 }
+
+// QA helper — run in DevTools to reset today's water count to 0
+window.toriResetWater = function() {
+  s.water = 0;
+  renderWaterCup();
+  updateProgress();
+  saveDay();
+  console.log('[Tori] water reset. s.water =', s.water, '| step.taps =', getWaterStep().taps);
+};
 
 // EXERCISE
 function setMode(mode) {
