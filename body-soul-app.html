@@ -2491,6 +2491,7 @@ BUILD: <span id="debug-build-val"></span>
     <div class="task-card" id="tc-shower"    onclick="toggleTask('shower')"   ><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
     <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
     <div class="task-card" id="tc-outside"   onclick="toggleTask('outside')"  ><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
+    <div class="task-card" id="tc-rest"      onclick="toggleTask('rest')"     ><div class="check-badge">✓</div><span class="t-icon">🌿</span><div class="t-name">מנוחה</div><div class="t-sub">רגע שקט / עצירה</div></div>
     <div class="task-card" id="tc-sleep"     onclick="toggleTask('sleep')"    ><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה בשעה סבירה</div><div class="t-sub">לישון טוב הלילה</div></div>
   </div>
 
@@ -2936,7 +2937,7 @@ BUILD: <span id="debug-build-val"></span>
 
 
 <script>
-const TASK_IDS = ['breakfast','lunch','dinner','shower','breathing','outside','sleep'];
+const TASK_IDS = ['breakfast','lunch','dinner','shower','breathing','outside','rest','sleep'];
 
 // Micro-task suggestion map — gentler version of each TASK_ID action
 const MICRO_TASK_LABELS = {
@@ -2954,7 +2955,7 @@ const MICRO_TASK_LABELS = {
 // Task label display (Hebrew user-facing names per TASK_ID)
 const TASK_DISPLAY_LABELS = {
   breakfast:'ארוחת בוקר', lunch:'ארוחת צהריים', dinner:'ארוחת ערב',
-  shower:'מקלחת', breathing:'נשימה קצרה', outside:'יציאה לאוויר', sleep:'שינה',
+  shower:'מקלחת', breathing:'נשימה קצרה', outside:'יציאה לאוויר', rest:'מנוחה', sleep:'שינה',
 };
 
 // Companion lines for the gentle habit panel
@@ -3020,6 +3021,7 @@ const TASK_UI_LABELS = {
   shower:    'מקלחת',
   breathing: 'רגע שקט',
   outside:   'אוויר צח',
+  rest:      'מנוחה',
   sleep:     'כניסה למיטה',   // full DOM: "כניסה למיטה בשעה סבירה" — shortened for panel
   water:     'מים',
   exercise:  'תנועה',         // composite card — shown as family label in panel
@@ -3262,7 +3264,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'size-buttons-less-more-2026-07-12';
+const TORI_BUILD = 'rest-card-connected-2026-07-12';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -5530,79 +5532,87 @@ const SELF_CARE_TASK_LIBRARY = [
   },
 
   // ── מנוחה (rest) ─────────────────────────────────────────────────────
-  // parentTask: 'sleep' — maps to tc-sleep card in Today.
-  // Order: full → medium → small. Time labels — no timer added.
+  // parentTask: 'rest' — maps to tc-rest card in Today (daytime rest, not bedtime).
+  // Order: full → medium → small. Default (no override) = tc-rest sub-label "רגע שקט / עצירה".
   {
     id: 'rest-10min',
     label: '10 דקות מנוחה',
     family: 'rest', plantFamily: 'rest',
-    level: 'full', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'full', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '🛌', type: 'task'
   },
   {
     id: 'rest-15min',
     label: '15 דקות הפסקה',
     family: 'rest', plantFamily: 'rest',
-    level: 'full', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'full', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '🧸', type: 'task'
   },
   {
     id: 'rest-cozy-10min',
     label: '10 דקות עם כרית / שמיכה / מקום נוח',
     family: 'rest', plantFamily: 'rest',
-    level: 'full', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'full', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '🌙', type: 'task'
   },
   {
     id: 'rest-3min',
     label: '3 דקות הפסקה',
     family: 'rest', plantFamily: 'rest',
-    level: 'medium', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'medium', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '😌', type: 'task'
   },
   {
     id: 'rest-5min-comfy',
     label: '5 דקות במקום נוח',
     family: 'rest', plantFamily: 'rest',
-    level: 'medium', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'medium', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '🌿', type: 'task'
   },
   {
     id: 'rest-sit-3min',
     label: '3 דקות לשבת רגע',
     family: 'rest', plantFamily: 'rest',
-    level: 'medium', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'medium', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '🍃', type: 'task'
   },
   {
     id: 'rest-30sec',
     label: '30 שניות לעצור רגע',
     family: 'rest', plantFamily: 'rest',
-    level: 'small', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'small', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '⏸️', type: 'task'
   },
   {
     id: 'rest-sit-minute',
     label: 'דקה לשבת רגע',
     family: 'rest', plantFamily: 'rest',
-    level: 'small', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'small', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '🪑', type: 'task'
   },
   {
     id: 'rest-lean-30sec',
     label: '30 שניות להישען אחורה',
     family: 'rest', plantFamily: 'rest',
-    level: 'small', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
+    level: 'small', parentTask: 'rest',
+    suggestedFor: ['rest'],
     icon: '🌙', type: 'task'
+  },
+  {
+    id: 'rest-moment',
+    label: 'רגע שקט / עצירה',
+    family: 'rest', plantFamily: 'rest',
+    level: 'small', parentTask: 'rest',
+    suggestedFor: ['rest'],
+    icon: '🌿', type: 'task'
   },
 
   // ── שתייה (water) ─────────────────────────────────────────────────────
@@ -6992,7 +7002,7 @@ function renderGardenCards() {
 // Map app task ids to garden action kinds
 const TASK_ACTION_MAP = {
   breakfast:'food', lunch:'food', dinner:'food',
-  shower:'hygiene', breathing:'breath', sleep:'rest', outside:'rest',
+  shower:'hygiene', breathing:'breath', rest:'rest', sleep:'rest', outside:'rest',
 };
 
 function updateJourney() {
@@ -9493,7 +9503,7 @@ function checkAndSendNotifications() {
 
 // Supported in v1: breakfast, lunch, dinner, shower, outside.
 // Deferred: water (cup logic), exercise (composite), breathing/sleep (no library family yet).
-var EDIT_MODE_SUPPORTED_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside'];
+var EDIT_MODE_SUPPORTED_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'rest'];
 
 var _editMode = false;
 var _pendingMoveTask = null;
@@ -9552,8 +9562,8 @@ function _applyEditModeControls() {
   var st = getPlusLibraryState();
 
   // Size controls for ordered-task domains
-  // Note: 'sleep' (tc-sleep = כניסה למיטה) excluded — rest entries need a dedicated tc-rest card.
-  var SIZE_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside'];
+  // Note: 'sleep' (tc-sleep = כניסה למיטה) excluded — bedtime card, no size controls.
+  var SIZE_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'rest'];
   SIZE_TASKS.forEach(function(id) {
     var card = document.getElementById('tc-' + id);
     if (!card) return;

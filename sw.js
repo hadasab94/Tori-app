@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v51'; // size-buttons-less-more: פחות/יותר labels + sleep removed from size controls
+const CACHE = 'body-soul-v52'; // rest-card-connected: tc-rest card + rest library wired to rest domain
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
