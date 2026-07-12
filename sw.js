@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v48'; // water-size-controls: in-card step adjust buttons
+const CACHE = 'body-soul-v49'; // arrange-day-size-controls: prev/next for breakfast/shower/outside + water layout fix
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

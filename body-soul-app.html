@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'water-size-controls-2026-07-12';
+const TORI_BUILD = 'arrange-day-size-controls-2026-07-12';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3479,6 +3479,49 @@ function adjustWaterStep(delta) {
   var plusBtn  = document.getElementById('water-size-plus');
   if (minusBtn) { minusBtn.disabled = (next === 0); minusBtn.style.opacity = next === 0 ? '0.4' : '1'; }
   if (plusBtn)  { plusBtn.disabled  = (next === WATER_STEPS.length - 1); plusBtn.style.opacity = next === WATER_STEPS.length - 1 ? '0.4' : '1'; }
+}
+
+// ── Task step helpers for edit-mode size controls ──────────────────────────
+// Returns the ordered library entries for a parentTask (full → micro).
+function _taskStepList(taskId) {
+  return SELF_CARE_TASK_LIBRARY.filter(function(t) { return t.parentTask === taskId; });
+}
+
+// Returns current index in _taskStepList, or -1 if at original (no override).
+function _taskCurrentIdx(taskId, list) {
+  var ov = _gentleHabitOverrides && _gentleHabitOverrides[taskId];
+  if (!ov || !ov.selectedOptionId) return -1;
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].id === ov.selectedOptionId) return i;
+  }
+  return -1;
+}
+
+// Moves the task one step softer (delta=+1, higher index = smaller) or
+// one step larger (delta=-1, lower index = more demanding).
+// Index -1 = original (no override, largest). Index list.length-1 = smallest.
+async function adjustTaskStep(taskId, delta) {
+  var list = _taskStepList(taskId);
+  if (!list.length) return;
+  var cur  = _taskCurrentIdx(taskId, list);
+  var next = Math.max(-1, Math.min(cur + delta, list.length - 1));
+  if (next === cur) return;
+
+  if (next === -1) {
+    await cancelAdaptiveOverride(taskId);
+  } else {
+    var task      = list[next];
+    var origLabel = TASK_UI_LABELS[taskId] || TASK_DISPLAY_LABELS[taskId] || taskId;
+    await activateMicroTaskForWeek(taskId, origLabel, task.label, task.id,
+      task.plantFamily || null, 'עברתי ל"' + task.label + '" 🌿');
+  }
+  // Update disabled states on the in-card buttons
+  var atMin = (next === list.length - 1);
+  var atMax = (next === -1);
+  var minB  = document.getElementById('step-minus-' + taskId);
+  var plusB = document.getElementById('step-plus-'  + taskId);
+  if (minB) { minB.disabled = atMin; minB.style.opacity = atMin ? '0.35' : '1'; }
+  if (plusB){ plusB.disabled = atMax; plusB.style.opacity = atMax ? '0.35' : '1'; }
 }
 
 // QA helper — run in DevTools to reset today's water count to 0
@@ -9417,8 +9460,10 @@ function exitEditMode() {
   if (btn) btn.textContent = 'לסדר את היום ✏️';
   var bar = document.getElementById('today-editbar');
   if (bar) bar.classList.remove('visible');
-  // Remove all edit controls from cards
   document.querySelectorAll('.edit-lib-btn').forEach(function(el) { el.remove(); });
+  // Restore water card flex layout (set during edit mode)
+  var wc = document.getElementById('water-card');
+  if (wc) { wc.style.flexWrap = ''; wc.style.alignItems = ''; }
 }
 
 function toggleEditMode() {
@@ -9426,51 +9471,71 @@ function toggleEditMode() {
   else enterEditMode();
 }
 
+function _makeSizeControlRow(id, minusId, plusId, atMin, atMax, color, onMinus, onPlus) {
+  var wrap = document.createElement('div');
+  wrap.className = 'edit-lib-btn';
+  wrap.style.cssText = 'display:flex;justify-content:space-between;gap:8px;padding:5px 0 0;margin-top:4px;border:none;width:100%';
+  wrap.onclick = function(e) { e.stopPropagation(); };
+
+  function _sizeBtn(btnId, label, disabled, onClick) {
+    var b = document.createElement('button');
+    b.id = btnId;
+    b.textContent = label;
+    b.disabled = disabled;
+    b.style.cssText = 'flex:1;padding:5px 0;font-size:11.5px;border-radius:8px;'
+      + 'border:1px solid ' + color + ';background:transparent;color:' + color + ';'
+      + 'cursor:pointer;font-family:inherit;opacity:' + (disabled ? '0.35' : '1');
+    b.onclick = onClick;
+    return b;
+  }
+
+  wrap.appendChild(_sizeBtn(minusId, 'רך יותר', atMin, onMinus));
+  wrap.appendChild(_sizeBtn(plusId,  'קצת יותר', atMax, onPlus));
+  return wrap;
+}
+
 function _applyEditModeControls() {
-  // Remove stale controls first
   document.querySelectorAll('.edit-lib-btn').forEach(function(el) { el.remove(); });
   var st = getPlusLibraryState();
-  EDIT_MODE_SUPPORTED_TASKS.forEach(function(id) {
+
+  // Size controls for ordered-task domains
+  var SIZE_TASKS = ['breakfast', 'shower', 'outside'];
+  SIZE_TASKS.forEach(function(id) {
     var card = document.getElementById('tc-' + id);
     if (!card) return;
-    if (card.style.display === 'none') return; // already in library
-    if (st.hiddenParentTasks && st.hiddenParentTasks[id]) return; // in library
-    var btn = document.createElement('button');
-    btn.className = 'edit-lib-btn';
-    btn.textContent = '🌿 לספרייה';
-    btn.onclick = (function(tid) {
-      return function(e) { e.stopPropagation(); showMoveConfirm(tid); };
-    })(id);
-    card.appendChild(btn);
+    if (card.style.display === 'none') return;
+    if (st.hiddenParentTasks && st.hiddenParentTasks[id]) return;
+    var list = _taskStepList(id);
+    if (!list.length) return;
+    var cur   = _taskCurrentIdx(id, list);
+    var atMin = (cur === list.length - 1); // at softest — rך יותר disabled
+    var atMax = (cur === -1);              // at original full — קצת יותר disabled
+    var row = _makeSizeControlRow(
+      id, 'step-minus-' + id, 'step-plus-' + id,
+      atMin, atMax,
+      'var(--sage,#6A9B78)',
+      (function(tid) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, 1); }; })(id),
+      (function(tid) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, -1); }; })(id)
+    );
+    card.appendChild(row);
   });
 
-  // Water card — size controls (replaces לספרייה for water)
+  // Water card — size controls with flex-wrap layout fix
   var waterCard = document.getElementById('water-card');
   if (waterCard) {
+    waterCard.style.flexWrap   = 'wrap';
+    waterCard.style.alignItems = 'flex-start';
     var level = gs.waterStepLevel || 0;
     var max   = WATER_STEPS.length - 1;
-    var wrap  = document.createElement('div');
-    wrap.className = 'edit-lib-btn'; // reuse class so exitEditMode cleans it up
-    wrap.style.cssText = 'display:flex;justify-content:space-between;gap:8px;margin-top:8px;width:100%';
-    wrap.onclick = function(e) { e.stopPropagation(); };
-
-    var minusBtn = document.createElement('button');
-    minusBtn.id = 'water-size-minus';
-    minusBtn.textContent = 'רך יותר';
-    minusBtn.disabled = (level === 0);
-    minusBtn.style.cssText = 'flex:1;padding:6px 0;font-size:12px;border-radius:8px;border:1px solid var(--sky,#5AACCE);background:#F0F8FC;color:var(--sky,#5AACCE);cursor:pointer;opacity:' + (level === 0 ? '0.4' : '1');
-    minusBtn.onclick = function(e) { e.stopPropagation(); adjustWaterStep(-1); };
-
-    var plusBtn = document.createElement('button');
-    plusBtn.id = 'water-size-plus';
-    plusBtn.textContent = 'קצת יותר';
-    plusBtn.disabled = (level === max);
-    plusBtn.style.cssText = 'flex:1;padding:6px 0;font-size:12px;border-radius:8px;border:1px solid var(--sky,#5AACCE);background:#F0F8FC;color:var(--sky,#5AACCE);cursor:pointer;opacity:' + (level === max ? '0.4' : '1');
-    plusBtn.onclick = function(e) { e.stopPropagation(); adjustWaterStep(1); };
-
-    wrap.appendChild(minusBtn);
-    wrap.appendChild(plusBtn);
-    waterCard.appendChild(wrap);
+    var row = _makeSizeControlRow(
+      'water', 'water-size-minus', 'water-size-plus',
+      level === 0, level === max,
+      'var(--sky,#5AACCE)',
+      function(e) { e.stopPropagation(); adjustWaterStep(-1); },
+      function(e) { e.stopPropagation(); adjustWaterStep(1); }
+    );
+    row.style.flex = '0 0 100%'; // force onto its own row below text+cups
+    waterCard.appendChild(row);
   }
 }
 
