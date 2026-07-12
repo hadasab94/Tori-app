@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'meals-rest-microsteps-2026-07-12';
+const TORI_BUILD = 'size-buttons-less-more-2026-07-12';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -9542,8 +9542,8 @@ function _makeSizeControlRow(id, minusId, plusId, atMin, atMax, color, onMinus, 
     return b;
   }
 
-  wrap.appendChild(_sizeBtn(minusId, 'רך יותר', atMin, onMinus));
-  wrap.appendChild(_sizeBtn(plusId,  'קצת יותר', atMax, onPlus));
+  wrap.appendChild(_sizeBtn(minusId, 'פחות', atMin, onMinus));
+  wrap.appendChild(_sizeBtn(plusId,  'יותר', atMax, onPlus));
   return wrap;
 }
 
@@ -9552,7 +9552,8 @@ function _applyEditModeControls() {
   var st = getPlusLibraryState();
 
   // Size controls for ordered-task domains
-  var SIZE_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'sleep'];
+  // Note: 'sleep' (tc-sleep = כניסה למיטה) excluded — rest entries need a dedicated tc-rest card.
+  var SIZE_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside'];
   SIZE_TASKS.forEach(function(id) {
     var card = document.getElementById('tc-' + id);
     if (!card) return;

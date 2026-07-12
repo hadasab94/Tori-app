@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v50'; // meals-rest-microsteps: normalized meal labels + rest time entries + size controls for lunch/dinner/sleep
+const CACHE = 'body-soul-v51'; // size-buttons-less-more: פחות/יותר labels + sleep removed from size controls
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
