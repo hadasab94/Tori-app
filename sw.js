@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v49'; // arrange-day-size-controls: prev/next for breakfast/shower/outside + water layout fix
+const CACHE = 'body-soul-v50'; // meals-rest-microsteps: normalized meal labels + rest time entries + size controls for lunch/dinner/sleep
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

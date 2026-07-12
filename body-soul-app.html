@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'arrange-day-size-controls-2026-07-12';
+const TORI_BUILD = 'meals-rest-microsteps-2026-07-12';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -5352,204 +5352,257 @@ const PLANT_STAGE_ASSETS = {
 
 const SELF_CARE_TASK_LIBRARY = [
 
-  // ── אוכל (food / nutrition) ──────────────────────────────────────────
+  // ── ארוחת בוקר (breakfast) ───────────────────────────────────────────
+  // Order: full → medium → small (controls: קצת יותר ← index 0, רך יותר → last index)
   {
     id: 'food-breakfast-tasty',
-    label: 'ארוחת בוקר טעימה',
+    label: 'ארוחת בוקר מסודרת',
     family: 'food', plantFamily: 'nutrition',
     level: 'full', parentTask: 'breakfast',
     suggestedFor: ['breakfast'],
     icon: '🍳', type: 'task'
   },
   {
+    id: 'food-bite-before-noon',
+    label: 'ביס ממשהו עד 12:00',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'medium', parentTask: 'breakfast',
+    suggestedFor: ['breakfast'],
+    icon: '🍎', type: 'task'
+  },
+  {
     id: 'food-breakfast-small',
-    label: 'ארוחת בוקר קטנה',
+    label: 'ארוחת בוקר קטנה מאולתרת',
     family: 'food', plantFamily: 'nutrition',
     level: 'medium', parentTask: 'breakfast',
     suggestedFor: ['breakfast'],
     icon: '🥣', type: 'task'
   },
   {
-    id: 'food-bite-before-noon',
-    label: 'ביס ממשהו עד 12:00',
+    id: 'food-breakfast-to-go',
+    label: 'ארוחת בוקר קטנה לדרך',
     family: 'food', plantFamily: 'nutrition',
-    level: 'micro', parentTask: 'breakfast',
+    level: 'medium', parentTask: 'breakfast',
     suggestedFor: ['breakfast'],
-    icon: '🍎', type: 'task'
+    icon: '🧆', type: 'task'
   },
   {
-    id: 'food-small-with-coffee',
-    label: 'משהו קטן ליד הקפה / שוקו',
+    id: 'food-breakfast-choose',
+    label: 'לבחור משהו לבוקר',
     family: 'food', plantFamily: 'nutrition',
-    level: 'tiny', parentTask: 'breakfast',
+    level: 'small', parentTask: 'breakfast',
     suggestedFor: ['breakfast'],
-    icon: '☕', type: 'task'
+    icon: '🫙', type: 'task'
   },
   {
     id: 'food-place-edible-nearby',
     label: 'להניח משהו אכיל לידך עד 12:00',
     family: 'food', plantFamily: 'nutrition',
-    level: 'micro', parentTask: 'breakfast',
+    level: 'small', parentTask: 'breakfast',
     suggestedFor: ['breakfast'],
-    icon: '🫙', type: 'task'
-  },
-  {
-    id: 'food-choose-for-later',
-    label: 'לבחור משהו קטן שאפשר לאכול אחר כך',
-    family: 'food', plantFamily: 'nutrition',
-    level: 'micro', parentTask: 'breakfast',
-    suggestedFor: ['breakfast', 'lunch'],
-    icon: '🧆', type: 'task'
-  },
-  {
-    id: 'food-open-and-leave-nearby',
-    label: 'לפתוח משהו אכיל ולהשאיר לידך',
-    family: 'food', plantFamily: 'nutrition',
-    level: 'micro', parentTask: 'breakfast',
-    suggestedFor: ['breakfast', 'lunch'],
     icon: '🫐', type: 'task'
   },
   {
-    id: 'food-visible-snack',
-    label: 'לשים פרי / קרקר / יוגורט במקום נראה',
+    id: 'food-breakfast-prepare-small',
+    label: 'להכין משהו קטן לבוקר',
     family: 'food', plantFamily: 'nutrition',
-    level: 'tiny', parentTask: 'breakfast',
-    suggestedFor: ['breakfast', 'lunch', 'dinner'],
+    level: 'small', parentTask: 'breakfast',
+    suggestedFor: ['breakfast'],
     icon: '🍇', type: 'task'
   },
 
   // ── ארוחת צהריים (lunch) ─────────────────────────────────────────────
+  // Order: full → medium → small
   {
     id: 'food-lunch-full',
-    label: 'ארוחת צהריים',
+    label: 'ארוחת צהריים מסודרת',
     family: 'food', plantFamily: 'nutrition',
     level: 'full', parentTask: 'lunch',
     suggestedFor: ['lunch'],
     icon: '🥗', type: 'task'
   },
   {
+    id: 'food-lunch-bite',
+    label: 'ביס ממשהו עד 15:00',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'medium', parentTask: 'lunch',
+    suggestedFor: ['lunch'],
+    icon: '🍎', type: 'task'
+  },
+  {
     id: 'food-lunch-small',
-    label: 'משהו קטן לצהריים',
+    label: 'ארוחת צהריים קטנה מאולתרת',
     family: 'food', plantFamily: 'nutrition',
     level: 'medium', parentTask: 'lunch',
     suggestedFor: ['lunch'],
     icon: '🥣', type: 'task'
   },
   {
-    id: 'food-lunch-warm',
-    label: 'משהו חם לצהריים',
+    id: 'food-lunch-to-go',
+    label: 'ארוחת צהריים קטנה לדרך',
     family: 'food', plantFamily: 'nutrition',
-    level: 'small', parentTask: 'lunch',
+    level: 'medium', parentTask: 'lunch',
     suggestedFor: ['lunch'],
-    icon: '🍲', type: 'task'
+    icon: '🧆', type: 'task'
   },
   {
-    id: 'food-lunch-bite',
-    label: 'ביס קטן לאמצע היום',
+    id: 'food-lunch-choose',
+    label: 'לבחור משהו לצהריים',
     family: 'food', plantFamily: 'nutrition',
-    level: 'micro', parentTask: 'lunch',
+    level: 'small', parentTask: 'lunch',
     suggestedFor: ['lunch'],
     icon: '🫙', type: 'task'
   },
   {
     id: 'food-place-lunch-nearby',
-    label: 'להניח משהו לאכול לידך לצהריים',
+    label: 'להניח משהו אכיל לידך עד 15:00',
     family: 'food', plantFamily: 'nutrition',
-    level: 'micro', parentTask: 'lunch',
+    level: 'small', parentTask: 'lunch',
     suggestedFor: ['lunch'],
-    icon: '🧆', type: 'task'
+    icon: '🫐', type: 'task'
+  },
+  {
+    id: 'food-lunch-prepare-small',
+    label: 'להכין משהו קטן לצהריים',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'small', parentTask: 'lunch',
+    suggestedFor: ['lunch'],
+    icon: '🍇', type: 'task'
   },
 
   // ── ארוחת ערב (dinner) ───────────────────────────────────────────────
+  // Order: full → medium → small
   {
     id: 'food-dinner-full',
-    label: 'ארוחת ערב',
+    label: 'ארוחת ערב מסודרת',
     family: 'food', plantFamily: 'nutrition',
     level: 'full', parentTask: 'dinner',
     suggestedFor: ['dinner'],
     icon: '🍲', type: 'task'
   },
   {
+    id: 'food-dinner-bite',
+    label: 'ביס ממשהו עד 20:00',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'medium', parentTask: 'dinner',
+    suggestedFor: ['dinner'],
+    icon: '🍎', type: 'task'
+  },
+  {
     id: 'food-dinner-small',
-    label: 'משהו קטן לערב',
+    label: 'ארוחת ערב קטנה מאולתרת',
     family: 'food', plantFamily: 'nutrition',
     level: 'medium', parentTask: 'dinner',
     suggestedFor: ['dinner'],
     icon: '🥘', type: 'task'
   },
   {
-    id: 'food-dinner-warm',
-    label: 'משהו חם לסיום היום',
+    id: 'food-dinner-to-go',
+    label: 'ארוחת ערב קטנה לדרך',
     family: 'food', plantFamily: 'nutrition',
-    level: 'small', parentTask: 'dinner',
+    level: 'medium', parentTask: 'dinner',
     suggestedFor: ['dinner'],
-    icon: '☕', type: 'task'
+    icon: '🧆', type: 'task'
   },
   {
-    id: 'food-dinner-bite',
-    label: 'ביס קטן לערב',
+    id: 'food-dinner-choose',
+    label: 'לבחור משהו לערב',
     family: 'food', plantFamily: 'nutrition',
-    level: 'micro', parentTask: 'dinner',
+    level: 'small', parentTask: 'dinner',
     suggestedFor: ['dinner'],
     icon: '🫙', type: 'task'
   },
   {
     id: 'food-place-dinner-nearby',
-    label: 'להניח משהו לאכול לידך לערב',
+    label: 'להניח משהו אכיל לידך עד 20:00',
     family: 'food', plantFamily: 'nutrition',
-    level: 'micro', parentTask: 'dinner',
+    level: 'small', parentTask: 'dinner',
     suggestedFor: ['dinner'],
     icon: '🫐', type: 'task'
   },
+  {
+    id: 'food-dinner-prepare-small',
+    label: 'להכין משהו קטן לערב',
+    family: 'food', plantFamily: 'nutrition',
+    level: 'small', parentTask: 'dinner',
+    suggestedFor: ['dinner'],
+    icon: '🍇', type: 'task'
+  },
 
   // ── מנוחה (rest) ─────────────────────────────────────────────────────
+  // parentTask: 'sleep' — maps to tc-sleep card in Today.
+  // Order: full → medium → small. Time labels — no timer added.
   {
-    id: 'rest-lie-down',
-    label: 'לשכב רגע ולהניח את הגוף',
+    id: 'rest-10min',
+    label: '10 דקות מנוחה',
     family: 'rest', plantFamily: 'rest',
     level: 'full', parentTask: 'sleep',
     suggestedFor: ['sleep'],
     icon: '🛌', type: 'task'
   },
   {
-    id: 'rest-sit-with-blanket',
-    label: 'לשבת עם שמיכה לכמה דקות',
+    id: 'rest-15min',
+    label: '15 דקות הפסקה',
     family: 'rest', plantFamily: 'rest',
-    level: 'medium', parentTask: 'sleep',
+    level: 'full', parentTask: 'sleep',
     suggestedFor: ['sleep'],
     icon: '🧸', type: 'task'
   },
   {
-    id: 'rest-eyes-closed',
-    label: 'לעצום עיניים לדקה',
+    id: 'rest-cozy-10min',
+    label: '10 דקות עם כרית / שמיכה / מקום נוח',
     family: 'rest', plantFamily: 'rest',
-    level: 'small', parentTask: 'sleep',
-    suggestedFor: ['sleep'],
-    icon: '😌', type: 'task'
-  },
-  {
-    id: 'rest-lean-back',
-    label: 'להישען לאחור לרגע',
-    family: 'rest', plantFamily: 'rest',
-    level: 'tiny', parentTask: 'sleep',
+    level: 'full', parentTask: 'sleep',
     suggestedFor: ['sleep'],
     icon: '🌙', type: 'task'
   },
   {
-    id: 'rest-pause-now',
-    label: 'לעצור לשנייה ולא לעשות כלום',
+    id: 'rest-3min',
+    label: '3 דקות הפסקה',
     family: 'rest', plantFamily: 'rest',
-    level: 'micro', parentTask: 'sleep',
+    level: 'medium', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '😌', type: 'task'
+  },
+  {
+    id: 'rest-5min-comfy',
+    label: '5 דקות במקום נוח',
+    family: 'rest', plantFamily: 'rest',
+    level: 'medium', parentTask: 'sleep',
     suggestedFor: ['sleep'],
     icon: '🌿', type: 'task'
   },
   {
-    id: 'rest-drop-pause',
-    label: 'לתת לגוף דקה בלי לעשות כלום',
+    id: 'rest-sit-3min',
+    label: '3 דקות לשבת רגע',
     family: 'rest', plantFamily: 'rest',
-    level: 'micro', parentTask: 'sleep',
+    level: 'medium', parentTask: 'sleep',
     suggestedFor: ['sleep'],
     icon: '🍃', type: 'task'
+  },
+  {
+    id: 'rest-30sec',
+    label: '30 שניות לעצור רגע',
+    family: 'rest', plantFamily: 'rest',
+    level: 'small', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '⏸️', type: 'task'
+  },
+  {
+    id: 'rest-sit-minute',
+    label: 'דקה לשבת רגע',
+    family: 'rest', plantFamily: 'rest',
+    level: 'small', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '🪑', type: 'task'
+  },
+  {
+    id: 'rest-lean-30sec',
+    label: '30 שניות להישען אחורה',
+    family: 'rest', plantFamily: 'rest',
+    level: 'small', parentTask: 'sleep',
+    suggestedFor: ['sleep'],
+    icon: '🌙', type: 'task'
   },
 
   // ── שתייה (water) ─────────────────────────────────────────────────────
@@ -9499,7 +9552,7 @@ function _applyEditModeControls() {
   var st = getPlusLibraryState();
 
   // Size controls for ordered-task domains
-  var SIZE_TASKS = ['breakfast', 'shower', 'outside'];
+  var SIZE_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'sleep'];
   SIZE_TASKS.forEach(function(id) {
     var card = document.getElementById('tc-' + id);
     if (!card) return;
