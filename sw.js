@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v52'; // rest-card-connected: tc-rest card + rest library wired to rest domain
+const CACHE = 'body-soul-v53'; // quiet-rest-permanent-controls: rest ladder on breathing card + permanent step storage
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

@@ -2491,7 +2491,6 @@ BUILD: <span id="debug-build-val"></span>
     <div class="task-card" id="tc-shower"    onclick="toggleTask('shower')"   ><div class="check-badge">✓</div><span class="t-icon">🚿</span><div class="t-name">מקלחת</div><div class="t-sub">ניקוי והרגעה</div></div>
     <div class="task-card" id="tc-breathing" onclick="toggleTask('breathing')"><div class="check-badge">✓</div><span class="t-icon">🌬️</span><div class="t-name">רגע שקט</div><div class="t-sub">נשימה / עצירה</div></div>
     <div class="task-card" id="tc-outside"   onclick="toggleTask('outside')"  ><div class="check-badge">✓</div><span class="t-icon">🌤️</span><div class="t-name">אוויר צח</div><div class="t-sub">יציאה החוצה</div></div>
-    <div class="task-card" id="tc-rest"      onclick="toggleTask('rest')"     ><div class="check-badge">✓</div><span class="t-icon">🌿</span><div class="t-name">מנוחה</div><div class="t-sub">רגע שקט / עצירה</div></div>
     <div class="task-card" id="tc-sleep"     onclick="toggleTask('sleep')"    ><div class="check-badge">✓</div><span class="t-icon">🌙</span><div class="t-name">כניסה למיטה בשעה סבירה</div><div class="t-sub">לישון טוב הלילה</div></div>
   </div>
 
@@ -2937,7 +2936,7 @@ BUILD: <span id="debug-build-val"></span>
 
 
 <script>
-const TASK_IDS = ['breakfast','lunch','dinner','shower','breathing','outside','rest','sleep'];
+const TASK_IDS = ['breakfast','lunch','dinner','shower','breathing','outside','sleep'];
 
 // Micro-task suggestion map — gentler version of each TASK_ID action
 const MICRO_TASK_LABELS = {
@@ -2955,7 +2954,7 @@ const MICRO_TASK_LABELS = {
 // Task label display (Hebrew user-facing names per TASK_ID)
 const TASK_DISPLAY_LABELS = {
   breakfast:'ארוחת בוקר', lunch:'ארוחת צהריים', dinner:'ארוחת ערב',
-  shower:'מקלחת', breathing:'נשימה קצרה', outside:'יציאה לאוויר', rest:'מנוחה', sleep:'שינה',
+  shower:'מקלחת', breathing:'נשימה קצרה', outside:'יציאה לאוויר', sleep:'שינה',
 };
 
 // Companion lines for the gentle habit panel
@@ -3021,7 +3020,6 @@ const TASK_UI_LABELS = {
   shower:    'מקלחת',
   breathing: 'רגע שקט',
   outside:   'אוויר צח',
-  rest:      'מנוחה',
   sleep:     'כניסה למיטה',   // full DOM: "כניסה למיטה בשעה סבירה" — shortened for panel
   water:     'מים',
   exercise:  'תנועה',         // composite card — shown as family label in panel
@@ -3264,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'rest-card-connected-2026-07-12';
+const TORI_BUILD = 'quiet-rest-permanent-controls-2026-07-12';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3489,7 +3487,8 @@ function _taskStepList(taskId) {
   return SELF_CARE_TASK_LIBRARY.filter(function(t) { return t.parentTask === taskId; });
 }
 
-// Returns current index in _taskStepList, or -1 if at original (no override).
+// Returns current index in _taskStepList based on Journey adaptive override, or -1 if none.
+// Used ONLY by the Journey/adaptive suggestion path.
 function _taskCurrentIdx(taskId, list) {
   var ov = _gentleHabitOverrides && _gentleHabitOverrides[taskId];
   if (!ov || !ov.selectedOptionId) return -1;
@@ -3499,28 +3498,69 @@ function _taskCurrentIdx(taskId, list) {
   return -1;
 }
 
-// Moves the task one step softer (delta=+1, higher index = smaller) or
-// one step larger (delta=-1, lower index = more demanding).
-// Index -1 = original (no override, largest). Index list.length-1 = smallest.
+// Tasks whose library list is ordered small→large (ascending).
+// For these, -1 (no selection) = smallest (default card label) → פחות disabled.
+// For all other tasks, -1 = largest (original full label) → יותר disabled.
+var STEP_ASCENDING_TASKS = ['breathing'];
+
+// Returns current size-control index from gs.taskStepSelections, or -1 if no selection.
+function _taskStepCurrentIdx(taskId, list) {
+  var sel = gs.taskStepSelections && gs.taskStepSelections[taskId];
+  if (!sel) return -1;
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].id === sel) return i;
+  }
+  return -1;
+}
+
+// Moves the task one step. For standard tasks: delta +1 = smaller, delta -1 = larger.
+// For STEP_ASCENDING_TASKS: delta +1 = larger, delta -1 = smaller (caller reverses deltas).
+// Stores permanent selection in gs.taskStepSelections — no 7-day expiry, no badge.
 async function adjustTaskStep(taskId, delta) {
   var list = _taskStepList(taskId);
   if (!list.length) return;
-  var cur  = _taskCurrentIdx(taskId, list);
+  var ascending = (STEP_ASCENDING_TASKS.indexOf(taskId) !== -1);
+  var cur  = _taskStepCurrentIdx(taskId, list);
   var next = Math.max(-1, Math.min(cur + delta, list.length - 1));
   if (next === cur) return;
 
+  // Persist the selection permanently (no expiry)
   if (next === -1) {
-    await cancelAdaptiveOverride(taskId);
+    delete gs.taskStepSelections[taskId];
   } else {
-    var task      = list[next];
-    var origLabel = TASK_UI_LABELS[taskId] || TASK_DISPLAY_LABELS[taskId] || taskId;
-    await activateMicroTaskForWeek(taskId, origLabel, task.label, task.id,
-      task.plantFamily || null, 'עברתי ל"' + task.label + '" 🌿');
+    gs.taskStepSelections[taskId] = list[next].id;
   }
+  await saveGardenState();
+
+  // Update card label immediately (no badge)
+  var card = document.getElementById('tc-' + taskId);
+  if (card) {
+    var nameEl = card.querySelector('.t-name');
+    if (nameEl) {
+      if (next === -1) {
+        // Restore default card label from DOM's original inner text
+        var origLabel = TASK_UI_LABELS[taskId] || TASK_DISPLAY_LABELS[taskId] || taskId;
+        nameEl.textContent = origLabel;
+      } else {
+        nameEl.textContent = list[next].label;
+      }
+    }
+  }
+
+  if (next !== -1) {
+    showToast('עברתי ל"' + list[next].label + '" 🌿');
+  }
+
   // Update disabled states on the in-card buttons
-  var atMin = (next === list.length - 1);
-  var atMax = (next === -1);
-  var minB  = document.getElementById('step-minus-' + taskId);
+  var atMin, atMax;
+  if (ascending) {
+    atMin = (next === -1);
+    atMax = (next === list.length - 1);
+  } else {
+    atMin = (next === list.length - 1);
+    atMax = (next === -1);
+  }
+  var minB = document.getElementById('step-minus-' + taskId);
   var plusB = document.getElementById('step-plus-'  + taskId);
   if (minB) { minB.disabled = atMin; minB.style.opacity = atMin ? '0.35' : '1'; }
   if (plusB){ plusB.disabled = atMax; plusB.style.opacity = atMax ? '0.35' : '1'; }
@@ -4012,7 +4052,8 @@ let gs = {
   factIdx: 0,
   factDate: '',
   wildCooldowns: {},
-  waterStepLevel: 0,  // 0-7, advances gently as water habit builds
+  waterStepLevel: 0,    // 0-7, advances gently as water habit builds
+  taskStepSelections: {}, // permanent size-control selections keyed by taskId → library entry id
 };
 
 // ---- Storage ----
@@ -4034,6 +4075,8 @@ async function loadGardenState() {
       }
       // Migration: waterStepLevel
       if (typeof gs.waterStepLevel !== 'number') gs.waterStepLevel = 0;
+      // Migration: taskStepSelections
+      if (!gs.taskStepSelections || typeof gs.taskStepSelections !== 'object') gs.taskStepSelections = {};
     }
   } catch(e){}
   // Day rollover
@@ -5531,88 +5574,89 @@ const SELF_CARE_TASK_LIBRARY = [
     icon: '🍇', type: 'task'
   },
 
-  // ── מנוחה (rest) ─────────────────────────────────────────────────────
-  // parentTask: 'rest' — maps to tc-rest card in Today (daytime rest, not bedtime).
-  // Order: full → medium → small. Default (no override) = tc-rest sub-label "רגע שקט / עצירה".
+  // ── מנוחה / רגע שקט (rest ladder) ───────────────────────────────────
+  // parentTask: 'breathing' — attached to the existing #tc-breathing "רגע שקט" card.
+  // Order: ASCENDING (small → full) so יותר moves toward longer rest and פחות moves back.
+  // Default (no stored selection) = card shows original label "רגע שקט".
   {
-    id: 'rest-10min',
-    label: '10 דקות מנוחה',
+    id: 'rest-moment',
+    label: 'רגע שקט / עצירה',
     family: 'rest', plantFamily: 'rest',
-    level: 'full', parentTask: 'rest',
-    suggestedFor: ['rest'],
-    icon: '🛌', type: 'task'
-  },
-  {
-    id: 'rest-15min',
-    label: '15 דקות הפסקה',
-    family: 'rest', plantFamily: 'rest',
-    level: 'full', parentTask: 'rest',
-    suggestedFor: ['rest'],
-    icon: '🧸', type: 'task'
-  },
-  {
-    id: 'rest-cozy-10min',
-    label: '10 דקות עם כרית / שמיכה / מקום נוח',
-    family: 'rest', plantFamily: 'rest',
-    level: 'full', parentTask: 'rest',
-    suggestedFor: ['rest'],
-    icon: '🌙', type: 'task'
-  },
-  {
-    id: 'rest-3min',
-    label: '3 דקות הפסקה',
-    family: 'rest', plantFamily: 'rest',
-    level: 'medium', parentTask: 'rest',
-    suggestedFor: ['rest'],
-    icon: '😌', type: 'task'
-  },
-  {
-    id: 'rest-5min-comfy',
-    label: '5 דקות במקום נוח',
-    family: 'rest', plantFamily: 'rest',
-    level: 'medium', parentTask: 'rest',
-    suggestedFor: ['rest'],
+    level: 'small', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
     icon: '🌿', type: 'task'
-  },
-  {
-    id: 'rest-sit-3min',
-    label: '3 דקות לשבת רגע',
-    family: 'rest', plantFamily: 'rest',
-    level: 'medium', parentTask: 'rest',
-    suggestedFor: ['rest'],
-    icon: '🍃', type: 'task'
   },
   {
     id: 'rest-30sec',
     label: '30 שניות לעצור רגע',
     family: 'rest', plantFamily: 'rest',
-    level: 'small', parentTask: 'rest',
-    suggestedFor: ['rest'],
+    level: 'small', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
     icon: '⏸️', type: 'task'
   },
   {
     id: 'rest-sit-minute',
     label: 'דקה לשבת רגע',
     family: 'rest', plantFamily: 'rest',
-    level: 'small', parentTask: 'rest',
-    suggestedFor: ['rest'],
+    level: 'small', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
     icon: '🪑', type: 'task'
   },
   {
     id: 'rest-lean-30sec',
     label: '30 שניות להישען אחורה',
     family: 'rest', plantFamily: 'rest',
-    level: 'small', parentTask: 'rest',
-    suggestedFor: ['rest'],
+    level: 'small', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
     icon: '🌙', type: 'task'
   },
   {
-    id: 'rest-moment',
-    label: 'רגע שקט / עצירה',
+    id: 'rest-3min',
+    label: '3 דקות הפסקה',
     family: 'rest', plantFamily: 'rest',
-    level: 'small', parentTask: 'rest',
-    suggestedFor: ['rest'],
+    level: 'medium', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
+    icon: '😌', type: 'task'
+  },
+  {
+    id: 'rest-5min-comfy',
+    label: '5 דקות במקום נוח',
+    family: 'rest', plantFamily: 'rest',
+    level: 'medium', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
     icon: '🌿', type: 'task'
+  },
+  {
+    id: 'rest-sit-3min',
+    label: '3 דקות לשבת רגע',
+    family: 'rest', plantFamily: 'rest',
+    level: 'medium', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
+    icon: '🍃', type: 'task'
+  },
+  {
+    id: 'rest-10min',
+    label: '10 דקות מנוחה',
+    family: 'rest', plantFamily: 'rest',
+    level: 'full', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
+    icon: '🛌', type: 'task'
+  },
+  {
+    id: 'rest-15min',
+    label: '15 דקות הפסקה',
+    family: 'rest', plantFamily: 'rest',
+    level: 'full', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
+    icon: '🧸', type: 'task'
+  },
+  {
+    id: 'rest-cozy-10min',
+    label: '10 דקות עם כרית / שמיכה / מקום נוח',
+    family: 'rest', plantFamily: 'rest',
+    level: 'full', parentTask: 'breathing',
+    suggestedFor: ['breathing'],
+    icon: '🌙', type: 'task'
   },
 
   // ── שתייה (water) ─────────────────────────────────────────────────────
@@ -7002,7 +7046,7 @@ function renderGardenCards() {
 // Map app task ids to garden action kinds
 const TASK_ACTION_MAP = {
   breakfast:'food', lunch:'food', dinner:'food',
-  shower:'hygiene', breathing:'breath', rest:'rest', sleep:'rest', outside:'rest',
+  shower:'hygiene', breathing:'breath', sleep:'rest', outside:'rest',
 };
 
 function updateJourney() {
@@ -9503,7 +9547,7 @@ function checkAndSendNotifications() {
 
 // Supported in v1: breakfast, lunch, dinner, shower, outside.
 // Deferred: water (cup logic), exercise (composite), breathing/sleep (no library family yet).
-var EDIT_MODE_SUPPORTED_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'rest'];
+var EDIT_MODE_SUPPORTED_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'breathing'];
 
 var _editMode = false;
 var _pendingMoveTask = null;
@@ -9562,8 +9606,9 @@ function _applyEditModeControls() {
   var st = getPlusLibraryState();
 
   // Size controls for ordered-task domains
-  // Note: 'sleep' (tc-sleep = כניסה למיטה) excluded — bedtime card, no size controls.
-  var SIZE_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'rest'];
+  // Note: 'sleep' excluded — bedtime card, no size controls.
+  // 'breathing' list is ascending (small→large): יותר = larger, פחות = smaller; deltas reversed.
+  var SIZE_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'breathing'];
   SIZE_TASKS.forEach(function(id) {
     var card = document.getElementById('tc-' + id);
     if (!card) return;
@@ -9571,15 +9616,22 @@ function _applyEditModeControls() {
     if (st.hiddenParentTasks && st.hiddenParentTasks[id]) return;
     var list = _taskStepList(id);
     if (!list.length) return;
-    var cur   = _taskCurrentIdx(id, list);
-    var atMin = (cur === list.length - 1); // at softest — rך יותר disabled
-    var atMax = (cur === -1);              // at original full — קצת יותר disabled
+    var ascending = (STEP_ASCENDING_TASKS.indexOf(id) !== -1);
+    var cur   = _taskStepCurrentIdx(id, list);
+    var atMin, atMax;
+    if (ascending) {
+      atMin = (cur === -1);              // no selection = smallest → פחות disabled
+      atMax = (cur === list.length - 1); // at largest → יותר disabled
+    } else {
+      atMin = (cur === list.length - 1); // at smallest → פחות disabled
+      atMax = (cur === -1);              // no selection = original full → יותר disabled
+    }
     var row = _makeSizeControlRow(
       id, 'step-minus-' + id, 'step-plus-' + id,
       atMin, atMax,
       'var(--sage,#6A9B78)',
-      (function(tid) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, 1); }; })(id),
-      (function(tid) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, -1); }; })(id)
+      (function(tid, asc) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, asc ? -1 : 1); }; })(id, ascending),
+      (function(tid, asc) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, asc ? 1 : -1); }; })(id, ascending)
     );
     card.appendChild(row);
   });
@@ -9649,7 +9701,7 @@ async function confirmMoveToLibrary() {
 function _setupLongPress() {
   var _lpTimer = null;
   function clearLP() { if (_lpTimer) { clearTimeout(_lpTimer); _lpTimer = null; } }
-  var allCards = EDIT_MODE_SUPPORTED_TASKS.concat(['breathing', 'sleep']); // unsupported show gentle toast
+  var allCards = EDIT_MODE_SUPPORTED_TASKS.concat(['sleep']); // sleep unsupported — shows gentle toast
   allCards.forEach(function(id) {
     var card = document.getElementById('tc-' + id);
     if (!card) return;
@@ -11183,6 +11235,22 @@ async function restoreFromPlus(kind) {
 
 // Apply active micro-task overrides to Today tab DOM (safe, does not delete original)
 function applyMicroTaskOverrides() {
+  // 1. Apply permanent size-control selections (no badge, no expiry)
+  var stepSels = (gs && gs.taskStepSelections) || {};
+  Object.keys(stepSels).forEach(function(id) {
+    var selId = stepSels[id];
+    if (!selId) return;
+    var list = _taskStepList(id);
+    var entry = null;
+    for (var i = 0; i < list.length; i++) { if (list[i].id === selId) { entry = list[i]; break; } }
+    if (!entry) return;
+    var card = document.getElementById('tc-' + id);
+    if (!card) return;
+    var nameEl = card.querySelector('.t-name');
+    if (nameEl) nameEl.textContent = entry.label;
+  });
+
+  // 2. Apply 7-day Journey adaptive overrides (with badge — these take visual precedence)
   var now = Date.now();
   Object.keys(_gentleHabitOverrides || {}).forEach(function(id) {
     var ov = _gentleHabitOverrides[id];
