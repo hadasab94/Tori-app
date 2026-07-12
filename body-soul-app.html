@@ -3262,7 +3262,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'rest-lunch-dinner-copy-2026-07-01';
+const TORI_BUILD = 'water-size-controls-2026-07-12';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3462,6 +3462,23 @@ function selectWaterStepFromLibrary(level) {
   updateProgress();
   closeLibModalForce();
   showToast('עדכנתי את שלב המים להיום. 💧');
+}
+
+// Adjusts water step level by delta (−1 or +1), re-renders, persists.
+// Used by the in-card size controls in edit mode.
+function adjustWaterStep(delta) {
+  var current = gs.waterStepLevel || 0;
+  var next = Math.max(0, Math.min(current + delta, WATER_STEPS.length - 1));
+  if (next === current) return;
+  gs.waterStepLevel = next;
+  saveGardenState();
+  renderWaterCup();
+  updateProgress();
+  // Refresh the button disabled states without leaving/re-entering edit mode
+  var minusBtn = document.getElementById('water-size-minus');
+  var plusBtn  = document.getElementById('water-size-plus');
+  if (minusBtn) { minusBtn.disabled = (next === 0); minusBtn.style.opacity = next === 0 ? '0.4' : '1'; }
+  if (plusBtn)  { plusBtn.disabled  = (next === WATER_STEPS.length - 1); plusBtn.style.opacity = next === WATER_STEPS.length - 1 ? '0.4' : '1'; }
 }
 
 // QA helper — run in DevTools to reset today's water count to 0
@@ -9426,6 +9443,35 @@ function _applyEditModeControls() {
     })(id);
     card.appendChild(btn);
   });
+
+  // Water card — size controls (replaces לספרייה for water)
+  var waterCard = document.getElementById('water-card');
+  if (waterCard) {
+    var level = gs.waterStepLevel || 0;
+    var max   = WATER_STEPS.length - 1;
+    var wrap  = document.createElement('div');
+    wrap.className = 'edit-lib-btn'; // reuse class so exitEditMode cleans it up
+    wrap.style.cssText = 'display:flex;justify-content:space-between;gap:8px;margin-top:8px;width:100%';
+    wrap.onclick = function(e) { e.stopPropagation(); };
+
+    var minusBtn = document.createElement('button');
+    minusBtn.id = 'water-size-minus';
+    minusBtn.textContent = 'רך יותר';
+    minusBtn.disabled = (level === 0);
+    minusBtn.style.cssText = 'flex:1;padding:6px 0;font-size:12px;border-radius:8px;border:1px solid var(--sky,#5AACCE);background:#F0F8FC;color:var(--sky,#5AACCE);cursor:pointer;opacity:' + (level === 0 ? '0.4' : '1');
+    minusBtn.onclick = function(e) { e.stopPropagation(); adjustWaterStep(-1); };
+
+    var plusBtn = document.createElement('button');
+    plusBtn.id = 'water-size-plus';
+    plusBtn.textContent = 'קצת יותר';
+    plusBtn.disabled = (level === max);
+    plusBtn.style.cssText = 'flex:1;padding:6px 0;font-size:12px;border-radius:8px;border:1px solid var(--sky,#5AACCE);background:#F0F8FC;color:var(--sky,#5AACCE);cursor:pointer;opacity:' + (level === max ? '0.4' : '1');
+    plusBtn.onclick = function(e) { e.stopPropagation(); adjustWaterStep(1); };
+
+    wrap.appendChild(minusBtn);
+    wrap.appendChild(plusBtn);
+    waterCard.appendChild(wrap);
+  }
 }
 
 // Hides/shows built-in parent task cards based on library state.

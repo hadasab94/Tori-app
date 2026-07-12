@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v47'; // rest-lunch-dinner-copy: label fixes
+const CACHE = 'body-soul-v48'; // water-size-controls: in-card step adjust buttons
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
