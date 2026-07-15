@@ -3277,7 +3277,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'daily-pace-gate-2026-07-15';
+const TORI_BUILD = 'pace-defaults-2026-07-15';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3518,9 +3518,15 @@ function _taskCurrentIdx(taskId, list) {
 // For all other tasks, -1 = largest (original full label) → יותר disabled.
 var STEP_ASCENDING_TASKS = ['breathing'];
 
-// Returns current size-control index from gs.taskStepSelections, or -1 if no selection.
+// Returns effective size-control index: manual selection > today's pace default > -1 (original).
 function _taskStepCurrentIdx(taskId, list) {
+  // 1. Permanent manual selection from פחות/יותר
   var sel = gs.taskStepSelections && gs.taskStepSelections[taskId];
+  if (!sel) {
+    // 2. Today's pace default
+    var todayDefaults = gs.paceTaskDefaults && gs.paceTaskDefaults[getTodayKey()];
+    sel = todayDefaults && todayDefaults[taskId];
+  }
   if (!sel) return -1;
   for (var i = 0; i < list.length; i++) {
     if (list[i].id === sel) return i;
@@ -4067,8 +4073,9 @@ let gs = {
   factIdx: 0,
   factDate: '',
   wildCooldowns: {},
-  waterStepLevel: 0,    // 0-7, advances gently as water habit builds
-  taskStepSelections: {}, // permanent size-control selections keyed by taskId → library entry id
+  waterStepLevel: 0,       // 0-7, advances gently as water habit builds
+  taskStepSelections: {},  // permanent size-control selections keyed by taskId → library entry id
+  paceTaskDefaults: {},    // daily pace defaults: { [localDateKey]: { taskId: libraryEntryId } }
 };
 
 // ---- Storage ----
@@ -4092,6 +4099,13 @@ async function loadGardenState() {
       if (typeof gs.waterStepLevel !== 'number') gs.waterStepLevel = 0;
       // Migration: taskStepSelections
       if (!gs.taskStepSelections || typeof gs.taskStepSelections !== 'object') gs.taskStepSelections = {};
+      // Migration: paceTaskDefaults
+      if (!gs.paceTaskDefaults || typeof gs.paceTaskDefaults !== 'object') gs.paceTaskDefaults = {};
+      // Prune stale pace defaults (keep only today to avoid unbounded growth)
+      var _todayK = getTodayKey();
+      Object.keys(gs.paceTaskDefaults).forEach(function(k) {
+        if (k !== _todayK) delete gs.paceTaskDefaults[k];
+      });
     }
   } catch(e){}
   // Day rollover
@@ -7570,10 +7584,10 @@ function _obFinish() {
 var _todayPace = null;
 
 var PACE_META = {
-  compassion: { label: 'יום חמלה',          emoji: '🫶', companionId: 'capy'   },
-  blanket:    { label: 'קצב שמיכה',         emoji: '🛏️', companionId: 'capy'   },
-  enough:     { label: 'קצב בדיוק מספיק',   emoji: '🦔', companionId: 'kipoda' },
-  curiosity:  { label: 'קצב סקרנות',        emoji: '🐛', companionId: 'forest' },
+  compassion: { label: 'יום חמלה',        chipLabel: 'יום חמלה',              emoji: '🫶', companionId: 'capy'   },
+  blanket:    { label: 'קצב שמיכה',       chipLabel: 'היום בקצב שמיכה',       emoji: '🛏️', companionId: 'capy'   },
+  enough:     { label: 'קצב בול באמצע',   chipLabel: 'היום בקצב בול באמצע',   emoji: '🦔', companionId: 'kipoda' },
+  curiosity:  { label: 'קצב סקרנות',      chipLabel: 'היום בקצב סקרנות',      emoji: '🐛', companionId: 'forest' },
 };
 
 async function loadTodayPace() {
@@ -7612,7 +7626,7 @@ function _buildPaceChip() {
   if (!m) return '';
   return '<div class="pace-chip-bar">'
     + '<span style="font-size:16px">' + m.emoji + '</span>'
-    + '<span class="pace-chip-label">' + m.label + '</span>'
+    + '<span class="pace-chip-label">' + (m.chipLabel || m.label) + '</span>'
     + '<button class="pace-chip-change" onclick="clearTodayPace()">לשנות קצב</button>'
     + '</div>';
 }
@@ -7628,7 +7642,7 @@ function _buildPaceGate() {
     + _buildPaceCard('blanket', 'קצב שמיכה', 'קפיברה',
         '"נתחיל מהשמיכה. היא כבר פה, ויש לה גישה מצוינת."',
         'טון נינוח וחם. להתחיל ביום בלי דחיפה, בקצב שלא ממהר לשום מקום.', '')
-    + _buildPaceCard('enough', 'קצב בדיוק מספיק', 'קיפודה',
+    + _buildPaceCard('enough', 'קצב בול באמצע', 'קיפודה',
         '"כמה משימות בגודל הנכון. כל השאר מוזמנות לשלוח מייל מסודר."',
         'טון שמשאיר מקום גם לך. לבחור מה מתאים להיום, בלי לתת לרשימה להשתלט.', '')
     + _buildPaceCard('curiosity', 'קצב סקרנות', 'חפשושית',
@@ -7662,8 +7676,53 @@ function _buildPaceCard(pace, title, character, quote, text, desc) {
     + '</div>';
 }
 
+// Tasks that receive daily pace defaults (same set as SIZE_TASKS).
+// Breathing is ascending (small→large); all others are descending (large→small).
+var PACE_DEFAULT_TASKS = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'breathing'];
+
+// Returns the list index for a given pace in a given domain.
+// ascending = list[0] is smallest; descending = list[0] is largest.
+function _paceDefaultIdx(taskId, list, pace) {
+  if (!list.length) return -1;
+  var ascending = (STEP_ASCENDING_TASKS.indexOf(taskId) !== -1);
+  var last = list.length - 1;
+  var mid  = Math.floor(last / 2);
+  if (pace === 'blanket' || pace === 'compassion') {
+    return ascending ? 0 : last;   // smallest
+  }
+  if (pace === 'curiosity') {
+    return ascending ? last : 0;   // fullest
+  }
+  if (pace === 'enough') {
+    return mid;                    // middle
+  }
+  return -1;
+}
+
+// Computes pace task defaults for today and stores them in gs.paceTaskDefaults[todayKey].
+// Compassion day skips default-setting (existing compassion logic handles that day's display).
+function _applyPaceDefaults(pace) {
+  gs.paceTaskDefaults = gs.paceTaskDefaults || {};
+  var todayKey = getTodayKey();
+  if (pace === 'compassion') {
+    // Compassion day: clear any stale defaults so original labels show through compassion panel
+    delete gs.paceTaskDefaults[todayKey];
+    return;
+  }
+  var defaults = {};
+  PACE_DEFAULT_TASKS.forEach(function(id) {
+    var list = _taskStepList(id);
+    if (!list.length) return;
+    var idx = _paceDefaultIdx(id, list, pace);
+    if (idx >= 0 && idx < list.length) defaults[id] = list[idx].id;
+  });
+  gs.paceTaskDefaults[todayKey] = defaults;
+}
+
 async function selectTodayPace(pace) {
   await saveTodayPace(pace);
+  _applyPaceDefaults(pace);
+  await saveGardenState();
 
   // Deactivate compassion day when switching away from it
   if (pace !== 'compassion' && cd.active) {
@@ -11263,7 +11322,22 @@ async function restoreFromPlus(kind) {
 
 // Apply active micro-task overrides to Today tab DOM (safe, does not delete original)
 function applyMicroTaskOverrides() {
-  // 1. Apply permanent size-control selections (no badge, no expiry)
+  // 1. Apply today's pace defaults (daily, no badge) — lowest priority
+  var todayDefaults = (gs.paceTaskDefaults || {})[getTodayKey()] || {};
+  Object.keys(todayDefaults).forEach(function(id) {
+    var selId = todayDefaults[id];
+    if (!selId) return;
+    var list = _taskStepList(id);
+    var entry = null;
+    for (var i = 0; i < list.length; i++) { if (list[i].id === selId) { entry = list[i]; break; } }
+    if (!entry) return;
+    var card = document.getElementById('tc-' + id);
+    if (!card) return;
+    var nameEl = card.querySelector('.t-name');
+    if (nameEl) nameEl.textContent = entry.label;
+  });
+
+  // 2. Apply permanent manual size-control selections (no badge) — overrides pace defaults
   var stepSels = (gs && gs.taskStepSelections) || {};
   Object.keys(stepSels).forEach(function(id) {
     var selId = stepSels[id];
@@ -11278,7 +11352,7 @@ function applyMicroTaskOverrides() {
     if (nameEl) nameEl.textContent = entry.label;
   });
 
-  // 2. Apply 7-day Journey adaptive overrides (with badge — these take visual precedence)
+  // 3. Apply 7-day Journey adaptive overrides (with badge) — overrides everything
   var now = Date.now();
   Object.keys(_gentleHabitOverrides || {}).forEach(function(id) {
     var ov = _gentleHabitOverrides[id];
