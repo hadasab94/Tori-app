@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v59'; // gentle-scroll-beta-feed: 7 approved posts, no likes, graceful image fallback
+const CACHE = 'body-soul-v60'; // gentle-scroll-pigeon: lynx replaced by pigeon-art post
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
