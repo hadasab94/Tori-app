@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v63'; // gentle-scroll-optimized: 5 feed images PNG→WebP, lazy loading
+const CACHE = 'body-soul-v64'; // asset-optimize: kipoda PNG→WebP, lairs resized, kipoda afterLines
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

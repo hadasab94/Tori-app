@@ -3044,7 +3044,7 @@ const TASK_UI_LABELS = {
 // ── Companion small UI icons (for sparkle button and future use) ──
 const COMPANION_UI_ICONS = {
   capy:       'assets/companions/ui-icons/capy-ui-icon.webp',
-  kipoda:     'assets/companions/קיפודה/קיפודה אייקון.png',
+  kipoda:     'assets/companions/ui-icons/kipoda-ui-icon.webp',
   hafshushit: 'assets/companions/ui-icons/hafshushit-ui-icon.webp',
   forest:     'assets/companions/ui-icons/hafshushit-ui-icon.webp', // internal alias
   // inactive
@@ -3278,7 +3278,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'gentle-scroll-optimized-2026-07-15';
+const TORI_BUILD = 'asset-optimize-kipoda-lines-2026-07-16';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -5023,8 +5023,8 @@ const COMPANIONS = {
   kipoda: {
     id:'kipoda', name:'קיפודה', species:'קיפודה',
     displayNameWithArticle:'הקיפודה',
-    img:'assets/companions/קיפודה/קיפודה תמונת ראשית.png',
-    homeImg:'assets/companions/קיפודה/קיפודה מאורה.png',
+    img:'assets/companions/kipoda.webp',
+    homeImg:'assets/companions/lairs/kipoda-home.webp',
     tagline:'קצב בדיוק מספיק',
     bio:'למשימות בגודל אפשרי, עם מקום גם לך וגם ליום.',
     fitsIf:'לבחור מה נכנס ליום, עם מקום שנשאר גם לך',
@@ -5175,7 +5175,7 @@ const COMPANION_LAIRS = {
     hebrewName: 'קיפודה',
     defaultState: 'home',
     states: {
-      home: { src: 'assets/companions/קיפודה/קיפודה מאורה.png',
+      home: { src: 'assets/companions/lairs/kipoda-home.webp',
               alt: 'קיפודה במאורה שלה, שקטה ונינוחה' },
     },
   },
@@ -5282,9 +5282,9 @@ const PAMPER_CARDS = {
         sister: ['אחותי ואני נרגענו יחד. זה נקרא ניהול משאבים רגשי עם חלוקים יפים.'],
       },
       kipoda: {
-        alone:  ['הגעתי לספא, התיישבתי, ושמתי גבול אדיב מול כל מה שביקש ממני משהו. הגוף אמר תודה.'],
-        friend: ['ספא עם חברה זה מפגש שיודע בדיוק מה הוא — שתי כוסות תה, אפס הסברים.'],
-        sister: ['שתי קיפודות בחלוקים. אחת מכירה אותי מלפני שהיו לי קוצים. זה נקרא ספא עם עורף.'],
+        alone:  ['חלוק, מים חמימים וקצת שקט. העולם יכול לחכות בחוץ — גם לקוצים יש שעות קבלה.'],
+        friend: ['קצת חום, קצת חברה, ומספיק מרחב כדי לנשום. זאת כבר עסקה טובה מאוד.'],
+        sister: ['שתי קיפודות, שני חלוקים, ואפס צורך להסביר למה היום נגמר כאן.'],
       },
     },
   },
@@ -5439,21 +5439,9 @@ const PAMPER_CARDS = {
         ],
       },
       kipoda: {
-        alone:  [
-          'יצאתי לקפה קטן. לא הסברתי לאף אחד לאן. זה נקרא גבול עם ניחוח לבנדר.',
-          'כוס ביד, פארק, ואני — שלוש ישויות שהסכימו לא לדרוש אחת מהשנייה יותר מדי.',
-          'סיבוב קטן, שקט בינוני, וחזרה הביתה לפני שמישהו הציע להמשיך. ניהול מצוין.',
-        ],
-        friend: [
-          'יצאנו לקפה. לא כל שיחה צריכה מסקנה — לפעמים מספיק שהלכנו ביחד.',
-          'חברה טובה יודעת מתי להגיד משהו ומתי פשוט להחזיק כוס לידך. שתיהן עשינו את שתיהן.',
-          'קפה, פארק, שתי בעלות דעה שמסכימות שלא להיות יעילות. שיתוף פעולה מוצלח.',
-        ],
-        sister: [
-          'אחותי ואני יצאנו לסיבוב. היא יודעת מתי לדבר ומתי הקפה מדבר במקומה.',
-          'שתי קיפודות, שתי כוסות, פארק אחד. זה נקרא תיאום לוגיסטי עם חום.',
-          'אחותי הציעה לצאת. אני הסכמתי. ביחד הצלחנו לא להפוך את זה לאירוע. עשר מעשר.',
-        ],
+        alone:  ['קפה, כמה צעדים וקצת אוויר בין כל מה שהיה. סיבוב קטן, אפקט בכלל לא קטן.'],
+        friend: ['קפה, חברה וכמה צעדים. בלי לפתור את החיים — רק לאוורר אותם קצת.'],
+        sister: ['קפה עם אחות: מישהי שמכירה את הקוצים, ובכל זאת יודעת בדיוק איפה לשבת לידך.'],
       },
     },
   },
