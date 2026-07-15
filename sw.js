@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v57'; // daily-fixed-task-controls: today-only vs fixed (קבוע) split, pin markers, 3-button row
+const CACHE = 'body-soul-v58'; // gentle-scroll-tone: scroll page reframed as counter-feed
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
