@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v55'; // quiet-rest-permanent-controls: rest ladder on breathing card + permanent step storage
+const CACHE = 'body-soul-v56'; // pace-task-source-badge-fix: manual wins over journey overrides, badge removed, QA helpers
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

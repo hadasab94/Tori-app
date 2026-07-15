@@ -3277,7 +3277,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'pace-defaults-2026-07-15';
+const TORI_BUILD = 'pace-task-source-badge-fix-2026-07-15';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3586,6 +3586,46 @@ async function adjustTaskStep(taskId, delta) {
   if (minB) { minB.disabled = atMin; minB.style.opacity = atMin ? '0.35' : '1'; }
   if (plusB){ plusB.disabled = atMax; plusB.style.opacity = atMax ? '0.35' : '1'; }
 }
+
+// QA helper — logs effective label source for each adjustable domain
+window.toriDebugTaskSources = function() {
+  var now = Date.now();
+  var todayKey = getTodayKey();
+  var todayDefaults = (gs.paceTaskDefaults || {})[todayKey] || {};
+  var stepSels = gs.taskStepSelections || {};
+  var domains = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'breathing'];
+  console.group('[Tori] Task source debug — ' + todayKey + ' | pace: ' + (gs._todayPace || (gs.paceTaskDefaults && gs.paceTaskDefaults[todayKey] ? 'set' : 'none')));
+  domains.forEach(function(id) {
+    var manualId = stepSels[id] || null;
+    var paceId = todayDefaults[id] || null;
+    var ov = _gentleHabitOverrides && _gentleHabitOverrides[id];
+    var journeyActive = ov && (ov.activeUntil || 0) > now;
+    var source, effectiveId;
+    if (manualId) {
+      source = 'manual'; effectiveId = manualId;
+    } else if (journeyActive) {
+      source = 'journeyOverride'; effectiveId = ov.selectedOptionId || ov.microLabel;
+    } else if (paceId) {
+      source = 'pace'; effectiveId = paceId;
+    } else {
+      source = 'original'; effectiveId = null;
+    }
+    var card = document.getElementById('tc-' + id);
+    var visibleLabel = card ? ((card.querySelector('.t-name') || {}).textContent || '(no .t-name)') : '(card not in DOM)';
+    console.log('[' + id + '] source=' + source + ' | effectiveId=' + (effectiveId || 'original') + ' | visible="' + visibleLabel + '"',
+      { manualId: manualId, paceId: paceId, journeyActive: journeyActive });
+  });
+  console.log('[water] source=ownSystem | waterStepLevel=' + (gs.waterStepLevel || 0) + ' (unchanged by pace)');
+  console.groupEnd();
+};
+
+// QA helper — clears only gs.taskStepSelections (manual פחות/יותר). Does NOT touch onboarding, companion, water, garden history, pamper, pace, or progress.
+window.toriResetTaskStepSelections = async function() {
+  gs.taskStepSelections = {};
+  await saveGardenState();
+  applyMicroTaskOverrides();
+  console.log('[Tori QA] taskStepSelections cleared. Pace defaults and all other state unchanged.');
+};
 
 // QA helper — run in DevTools to reset today's water count to 0
 window.toriResetWater = function() {
@@ -11322,8 +11362,14 @@ async function restoreFromPlus(kind) {
 
 // Apply active micro-task overrides to Today tab DOM (safe, does not delete original)
 function applyMicroTaskOverrides() {
-  // 1. Apply today's pace defaults (daily, no badge) — lowest priority
+  // Remove stale badges from previous renders
+  document.querySelectorAll('.micro-badge').forEach(function(el) { el.remove(); });
+
+  var now = Date.now();
   var todayDefaults = (gs.paceTaskDefaults || {})[getTodayKey()] || {};
+  var stepSels = (gs && gs.taskStepSelections) || {};
+
+  // 1. Apply today's pace defaults (daily, no badge) — lowest priority
   Object.keys(todayDefaults).forEach(function(id) {
     var selId = todayDefaults[id];
     if (!selId) return;
@@ -11337,8 +11383,20 @@ function applyMicroTaskOverrides() {
     if (nameEl) nameEl.textContent = entry.label;
   });
 
-  // 2. Apply permanent manual size-control selections (no badge) — overrides pace defaults
-  var stepSels = (gs && gs.taskStepSelections) || {};
+  // 2. Apply 7-day Journey adaptive overrides — overrides pace, but NOT manual selections
+  Object.keys(_gentleHabitOverrides || {}).forEach(function(id) {
+    if (stepSels[id]) return; // manual פחות/יותר wins over journey override
+    var ov = _gentleHabitOverrides[id];
+    if (!ov || (ov.activeUntil || 0) < now) return;
+    var card = document.getElementById('tc-' + id);
+    if (!card) return;
+    var nameEl = card.querySelector('.t-name');
+    if (!nameEl) return;
+    nameEl.textContent = ov.microLabel;
+    // Badge text removed for V1 — label change is sufficient
+  });
+
+  // 3. Apply permanent manual size-control selections (no badge) — highest priority, always wins
   Object.keys(stepSels).forEach(function(id) {
     var selId = stepSels[id];
     if (!selId) return;
@@ -11350,24 +11408,6 @@ function applyMicroTaskOverrides() {
     if (!card) return;
     var nameEl = card.querySelector('.t-name');
     if (nameEl) nameEl.textContent = entry.label;
-  });
-
-  // 3. Apply 7-day Journey adaptive overrides (with badge) — overrides everything
-  var now = Date.now();
-  Object.keys(_gentleHabitOverrides || {}).forEach(function(id) {
-    var ov = _gentleHabitOverrides[id];
-    if (!ov || (ov.activeUntil || 0) < now) return;
-    var card = document.getElementById('tc-' + id);
-    if (!card) return;
-    var nameEl = card.querySelector('.t-name');
-    if (!nameEl) return;
-    nameEl.textContent = ov.microLabel;
-    if (!card.querySelector('.micro-badge')) {
-      var badge = document.createElement('span');
-      badge.className = 'micro-badge';
-      badge.textContent = 'גרסה קטנה לשבוע';
-      nameEl.parentNode.insertBefore(badge, nameEl.nextSibling);
-    }
   });
 }
 
