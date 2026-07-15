@@ -1056,6 +1056,7 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .j-micro-btn-yes { padding:8px 16px; border-radius:999px; background:var(--g-sage-deep); color:#fff; border:none; font-size:12.5px; font-family:inherit; cursor:pointer; font-weight:500; }
 .j-micro-btn-no  { padding:8px 16px; border-radius:999px; background:rgba(70,55,30,0.07); color:var(--g-ink-2); border:none; font-size:12.5px; font-family:inherit; cursor:pointer; }
 .micro-badge { font-size:10px; color:var(--g-sage-deep); display:block; margin-top:2px; font-weight:600; letter-spacing:0.3px; }
+.task-fixed-pin { position:absolute; top:7px; right:7px; width:9px; height:9px; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.22); pointer-events:none; z-index:2; }
 
 /* Points chip */
 .j-pts-badge { font-size:12px; padding:4px 10px; border-radius:999px; font-weight:500; }
@@ -3277,7 +3278,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'pace-task-source-badge-fix-2026-07-15';
+const TORI_BUILD = 'daily-fixed-task-controls-2026-07-15';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3518,12 +3519,19 @@ function _taskCurrentIdx(taskId, list) {
 // For all other tasks, -1 = largest (original full label) → יותר disabled.
 var STEP_ASCENDING_TASKS = ['breathing'];
 
-// Returns effective size-control index: manual selection > today's pace default > -1 (original).
+// Returns effective size-control index using 4-tier precedence:
+// fixed (קבוע) > today-only (פחות/יותר) > pace default > -1 (original label).
 function _taskStepCurrentIdx(taskId, list) {
-  // 1. Permanent manual selection from פחות/יותר
-  var sel = gs.taskStepSelections && gs.taskStepSelections[taskId];
+  var sel;
+  // 1. Fixed selection (קבוע) — survives pace changes and day rollovers
+  sel = gs.fixedTaskStepSelections && gs.fixedTaskStepSelections[taskId];
   if (!sel) {
-    // 2. Today's pace default
+    // 2. Today-only adjustment from פחות/יותר — expires naturally tomorrow
+    var todaySels = gs.dailyTaskStepSelections && gs.dailyTaskStepSelections[getTodayKey()];
+    sel = todaySels && todaySels[taskId];
+  }
+  if (!sel) {
+    // 3. Today's pace default
     var todayDefaults = gs.paceTaskDefaults && gs.paceTaskDefaults[getTodayKey()];
     sel = todayDefaults && todayDefaults[taskId];
   }
@@ -3536,30 +3544,41 @@ function _taskStepCurrentIdx(taskId, list) {
 
 // Moves the task one step. For standard tasks: delta +1 = smaller, delta -1 = larger.
 // For STEP_ASCENDING_TASKS: delta +1 = larger, delta -1 = smaller (caller reverses deltas).
-// Stores permanent selection in gs.taskStepSelections — no 7-day expiry, no badge.
+// Routes save to fixedTaskStepSelections if task is fixed, else to dailyTaskStepSelections.
 async function adjustTaskStep(taskId, delta) {
   var list = _taskStepList(taskId);
   if (!list.length) return;
   var ascending = (STEP_ASCENDING_TASKS.indexOf(taskId) !== -1);
-  var cur  = _taskStepCurrentIdx(taskId, list);
-  var next = Math.max(-1, Math.min(cur + delta, list.length - 1));
+  var isFixed = !!(gs.fixedTaskStepSelections && gs.fixedTaskStepSelections[taskId]);
+  var cur = _taskStepCurrentIdx(taskId, list);
+
+  // Fixed tasks cannot step below index 0 (no falling back to original label while fixed)
+  var minIdx = isFixed ? 0 : -1;
+  var next = Math.max(minIdx, Math.min(cur + delta, list.length - 1));
   if (next === cur) return;
 
-  // Persist the selection permanently (no expiry)
-  if (next === -1) {
-    delete gs.taskStepSelections[taskId];
+  var todayKey = getTodayKey();
+  if (isFixed) {
+    // Update the fixed selection in place
+    gs.fixedTaskStepSelections[taskId] = list[next].id;
   } else {
-    gs.taskStepSelections[taskId] = list[next].id;
+    // Save as today-only adjustment — expires naturally on next day
+    gs.dailyTaskStepSelections = gs.dailyTaskStepSelections || {};
+    gs.dailyTaskStepSelections[todayKey] = gs.dailyTaskStepSelections[todayKey] || {};
+    if (next === -1) {
+      delete gs.dailyTaskStepSelections[todayKey][taskId];
+    } else {
+      gs.dailyTaskStepSelections[todayKey][taskId] = list[next].id;
+    }
   }
   await saveGardenState();
 
-  // Update card label immediately (no badge)
+  // Update card label immediately
   var card = document.getElementById('tc-' + taskId);
   if (card) {
     var nameEl = card.querySelector('.t-name');
     if (nameEl) {
       if (next === -1) {
-        // Restore default card label from DOM's original inner text
         var origLabel = TASK_UI_LABELS[taskId] || TASK_DISPLAY_LABELS[taskId] || taskId;
         nameEl.textContent = origLabel;
       } else {
@@ -3568,18 +3587,16 @@ async function adjustTaskStep(taskId, delta) {
     }
   }
 
-  if (next !== -1) {
-    showToast('עברתי ל"' + list[next].label + '" 🌿');
-  }
+  if (next !== -1) { showToast('עברתי ל"' + list[next].label + '" 🌿'); }
 
   // Update disabled states on the in-card buttons
   var atMin, atMax;
   if (ascending) {
-    atMin = (next === -1);
+    atMin = (next <= minIdx);
     atMax = (next === list.length - 1);
   } else {
     atMin = (next === list.length - 1);
-    atMax = (next === -1);
+    atMax = (next <= minIdx);
   }
   var minB = document.getElementById('step-minus-' + taskId);
   var plusB = document.getElementById('step-plus-'  + taskId);
@@ -3587,22 +3604,99 @@ async function adjustTaskStep(taskId, delta) {
   if (plusB){ plusB.disabled = atMax; plusB.style.opacity = atMax ? '0.35' : '1'; }
 }
 
+// Domain pin colors for the fixed-task visual indicator
+var FIXED_PIN_COLORS = {
+  breakfast: '#E8B89A',
+  lunch:     '#E8C96A',
+  dinner:    '#C4B0D8',
+  shower:    '#8ABCDA',
+  outside:   '#8EC99A',
+  breathing: '#8AB89A',
+};
+
+function _addFixedPin(taskId) {
+  var card = document.getElementById('tc-' + taskId);
+  if (!card) return;
+  if (card.querySelector('.task-fixed-pin')) return;
+  var pin = document.createElement('span');
+  pin.className = 'task-fixed-pin';
+  pin.title = 'קבוע';
+  pin.style.background = FIXED_PIN_COLORS[taskId] || '#aaa';
+  card.appendChild(pin);
+}
+
+function _removeFixedPin(taskId) {
+  var card = document.getElementById('tc-' + taskId);
+  if (!card) return;
+  var pin = card.querySelector('.task-fixed-pin');
+  if (pin) pin.remove();
+}
+
+function _syncFixedBtn(taskId, isFixed) {
+  var btn = document.getElementById('step-fixed-' + taskId);
+  if (!btn) return;
+  var pinColor = FIXED_PIN_COLORS[taskId] || 'var(--sage,#6A9B78)';
+  if (isFixed) {
+    btn.style.background = pinColor;
+    btn.style.color = '#fff';
+    btn.style.borderColor = pinColor;
+  } else {
+    btn.style.background = 'transparent';
+    btn.style.color = 'var(--sage,#6A9B78)';
+    btn.style.borderColor = 'var(--sage,#6A9B78)';
+  }
+}
+
+// Toggles the fixed (קבוע) state for a task.
+// If not fixed: fixes the current effective selection.
+// If already fixed: removes the fixed state; task falls back to today/pace/original.
+async function toggleTaskFixed(taskId) {
+  gs.fixedTaskStepSelections = gs.fixedTaskStepSelections || {};
+  var isFixed = !!(gs.fixedTaskStepSelections[taskId]);
+
+  if (isFixed) {
+    delete gs.fixedTaskStepSelections[taskId];
+    _removeFixedPin(taskId);
+    _syncFixedBtn(taskId, false);
+    // Re-apply overrides so the card label falls back to today/pace/original
+    applyMicroTaskOverrides();
+    showToast('הוסרה הנעיצה — המשימה תתעדכן עם הקצב 🌿');
+  } else {
+    // Fix the current effective selection
+    var list = _taskStepList(taskId);
+    var cur = _taskStepCurrentIdx(taskId, list);
+    if (cur < 0 || cur >= list.length) {
+      showToast('בחרי קודם גודל עם פחות / יותר 🌿');
+      return;
+    }
+    gs.fixedTaskStepSelections[taskId] = list[cur].id;
+    _addFixedPin(taskId);
+    _syncFixedBtn(taskId, true);
+    showToast('קבוע! 📌 המשימה נשמרת גם מחר');
+  }
+  await saveGardenState();
+}
+
 // QA helper — logs effective label source for each adjustable domain
 window.toriDebugTaskSources = function() {
   var now = Date.now();
   var todayKey = getTodayKey();
   var todayDefaults = (gs.paceTaskDefaults || {})[todayKey] || {};
-  var stepSels = gs.taskStepSelections || {};
+  var todaySels = (gs.dailyTaskStepSelections || {})[todayKey] || {};
+  var fixedSels = gs.fixedTaskStepSelections || {};
   var domains = ['breakfast', 'lunch', 'dinner', 'shower', 'outside', 'breathing'];
-  console.group('[Tori] Task source debug — ' + todayKey + ' | pace: ' + (gs._todayPace || (gs.paceTaskDefaults && gs.paceTaskDefaults[todayKey] ? 'set' : 'none')));
+  console.group('[Tori] Task source debug — ' + todayKey);
   domains.forEach(function(id) {
-    var manualId = stepSels[id] || null;
-    var paceId = todayDefaults[id] || null;
+    var fixedId = fixedSels[id] || null;
+    var todayId = todaySels[id] || null;
+    var paceId  = todayDefaults[id] || null;
     var ov = _gentleHabitOverrides && _gentleHabitOverrides[id];
     var journeyActive = ov && (ov.activeUntil || 0) > now;
     var source, effectiveId;
-    if (manualId) {
-      source = 'manual'; effectiveId = manualId;
+    if (fixedId) {
+      source = 'fixed'; effectiveId = fixedId;
+    } else if (todayId) {
+      source = 'today'; effectiveId = todayId;
     } else if (journeyActive) {
       source = 'journeyOverride'; effectiveId = ov.selectedOptionId || ov.microLabel;
     } else if (paceId) {
@@ -3613,18 +3707,20 @@ window.toriDebugTaskSources = function() {
     var card = document.getElementById('tc-' + id);
     var visibleLabel = card ? ((card.querySelector('.t-name') || {}).textContent || '(no .t-name)') : '(card not in DOM)';
     console.log('[' + id + '] source=' + source + ' | effectiveId=' + (effectiveId || 'original') + ' | visible="' + visibleLabel + '"',
-      { manualId: manualId, paceId: paceId, journeyActive: journeyActive });
+      { fixedId: fixedId, todayId: todayId, paceId: paceId, journeyActive: journeyActive });
   });
   console.log('[water] source=ownSystem | waterStepLevel=' + (gs.waterStepLevel || 0) + ' (unchanged by pace)');
   console.groupEnd();
 };
 
-// QA helper — clears only gs.taskStepSelections (manual פחות/יותר). Does NOT touch onboarding, companion, water, garden history, pamper, pace, or progress.
+// QA helper — clears today-only and fixed task step selections. Does NOT touch pace, water, onboarding, companion, or other state.
 window.toriResetTaskStepSelections = async function() {
+  gs.dailyTaskStepSelections = {};
+  gs.fixedTaskStepSelections = {};
   gs.taskStepSelections = {};
   await saveGardenState();
   applyMicroTaskOverrides();
-  console.log('[Tori QA] taskStepSelections cleared. Pace defaults and all other state unchanged.');
+  console.log('[Tori QA] dailyTaskStepSelections + fixedTaskStepSelections cleared. Pace defaults and other state unchanged.');
 };
 
 // QA helper — run in DevTools to reset today's water count to 0
@@ -4113,9 +4209,11 @@ let gs = {
   factIdx: 0,
   factDate: '',
   wildCooldowns: {},
-  waterStepLevel: 0,       // 0-7, advances gently as water habit builds
-  taskStepSelections: {},  // permanent size-control selections keyed by taskId → library entry id
-  paceTaskDefaults: {},    // daily pace defaults: { [localDateKey]: { taskId: libraryEntryId } }
+  waterStepLevel: 0,          // 0-7, advances gently as water habit builds
+  taskStepSelections: {},     // legacy — migrated out on load
+  dailyTaskStepSelections: {},// today-only adjustments: { [dateKey]: { taskId: libraryEntryId } }
+  fixedTaskStepSelections: {},// permanent fixed selections (קבוע): { taskId: libraryEntryId }
+  paceTaskDefaults: {},       // daily pace defaults: { [localDateKey]: { taskId: libraryEntryId } }
 };
 
 // ---- Storage ----
@@ -4137,14 +4235,30 @@ async function loadGardenState() {
       }
       // Migration: waterStepLevel
       if (typeof gs.waterStepLevel !== 'number') gs.waterStepLevel = 0;
-      // Migration: taskStepSelections
+      // Migration: new daily/fixed step selection fields
+      if (!gs.dailyTaskStepSelections || typeof gs.dailyTaskStepSelections !== 'object') gs.dailyTaskStepSelections = {};
+      if (!gs.fixedTaskStepSelections || typeof gs.fixedTaskStepSelections !== 'object') gs.fixedTaskStepSelections = {};
+      // Migrate legacy gs.taskStepSelections → today's dailyTaskStepSelections (NOT fixed — user didn't press קבוע)
       if (!gs.taskStepSelections || typeof gs.taskStepSelections !== 'object') gs.taskStepSelections = {};
+      if (Object.keys(gs.taskStepSelections).length > 0) {
+        var _migKey = getTodayKey();
+        gs.dailyTaskStepSelections[_migKey] = gs.dailyTaskStepSelections[_migKey] || {};
+        Object.keys(gs.taskStepSelections).forEach(function(tid) {
+          if (!gs.dailyTaskStepSelections[_migKey][tid]) {
+            gs.dailyTaskStepSelections[_migKey][tid] = gs.taskStepSelections[tid];
+          }
+        });
+        gs.taskStepSelections = {};
+      }
       // Migration: paceTaskDefaults
       if (!gs.paceTaskDefaults || typeof gs.paceTaskDefaults !== 'object') gs.paceTaskDefaults = {};
-      // Prune stale pace defaults (keep only today to avoid unbounded growth)
+      // Prune stale entries (keep only today to avoid unbounded growth)
       var _todayK = getTodayKey();
       Object.keys(gs.paceTaskDefaults).forEach(function(k) {
         if (k !== _todayK) delete gs.paceTaskDefaults[k];
+      });
+      Object.keys(gs.dailyTaskStepSelections).forEach(function(k) {
+        if (k !== _todayK) delete gs.dailyTaskStepSelections[k];
       });
     }
   } catch(e){}
@@ -9705,6 +9819,7 @@ function toggleEditMode() {
   else enterEditMode();
 }
 
+// 2-button row used for water card only
 function _makeSizeControlRow(id, minusId, plusId, atMin, atMax, color, onMinus, onPlus) {
   var wrap = document.createElement('div');
   wrap.className = 'edit-lib-btn';
@@ -9728,6 +9843,56 @@ function _makeSizeControlRow(id, minusId, plusId, atMin, atMax, color, onMinus, 
   return wrap;
 }
 
+// 3-button row for task cards: פחות | קבוע | יותר
+function _makeTaskControlRow(taskId, atMin, atMax) {
+  var isFixed = !!(gs.fixedTaskStepSelections && gs.fixedTaskStepSelections[taskId]);
+  var ascending = (STEP_ASCENDING_TASKS.indexOf(taskId) !== -1);
+  var color = 'var(--sage,#6A9B78)';
+  var pinColor = FIXED_PIN_COLORS[taskId] || color;
+
+  var wrap = document.createElement('div');
+  wrap.className = 'edit-lib-btn';
+  wrap.style.cssText = 'display:flex;justify-content:space-between;gap:6px;padding:5px 0 0;margin-top:4px;border:none;width:100%';
+  wrap.onclick = function(e) { e.stopPropagation(); };
+
+  function _btn(btnId, label, disabled, css, onClick) {
+    var b = document.createElement('button');
+    b.id = btnId;
+    b.textContent = label;
+    b.disabled = disabled;
+    b.style.cssText = css;
+    b.onclick = onClick;
+    return b;
+  }
+
+  var baseCss = 'flex:1;padding:5px 0;font-size:11.5px;border-radius:8px;cursor:pointer;font-family:inherit;';
+
+  var minusBtn = _btn(
+    'step-minus-' + taskId, 'פחות', atMin,
+    baseCss + 'border:1px solid ' + color + ';background:transparent;color:' + color + ';opacity:' + (atMin ? '0.35' : '1'),
+    (function(tid, asc) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, asc ? -1 : 1); }; })(taskId, ascending)
+  );
+
+  var fixedCss = isFixed
+    ? baseCss + 'border:1px solid ' + pinColor + ';background:' + pinColor + ';color:#fff;'
+    : baseCss + 'border:1px solid ' + color + ';background:transparent;color:' + color + ';';
+  var fixedBtn = _btn(
+    'step-fixed-' + taskId, 'קבוע', false, fixedCss,
+    (function(tid) { return function(e) { e.stopPropagation(); toggleTaskFixed(tid); }; })(taskId)
+  );
+
+  var plusBtn = _btn(
+    'step-plus-' + taskId, 'יותר', atMax,
+    baseCss + 'border:1px solid ' + color + ';background:transparent;color:' + color + ';opacity:' + (atMax ? '0.35' : '1'),
+    (function(tid, asc) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, asc ? 1 : -1); }; })(taskId, ascending)
+  );
+
+  wrap.appendChild(minusBtn);
+  wrap.appendChild(fixedBtn);
+  wrap.appendChild(plusBtn);
+  return wrap;
+}
+
 function _applyEditModeControls() {
   document.querySelectorAll('.edit-lib-btn').forEach(function(el) { el.remove(); });
   var st = getPlusLibraryState();
@@ -9743,23 +9908,19 @@ function _applyEditModeControls() {
     if (st.hiddenParentTasks && st.hiddenParentTasks[id]) return;
     var list = _taskStepList(id);
     if (!list.length) return;
+    var isFixed = !!(gs.fixedTaskStepSelections && gs.fixedTaskStepSelections[id]);
     var ascending = (STEP_ASCENDING_TASKS.indexOf(id) !== -1);
-    var cur   = _taskStepCurrentIdx(id, list);
+    var cur = _taskStepCurrentIdx(id, list);
+    var minIdx = isFixed ? 0 : -1;
     var atMin, atMax;
     if (ascending) {
-      atMin = (cur === -1);              // no selection = smallest → פחות disabled
-      atMax = (cur === list.length - 1); // at largest → יותר disabled
+      atMin = (cur <= minIdx);
+      atMax = (cur === list.length - 1);
     } else {
-      atMin = (cur === list.length - 1); // at smallest → פחות disabled
-      atMax = (cur === -1);              // no selection = original full → יותר disabled
+      atMin = (cur === list.length - 1);
+      atMax = (cur <= minIdx);
     }
-    var row = _makeSizeControlRow(
-      id, 'step-minus-' + id, 'step-plus-' + id,
-      atMin, atMax,
-      'var(--sage,#6A9B78)',
-      (function(tid, asc) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, asc ? -1 : 1); }; })(id, ascending),
-      (function(tid, asc) { return function(e) { e.stopPropagation(); adjustTaskStep(tid, asc ? 1 : -1); }; })(id, ascending)
-    );
+    var row = _makeTaskControlRow(id, atMin, atMax);
     card.appendChild(row);
   });
 
@@ -11360,19 +11521,20 @@ async function restoreFromPlus(kind) {
   if (jv && jv.classList.contains('active')) renderJourneyTab();
 }
 
-// Apply active micro-task overrides to Today tab DOM (safe, does not delete original)
+// Apply active micro-task overrides to Today tab DOM (safe, does not delete original).
+// Precedence (highest wins): fixed (קבוע) > today-only (פחות/יותר) > journey override > pace default > original.
 function applyMicroTaskOverrides() {
-  // Remove stale badges from previous renders
+  // Clear stale badges and pins from previous renders
   document.querySelectorAll('.micro-badge').forEach(function(el) { el.remove(); });
+  document.querySelectorAll('.task-fixed-pin').forEach(function(el) { el.remove(); });
 
   var now = Date.now();
-  var todayDefaults = (gs.paceTaskDefaults || {})[getTodayKey()] || {};
-  var stepSels = (gs && gs.taskStepSelections) || {};
+  var todayKey = getTodayKey();
+  var todayDefaults = (gs.paceTaskDefaults || {})[todayKey] || {};
+  var todaySels    = (gs.dailyTaskStepSelections || {})[todayKey] || {};
+  var fixedSels    = gs.fixedTaskStepSelections || {};
 
-  // 1. Apply today's pace defaults (daily, no badge) — lowest priority
-  Object.keys(todayDefaults).forEach(function(id) {
-    var selId = todayDefaults[id];
-    if (!selId) return;
+  function _applyLabel(id, selId) {
     var list = _taskStepList(id);
     var entry = null;
     for (var i = 0; i < list.length; i++) { if (list[i].id === selId) { entry = list[i]; break; } }
@@ -11381,33 +11543,40 @@ function applyMicroTaskOverrides() {
     if (!card) return;
     var nameEl = card.querySelector('.t-name');
     if (nameEl) nameEl.textContent = entry.label;
+  }
+
+  // 1. Pace defaults — lowest priority, skip tasks with higher-priority sources
+  Object.keys(todayDefaults).forEach(function(id) {
+    if (fixedSels[id] || todaySels[id]) return;
+    var selId = todayDefaults[id];
+    if (selId) _applyLabel(id, selId);
   });
 
-  // 2. Apply 7-day Journey adaptive overrides — overrides pace, but NOT manual selections
+  // 2. Journey adaptive overrides — overrides pace, not today or fixed
   Object.keys(_gentleHabitOverrides || {}).forEach(function(id) {
-    if (stepSels[id]) return; // manual פחות/יותר wins over journey override
+    if (fixedSels[id] || todaySels[id]) return;
     var ov = _gentleHabitOverrides[id];
     if (!ov || (ov.activeUntil || 0) < now) return;
     var card = document.getElementById('tc-' + id);
     if (!card) return;
     var nameEl = card.querySelector('.t-name');
-    if (!nameEl) return;
-    nameEl.textContent = ov.microLabel;
-    // Badge text removed for V1 — label change is sufficient
+    if (nameEl) nameEl.textContent = ov.microLabel;
+    // גרסה קטנה לשבוע badge removed for V1
   });
 
-  // 3. Apply permanent manual size-control selections (no badge) — highest priority, always wins
-  Object.keys(stepSels).forEach(function(id) {
-    var selId = stepSels[id];
+  // 3. Today-only adjustments from פחות/יותר — override pace and journey, not fixed
+  Object.keys(todaySels).forEach(function(id) {
+    if (fixedSels[id]) return;
+    var selId = todaySels[id];
+    if (selId) _applyLabel(id, selId);
+  });
+
+  // 4. Fixed selections (קבוע) — highest priority, show pin marker
+  Object.keys(fixedSels).forEach(function(id) {
+    var selId = fixedSels[id];
     if (!selId) return;
-    var list = _taskStepList(id);
-    var entry = null;
-    for (var i = 0; i < list.length; i++) { if (list[i].id === selId) { entry = list[i]; break; } }
-    if (!entry) return;
-    var card = document.getElementById('tc-' + id);
-    if (!card) return;
-    var nameEl = card.querySelector('.t-name');
-    if (nameEl) nameEl.textContent = entry.label;
+    _applyLabel(id, selId);
+    _addFixedPin(id);
   });
 }
 
