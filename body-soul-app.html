@@ -405,7 +405,8 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 /* SCROLL FEED — "תורי לגלול" feed cards
    Design intent: familiar feed feel, calm Tori tone.
    Cards = posts. Category = pill tag. Footer = thin separator + borderless like. */
-.feed-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; padding: 18px 16px 0; margin-bottom: 16px; direction: rtl; }
+.feed-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; padding: 18px 16px 18px; margin-bottom: 16px; direction: rtl; }
+.feed-img-wrap { margin: 2px 0 10px; border-radius: 10px; overflow: hidden; }
 .feed-card-category { font-size: 11px; font-weight: 700; color: var(--sky, #6aabcf); background: var(--sky-l, #e8f4fb); border-radius: 12px; padding: 3px 10px; display: inline-block; margin-bottom: 11px; letter-spacing: 0.3px; }
 .feed-card-title { font-size: 16px; font-weight: 800; color: var(--text1); line-height: 1.35; margin-bottom: 10px; }
 .feed-card-text { font-size: 14px; color: var(--text2); line-height: 1.8; white-space: pre-line; }
@@ -3277,7 +3278,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'gentle-scroll-tone-2026-07-15';
+const TORI_BUILD = 'gentle-scroll-beta-feed-2026-07-15';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -10947,140 +10948,71 @@ async function saveNiimNote(libDef) {
 //   Pixabay License, CC-BY (any version) with attribution.
 //   Avoid NC, ND, or unclear sources.
 //
-// visualNeed: true = card's punchline requires an image; don't add to feed without one.
-// Do NOT add therapeutic framing, CTAs, or trauma/anxiety language here.
+// Beta feed for "גלילה בקצב אחר". 7 approved posts, ordered as specified.
+// image: path to original asset inside repo. attributionRequired: false for all V1 items.
+// Images degrade gracefully — card shown text-only if file is missing.
+// Do NOT add external images, Wikimedia/stock images, or source links in the UI.
 const SCROLL_FEED_ITEMS = [
   {
-    id: 'feed-capybara-calm-001',
-    category: 'חיות עם אופי',
-    title: 'קפיברות הן מקצועניות של שכנות טובה',
-    text: 'קפיברות ידועות בזה שהן מסתדרות עם מגוון גדול של חיות סביבן. יש משהו מרגיע ביצור שנראה כאילו הוא פשוט הגיע לעולם עם מדיניות של: נעים, לא דחוף, אפשר לשבת יחד.',
-    type: 'fact', gentle: true, visualNeed: false,
+    id: 'bamboo-roots',
+    category: 'טבע',
+    title: 'הבמבוק שעבד על תשתיות',
+    text: 'במבוק מוסו יכול לצמוח בקצב כמעט לא הגיוני: במחקר על אוכלוסיות במבוק בסין נמדדה צמיחה של עד 114.5 ס״מ ביום.\nאבל הצמיחה המהירה הזאת נשענת על משהו הרבה פחות דרמטי לעין: קני שורש, אזורי חלוקת תאים, אזורי התארכות, ותשתית שכבר הייתה שם לפני שהגובה התחיל לעשות רושם.\nמבחוץ: "וואו, פתאום."\nמתחת לפני השטח: "סליחה, עבדנו פה על מערכת."',
+    image: 'assets/gentle-scroll/bamboo-roots.png',
+    imageAlt: 'שורשי במבוק מתחת לפני הקרקע',
+    imageApproved: true, attributionRequired: false, gentle: true,
+  },
+  {
+    id: 'otter-pocket',
+    category: 'חיות',
+    title: 'ללוטרות ים יש כיסים',
+    text: 'ללוטרות ים יש קפלי עור רפויים מתחת לכל אמה. NOAA מתארים את זה כמו כיסים: הן שומרות שם מזון, ולפעמים גם אבנים שהן משתמשות בהן כדי לפצח צדפות ורכיכות.\nכיסים.\nשל לוטרה.\nבשביל חטיפים וכלים.\nיש יצורים בעולם שמגיעים מוכנים יותר מאיתנו ליום סידורים.',
+    image: 'assets/gentle-scroll/otter-pocket.png',
+    imageAlt: 'לוטרת ים צפה על המים',
+    imageApproved: true, attributionRequired: false, gentle: true,
+  },
+  {
+    id: 'octopus-sleep',
+    category: 'חיות',
+    title: 'תמנונים ישנים עם אפקטים',
+    text: 'במחקר שפורסם ב־Nature נמצא שתמנונים עוברים בין שינה שקטה לבין שלב שינה פעיל. בזמן השלב הפעיל יכולים להופיע שינויי צבע ודוגמאות מהירים על העור.\nכלומר, יש יצור שבזמן שינה נראה כאילו הוא מריץ מצגת פנימית.\nתמנון: ישן.\nגם תמנון: "רגע, אני מחליף רקע."',
+    image: 'assets/gentle-scroll/octopus-sleep.png',
+    imageAlt: 'תמנון מתחת למים',
+    imageApproved: true, attributionRequired: false, gentle: true,
+  },
+  {
+    id: 'waking-rest',
+    category: 'מחקר',
+    title: 'מנוחה ערה',
+    text: 'יש תחום מחקר שנקרא waking rest — מנוחה ערה ושקטה אחרי למידה. סקירות בתחום מתארות מחקרים שמצאו שמנוחה כזאת יכולה לעזור לקיבוע זיכרונות חדשים.\nלא שינה. לא פעולה גדולה. כמה דקות בלי להכניס עוד קלט.\nהמוח, מתברר, יודע לעבוד גם במצב שנראה מבחוץ כמו: "היא פשוט יושבת שם."',
+    image: 'assets/gentle-scroll/waking-rest.png',
+    imageAlt: 'פינה שקטה ונינוחה',
+    imageApproved: true, attributionRequired: false, gentle: true,
+  },
+  {
+    id: 'seed-dormancy',
+    category: 'טבע',
+    title: 'זרעים לא מתחילים רק כי אפשר',
+    text: 'תרדמת זרעים היא מצב שבו זרעים לא נובטים מיד, גם כשנדמה שיש חלק מהתנאים. בספרות המקצועית מתארים את התרדמת כתכונה שמגדירה אילו תנאים נדרשים לנביטה — למשל טמפרטורה, מים, אור או שינוי עונתי.\nהזרע לא מחפש מוטיבציה.\nהוא מחפש תנאים.\nיש בזה משהו מאוד מסודר מצידו.',
     image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
+    imageApproved: false, attributionRequired: false, gentle: true,
   },
   {
-    id: 'feed-octopus-arms-001',
-    category: 'וואלה, לא ידעתי',
-    title: 'לתמנון יש מוח די מבוזר',
-    text: 'לתמנונים יש מערכת עצבים מרתקת, וחלק גדול מהנוירונים שלהם נמצא בזרועות.\n\nזה אומר שכל זרוע יודעת לעשות לא מעט בעצמה — לחקור, להגיב, ולהסתדר עם העולם מקרוב.\n\nתמנון הוא לא רק חכם.\nהוא חכם בכמה כיוונים במקביל.',
-    type: 'fact', gentle: true, visualNeed: false,
+    id: 'ozone-recovery',
+    category: 'עולם',
+    title: 'שכבת האוזון עושה קאמבק איטי',
+    text: 'לפי UNEP, אם המדיניות הנוכחית תישמר, שכבת האוזון צפויה לחזור לרמות של 1980 בערך עד 2040 ברוב העולם, עד 2045 באזור הארקטי, ועד 2066 מעל אנטארקטיקה.\nזה לא סיפור של "תיקנו הכול מהר".\nזה סיפור של הסכמים, מדע, רגולציה, שנים, ומולקולות שמפנות את הבמה בקצב שלהן.\nלפעמים חדשות טובות נראות כמו גרף קצת משעמם. וזה חלק מהקסם.',
     image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
+    imageApproved: false, attributionRequired: false, gentle: true,
   },
   {
-    id: 'feed-penguin-pebble-001',
-    category: 'חיות עם אופי',
-    title: 'פינגווינים וחלוקי נחל: מחווה קטנה, משמעות גדולה',
-    text: 'אצל חלק ממיני הפינגווינים, חלוקי נחל יכולים להיות חלק מבניית הקן וגם מחיזור.\n\nיש משהו מקסים ברעיון שחלוק קטן יכול להיות מחווה רצינית לגמרי.\n\nרומנטיקה בגרסת אנטארקטיקה.',
-    type: 'fact', gentle: true, visualNeed: false,
-    image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
-  },
-  {
-    id: 'feed-clouds-names-001',
-    category: 'טבע שעושה וואו',
-    title: 'הענן הזה נראה כאילו הים עבר לתקרה',
-    text: 'יש עננים שנראים ממש כמו גלים בים.\n\nקוראים להם ענני קלווין-הלמהולץ, והם נוצרים בתנאים מסוימים של זרימת אוויר.\n\nהשמיים עשו רגע של ים.\nיצא להם יפה.',
-    type: 'fact', gentle: true, visualNeed: true, mediaType: 'image',
-    image: './assets/scroll-feed/kelvin_helmholtz_waves.jpg',
-    imageAlt: 'ענני קלווין-הלמהולץ — גלי ענן אטמוספריים שנראים כמו גלי ים',
-    imageApproved: true, imageApprovalStatus: 'approved',
-    imageTitle: 'Kelvin-Helmholtz waves',
-    imageCreator: 'Rod Jones Photography',
-    imageSourceName: 'Wikimedia Commons',
-    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Kelvin-Helmholtz_waves.jpg',
-    imageLicense: 'CC BY 2.0',
-    imageLicenseUrl: 'https://creativecommons.org/licenses/by/2.0/',
-    imageModified: true, imageModificationNote: 'נחתכה לתצוגת מובייל',
-    attributionRequired: true,
-    imageAttribution: 'Photo: Rod Jones Photography · Wikimedia Commons · CC BY 2.0',
-  },
-  {
-    id: 'feed-tiny-library-001',
-    category: 'דברים קטנים שאנשים יצרו',
-    title: 'ספריות קטנות ברחוב הן רעיון ממש יפה',
-    text: 'במקומות רבים בעולם יש ספריות קטנות ברחוב: קופסה קטנה עם ספרים, וכל אחת יכולה לקחת ספר או להשאיר אחד.\n\nזה רעיון פשוט מאוד.\nובכל זאת, יש בו משהו שמרגיש כמו אמון קטן שמישהו השאיר על המדרכה.',
-    type: 'tiny_world', gentle: true, visualNeed: false,
-    image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null, imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
-  },
-  {
-    id: 'feed-mimosa-touch-001',
-    category: 'צמחים עם אופי',
-    title: 'צמח שמתבייש ממגע',
-    text: 'יש צמח בשם מימוזה ביישנית, שהעלים שלו נסגרים כשנוגעים בהם.\n\nהוא לא עושה סצנה.\nהוא פשוט אומר:\n"תודה, אני אקח רגע לעצמי."\n\nצמח עם גבולות. מכבדות.',
-    type: 'fact', gentle: true, visualNeed: true, mediaType: 'video',
-    image: './assets/scroll-feed/mimosa_pudica_closing.mp4',
-    imageAlt: 'עלי מימוזה ביישנית נסגרים בתגובה למגע',
-    // Pexels License — free for commercial use, no attribution required.
-    imageApproved: true, imageApprovalStatus: 'approved',
-    imageTitle: 'Video Of A Shy Plant',
-    imageCreator: 'Pixabay',
-    imageSourceName: 'Pexels',
-    imageSourceUrl: 'https://www.pexels.com/video/video-of-a-shy-plant-856217/',
-    imageLicense: 'Pexels License',
-    imageLicenseUrl: 'https://www.pexels.com/license/',
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
-  },
-  {
-    id: 'feed-banana-berry-001',
-    category: 'וואלה, לא ידעתי',
-    title: 'בננה היא גרגר יער. תות לא.',
-    text: 'מבחינה בוטנית, בננה נחשבת לגרגר יער.\nתות, לעומת זאת, לא בדיוק.\n\nהבוטניקה קמה בוקר אחד ואמרה:\n"היום נבדוק מי באמת קוראת את ההגדרות הקטנות."',
-    type: 'fact', gentle: true, visualNeed: false, mediaType: null,
-    image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null,
-    imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
-  },
-  {
-    id: 'feed-honey-timeless-001',
-    category: 'וואלה, לא ידעתי',
-    title: 'דבש לא ממהר לשום מקום',
-    text: 'דבש שנשמר כמו שצריך יכול להחזיק מעמד זמן ממש, ממש ארוך.\n\nלפעמים מוצאים דבש עתיק שנראה כאילו הוא פשוט נשאר באותו מצב צבירה וחיכה שמישהו ישים לב.\n\nהדבש לא ממהר.\nיש לו קצב משלו.',
-    type: 'fact', gentle: true, visualNeed: false, mediaType: null,
-    image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null,
-    imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
-  },
-  {
-    id: 'feed-raven-memory-001',
-    category: 'חיות עם אופי',
-    title: 'עורב יכול לזכור פרצוף',
-    text: 'עורבים יכולים לזהות פרצופים של אנשים ולזכור אותם לאורך זמן.\n\nכלומר, אם עורב מסתכל עלייך במבט עמוק מדי —\nיכול להיות שהוא פשוט מעדכן תיקייה פנימית.\n\nמסודר. שחור. חד הבחנה. מאוד מקצועי.',
-    type: 'fact', gentle: true, visualNeed: false, mediaType: null,
-    image: null, imageAlt: null,
-    imageApproved: false, imageApprovalStatus: null,
-    imageTitle: null, imageCreator: null,
-    imageSourceName: null, imageSourceUrl: null,
-    imageLicense: null, imageLicenseUrl: null,
-    imageModified: false, imageModificationNote: null,
-    attributionRequired: false, imageAttribution: null,
+    id: 'iberian-lynx',
+    category: 'עולם',
+    title: 'הלינקס האיברי חזר כמה צעדים אחורה מהקצה',
+    text: 'הלינקס האיברי היה אחד החתולים הנדירים בעולם. לפי IUCN, האוכלוסייה עלתה מ־62 פרטים בוגרים בשנת 2001 ל־648 בשנת 2022, וב־2024 הסטטוס שלו השתפר מ־Endangered ל־Vulnerable.\nעדיין צריך לשמור עליו. אבל זה שינוי אמיתי.\nלא כזה שקורה ביום. יותר כזה שמורכב מהמון פעולות קטנות, בתי גידול, רבייה, השבות לטבע, ואנשים שלא עזבו את זה באמצע.\nהחתול, מצידו, ממשיך להיראות כאילו הוא ידע שזה יקרה.',
+    image: 'assets/gentle-scroll/iberian-lynx.png',
+    imageAlt: 'לינקס איברי',
+    imageApproved: true, attributionRequired: false, gentle: true,
   },
 ];
 
@@ -11204,8 +11136,15 @@ function _buildFeedMediaHtml(item) {
     mediaHtml = '<video class="feed-card-video" src="' + mediaSrc + '" '
       + 'autoplay muted loop playsinline preload="metadata" '
       + 'aria-label="' + _escH(item.imageAlt || '') + '"></video>';
-  } else {
+  } else if (item.attributionRequired === true) {
+    // Attribution images: render directly, attribution block appended below
     mediaHtml = '<img src="' + mediaSrc + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img">';
+  } else {
+    // No-attribution images: wrap so onerror can hide the whole block if file is missing
+    mediaHtml = '<div class="feed-img-wrap">'
+      + '<img src="' + mediaSrc + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img"'
+      + ' onerror="this.parentNode.style.display=\'none\'">'
+      + '</div>';
   }
   if (item.attributionRequired === true) {
     var a = '<div class="feed-img-attribution">';
@@ -11256,22 +11195,12 @@ function renderScrollFeed() {
     items.sort(function(a, b) { return (b.gentle ? 1 : 0) - (a.gentle ? 1 : 0); });
   }
   items.forEach(function(item) {
-    var liked = (_feedLikes[item.id] && _feedLikes[item.id].liked) ? true : false;
     var imgHtml = _buildFeedMediaHtml(item);
     html += '<div class="feed-card" data-card-id="' + _escH(item.id) + '">'
       + '<div class="feed-card-category">' + _escH(item.category) + '</div>'
       + imgHtml
       + '<div class="feed-card-title">' + _escH(item.title) + '</div>'
       + '<div class="feed-card-text">'  + _escH(item.text)  + '</div>'
-      + '<div class="feed-card-footer">'
-      + '<button class="feed-like-btn' + (liked ? ' liked' : '') + '" '
-      + 'id="like-btn-' + _escH(item.id) + '" '
-      + 'onclick="toggleFeedLike(\'' + _escH(item.id) + '\')" '
-      + 'aria-pressed="' + liked + '" aria-label="סמן אהבתי">'
-      + '<span class="feed-like-icon">' + (liked ? '♥' : '♡') + '</span>'
-      + '<span>אהבתי</span>'
-      + '</button>'
-      + '</div>'
       + '</div>';
   });
   el.innerHTML = html;
