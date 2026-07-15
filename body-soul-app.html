@@ -487,6 +487,21 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .pace-chip-bar { display: flex; align-items: center; gap: 8px; padding: 9px 14px; background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; margin: 10px 0 4px; }
 .pace-chip-label { font-size: 13px; font-weight: 700; color: var(--text1); flex: 1; }
 .pace-chip-change { font-size: 12px; color: var(--text3); cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; text-decoration: underline; -webkit-tap-highlight-color: transparent; }
+
+/* ===== PACE GATE — daily entry screen ===== */
+.pace-gate { padding: 6px 0 24px; }
+.pace-gate-title { font-size: 20px; font-weight: 800; color: var(--text1); margin-bottom: 6px; line-height: 1.3; }
+.pace-gate-sub { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 18px; }
+
+/* Hide task body while pace gate is active */
+#view-today.pace-gate-active > .today-edit-entry-btn,
+#view-today.pace-gate-active > .today-editbar,
+#view-today.pace-gate-active > .celebration,
+#view-today.pace-gate-active > .sec,
+#view-today.pace-gate-active > .task-grid,
+#view-today.pace-gate-active > #compassion-day-panel {
+  display: none !important;
+}
 .sys-prompt-wrap { padding: 12px; }
 .sys-prompt-card { background: #1a1a2e; color: #a8d8a8; border-radius: 12px; padding: 14px; font-size: 10px; line-height: 1.7; font-family: monospace; white-space: pre-wrap; overflow-x: auto; direction: ltr; }
 
@@ -3262,7 +3277,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'quiet-rest-permanent-controls-2026-07-12';
+const TORI_BUILD = 'daily-pace-gate-2026-07-15';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -7576,7 +7591,20 @@ async function saveTodayPace(pace) {
 function renderPaceSection() {
   var el = document.getElementById('today-pace-section');
   if (!el) return;
-  el.innerHTML = _todayPace ? _buildPaceChip() : _buildPaceSelector();
+  var viewToday = document.getElementById('view-today');
+  if (_todayPace) {
+    el.innerHTML = _buildPaceChip();
+    if (viewToday) viewToday.classList.remove('pace-gate-active');
+  } else {
+    // Gate only appears after onboarding is complete
+    if (typeof bp !== 'undefined' && !bp.isSetup) {
+      el.innerHTML = '';
+      if (viewToday) viewToday.classList.remove('pace-gate-active');
+      return;
+    }
+    el.innerHTML = _buildPaceGate();
+    if (viewToday) viewToday.classList.add('pace-gate-active');
+  }
 }
 
 function _buildPaceChip() {
@@ -7585,14 +7613,14 @@ function _buildPaceChip() {
   return '<div class="pace-chip-bar">'
     + '<span style="font-size:16px">' + m.emoji + '</span>'
     + '<span class="pace-chip-label">' + m.label + '</span>'
-    + '<button class="pace-chip-change" onclick="clearTodayPace()">שינוי קצב</button>'
+    + '<button class="pace-chip-change" onclick="clearTodayPace()">לשנות קצב</button>'
     + '</div>';
 }
 
-function _buildPaceSelector() {
-  return '<div class="pace-section">'
-    + '<div class="pace-section-title">עם איזה קצב נתחיל היום?</div>'
-    + '<div class="pace-section-intro">הקצב שתבחרי יעזור לתורי לבחור את הטון של היום, את הדמות שתלווה אותך, ואת הדרך הכי מתאימה להתחיל.<br>תמיד אפשר להחליף קצב בהמשך היום.</div>'
+function _buildPaceGate() {
+  return '<div class="pace-gate">'
+    + '<div class="pace-gate-title">עם איזה קצב נתחיל היום?</div>'
+    + '<div class="pace-gate-sub">אפשר לבחור לפי היום שיש עכשיו. אחר כך נפתח את המשימות.</div>'
     + '<div class="pace-cards">'
     + _buildPaceCard('compassion', 'יום חמלה', '', '',
         'ליום לא פשוט, כשגם להתחיל צריך להיות עדין במיוחד.',

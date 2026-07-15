@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v53'; // quiet-rest-permanent-controls: rest ladder on breathing card + permanent step storage
+const CACHE = 'body-soul-v54'; // quiet-rest-permanent-controls: rest ladder on breathing card + permanent step storage
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
