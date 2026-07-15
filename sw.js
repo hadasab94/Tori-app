@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v60'; // gentle-scroll-pigeon: lynx replaced by pigeon-art post
+const CACHE = 'body-soul-v61'; // gentle-scroll-images: 5 feed images added to assets/gentle-scroll/
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
