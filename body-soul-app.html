@@ -3278,7 +3278,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'kipoda-pamper-images-2026-07-15';
+const TORI_BUILD = 'gentle-scroll-optimized-2026-07-15';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -10990,7 +10990,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'טבע',
     title: 'הבמבוק שעבד על תשתיות',
     text: 'במבוק מוסו יכול לצמוח בקצב כמעט לא הגיוני: במחקר על אוכלוסיות במבוק בסין נמדדה צמיחה של עד 114.5 ס״מ ביום.\nאבל הצמיחה המהירה הזאת נשענת על משהו הרבה פחות דרמטי לעין: קני שורש, אזורי חלוקת תאים, אזורי התארכות, ותשתית שכבר הייתה שם לפני שהגובה התחיל לעשות רושם.\nמבחוץ: "וואו, פתאום."\nמתחת לפני השטח: "סליחה, עבדנו פה על מערכת."',
-    image: 'assets/gentle-scroll/bamboo-roots.png',
+    image: 'assets/gentle-scroll/bamboo-roots.webp',
     imageAlt: 'שורשי במבוק מתחת לפני הקרקע',
     imageApproved: true, attributionRequired: false, gentle: true,
   },
@@ -10999,7 +10999,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'חיות',
     title: 'ללוטרות ים יש כיסים',
     text: 'ללוטרות ים יש קפלי עור רפויים מתחת לכל אמה. NOAA מתארים את זה כמו כיסים: הן שומרות שם מזון, ולפעמים גם אבנים שהן משתמשות בהן כדי לפצח צדפות ורכיכות.\nכיסים.\nשל לוטרה.\nבשביל חטיפים וכלים.\nיש יצורים בעולם שמגיעים מוכנים יותר מאיתנו ליום סידורים.',
-    image: 'assets/gentle-scroll/otter-pocket.png',
+    image: 'assets/gentle-scroll/otter-pocket.webp',
     imageAlt: 'לוטרת ים צפה על המים',
     imageApproved: true, attributionRequired: false, gentle: true,
   },
@@ -11008,7 +11008,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'חיות',
     title: 'תמנונים ישנים עם אפקטים',
     text: 'במחקר שפורסם ב־Nature נמצא שתמנונים עוברים בין שינה שקטה לבין שלב שינה פעיל. בזמן השלב הפעיל יכולים להופיע שינויי צבע ודוגמאות מהירים על העור.\nכלומר, יש יצור שבזמן שינה נראה כאילו הוא מריץ מצגת פנימית.\nתמנון: ישן.\nגם תמנון: "רגע, אני מחליף רקע."',
-    image: 'assets/gentle-scroll/octopus-sleep.png',
+    image: 'assets/gentle-scroll/octopus-sleep.webp',
     imageAlt: 'תמנון מתחת למים',
     imageApproved: true, attributionRequired: false, gentle: true,
   },
@@ -11017,7 +11017,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'מחקר',
     title: 'מנוחה ערה',
     text: 'יש תחום מחקר שנקרא waking rest — מנוחה ערה ושקטה אחרי למידה. סקירות בתחום מתארות מחקרים שמצאו שמנוחה כזאת יכולה לעזור לקיבוע זיכרונות חדשים.\nלא שינה. לא פעולה גדולה. כמה דקות בלי להכניס עוד קלט.\nהמוח, מתברר, יודע לעבוד גם במצב שנראה מבחוץ כמו: "היא פשוט יושבת שם."',
-    image: 'assets/gentle-scroll/waking-rest.png',
+    image: 'assets/gentle-scroll/waking-rest.webp',
     imageAlt: 'פינה שקטה ונינוחה',
     imageApproved: true, attributionRequired: false, gentle: true,
   },
@@ -11043,7 +11043,7 @@ const SCROLL_FEED_ITEMS = [
     title: 'יונים יכולות להבדיל בין פיקאסו למונה',
     text: 'במחקר שפורסם ב־1995, אימנו חוקרים יונים להבחין בין ציורים של פיקאסו לבין ציורים של מונה.\nאחרי האימון, היונים הכירו ציורים חדשים של אותם אמנים — כאלה שמעולם לא ראו בתהליך הלמידה.\nזה לא טריק. זה קיטלוג ויזואלי.\nיונה ברחוב שלא הסתכלת עליה פעמיים אולי מחלקת את העולם לקטגוריות שאת לא חשבת שמישהו פרט אליך מבחין בהן.',
     // internal source note: Watanabe, Sakamoto & Wakita (1995), Pigeons' discrimination of paintings by Monet and Picasso, J. Exp. Analysis of Behavior.
-    image: 'assets/gentle-scroll/pigeon-art.png',
+    image: 'assets/gentle-scroll/pigeon-art.webp',
     imageAlt: 'יונה בוחנת ציורים',
     imageApproved: true, attributionRequired: false, gentle: true,
   },
@@ -11147,7 +11147,7 @@ function recordFeedImpression(cardId) {
 //   4. Missing required fields → console.warn + return '' (media suppressed)
 //   5. Attribution rendered as linked HTML from structured fields (not raw imageAttribution text)
 //   6. No attribution block when attributionRequired === false
-function _buildFeedMediaHtml(item) {
+function _buildFeedMediaHtml(item, isFirst) {
   if (!item.image || item.imageApproved !== true) return '';
   if (item.attributionRequired === true) {
     var required = ['imageCreator', 'imageSourceUrl', 'imageLicense', 'imageLicenseUrl', 'imageAttribution'];
@@ -11176,6 +11176,7 @@ function _buildFeedMediaHtml(item) {
     // No-attribution images: wrap so onerror can hide the whole block if file is missing
     mediaHtml = '<div class="feed-img-wrap">'
       + '<img src="' + mediaSrc + '" alt="' + _escH(item.imageAlt || '') + '" class="feed-card-img"'
+      + (isFirst ? '' : ' loading="lazy" decoding="async"')
       + ' onerror="this.parentNode.style.display=\'none\'">'
       + '</div>';
   }
@@ -11227,8 +11228,8 @@ function renderScrollFeed() {
   if (cdMode) {
     items.sort(function(a, b) { return (b.gentle ? 1 : 0) - (a.gentle ? 1 : 0); });
   }
-  items.forEach(function(item) {
-    var imgHtml = _buildFeedMediaHtml(item);
+  items.forEach(function(item, idx) {
+    var imgHtml = _buildFeedMediaHtml(item, idx === 0);
     html += '<div class="feed-card" data-card-id="' + _escH(item.id) + '">'
       + '<div class="feed-card-category">' + _escH(item.category) + '</div>'
       + imgHtml

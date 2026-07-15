@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v62'; // kipoda-pamper-images: 6 pamper images added for kipoda companion
+const CACHE = 'body-soul-v63'; // gentle-scroll-optimized: 5 feed images PNG→WebP, lazy loading
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
