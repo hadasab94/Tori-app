@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v61'; // gentle-scroll-images: 5 feed images added to assets/gentle-scroll/
+const CACHE = 'body-soul-v62'; // kipoda-pamper-images: 6 pamper images added for kipoda companion
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
