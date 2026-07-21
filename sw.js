@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v65'; // approved-content-privacy-fixes: debug badge removed, pamper gate live, copy + reset-flow updates
+const CACHE = 'body-soul-v66'; // onboarding-icons-teeth-library: team-screen pace+icons, teeth category restored
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

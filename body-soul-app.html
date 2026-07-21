@@ -1,4 +1,4 @@
-<!-- Tori version: approved-content-privacy-fixes-2026-07-20 -->
+<!-- Tori version: onboarding-icons-teeth-library-2026-07-21 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -458,7 +458,12 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 /* Onboarding v2 — team screen */
 .ob-team-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
 .ob-team-card { background: #F9F6FF; border: 1.5px solid #D4C4F0; border-radius: 14px; padding: 12px 14px; }
+.ob-team-head { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+.ob-team-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: #EFE7FA; }
+.ob-team-head-text { min-width: 0; }
+.ob-team-name-row { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
 .ob-team-name { font-size: 14px; font-weight: 800; color: #5A3F8A; }
+.ob-team-pace { font-size: 12px; font-weight: 700; color: #8B72B8; }
 .ob-team-label { font-size: 11.5px; color: #8B72B8; }
 .ob-team-text { font-size: 12.5px; color: #444; line-height: 1.55; margin: 6px 0 4px; }
 .ob-team-quote { font-size: 12px; color: #7A5AAA; font-style: italic; }
@@ -3274,7 +3279,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'approved-content-privacy-fixes-2026-07-20';
+const TORI_BUILD = 'onboarding-icons-teeth-library-2026-07-21';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -7647,23 +7652,27 @@ function _obRenderTeam() {
   return '<div class="ob-title" style="margin-bottom:6px">הכירי את הצוות של תורי</div>'
     + '<div class="ob-sub" style="margin-bottom:12px">שלוש חברות קטנות שמלוות אותך בדרכים שונות — עם קצב, הומור וסוג אחר של יחס טוב לעצמך.<br>בכל יום אפשר להתחיל עם מי שהכי מתאימה לרגע שלך, ותמיד אפשר להחליף.</div>'
     + '<div class="ob-team-list">'
-    + _obTeamCard('קפיברה', 'קצב שמיכה, יחס טוב לעצמך.',
+    + _obTeamCard('קפיברה', 'קצב שמיכה', 'assets/companions/ui-icons/capy-ui-icon.webp', 'קצב שמיכה, יחס טוב לעצמך.',
         'מתאימה לימים שבהם כדאי להתחיל ממש בקטן — משהו לגוף, למנוחה, או לתחושה קצת יותר נעימה.',
         '"גם קצב שמיכה הוא קצב. הוא פשוט מגיע עם כרית."')
-    + _obTeamCard('קיפודה', 'בחירה בעצמך, עם חיוך וקוצים.',
+    + _obTeamCard('קיפודה', 'קצב אמצע', 'assets/companions/ui-icons/kipoda-ui-icon.webp', 'בחירה בעצמך, עם חיוך וקוצים.',
         'מתאימה לימים שבהם צריך קצת יותר מקום, גבול קטן, או תזכורת שמותר לך להיות בצד שלך.',
         '"תודה שבאתם. הזמנתם מקום מראש?"')
-    + _obTeamCard('חפשושית', 'ניצוץ קטן לתזוזה טובה.',
+    + _obTeamCard('חפשושית', 'קצב סקרנות', 'assets/companions/ui-icons/hafshushit-ui-icon.webp', 'ניצוץ קטן לתזוזה טובה.',
         'מתאימה לימים שבהם אפשר לנסות לנוע — לא בגדול, רק למצוא כיוון קטן שאפשר להתחיל ממנו.',
         '"ניסוי קטן, בלי חוזה המשך. רק לראות אם משהו זז."')
     + '</div>'
     + '<button class="ob-nxt" onclick="_obAdvance()">נמשיך להתאים את תורי אלייך</button>';
 }
 
-function _obTeamCard(name, label, text, quote) {
+function _obTeamCard(name, pace, iconSrc, label, text, quote) {
   return '<div class="ob-team-card">'
-    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
-    + '<div><div class="ob-team-name">' + name + '</div><div class="ob-team-label">' + label + '</div></div>'
+    + '<div class="ob-team-head">'
+    + '<img class="ob-team-icon" src="' + iconSrc + '" alt="' + name + '" loading="eager" onerror="this.style.display=\'none\'">'
+    + '<div class="ob-team-head-text">'
+    + '<div class="ob-team-name-row"><span class="ob-team-name">' + name + '</span><span class="ob-team-pace">· ' + pace + '</span></div>'
+    + '<div class="ob-team-label">' + label + '</div>'
+    + '</div>'
     + '</div>'
     + '<div class="ob-team-text">' + text + '</div>'
     + '<div class="ob-team-quote">' + quote + '</div>'
@@ -10896,7 +10905,7 @@ function renderStructuredPlusSection() {
 
 var ACTIVE_LIBRARY_KEY = 'active:libraryTasks';
 // Families supported for user-adding to Today in this step.
-var LIBRARY_SUPPORTED_FAMILIES = ['food', 'rest', 'bodyRefresh', 'freshAir', 'quietMoment'];
+var LIBRARY_SUPPORTED_FAMILIES = ['food', 'rest', 'bodyRefresh', 'freshAir', 'quietMoment', 'teeth'];
 
 var _activeLibraryTasks = [];
 
