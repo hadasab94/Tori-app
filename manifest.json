@@ -1,7 +1,7 @@
 {
   "name": "תורי",
   "short_name": "תורי",
-  "description": "מסע ההחלמה היומי שלך",
+  "description": "צעדים קטנים של חמלה עצמית, בקצב שלך.",
   "start_url": "./body-soul-app.html",
   "display": "standalone",
   "background_color": "#FBF4E8",
