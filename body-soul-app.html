@@ -1,4 +1,4 @@
-<!-- Tori version: onboarding-5screen-companion-select-tour-2026-07-23 -->
+<!-- Tori version: onboarding-fixstep-domainlist-libraryguide-2026-07-24 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -2759,6 +2759,16 @@ if('serviceWorker' in navigator){
     </div>
   </div>
 
+  <div class="guide-item" id="guide-library">
+    <div class="guide-item-header" onclick="toggleGuideItem('guide-library')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleGuideItem('guide-library');}" role="button" tabindex="0" aria-expanded="false" aria-controls="guide-library-body">
+      <span class="guide-item-title">ספריית הדאגה העצמית</span>
+      <span class="guide-item-chevron">▼</span>
+    </div>
+    <div class="guide-item-body" id="guide-library-body">
+      <div class="guide-item-text">כאן מחכים כל התחומים והצעדים של תורי. אפשר לבחור פעולה, להתאים את גודל הצעד ולהוסיף אותה לדרך שלך.</div>
+    </div>
+  </div>
+
   <div class="guide-item" id="guide-compassion">
     <div class="guide-item-header" onclick="toggleGuideItem('guide-compassion')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleGuideItem('guide-compassion');}" role="button" tabindex="0" aria-expanded="false" aria-controls="guide-compassion-body">
       <span class="guide-item-title">יום חמלה</span>
@@ -3301,7 +3311,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'onboarding-5screen-companion-select-tour-2026-07-23';
+const TORI_BUILD = 'onboarding-fixstep-domainlist-libraryguide-2026-07-24';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -7646,19 +7656,34 @@ var OB_GENTLE_CATEGORIES = [
   { id: 'teeth',       label: 'פה ושיניים' },
 ];
 
+// Sets a PERMANENT starting step-size for a parentTask-linked domain, by
+// reusing gs.fixedTaskStepSelections — the exact same state the existing
+// פחות | קבוע | יותר buttons on task cards read and write (see
+// _taskStepCurrentIdx / adjustTaskStep / toggleTaskFixed / applyMicroTaskOverrides
+// above). This is the highest-priority tier and has no expiry, unlike the
+// 7-day Journey adaptive-suggestion override (_gentleHabitOverrides), which is
+// intentionally NOT used here — an onboarding choice is a standing preference,
+// not a one-week trial. Because it writes to the same state, any later manual
+// change via those same buttons naturally takes precedence over this default.
+function _obFixTaskStep(parentTaskId, libraryTaskId) {
+  gs.fixedTaskStepSelections = gs.fixedTaskStepSelections || {};
+  gs.fixedTaskStepSelections[parentTaskId] = libraryTaskId;
+  _addFixedPin(parentTaskId); // safe no-op if the Today card isn't in the DOM yet
+}
+
 // Maps a chosen gentle-start domain to the smallest real library option for
-// it, and activates it through the EXISTING mechanisms (adaptive micro-task
-// override for parentTask-linked families, direct library add for standalone
+// it, and activates it through the EXISTING mechanisms (permanent fixed step
+// for parentTask-linked families, direct library add for standalone
 // families, the dedicated water-step selector for water) — no parallel
 // mechanism is created here.
 var OB_GENTLE_ACTIONS = {
-  food:        function () { tryAdaptiveForWeek('food-place-edible-nearby'); },   // parentTask: breakfast
-  bodyRefresh: function () { tryAdaptiveForWeek('body-wash-hands'); },            // parentTask: shower
-  freshAir:    function () { tryAdaptiveForWeek('fresh-air-open-window'); },      // parentTask: outside
-  rest:        function () { tryAdaptiveForWeek('rest-moment'); },                // parentTask: breathing
-  teeth:       function () { addLibraryTaskToToday('teeth-place-brush-paste'); }, // standalone
-  quietMoment: function () { addLibraryTaskToToday('quiet-one-deep-breath'); },   // standalone
-  water:       function () { selectWaterStepFromLibrary(0); },                    // dedicated water mechanism
+  food:        function () { _obFixTaskStep('breakfast', 'food-place-edible-nearby'); }, // parentTask: breakfast
+  bodyRefresh: function () { _obFixTaskStep('shower', 'body-wash-hands'); },              // parentTask: shower
+  freshAir:    function () { _obFixTaskStep('outside', 'fresh-air-open-window'); },       // parentTask: outside
+  rest:        function () { _obFixTaskStep('breathing', 'rest-moment'); },               // parentTask: breathing
+  teeth:       function () { addLibraryTaskToToday('teeth-place-brush-paste'); },         // standalone, already permanent
+  quietMoment: function () { addLibraryTaskToToday('quiet-one-deep-breath'); },           // standalone, already permanent
+  water:       function () { selectWaterStepFromLibrary(0); },                             // dedicated water mechanism, already permanent
 };
 
 function renderObScreen() {
@@ -7719,12 +7744,12 @@ function _obRenderPersonalize() {
   var canContinue = _obPersonalization === 'start_all'
     || (_obPersonalization === 'custom' && _obGentleAreas.length > 0);
   var h = '<div class="ob-title">איך תרצי להתחיל?</div>'
-    + '<div class="ob-sub">אפשר להתחיל עם המבנה של תורי או לבחור בעצמך אילו תחומים יופיעו במסך היום. תמיד אפשר לשנות את הבחירה בהמשך.</div>'
+    + '<div class="ob-sub">תורי תציג לך צעדים ממגוון תחומים. אפשר להתחיל עם המבנה הרגיל שלה, או לבחור תחומים שבהם תרצי לקבל מיקרו־צעדים כבר מההתחלה.</div>'
     + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
-    + _obPersOpt('start_all', 'להתחיל עם תורי',
-        'תורי תציג בכל יום את כל הצעדים מכל התחומים. אין ציפייה לעשות את כולם — את בוחרת מתוכם מה מתאים היום.')
-    + _obPersOpt('custom', 'אני רוצה לבחור תחומים',
-        'תוכלי לבחור בעצמך אילו תחומים יופיעו במסך היום.')
+    + _obPersOpt('start_all', 'להתחיל עם המבנה של תורי',
+        'תורי תציג צעדים ממגוון תחומים, ואת תבחרי בכל יום מה מתאים.')
+    + _obPersOpt('custom', 'להתחיל בעדינות בתחומים שאבחר',
+        'תוכלי לבחור תחום אחד או יותר שבהם תורי תתחיל מראש ממיקרו־צעדים.')
     + '</div>'
     + (_obPersonalization === 'custom' ? _obRenderCategoryChips() : '')
     + '<button class="ob-nxt" onclick="_obPersonalizeFinish()"'
@@ -7798,6 +7823,10 @@ function _obFinish() {
     if (!action) return;
     try { action(); } catch (e) { console.error('[Tori] gentle-start action failed for', id, e); }
   });
+  if (chosen.length) {
+    applyMicroTaskOverrides(); // refresh visible Today card labels immediately
+    saveGardenState();        // persist fixedTaskStepSelections + water step together
+  }
   _obMaybeStartTour();
 }
 

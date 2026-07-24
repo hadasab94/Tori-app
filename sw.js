@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v67'; // onboarding-5screen-companion-select-tour: real 5-screen onboarding, companion-select reuse, post-onboarding tour
+const CACHE = 'body-soul-v68'; // onboarding-fixstep-domainlist-libraryguide: permanent fixed-step gentle start, corrected screen-5 copy, library guide entry
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
