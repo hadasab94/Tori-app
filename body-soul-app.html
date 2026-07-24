@@ -1,4 +1,4 @@
-<!-- Tori version: onboarding-icons-teeth-library-2026-07-21 -->
+<!-- Tori version: onboarding-5screen-companion-select-tour-2026-07-23 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -467,6 +467,25 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .ob-team-label { font-size: 11.5px; color: #8B72B8; }
 .ob-team-text { font-size: 12.5px; color: #444; line-height: 1.55; margin: 6px 0 4px; }
 .ob-team-quote { font-size: 12px; color: #7A5AAA; font-style: italic; }
+/* Post-onboarding tour — small, non-blocking, dismissible card */
+.ob-tour {
+  position: fixed; left: 16px; right: 16px; bottom: 104px; z-index: 700;
+  max-width: 420px; margin: 0 auto;
+  background: white; border-radius: 16px; padding: 14px 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.18); border: 1.5px solid #EFE7FA;
+}
+.ob-tour-step { font-size: 11px; color: #9B72CF; font-weight: 700; margin-bottom: 4px; }
+.ob-tour-title { font-size: 14.5px; font-weight: 800; color: #333; margin-bottom: 4px; }
+.ob-tour-text { font-size: 12.5px; color: #555; line-height: 1.55; margin-bottom: 12px; }
+.ob-tour-btns { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ob-tour-skip { background: none; border: none; color: #999; font-size: 12px; cursor: pointer; font-family: inherit; padding: 6px 4px; }
+.ob-tour-next { background: #9B72CF; color: white; border: none; border-radius: 10px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.ob-tour-next:focus-visible, .ob-tour-skip:focus-visible { outline: 2px solid #6B4C9A; outline-offset: 2px; }
+@media (max-width: 380px) { .ob-tour { left: 10px; right: 10px; bottom: 96px; } }
+/* Onboarding v2 — journey info screen */
+.ob-info-card { background: #F9F6FF; border: 1.5px solid #D4C4F0; border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+.ob-info-title { font-size: 13.5px; font-weight: 800; color: #5A3F8A; margin-bottom: 4px; }
+.ob-info-text { font-size: 12.5px; color: #444; line-height: 1.55; }
 /* Onboarding v2 — personalization screen */
 .ob-pers-opt { width: 100%; background: white; border: 1.5px solid #ddd; border-radius: 12px; padding: 10px 14px; text-align: right; cursor: pointer; font-family: inherit; transition: border-color 0.18s, background 0.18s; display: block; }
 .ob-pers-opt.on { border-color: #9B72CF; background: #F3ECFF; }
@@ -2936,6 +2955,9 @@ if('serviceWorker' in navigator){
 <!-- FLOATING הידעת BUTTON -->
 <button class="fact-fab" onclick="openFact()">💡 הידעת?</button>
 
+<!-- POST-ONBOARDING TOUR — non-blocking, closable any time, shown once -->
+<div id="ob-tour" class="ob-tour" style="display:none" role="dialog" aria-label="סיור קצר בתורי" aria-live="polite"></div>
+
 <!-- BOTTOM NAV
      RTL visual order (right → left): היום | המסע | ╎ לגלול
      nav-scroll has border-inline-start separator to signal it's a secondary area -->
@@ -3279,7 +3301,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'onboarding-icons-teeth-library-2026-07-21';
+const TORI_BUILD = 'onboarding-5screen-companion-select-tour-2026-07-23';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -5012,12 +5034,12 @@ const COMPANIONS = {
     displayNameWithArticle:'הקפיברה',
     img:'assets/companions/capy.webp',
     homeImg:'assets/companions/capy-home.webp',
-    tagline:'הכי רגועה, באופן עקבי',
+    tagline:'קצב שמיכה · חמה, מפוכחת וקצת צינית',
     bio:'לא ממהרת לשום מקום. מחכה בלי לדחוק.',
     fitsIf:'קצב יציב ובלי דרמה',
     pace:'קצב שמיכה',
     mainQuote:'נתחיל מהשמיכה. היא כבר פה, ויש לה גישה מצוינת.',
-    personalitySummary:'קפיברה היא החברה הרגועה־יבשה. ההומור שלה דד־פאן, מינימליסטי, רגוע ולא מתרגש. היא מורידה לחץ דרך משפטים פשוטים, יבשים ומדויקים שמחזירים את המשתמשת לפעולה אחת קטנה בלי רעש. היא לא מנסה להלהיב, לא מדרבנת בקול גדול ולא עושה עניין. מתאימה במיוחד למצבים של הצפה, לחץ, עומס משימות, צורך להאט או תחושה שהכול דחוף.',
+    personalitySummary:'קפיברה היא דודה אוהבת שכבר ראתה את החיים מגזימים פעם או פעמיים. היא מורידה את הלחץ, מוסיפה הומור רך ועוזרת למצוא דרך לעשות משהו טוב בשבילך גם ביום כבד.',
     accent:'#D9A48A', accentSoft:'rgba(217,164,138,0.18)', sceneTint:'#FBF3EB',
     active: true,
   },
@@ -5026,12 +5048,12 @@ const COMPANIONS = {
     displayNameWithArticle:'הקיפודה',
     img:'assets/companions/kipoda.webp',
     homeImg:'assets/companions/lairs/kipoda-home.webp',
-    tagline:'קצב אמצע',
+    tagline:'קצב אמצע · חדה, מתוחכמת ובעדך',
     bio:'למשימות בגודל אפשרי, עם מקום גם לך וגם ליום.',
     fitsIf:'לבחור מה נכנס ליום, עם מקום שנשאר גם לך',
     pace:'קצב אמצע',
     mainQuote:'כמה משימות בגודל הנכון. כל השאר מוזמנות לשלוח מייל מסודר.',
-    personalitySummary:'קיפודה עוזרת לשמור על משימות בגודל שאפשר לחיות איתו. ההומור שלה שנון ואלגנטי, עם גבולות חמים ולא נוזפים. היא לא מלמדת ולא מתקנת — היא בעד לבחור מה נכנס ליום ומה שולחת מייל ומחכה. מתאימה במיוחד כשצריך לצמצם, לדייק, ולהרגיש שיש מקום גם לך.',
+    personalitySummary:'קיפודה קולטת מיד כשהעולם קצת התבלבל וחשב שהקצב שלו קודם לשלך. היא מרימה גבה, מחזירה את הצרכים שלך לתמונה ועוזרת לבחור מה מתאים לך — עם הומור חכם וקוצים במידה טובה.',
     accent:'#9A8DB0', accentSoft:'rgba(154,141,176,0.18)', sceneTint:'#F0EDF5',
     active: true,
   },
@@ -5040,12 +5062,12 @@ const COMPANIONS = {
     displayNameWithArticle:'החפשושית',
     img:'assets/companions/forest.webp',
     homeImg:'assets/companions/forest-home.webp',
-    tagline:'הכי קרובה לאדמה',
+    tagline:'קצב סקרנות · משונה, סקרנית ומלאת רעיונות',
     bio:'חייה של תנועה ושורשים. הולכת בקצב שלך.',
     fitsIf:'לנוע ולהרגיש את הגוף',
     pace:'קצב סקרנות',
     mainQuote:'ניסוי קטן, בלי חוזה המשך. רק לראות אם משהו זז.',
-    personalitySummary:'חפשושית היא החברה הפייתית־אבסורדית. ההומור שלה מוזר־מתוק, יערי, קליל ומקטין איום. היא הופכת משימות גדולות למשהו קטן, מצחיק ואפשרי, כאילו המשימה היא מפלצת קטנה עם יחסי ציבור מוגזמים. מתאימה במיוחד למצבים של הימנעות, פחד מהתחלה, משימות ביתיות או תחושה שהכול גדול מדי.',
+    personalitySummary:'חפשושית מוצאת פתחים ושבילים במקומות שנראו סגורים. היא מכניסה משחק לתנועה, הופכת התחלות לניסויים קטנים ומזכירה שאפשר לגלות את הדרך תוך כדי.',
     accent:'#8FA679', accentSoft:'rgba(143,166,121,0.18)', sceneTint:'#EFF1E5',
     active: true,
   },
@@ -7610,87 +7632,103 @@ var _obScreen = 0;
 var _obPersonalization = null; // 'tori' | 'all' | 'custom'
 var _obGentleAreas = [];       // array of category IDs user wants approached gently
 
-// Categories shown on screen 4 — only IDs supported by the current self-care system.
-// TODO: obGentleAreas should later override daily pace when task-size rendering is
-//       implemented. For now they are stored in bp and available for future use.
+// Domains shown on screen 5 — kept in sync with the families the self-care
+// library actually supports today (LIBRARY_SUPPORTED_FAMILIES + water, which
+// has its own dedicated step mechanism). 'movement' is intentionally excluded:
+// it is defined in LIB_FAMILIES but not yet addable via the library ("בשלב הבא").
 var OB_GENTLE_CATEGORIES = [
-  { id: 'shower',   label: 'היגיינה' },
-  { id: 'food',     label: 'אכילה' },
-  { id: 'water',    label: 'שתייה' },
-  { id: 'outside',  label: 'אוויר ואור' },
-  { id: 'sleep',    label: 'מנוחה' },
-  { id: 'exercise', label: 'תנועה קטנה' },
+  { id: 'food',        label: 'אכילה' },
+  { id: 'water',       label: 'שתייה' },
+  { id: 'rest',        label: 'מנוחה' },
+  { id: 'bodyRefresh', label: 'רענון גוף' },
+  { id: 'freshAir',    label: 'אוויר צח' },
+  { id: 'quietMoment', label: 'רגע שקט' },
+  { id: 'teeth',       label: 'פה ושיניים' },
 ];
+
+// Maps a chosen gentle-start domain to the smallest real library option for
+// it, and activates it through the EXISTING mechanisms (adaptive micro-task
+// override for parentTask-linked families, direct library add for standalone
+// families, the dedicated water-step selector for water) — no parallel
+// mechanism is created here.
+var OB_GENTLE_ACTIONS = {
+  food:        function () { tryAdaptiveForWeek('food-place-edible-nearby'); },   // parentTask: breakfast
+  bodyRefresh: function () { tryAdaptiveForWeek('body-wash-hands'); },            // parentTask: shower
+  freshAir:    function () { tryAdaptiveForWeek('fresh-air-open-window'); },      // parentTask: outside
+  rest:        function () { tryAdaptiveForWeek('rest-moment'); },                // parentTask: breathing
+  teeth:       function () { addLibraryTaskToToday('teeth-place-brush-paste'); }, // standalone
+  quietMoment: function () { addLibraryTaskToToday('quiet-one-deep-breath'); },   // standalone
+  water:       function () { selectWaterStepFromLibrary(0); },                    // dedicated water mechanism
+};
 
 function renderObScreen() {
   var inner = document.getElementById('ob-card-inner');
   if (!inner) return;
-  var renderers = [_obRenderWelcome, _obRenderHow, _obRenderTeam, _obRenderPersonalize, _obRenderReady];
+  // Screen 3 (index 2) — companion selection. Reuses the live Journey-tab
+  // selection component (same cards, same cs._pendingId / save logic, same
+  // dynamic "בחרתי את X" button) instead of a separate onboarding-only build.
+  if (_obScreen === 2) {
+    cs._pendingId = cs.companionId || null;
+    renderCompanionSelectDOM(inner);
+    return;
+  }
+  var renderers = [_obRenderWelcome, _obRenderHow, null, _obRenderJourney, _obRenderPersonalize];
   var fn = renderers[_obScreen];
   if (fn) inner.innerHTML = fn();
 }
 
 function _obRenderWelcome() {
   return '<div style="font-size:36px;margin-bottom:10px">🌱</div>'
-    + '<div class="ob-title">ברוכה הבאה לתורי</div>'
-    + '<div class="ob-sub">תורי נבנתה על רעיון פשוט: צעדים קטנים, מילים טובות והומור בזמן הנכון יכולים לשנות לאט את הדרך שבה את פוגשת את עצמך ביום־יום.'
-    + '<br><br>כאן לא צריך להתחיל בגדול. גם צעד קטן, מילה טובה אחת, או רגע של יחס טוב לעצמך — נחשבים.</div>'
-    + '<button class="ob-nxt" onclick="_obAdvance()">נתחיל בקטן</button>';
+    + '<div class="ob-title">ברוכה הבאה לתורי 🌱</div>'
+    + '<div class="ob-sub">קוראים לה תורי כי עכשיו הגיע גם תורך — לבחור גם בך, לתת מקום למה שאת צריכה ולעשות את זה בצעדים קטנים, עד שהבחירה הזאת מרגישה טבעית יותר.'
+    + '<br><br>תורי באה לנסות לצמצם את הפער בין מה שהיית רוצה לעשות לבין מה שמצליח לקרות בפועל. היא מפרקת פעולות לצעדים ברורים, מסבירה את הערך שמאחוריהם ועוזרת לבנות בהדרגה את היכולת לעשות עוד.</div>'
+    + '<button class="ob-nxt" onclick="_obAdvance()">בואי נראה איך זה עובד</button>';
 }
 
 function _obRenderHow() {
   return '<div style="font-size:32px;margin-bottom:10px">📋</div>'
-    + '<div class="ob-title">איך תורי עובדת?</div>'
-    + '<div class="ob-sub">בכל יום תורי מציעה כמה צעדים קטנים של יחס טוב לעצמך — לגוף, למנוחה, להיגיינה, או לרגע שקט.'
-    + '<br><br>את בוחרת מה מתאים: צעד קטנטן, צעד רגיל, או פשוט לא עכשיו.'
-    + '<br><br>ואם זה יום שצריך בו פחות — אפשר לעבור ליום חמלה.'
-    + '<br><br>ויש גם צוות קטן שמלווה אותך. לכל אחת יש קצב, הומור ודרך אחרת להעביר איתך את היום.</div>'
-    + '<button class="ob-nxt" onclick="_obAdvance()">נכיר את הצוות</button>';
+    + '<div class="ob-title">מתחילות בצעד ברור</div>'
+    + '<div class="ob-sub">במסך היום תמצאי כפתורים ממגוון תחומים. בכל יום תוכלי לבחור קצב ולהתאים את גודל הצעדים למה שמתאים היום.'
+    + '<br><br>בתחילת הדרך תורי מתמקדת בצעדים יומיומיים כמו אוכל, שתייה, תנועה, מנוחה והיגיינה. בקרוב היא תכלול גם אזור צמיחה, שבו אותה שיטה תעזור לפרק למידה ומטרות אישיות למיקרו־צעדים.'
+    + '<br><br>ב״נעים לדעת״ תוכלי להבין את המשמעות של כל צעד, לקרוא על המחקר שמאחוריו ולהבין לעומק למה חזרה עליו עשויה לתרום לאורך זמן.'
+    + '<br><br>תורי מציעה נקודת התחלה ברורה ועוזרת להפוך מטרה שחשובה לך לצעד קטן שאפשר להתחיל ממנו היום.</div>'
+    + '<button class="ob-nxt" onclick="_obAdvance()">להכיר את מי שתלווה אותי</button>';
 }
 
-function _obRenderTeam() {
-  return '<div class="ob-title" style="margin-bottom:6px">הכירי את הצוות של תורי</div>'
-    + '<div class="ob-sub" style="margin-bottom:12px">שלוש חברות קטנות שמלוות אותך בדרכים שונות — עם קצב, הומור וסוג אחר של יחס טוב לעצמך.<br>בכל יום אפשר להתחיל עם מי שהכי מתאימה לרגע שלך, ותמיד אפשר להחליף.</div>'
-    + '<div class="ob-team-list">'
-    + _obTeamCard('קפיברה', 'קצב שמיכה', 'assets/companions/ui-icons/capy-ui-icon.webp', 'קצב שמיכה, יחס טוב לעצמך.',
-        'מתאימה לימים שבהם כדאי להתחיל ממש בקטן — משהו לגוף, למנוחה, או לתחושה קצת יותר נעימה.',
-        '"גם קצב שמיכה הוא קצב. הוא פשוט מגיע עם כרית."')
-    + _obTeamCard('קיפודה', 'קצב אמצע', 'assets/companions/ui-icons/kipoda-ui-icon.webp', 'בחירה בעצמך, עם חיוך וקוצים.',
-        'מתאימה לימים שבהם צריך קצת יותר מקום, גבול קטן, או תזכורת שמותר לך להיות בצד שלך.',
-        '"תודה שבאתם. הזמנתם מקום מראש?"')
-    + _obTeamCard('חפשושית', 'קצב סקרנות', 'assets/companions/ui-icons/hafshushit-ui-icon.webp', 'ניצוץ קטן לתזוזה טובה.',
-        'מתאימה לימים שבהם אפשר לנסות לנוע — לא בגדול, רק למצוא כיוון קטן שאפשר להתחיל ממנו.',
-        '"ניסוי קטן, בלי חוזה המשך. רק לראות אם משהו זז."')
+function _obRenderJourney() {
+  return '<div class="ob-title">כל התקדמות שלך נספרת בלשונית המסע</div>'
+    + '<div class="ob-sub" style="margin-bottom:14px">בכל פעם שאת מסמנת פעולה, ההתקדמות נשמרת במסע ומתחברת למה שכבר עשית.</div>'
+    + '<div class="ob-info-card">'
+    + '<div class="ob-info-title">💛 נקודות חיבור</div>'
+    + '<div class="ob-info-text">הפעולות שסימנת מוסיפות נקודות חיבור. בעזרתן תוכלי לבחור פינוקים לדמות שמלווה אותך.</div>'
     + '</div>'
-    + '<button class="ob-nxt" onclick="_obAdvance()">נמשיך להתאים את תורי אלייך</button>';
-}
-
-function _obTeamCard(name, pace, iconSrc, label, text, quote) {
-  return '<div class="ob-team-card">'
-    + '<div class="ob-team-head">'
-    + '<img class="ob-team-icon" src="' + iconSrc + '" alt="' + name + '" loading="eager" onerror="this.style.display=\'none\'">'
-    + '<div class="ob-team-head-text">'
-    + '<div class="ob-team-name-row"><span class="ob-team-name">' + name + '</span><span class="ob-team-pace">· ' + pace + '</span></div>'
-    + '<div class="ob-team-label">' + label + '</div>'
+    + '<div class="ob-info-card">'
+    + '<div class="ob-info-title">🎁 פינוקים</div>'
+    + '<div class="ob-info-text">קודם בחרת לעשות משהו בשבילך. אחר כך אפשר להשתמש בנקודות החיבור כדי לתת קצת טוב בחזרה — בפינוק לדמות לבד, עם חברה או עם אחות.</div>'
     + '</div>'
+    + '<div class="ob-info-card">'
+    + '<div class="ob-info-title">🌱 מה מתחזק אצלי</div>'
+    + '<div class="ob-info-text">פעולה שאת בוחרת לחזק מקבלת עציץ משלה.'
+    + '<br><br>אין צורך לעשות דבר נוסף: כשאת מסמנת את הפעולה, השקית את העציץ. בכל פעם שאת חוזרת אליה הוא ממשיך לגדול, ובימים אחרים הוא מחכה לך בסבלנות.'
+    + '<br><br>בעתיד, אחרי תקופת התמדה, תוכלי להעביר את העציץ למאורת הדמות, ולתת לה אותו במתנה — על הדרך שעשיתן וכדי לחגוג יחד את הטמעת ההרגל.</div>'
     + '</div>'
-    + '<div class="ob-team-text">' + text + '</div>'
-    + '<div class="ob-team-quote">' + quote + '</div>'
-    + '</div>';
+    + '<button class="ob-nxt" onclick="_obAdvance()">להתאים את תורי אליי</button>';
 }
 
 function _obRenderPersonalize() {
-  var canContinue = !!_obPersonalization;
-  var h = '<div class="ob-title">באילו תחומים כדאי לתורי לגשת אלייך בעדינות?</div>'
-    + '<div class="ob-sub">אפשר לבחור תחומים שבהם כדאי להתחיל בצעדים קטנים במיוחד. תמיד אפשר לשנות את הבחירה בהמשך.</div>'
+  var canContinue = _obPersonalization === 'start_all'
+    || (_obPersonalization === 'custom' && _obGentleAreas.length > 0);
+  var h = '<div class="ob-title">איך תרצי להתחיל?</div>'
+    + '<div class="ob-sub">אפשר להתחיל עם המבנה של תורי או לבחור בעצמך אילו תחומים יופיעו במסך היום. תמיד אפשר לשנות את הבחירה בהמשך.</div>'
     + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
-    + _obPersOpt('tori',   'לפי המלצת תורי',    'תורי תשלב בשבילך כמה צעדים קטנים וכמה צעדים רגילים.')
-    + _obPersOpt('all',    'הכול רלוונטי לי',    'תורי תוכל להציע מכל התחומים, בלי להעמיס הכול ביום אחד.')
-    + _obPersOpt('custom', 'אני רוצה לבחור',      'אמשיך לבחירת תחומים בעצמי.')
+    + _obPersOpt('start_all', 'להתחיל עם תורי',
+        'תורי תציג בכל יום את כל הצעדים מכל התחומים. אין ציפייה לעשות את כולם — את בוחרת מתוכם מה מתאים היום.')
+    + _obPersOpt('custom', 'אני רוצה לבחור תחומים',
+        'תוכלי לבחור בעצמך אילו תחומים יופיעו במסך היום.')
     + '</div>'
     + (_obPersonalization === 'custom' ? _obRenderCategoryChips() : '')
-    + '<button class="ob-nxt" onclick="_obPersonalizeNext()"'
-    + (canContinue ? '' : ' disabled') + '>להמשיך</button>';
+    + '<button class="ob-nxt" onclick="_obPersonalizeFinish()"'
+    + (canContinue ? '' : ' disabled') + '>לשמור ולעבור להיום</button>';
   return h;
 }
 
@@ -7703,22 +7741,17 @@ function _obPersOpt(val, title, desc) {
 }
 
 function _obRenderCategoryChips() {
-  var h = '<div style="margin:4px 0 8px;font-size:12.5px;font-weight:700;color:var(--text2,#7a6a5a)">בחרי תחומים שדורשים גישה עדינה יותר:</div>'
+  var skipOn = _obGentleAreas.indexOf('__skip__') > -1;
+  var h = '<div style="margin:4px 0 4px;font-size:13.5px;font-weight:700;color:var(--text1,#333)">באילו תחומים תרצי להתחיל בעדינות במיוחד?</div>'
+    + '<div style="margin:0 0 8px;font-size:12.5px;color:var(--text2,#7a6a5a)">אפשר לבחור תחום אחד או יותר, ותורי תציג בהם מיקרו־צעדים כבר מההתחלה.</div>'
     + '<div class="ob-opts" style="margin-bottom:10px">';
   OB_GENTLE_CATEGORIES.forEach(function(cat) {
-    var on = _obGentleAreas.indexOf(cat.id) > -1;
+    var on = !skipOn && _obGentleAreas.indexOf(cat.id) > -1;
     h += '<button class="ob-opt' + (on ? ' on' : '') + '" onclick="_obToggleGentleArea(\'' + cat.id + '\')">' + cat.label + '</button>';
   });
+  h += '<button class="ob-opt' + (skipOn ? ' on' : '') + '" onclick="_obToggleGentleArea(\'__skip__\')">לא צריך כרגע</button>';
   h += '</div>';
   return h;
-}
-
-function _obRenderReady() {
-  return '<div style="font-size:36px;margin-bottom:10px">✨</div>'
-    + '<div class="ob-title">אפשר להתחיל</div>'
-    + '<div class="ob-sub">תורי תציע לך צעדים לפי מה שבחרת, ותמיד אפשר לשנות.'
-    + '<br><br>נתחיל מהיום ונראה איזה קצב מתאים לך עכשיו.</div>'
-    + '<button class="ob-nxt" onclick="_obFinish()">לעבור להיום</button>';
 }
 
 function _obAdvance() { _obScreen++; renderObScreen(); }
@@ -7730,26 +7763,102 @@ function _obSetPersonalization(val) {
 }
 
 function _obToggleGentleArea(id) {
-  var idx = _obGentleAreas.indexOf(id);
-  if (idx > -1) _obGentleAreas.splice(idx, 1);
-  else _obGentleAreas.push(id);
+  if (id === '__skip__') {
+    _obGentleAreas = (_obGentleAreas.indexOf('__skip__') > -1) ? [] : ['__skip__'];
+  } else {
+    var skipIdx = _obGentleAreas.indexOf('__skip__');
+    if (skipIdx > -1) _obGentleAreas.splice(skipIdx, 1);
+    var idx = _obGentleAreas.indexOf(id);
+    if (idx > -1) _obGentleAreas.splice(idx, 1);
+    else _obGentleAreas.push(id);
+  }
   renderObScreen();
 }
 
-function _obPersonalizeNext() {
-  if (!_obPersonalization) return;
-  _obScreen++;
-  renderObScreen();
+function _obPersonalizeFinish() {
+  var canContinue = _obPersonalization === 'start_all'
+    || (_obPersonalization === 'custom' && _obGentleAreas.length > 0);
+  if (!canContinue) return;
+  _obFinish();
 }
 
 function _obFinish() {
-  bp.obPersonalization = _obPersonalization || 'tori';
-  bp.obGentleAreas = _obGentleAreas.slice(); // copy
-  // TODO: obGentleAreas should later override daily pace when task-size rendering
-  //       is implemented. For now stored in bp.obGentleAreas for future use.
+  bp.obPersonalization = _obPersonalization || 'start_all';
+  var chosen = (_obPersonalization === 'custom')
+    ? _obGentleAreas.filter(function (id) { return id !== '__skip__'; })
+    : [];
+  bp.obGentleAreas = chosen.slice(); // copy
   bp.isSetup = true;
   saveBotData();
   document.getElementById('ob-ov').classList.remove('open');
+  // Apply the chosen gentle-start domains through the existing micro-task /
+  // library-add / water-step mechanisms — see OB_GENTLE_ACTIONS above.
+  chosen.forEach(function (id) {
+    var action = OB_GENTLE_ACTIONS[id];
+    if (!action) return;
+    try { action(); } catch (e) { console.error('[Tori] gentle-start action failed for', id, e); }
+  });
+  _obMaybeStartTour();
+}
+
+// ── Post-onboarding tour ──────────────────────────────────────────────────
+// Short, non-blocking, 3-step introduction shown once after onboarding
+// finishes. Never blocks the Today screen, closable at any step, and marked
+// seen in storage the moment it first appears (a mid-tour refresh will not
+// restart it). Not shown to users who already had bp.isSetup=true before
+// this feature existed — only triggered from a fresh _obFinish() completion.
+var TORI_TOUR_KEY = 'tori_tour_v1_seen';
+var _tourStep = 0;
+var TOUR_STEPS = [
+  {
+    title: 'יום חמלה',
+    text: 'יש ימים שבהם מתאים להוריד ציפיות עוד קצת. יום חמלה הוא מצב נפרד מהקצבים הרגילים, ומציע התחלה עדינה במיוחד ליום הזה.',
+  },
+  {
+    title: 'ספריית הדאגה העצמית',
+    text: 'כאן מחכים כל התחומים והצעדים של תורי. אפשר לבחור פעולה, להתאים את גודל הצעד ולהוסיף אותה לדרך שלך.',
+  },
+  {
+    title: 'תורי לגלול',
+    text: 'מקום לגלול בו בלי משימה להשלים. מחכים כאן כרטיסים קצרים עם תמונות, מחשבות ורגעים שאפשר לעצור בהם או פשוט להמשיך הלאה.',
+  },
+];
+
+async function _obMaybeStartTour() {
+  try {
+    var seen = await store.get(TORI_TOUR_KEY);
+    if (seen) return;
+  } catch (e) {}
+  _tourStep = 0;
+  await store.set(TORI_TOUR_KEY, '1'); // mark seen immediately — a mid-tour refresh must not restart it
+  _renderTourStep();
+}
+
+function _renderTourStep() {
+  var el = document.getElementById('ob-tour');
+  if (!el) return;
+  var step = TOUR_STEPS[_tourStep];
+  if (!step) { el.style.display = 'none'; return; }
+  var isLast = _tourStep === TOUR_STEPS.length - 1;
+  el.innerHTML = '<div class="ob-tour-step">' + (_tourStep + 1) + ' מתוך ' + TOUR_STEPS.length + '</div>'
+    + '<div class="ob-tour-title">' + step.title + '</div>'
+    + '<div class="ob-tour-text">' + step.text + '</div>'
+    + '<div class="ob-tour-btns">'
+    + '<button class="ob-tour-skip" onclick="_tourClose()">סגירה</button>'
+    + '<button class="ob-tour-next" onclick="_tourNext()">' + (isLast ? 'הבנתי' : 'הבא') + '</button>'
+    + '</div>';
+  el.style.display = 'block';
+}
+
+function _tourNext() {
+  _tourStep++;
+  if (_tourStep >= TOUR_STEPS.length) { _tourClose(); return; }
+  _renderTourStep();
+}
+
+function _tourClose() {
+  var el = document.getElementById('ob-tour');
+  if (el) el.style.display = 'none';
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -12467,7 +12576,7 @@ function renderCompanionSelectDOM(inner) {
   hdr.className = 'jcs-header';
   hdr.innerHTML = '<div style="font-size:11.5px;letter-spacing:0.4px;color:var(--g-ink-3);margin-bottom:6px">רגע לפני שמתחילים</div>'
     + '<div class="jcs-title">מי תלווה אותך בדרך?</div>'
-    + '<div class="jcs-sub">יצור מלווה שנע איתך, מגיב לפעולות הקטנות, ולא נעלב אם את לא מופיעה. אפשר להחליף בכל רגע.</div>';
+    + '<div class="jcs-sub">לכל אחת דרך אחרת לעזור לך לזוז — ברוך, בשנינות או בסקרנות. בחרי את החברה שמתאימה לך עכשיו.</div>';
   inner.appendChild(hdr);
 
   // ── Card list ──
@@ -12551,7 +12660,7 @@ function renderCompanionSelectDOM(inner) {
   // Footnote
   var note = document.createElement('div');
   note.style.cssText = 'font-size:12px;color:var(--g-ink-3);text-align:center;line-height:1.5;margin:8px 0 4px';
-  note.textContent = 'אפשר להחליף בכל זמן. הן לא ייפגעו.';
+  note.textContent = 'אפשר להחליף בכל זמן. חברות טובות מבינות שגם הקצב משתנה.';
   inner.appendChild(note);
 
   // CTA bar — reads cs._pendingId directly (no local selectedId variable)
@@ -12679,6 +12788,14 @@ function doConfirmJourneyCompanion() {
   cs._switching = false; // clear switch mode
   saveCompanionState();
   cancelJourneyConfirm();
+  // If this confirm happened during onboarding screen 3 (companion select),
+  // continue the onboarding flow instead of only refreshing the Journey tab,
+  // which isn't visible yet at this point.
+  var _obOv = document.getElementById('ob-ov');
+  if (_obOv && _obOv.classList.contains('open') && _obScreen === 2) {
+    _obAdvance();
+    return;
+  }
   try {
     renderJourneyTab();
   } catch(e) {

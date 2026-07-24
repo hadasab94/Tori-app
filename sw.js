@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v66'; // onboarding-icons-teeth-library: team-screen pace+icons, teeth category restored
+const CACHE = 'body-soul-v67'; // onboarding-5screen-companion-select-tour: real 5-screen onboarding, companion-select reuse, post-onboarding tour
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
