@@ -1,4 +1,4 @@
-<!-- Tori version: onboarding-fixstep-domainlist-libraryguide-2026-07-24 -->
+<!-- Tori version: onboarding-reorder-pace-bridge-character-cleanup-2026-07-25 -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -3096,37 +3096,9 @@ const PLANT_STAGE_ICONS = {
 
 // ── Today sparkle lines — shown only on user request, never automatically ──
 // Companion ID key; forest = internal alias for חפשושית
+// Active companions only (capy, kipoda, hafshushit/forest). Dead characters
+// (bear, cat, fox) removed per docs/CHARACTER-CONTENT-COMPASS.md.
 const TODAY_SPARK_LINES = {
-  // דובה — warm, patient, soft self-care. 12 lines.
-  bear: [
-    'כוס מים היא גם אחת. הגוף שמח על כל ג׳סטה קטנה כלפיו.',
-    'אני בעד דברים קטנים שאפשר להחזיק ביד ולשמור על הלב.',
-    'אם היום כבד, משהו בגודל של פירור עוגייה גם נחשב.',
-    'משהו קטן וטוב עדיין נחשב משהו טוב.',
-    'יש לי זמן, פרווה, וסבלנות. נמשיך ביחד בקצב שמתאים.',
-    'מותר לנוח. הגוף עושה עבודה חשובה גם כשאת שקטה.',
-    'גרסה שתתה מים היום זה כבר שדרוג. ממש.',
-    'העייפות שם, היא אמיתית. גם רגע עצירה קטן הוא מעשה.',
-    'יום שבו פשוט עברת אותו — גם הוא נחשב. ממש.',
-    'ביס, לגימה, נשימה. שלושה דברים, אפס נאומים.',
-    'אני בעדך גם כשאת על מצב סוללה 3%. במיוחד אז.',
-    'הגוף שמח על כל זיכרון קטן. ביס, שלוק, נשימה — הוא מרגיש.',
-  ],
-  // חתולה — observational, elegant, dry wit, low-pressure philosophy. 12 lines.
-  cat: [
-    'חתולה בוחרת איזה חדר לפתוח ומתי. זה גם חופש, וזה גם בסדר.',
-    'אפשר לבחור דבר אחד קטן ולהעמיד פנים שזה היה מתוכנן באלגנטיות.',
-    'אני בעד מינימום מאמץ, מקסימום אפקט.',
-    'לפעמים פינה אחת מסודרת מספיקה. העולם ימתין, הוא עמוס בלאו הכי.',
-    'אולי רק שקופית אחת יפה. גם זו הצגה מכובדת.',
-    'מחשבה שמגיעה עם גלימה דרמטית — מותר להושיב אותה בקצה ולהמשיך.',
-    'הסיפור שהראש מספר עכשיו הוא רק טיוטה. מותר לערוך.',
-    'לפעמים הראש עושה זום אין מוגזם. שמת לב?',
-    'מותר להרגיש לא בטוחה ועדיין לעשות צעד קטן. חתולות עושות את זה כל הזמן.',
-    'גם ירח עובד בשלבים. שלב קטן — גם הוא פאזה מכובדת.',
-    'ניצוץ קטן ושקט — גם הוא נחשב. חתולה יודעת להעריך ניצוצות כאלה.',
-    'אפשר לשבת לצד דבר שלא נפתר עכשיו. אני פה, בפינה, עם עיניים חצי עצומות.',
-  ],
   // חפשושית — gentle, forest-flavored, curious, small-step magic. 12 lines.
   hafshushit: [
     'אפשר רק להציץ. הצצה היא פעולה שלמה בפני עצמה, וזה מרגיע אותי.',
@@ -3171,21 +3143,6 @@ const TODAY_SPARK_LINES = {
     'פעולה קטנה עם פרצוף רגוע — זה מותג חזק.',
     'פיג׳מה ופעולה קטנה. שילוב לגיטימי לחלוטין.',
     'גם הגרסה הנוכחית שלך עושה את העבודה. פעולה מוכרת — גם היא נחשבת.',
-  ],
-  // שועלה — precise, warm, elegant, on the user's side. 12 lines.
-  fox: [
-    'מהלך קטן ומדויק — זה הסוג שהשועלה הכי אוהבת. פשוט ועם כיוון.',
-    'אפשר לבחור אפשרות אחת. בחירה היא כוח, גם כשהיא שקטה.',
-    'מספיק לסמן פינה אחת טובה. זה גם התקדמות, ובגודל שמחזיק.',
-    'משהו פשוט ובר־ביצוע הוא לפעמים ההברקה הכי אלגנטית שיש.',
-    'אני בעד צעד קטן עם יחסי ציבור טובים.',
-    'ניצחון קטן שאפשר לסמן ולהמשיך — הסוג הכי שמיש.',
-    'הצעד הראשון צריך רק להיות שם. זה מספיק, וזה פותח משהו.',
-    'לפעמים פחות כוח ויותר תזמון — זה מה שעובד.',
-    'מומנטום בגודל כף יד עם כיוון ברור — זה כל מה שצריך לנסוע.',
-    'לפתוח, לעשות דבר אחד, להמשיך. פשוט ויעיל.',
-    'השועלה בעד: עקבי ונעים, על פני הרבה ומהומה.',
-    'גרסה קצרה של המשימה — לפעמים היא הגרסה העדיפה.',
   ],
 };
 // Internal alias for forest companion ID
@@ -3311,7 +3268,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'onboarding-fixstep-domainlist-libraryguide-2026-07-24';
+const TORI_BUILD = 'onboarding-reorder-pace-bridge-character-cleanup-2026-07-25';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -6340,71 +6297,14 @@ const SELF_CARE_PARENT_TASK_TO_FAMILY = {
 
 // ===== COMPANION PHRASE BANKS =====
 // 30 phrases per companion. Source of truth for journeyFunnyLine().
+// Active companions only (capy, forest). Dead characters (bear, cat, fox)
+// removed per docs/CHARACTER-CONTENT-COMPASS.md.
+// NOTE: kipoda has no entries here — confirmed via `git log -S` that this
+// array (commit 6e50d9f) predates kipoda's introduction as an active
+// companion (commit a38bc25). getNextCompanionPhrase() safely returns '' for
+// a missing companion id. Not filled with invented lines — real content gap
+// for a separate human writing round.
 const COMPANION_PHRASES = {
-  bear: [
-    'בואי נתחיל במשהו קטן: מים. הגוף שלך לא ביקש ספא, רק שלא נשכח שהוא קיים.',
-    'אכלת משהו היום? לא צריך סעודת מלכות, גם ביס קטן נחשב הצהרת כוונות.',
-    'לפעמים הצעד הכי אמיץ הוא לשתות מים ולקרוא לזה ניהול משברים.',
-    'בואי נעשה דבר אחד קטן. לא מהפכה, רק סימן קטן לגוף שאנחנו עדיין בצוות שלו.',
-    'היום לא חייב להיות מושלם. הוא רק צריך לכלול רגע אחד שבו היית בצד של עצמך.',
-    'שמיכה דמיונית על הכתפיים, ספל ביד, ועכשיו פעולה קטנה. זה כל הטקס.',
-    'אם כל מה שעשית עכשיו זה לעצור ולנשום — מבחינתי זה כבר פרק בספר הצלחות קטנות.',
-    'לא צריך לסדר את כל החיים. נתחיל בלא להתעלם מהגוף כאילו הוא הודעה מקבוצת ועד.',
-    'בואי נאכיל אותך לפני שהמוח מתחיל לכתוב תסריטים בלי תקציב.',
-    'שתית מים? יופי. עכשיו הגוף שלך פחות מרגיש שהוא עובד בהתנדבות.',
-    'המשימה היום: דבר קטן אחד לטובתך. לא צריך קונפטי, אבל בלב אני זורקת.',
-    'מותר לנוח גם אם לא סיימת הכול. הגוף לא עובד לפי חוזה קבלן.',
-    'בואי נוריד הילוך. גם דובה עם ספל יודעת שלפעמים זה כל מה שצריך.',
-    'היום אנחנו לא מוכיחות כלום לאף אחד. אנחנו רק דואגות שלא תיעלמי לעצמך.',
-    'אם קשה להתחיל, נתחיל בקטן כל כך שאפילו ההתנגדות תתבלבל.',
-    'ביס, לגימה, נשימה. שלושה דברים קטנים, אפס נאומים.',
-    'לא כל יום צריך להרגיש כמו ניצחון. לפעמים מספיק שהוא לא יהיה נגדך.',
-    'בואי נעשה פעולה אחת שתגרום למחר להגיד לנו תודה קטנה.',
-    'הכוס חצי מלאה, אבל קודם בואי נמלא גם את הבקבוק שלך.',
-    'אין צורך להיות גרסה משודרגת שלך היום. גרסה שתתה מים זה כבר שדרוג.',
-    'אם הראש רועש, נתחיל מהגוף. הוא בדרך כלל פחות אוהב דיונים ארוכים.',
-    'בואי נעשה משהו פשוט: לפתוח, להרים, לשתות, לסמן. בלי להפוך את זה לסדרה.',
-    'העייפות שלך לא צריכה הוכחות. היא רק צריכה שנקשיב לה רגע.',
-    'דבר קטן עכשיו עדיף על תוכנית ענקית שנשארת לשבת בפינה עם פרצוף.',
-    'היום נבחר פעולה אחת חמה לעצמך. כן, גם לשטוף פנים נחשב.',
-    'אם את מרגישה תקועה, בואי לא נזיז הר. נזיז כפית. כפית זה התחלה מכובדת.',
-    'אני בעדך גם כשאת על מצב סוללה חלשה. במיוחד אז.',
-    'בואי נעשה טיפול בסיסי ביצור האנושי: מים, אוכל, נשימה, פחות אשמה.',
-    'היום לא בודקים כמה רחוק הגעת. בודקים האם עשית משהו קטן שלא ויתרת עליו.',
-    'אני מביאה ספל, את מביאה צעד קטן. יש לנו תוכנית.',
-  ],
-  cat: [
-    'המוח שלך פתח ישיבה בלי אישור. בואי נקשיב רגע, אבל לא ניתן לו לנהל את החברה.',
-    'המחשבה הזאת נשמעת מאוד בטוחה בעצמה. חמוד מצידה, אבל נבדוק עובדות.',
-    'לא כל מחשבה שמגיעה עם גלימה דרמטית היא נבואה.',
-    'בואי נניח את המחשבה על השולחן. לא על הראש שלך, על השולחן.',
-    'הראש שלך מנסה לפתור הכול בבת אחת. שאפתני. לא יעיל, אבל שאפתני.',
-    'מחשבה מלחיצה נכנסה עם נעלי עקב ורעש. מותר לה לעבור, לא חייבים לתת לה חדר.',
-    'היום לא חייב להיות קסום. מספיק שנמצא בו ניצוץ קטן שלא עשה רעש.',
-    'בואי נבדוק: האם זו עובדה, תחושה, או המוח שלך כותב רומן?',
-    'לפעמים הראש עושה זום אין מוגזם. בואי נלחץ רגע על זום אאוט.',
-    'את לא צריכה להאמין לכל מחשבה. חלקן רק באו לעשות ביקור בלי לתאם.',
-    'אם המוח שלך הביא תחזית קודרת, נזכור שהוא לא תמיד מדייק במזג אוויר פנימי.',
-    'בואי נבחר מחשבה אחת פחות כבדה. לא צריך להחליף את כל הספרייה.',
-    'העובדה שזה מרגיש גדול לא אומרת שזה חייב לנהל אותך.',
-    'המחשבות עשו מסיבה. אנחנו לא חייבות להביא כיבוד.',
-    'אפשר להרגיש לא בטוחה ועדיין לעשות צעד קטן. חתולות עושות את זה באלגנטיות.',
-    'לא נילחם במחשבה. נזיז אותה קצת הצידה ונראה מה עוד יש בחדר.',
-    'הסיפור שהראש מספר עכשיו הוא רק טיוטה. מותר לערוך.',
-    'בואי ניתן למחשבה שם מצחיק. משהו פחות מאיים מ"האמת המוחלטת".',
-    'זה לא סוף העולם. זה אולי סוף סצנה, וגם זה בעריכה.',
-    'את לא חייבת להרגיש מוכנה כדי להתחיל. מוכנות היא לפעמים פרווה שמגיעה אחר כך.',
-    'המוח אומר "הכול או כלום". אנחנו, באלגנטיות, בוחרות "משהו קטן".',
-    'בואי לא ניתן למחשבה אחת לקבל כיסא מנהלת.',
-    'אם הראש צועק, נענה לו בלחישה: שמעתי, תודה, עכשיו מים.',
-    'מותר לא לדעת בדיוק מה עושים. גם ירח עובד בשלבים.',
-    'היום לא צריך לפתור את כל העלילה. רק להפוך עמוד אחד.',
-    'התחושה אמיתית. המסקנה שלה לא בהכרח מחזיקה תעודת זהות.',
-    'בואי נעשה פעולה קטנה שתזכיר למוח שהוא לא לבד פה.',
-    'המחשבה הזאת קיבלה יותר מדי תאורה. נעמעם קצת.',
-    'לא כל ספק הוא סימן לעצור. לפעמים הוא רק חתול שעבר על המקלדת.',
-    'בואי נבחר את האפשרות הכי עדינה וחכמה כרגע. לא מושלמת, חכמה.',
-  ],
   forest: [
     'המשימה הזאת נראית גדולה רק כי היא עומדת קרוב למצלמה.',
     'בואי נעשה גרסת חפשושית: לא הכול, רק פינה קטנה של הדבר.',
@@ -6468,38 +6368,6 @@ const COMPANION_PHRASES = {
     'היום נעשה פחות רעש ויותר דבר קטן.',
     'לא צריך כוח גדול. צריך רגע אחד שבו לא מתווכחים עם המציאות.',
     'בואי נעשה פעולה קטנה ונמשיך כאילו זה היה ברור.',
-  ],
-  fox: [
-    'משימת 30 שניות. לא כי אנחנו גיבורות-על, כי אנחנו חכמות וחוסכות אנרגיה.',
-    'בואי נעשה צעד קטן ואז נתנהג כאילו זה היה חלק מתוכנית מבריקה.',
-    'לא צריך מוטיבציה ענקית. צריך רק לפתוח חריץ בדלת ולהכניס רגל.',
-    'היום נעשה מהלך קטן. שקט, חכם, בלי להודיע לפחד.',
-    'בואי נעקוף את ההתנגדות מהצד. היא מצפה שנגיע מהכניסה הראשית.',
-    'המשימה נראית קשוחה? יופי. נתחיל מהמקום שהיא שכחה לנעול.',
-    'שתי דקות. זה הכול. אם נרצה להמשיך — נעמיד פנים שזה היה הרעיון שלנו מההתחלה.',
-    'בואי נבחר ניצחון קטן שאפשר לסמן בלי דרמה.',
-    'את לא צריכה להרגיש מוכנה. את צריכה להתחיל מספיק קטן כדי לא להבהיל את המערכת.',
-    'היום אנחנו לא דוחפות בכוח. אנחנו מתחכמות באלגנטיות.',
-    'בואי נעשה את הגרסה הקצרה. גרסאות קצרות הן לפעמים קסם עם נעליים.',
-    'מוכנה למהלך קטן? לא גדול. קטן כזה שההתנגדות תגיד "רגע, מה קרה פה?"',
-    'הטריק הוא לא לנצח את היום. הטריק הוא לסמן דבר אחד לפני שהוא שם לב.',
-    'בואי נתחיל עכשיו, לפני שהמוח יבקש עוד ישיבת הכנה.',
-    'לא צריך להיות בשיא. צריך להיות מספיק כאן כדי לעשות פעולה אחת.',
-    'היום נשתמש בשיטת השועלה: פחות כוח, יותר תזמון.',
-    'משימה אחת קטנה, ואז חיוך קטן של "כן, אני יודעת מה עשיתי".',
-    'אם אין חשק, נלך על תחכום. חשק הוא נחמד, אבל לא תמיד מגיע בזמן.',
-    'בואי נפתח את הדבר, נעשה פעולה אחת, ונצא כאילו אנחנו מאוד עסוקות.',
-    'ההתנגדות הביאה טיעונים. יפה לה. אנחנו מביאות פעולה קטנה.',
-    'בואי נבנה מומנטום בגודל כף יד. לא צריך מנוע טורבו.',
-    'הצעד הראשון לא צריך להרשים. הוא רק צריך להופיע.',
-    'היום נעשה משהו קטן שיגרום לך להגיד בערב: אה, נכון, לא ויתרתי.',
-    'אם המשימה כבדה, נגנוב ממנה חתיכה קטנה ונלך.',
-    'בואי נעשה את זה לפני שהספק מתאפר ומתחיל לנאום.',
-    'החוכמה היא לא לעשות הכול. החוכמה היא להתחיל במקום שלא מפחיד מדי.',
-    'את יכולה להתקדם גם עם חצי כוח. שועלות לא מבזבזות אנרגיה לחינם.',
-    'בואי נסמן פעולה אחת. סימון קטן, סיפוק גדול באופן לא פרופורציונלי.',
-    'היום לא צריך אומץ ענק. צריך רגע קטן של "יאללה, ננסה".',
-    'בואי נעשה מהלך קטן וחכם. כזה שלא נראה דרמטי, אבל משנה את הכיוון.',
   ],
 };
 
@@ -6582,38 +6450,12 @@ function getNextCompanionPhrase(companionId) {
 }
 
 
-const COMPANION_LINES = {
-  capy: {
-    waiting:'אני כאן. שלוק קטן יספיק כדי להתחיל.',
-    active: 'נכנס שלוק. יש תיעוד. נמשיך כאילו זה היה קל.',
-    good:  'יום עם תזוזה. לא נוצץ — בנוי.',
-    cave:  'מצב מאורה הופעל. זו לא עצירה, זו אסטרטגיה.',
-  },
-  bear: {
-    waiting:'יש פה שמיכה כשתצטרכי. בלי לחץ.',
-    active: 'הגוף קיבל עדכון קטן. יפה ושימושי.',
-    good:  'יום נדיר של תזוזה רחבה. נשמור על השמיכה ליד.',
-    cave:  'מצב מאורה. אני שומרת לך מקום עד שתחזרי.',
-  },
-  fox: {
-    waiting:'אוזניים פתוחות. פעולה אחת ואני שם.',
-    active: 'התחלה יפה. שתי אצבעות על הדופק.',
-    good:  'יום עם נוכחות. בלי הצגות.',
-    cave:  'גם ימי עוצמה-נמוכה הם חלק מהיום.',
-  },
-  forest: {
-    waiting:'הולכת בקצב שלך. נחכה לתזוזה.',
-    active: 'תזוזה קטנה — הגוף קלט שאת בצוות.',
-    good:  'הלכנו קצת היום. הדרך נבנית בצעדים.',
-    cave:  'מצב מאורה. השורשים עובדים גם בלי תזוזה.',
-  },
-  cat: {
-    waiting:'הערב עוד צעיר. הכל אפשרי באיטיות.',
-    active: 'נרשם. נמשיך באור עמום.',
-    good:  'יום עם קצב. נשארנו עם הראש שקט.',
-    cave:  'מצב מאורה — אור עמום פעיל. בסדר גמור.',
-  },
-};
+// COMPANION_LINES removed — was an exact duplicate of JOURNEY_COMPANION_LINES,
+// read only by renderCompanionSection(), which targets #g-companion-section
+// (confirmed dead: sits inside the "Legacy hidden layer" display:none div in
+// the markup, unreachable from the live Journey tab). That function's one
+// reference now points at the canonical JOURNEY_COMPANION_LINES instead —
+// see below.
 
 const MARK_LABELS = {
   water:     'שלוק שנרשם.',
@@ -6964,7 +6806,7 @@ function renderCompanionSection() {
   const comp = COMPANIONS[cs.companionId];
   const mood = deriveCompanionMood();
   const marks = getMarksToday();
-  const speechLine = (COMPANION_LINES[cs.companionId]||{})[mood] || '';
+  const speechLine = (JOURNEY_COMPANION_LINES[cs.companionId]||{})[mood] || '';
 
   // Scene: radial gradient + companion SVG + floating items + pill + cave overlay
   const lastMarks = marks.slice(-3);
@@ -7689,15 +7531,16 @@ var OB_GENTLE_ACTIONS = {
 function renderObScreen() {
   var inner = document.getElementById('ob-card-inner');
   if (!inner) return;
-  // Screen 3 (index 2) — companion selection. Reuses the live Journey-tab
+  // Screen order: 1 Welcome, 2 How, 3 Journey, 4 Personalize, 5 Companion select (last).
+  // Screen 5 (index 4) — companion selection. Reuses the live Journey-tab
   // selection component (same cards, same cs._pendingId / save logic, same
   // dynamic "בחרתי את X" button) instead of a separate onboarding-only build.
-  if (_obScreen === 2) {
+  if (_obScreen === 4) {
     cs._pendingId = cs.companionId || null;
     renderCompanionSelectDOM(inner);
     return;
   }
-  var renderers = [_obRenderWelcome, _obRenderHow, null, _obRenderJourney, _obRenderPersonalize];
+  var renderers = [_obRenderWelcome, _obRenderHow, _obRenderJourney, _obRenderPersonalize, null];
   var fn = renderers[_obScreen];
   if (fn) inner.innerHTML = fn();
 }
@@ -7717,7 +7560,7 @@ function _obRenderHow() {
     + '<br><br>בתחילת הדרך תורי מתמקדת בצעדים יומיומיים כמו אוכל, שתייה, תנועה, מנוחה והיגיינה. בקרוב היא תכלול גם אזור צמיחה, שבו אותה שיטה תעזור לפרק למידה ומטרות אישיות למיקרו־צעדים.'
     + '<br><br>ב״נעים לדעת״ תוכלי להבין את המשמעות של כל צעד, לקרוא על המחקר שמאחוריו ולהבין לעומק למה חזרה עליו עשויה לתרום לאורך זמן.'
     + '<br><br>תורי מציעה נקודת התחלה ברורה ועוזרת להפוך מטרה שחשובה לך לצעד קטן שאפשר להתחיל ממנו היום.</div>'
-    + '<button class="ob-nxt" onclick="_obAdvance()">להכיר את מי שתלווה אותי</button>';
+    + '<button class="ob-nxt" onclick="_obAdvance()">להכיר את המסע</button>';
 }
 
 function _obRenderJourney() {
@@ -7725,7 +7568,7 @@ function _obRenderJourney() {
     + '<div class="ob-sub" style="margin-bottom:14px">בכל פעם שאת מסמנת פעולה, ההתקדמות נשמרת במסע ומתחברת למה שכבר עשית.</div>'
     + '<div class="ob-info-card">'
     + '<div class="ob-info-title">💛 נקודות חיבור</div>'
-    + '<div class="ob-info-text">הפעולות שסימנת מוסיפות נקודות חיבור. בעזרתן תוכלי לבחור פינוקים לדמות שמלווה אותך.</div>'
+    + '<div class="ob-info-text">הפעולות שסימנת מוסיפות נקודות חיבור. בעזרתן תוכלי לבחור פינוקים לדמות שתלווה אותך.</div>'
     + '</div>'
     + '<div class="ob-info-card">'
     + '<div class="ob-info-title">🎁 פינוקים</div>'
@@ -7744,16 +7587,18 @@ function _obRenderPersonalize() {
   var canContinue = _obPersonalization === 'start_all'
     || (_obPersonalization === 'custom' && _obGentleAreas.length > 0);
   var h = '<div class="ob-title">איך תרצי להתחיל?</div>'
-    + '<div class="ob-sub">תורי תציג לך צעדים ממגוון תחומים. אפשר להתחיל עם המבנה הרגיל שלה, או לבחור תחומים שבהם תרצי לקבל מיקרו־צעדים כבר מההתחלה.</div>'
+    + '<div class="ob-sub">תורי תציג לך צעדים ממגוון תחומים. אפשר להתחיל בגודל הרגיל של הצעדים, או לבחור תחומים שבהם תרצי להתחיל ממיקרו־צעד.'
+    + '<br><br>תורי תתחיל מהגודל שבחרת, ואם תבחיני שצעד מסוים לא מסתדר כמה ימים ברציפות, היא עשויה להציע גרסה קטנה יותר עבורו.</div>'
     + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
-    + _obPersOpt('start_all', 'להתחיל עם המבנה של תורי',
-        'תורי תציג צעדים ממגוון תחומים, ואת תבחרי בכל יום מה מתאים.')
+    + _obPersOpt('start_all', 'להתחיל עם הצעדים הרגילים של תורי',
+        'תורי תתחיל בגודל הרגיל של הצעדים בכל התחומים.')
     + _obPersOpt('custom', 'להתחיל בעדינות בתחומים שאבחר',
-        'תוכלי לבחור תחום אחד או יותר שבהם תורי תתחיל מראש ממיקרו־צעדים.')
+        'תוכלי לבחור תחום אחד או יותר שבהם תורי תתחיל מראש ממיקרו־צעד.')
     + '</div>'
     + (_obPersonalization === 'custom' ? _obRenderCategoryChips() : '')
+    + '<div style="font-size:12px;color:var(--text3,#9e8e7e);line-height:1.5;margin-bottom:10px">בהמשך תוכלי להשתמש ב״לסדר את היום״ כדי להוסיף, להסיר, להגדיל או להקטין צעדים בכל שלב.</div>'
     + '<button class="ob-nxt" onclick="_obPersonalizeFinish()"'
-    + (canContinue ? '' : ' disabled') + '>לשמור ולעבור להיום</button>';
+    + (canContinue ? '' : ' disabled') + '>לבחור מי תלווה אותי</button>';
   return h;
 }
 
@@ -7804,7 +7649,10 @@ function _obPersonalizeFinish() {
   var canContinue = _obPersonalization === 'start_all'
     || (_obPersonalization === 'custom' && _obGentleAreas.length > 0);
   if (!canContinue) return;
-  _obFinish();
+  // Personalize is no longer the last screen — advance to companion select.
+  // Onboarding now finishes when a companion is confirmed (see the
+  // doConfirmJourneyCompanion onboarding-aware hook below).
+  _obAdvance();
 }
 
 function _obFinish() {
@@ -7910,6 +7758,17 @@ async function loadTodayPace() {
     var raw = await store.get('tori_pace:' + getTodayKey());
     _todayPace = (raw && raw.length) ? raw : null;
   } catch(e) { _todayPace = null; }
+  // Bridge: an ongoing multi-day compassion streak (cd.active, tracked
+  // separately in compassion:state) should count as today's pace even if
+  // today's own tori_pace key was never written — e.g. day 2+ of a streak
+  // that began on an earlier day, or compassion day activated via the header
+  // button rather than the pace gate. Without this, the pace gate would
+  // incorrectly ask for a pace while compassion day is still active.
+  // loadCompassionState() runs before loadTodayPace() in init(), so cd is
+  // already populated here.
+  if (!_todayPace && typeof cd !== 'undefined' && cd && cd.active) {
+    await saveTodayPace('compassion');
+  }
 }
 
 async function saveTodayPace(pace) {
@@ -9311,17 +9170,11 @@ function renderTodayCompanionPath() {
 }
 
 // ── Companion feedback line ──
+// Active companions only (capy, kipoda, hafshushit/forest). Dead characters
+// (bear, cat, fox) removed per docs/CHARACTER-CONTENT-COMPASS.md. This whole
+// bank is currently dormant (see renderCompanionFeedback below) but kept —
+// same real content gap as elsewhere: kipoda has no entry yet.
 var TODAY_COMPANION_FEEDBACK = {
-  bear: {
-    none:    'הדובה כאן איתך, בכל מה שיקרה היום. לא צריך להיות מוכן/ה.',
-    few:     'כבר עשית משהו. הדובה רואה אותך ושמחה על זה.',
-    several: 'ממש הרגשתי אותך היום. הדובה גאה בך. ♥',
-  },
-  cat: {
-    none:    'הפה שלי סגור, אבל אני פה. בשבילך, גם כשלא עושים כלום.',
-    few:     'טוב. שמתי לב. ממשיכת לעקוב מהפינה.',
-    several: 'לא אגיד כלום. רק אגיד שאני שמחה שהיית פה היום.',
-  },
   hafshushit: {
     none:    'אנחנו לא מודדים כאן. פשוט פה ביחד, בלי ציפיות.',
     few:     'כבר יש כאן משהו. זה מספיק, ממש.',
@@ -9331,11 +9184,6 @@ var TODAY_COMPANION_FEEDBACK = {
     none:    'קפיברה לא ממהרת. ישבי לידי, נהיה פה ביחד.',
     few:     'קצת דברים כבר קרו היום. זה יפה מאוד.',
     several: 'כמה טוב שהיום נראה ככה. קפיברה מרוצה.',
-  },
-  fox: {
-    none:    'השועלה פה, ומחכה. אין מה לדאוג.',
-    few:     'טוב. עשית משהו. השועלה הבחינה בזה.',
-    several: 'יום כזה מרגיש טוב. השועלה גאה, ולא תגיד את זה פעמיים. ♥',
   },
 };
 TODAY_COMPANION_FEEDBACK.forest = TODAY_COMPANION_FEEDBACK.hafshushit;
@@ -9354,12 +9202,11 @@ function renderCompanionFeedback() {
 
 var COMPASSION_DAY_WINS = ["נשמתי כאילו זו פעולה מתקדמת.","פיהקתי בכבוד.","מצמצתי כמה פעמים. מערכת עובדת.","גללתי בטלפון וחזרתי בלי להגיש דוח.","לא עניתי להודעה מתוך אחריות אנרגטית.","בהיתי בקיר בצורה מקצועית.","החלפתי תנוחה. ריענון מערכת.","קמתי ואז התיישבתי שוב. עלילה.","שכבתי בצורה משכנעת.","עשיתי כלום, אבל עם נוכחות.","לא פתרתי את כל החיים. החלטה נבונה.","דחיתי משהו בלי לפתוח ועדה פנימית.","אמרתי 'אחר כך' ונשארתי בחיים.","מצאתי תנוחה פחות גרועה.","הייתי קיימת. מרשים, בכנות.","שמתי שמיכה כאילו אני בתפקיד רשמי.","הורדתי משהו לא נוח. שיפור תנאים.","לבשתי משהו נוח. ניהול משאבים.","חיפשתי את הטלפון בזמן שהוא היה ביד.","מצאתי מטען. הישרדות מודרנית.","טענתי את הטלפון ולקחתי על זה קרדיט רגשי.","פתחתי אפליקציה ושכחתי למה. קלאסיקה.","לא נכנסתי לוויכוח פנימי של שלוש עונות.","החזקתי כוס כאילו אני דמות בסדרה רגועה.","הסתכלתי החוצה כאילו אני בקליפ של התפתחות אישית.","סגרתי חלון כי גם זה גבול.","שמתי משהו ברקע כדי שהשקט לא יעשה עיניים.","כיביתי משהו ברקע כי גם למוח יש ועד בית.","עשיתי פרצוף לעצמי. תקשורת פנימית.","נאנחתי עמוק. הגוף שלח מייל.","קראתי הודעה ולא עניתי. מצב צפייה מתקדמת.","עניתי להודעה אחת ונשארתי לספר.","עברתי מחדר לחדר ושכחתי למה. טיול פנים.","התכסיתי ואז הוצאתי רגל. איזון אקלימי.","שמתי לב שקשה ועשיתי עם זה פרצוף. לגיטימי.","לא הפכתי את היום הזה למשפט בבית דין פנימי. יפה לי.","נתתי לעצמי להיות במצב טעינה איטית.","נשארתי אופקית מתוך מחויבות למקצוע.","חשבתי על לעשות משהו. שלב מחקר.","פתחתי רשימה וסגרתי אותה. גבולות.","לא קניתי רהיט חדש כדי לפתור רגש. בגרות.","שרדתי רגע לא נעים בלי לתת לו שם של סדרה.","שמתי פנים של 'אני מתפקדת' מול האוויר.","הייתי דרמטית בלב, שקטה בחוץ. רב-תחומיות.","הזזתי חפץ אחד. כמעט שיפוץ.","לא עניתי לעצמי בגסות. שיפור שירות.","לקחתי הפסקה מהפסקה. לגיטימי.","שמרתי על עצמי במינימום תנועה.","עברתי עוד רגע בלי לפתוח טבלת אקסל לרגשות.","הגעתי עד כאן. לא מעט בכלל."];
 
+// Active companions only (capy, kipoda, hafshushit/forest). Dead characters
+// (bear, cat, fox) removed per docs/CHARACTER-CONTENT-COMPASS.md.
 var COMPASSION_DAY_COMPANION_LINES = {
-  bear:       'ביום חמלה גם שמיכה, נשימה וחצי פיהוק נחשבים לתוכנית פעולה מכובדת.',
-  cat:        'ביום חמלה לא צריך להבריק. מספיק לעבור את היום עם קצת חן ובלי לפתוח ועדת ביקורת.',
   hafshushit: 'ביום חמלה, אם היום קוצני, הולכות מסביב. גם מסביב זו דרך, ולפעמים היא אפילו יותר חמודה.',
   capy:       'ביום חמלה אני מאשרת רשמית: בהייה, תנוחה נוחה ונשימה אחת — לגמרי נחשבות.',
-  fox:        'ביום חמלה השועלה שלך שומרת על האש במקום בטוח. אין צורך לרוץ כשהיום מבקש להאט.',
   kipoda:     'היום הדלת נפתחת רק למה שבאמת עדין. כל השאר יכול להמתין בחוץ בנימוס.',
 };
 COMPASSION_DAY_COMPANION_LINES.forest = COMPASSION_DAY_COMPANION_LINES.hafshushit;
@@ -9801,6 +9648,12 @@ async function activateCompassionDay() {
   if (!cd.visibleWins || cd.visibleWins.length === 0) _initVisibleWins();
   await saveCompassionWins();
   await saveCompassionState();
+  // Keep the daily pace gate in sync, regardless of entry point (header
+  // button here, or the pace-gate card via selectTodayPace). Without this,
+  // activating compassion day from the header would leave today's pace key
+  // unset, and the gate could still ask "עם איזה קצב נתחיל היום?" later.
+  await saveTodayPace('compassion');
+  if (typeof renderPaceSection === 'function') renderPaceSection(); // swap gate → chip immediately
   closeCompassionModal();
   updateCompassionUI();
   bs.compassionDay = true; updateBotUI(); saveBotData();
@@ -10359,6 +10212,12 @@ var JOURNEY_ACTION_LABELS = {
 };
 
 // ── Companion lines ──
+// Active companions only (capy, kipoda, forest). Dead characters (bear, cat,
+// fox) removed per docs/CHARACTER-CONTENT-COMPASS.md — see cleanup notes in
+// the fix-round commit message for what was removed and why.
+// NOTE: kipoda has no entry here yet — a real content gap, not filled with
+// invented lines. cs.companionId === 'kipoda' safely falls back to '' at the
+// call site (renderJourneyTab bubble) until real kipoda lines are written.
 var JOURNEY_COMPANION_LINES = {
   capy: {
     waiting:'אני כאן. שלוק קטן יספיק כדי להתחיל.',
@@ -10366,29 +10225,11 @@ var JOURNEY_COMPANION_LINES = {
     good:'יום עם תזוזה. לא נוצץ — בנוי.',
     cave:'מצב מאורה הופעל. זו לא עצירה, זו אסטרטגיה.',
   },
-  bear: {
-    waiting:'יש פה שמיכה כשתצטרכי. בלי לחץ.',
-    active:'הגוף קיבל עדכון קטן. יפה ושימושי.',
-    good:'יום נדיר של תזוזה רחבה. נשמור על השמיכה.',
-    cave:'מצב מאורה. אני שומרת לך מקום עד שתחזרי.',
-  },
-  fox: {
-    waiting:'אוזניים פתוחות. פעולה אחת ואני שם.',
-    active:'התחלה יפה. שתי אצבעות על הדופק.',
-    good:'יום עם נוכחות. בלי הצגות.',
-    cave:'גם ימי עוצמה-נמוכה הם חלק מהיום.',
-  },
   forest: {
     waiting:'הולכת בקצב שלך. נחכה לתזוזה.',
     active:'תזוזה קטנה — הגוף קלט שאת בצוות.',
     good:'הלכנו קצת היום. הדרך נבנית בצעדים.',
     cave:'מצב מאורה. השורשים עובדים גם בלי תזוזה.',
-  },
-  cat: {
-    waiting:'הערב עוד צעיר. הכל אפשרי באטיות.',
-    active:'נרשם. נמשיך באור עמום.',
-    good:'יום עם קצב. נשארנו עם הראש שקט.',
-    cave:'מצב מאורה — אור עמום פעיל. בסדר גמור.',
   },
 };
 
@@ -12817,12 +12658,13 @@ function doConfirmJourneyCompanion() {
   cs._switching = false; // clear switch mode
   saveCompanionState();
   cancelJourneyConfirm();
-  // If this confirm happened during onboarding screen 3 (companion select),
-  // continue the onboarding flow instead of only refreshing the Journey tab,
-  // which isn't visible yet at this point.
+  // If this confirm happened during onboarding screen 5 (companion select,
+  // now the LAST screen), finish onboarding instead of only refreshing the
+  // Journey tab, which isn't visible yet at this point. Choosing a companion
+  // here does not select a daily pace — that stays a separate, later choice.
   var _obOv = document.getElementById('ob-ov');
-  if (_obOv && _obOv.classList.contains('open') && _obScreen === 2) {
-    _obAdvance();
+  if (_obOv && _obOv.classList.contains('open') && _obScreen === 4) {
+    _obFinish();
     return;
   }
   try {

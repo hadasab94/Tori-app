@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v68'; // onboarding-fixstep-domainlist-libraryguide: permanent fixed-step gentle start, corrected screen-5 copy, library guide entry
+const CACHE = 'body-soul-v69'; // onboarding-reorder-pace-bridge-character-cleanup: companion-select now last, pace/compassion-day sync bridge, dead-character sentence cleanup
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
