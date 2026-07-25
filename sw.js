@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v69'; // onboarding-reorder-pace-bridge-character-cleanup: companion-select now last, pace/compassion-day sync bridge, dead-character sentence cleanup
+const CACHE = 'body-soul-v70'; // research-content-fix: 8 forbidden-word/overclaim fixes in TASK_MSGS/FACTS/HABIT_SCIENCE/chooseEx
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
