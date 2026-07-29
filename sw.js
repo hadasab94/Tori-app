@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v72'; // pilot content pass: removed dead bot/system-prompt legacy code, softened absolute research claims, water push title, local-data disclosure, growth-corner wording
+const CACHE = 'body-soul-v73'; // identity pass: onboarding screen 1 + About Tori rewritten off C-PTSD framing, FACTS re-audited (9 removed), dead bot/chat module fully deleted, streak counter unchanged
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
