@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v75'; // deleted TODAY_SPARK_LINES (sparkle button now uses APPROVED_GENERAL_COMPANION_LINES), deleted dormant TODAY_COMPANION_FEEDBACK, removed retired-character pamper text; pace<->companion tagline pairing kept as-is
+const CACHE = 'body-soul-v76'; // approved knowledge content live: TORI_METHOD_FACTS/TORI_ACTION_FACTS/TORI_COMPASSION_FACTS wired into "הידעת?", per-action cards, and new יום חמלה knowledge button; old FACTS + quietMoment completionNote disconnected
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

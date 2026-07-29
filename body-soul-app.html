@@ -1,4 +1,4 @@
-<!-- Tori version: legacy-content-cleanup-2026-07-29d -->
+<!-- Tori version: approved-knowledge-content-2026-07-29e -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -395,6 +395,7 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .niim-card-label { font-size: 14px; font-weight: 700; color: var(--text1); line-height: 1.3; }
 .niim-card-note { font-size: 13.5px; color: var(--text2); line-height: 1.75; }
 .niim-card-seen { font-size: 11px; color: var(--text3); margin-top: 8px; }
+.niim-card-family { display: inline-block; font-size: 11px; color: var(--text3); background: var(--bg); border-radius: 999px; padding: 2px 9px; margin-bottom: 8px; }
 .niim-empty { font-size: 14px; color: var(--text3); line-height: 1.75; padding: 12px 0 8px; }
 
 /* SCROLL FEED — "תורי לגלול" feed cards
@@ -1518,6 +1519,19 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
   touch-action: manipulation;
 }
 .cd-custom-helper { font-size: 11.5px; color: #7A6E5C; text-align: center; margin-bottom: 20px; }
+.cd-knowledge-teaser {
+  background: #FFFDF7; border: 1px solid rgba(185,158,100,0.30);
+  border-radius: 14px; padding: 14px; margin-bottom: 14px;
+}
+.cd-knowledge-title { font-size: 13.5px; font-weight: 700; color: #5A4830; margin-bottom: 6px; }
+.cd-knowledge-text { font-size: 12.5px; color: #7A6E5C; line-height: 1.6; margin-bottom: 10px; }
+.cd-knowledge-btn {
+  width: 100%; padding: 11px 16px;
+  border-radius: 999px; border: 1.5px solid rgba(185,158,100,0.38);
+  background: #FFF8EA; color: #5A4830;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; touch-action: manipulation;
+}
 .cd-custom-input-area {
   background: #FFFDF7; border-radius: 14px;
   padding: 12px; margin-bottom: 10px;
@@ -3081,27 +3095,134 @@ const PARTIAL_COMPLETION_MSGS = [
   'הסטרייק שמור. הגוף שלך שמח. הכל בסדר. 🔥',
 ];
 
-const FACTS = [
-  { title:'תכנון קטן וברור עוזר להתחיל', body:'סקירה רחבה שאיגדה 94 מחקרים מצאה שתכנון מראש של מתי ואיך לבצע פעולה נקשר בסיכוי גבוה יותר להוציא אותה לפועל. (זו השפעה ממוצעת, לא הבטחה אישית.)', src:'Gollwitzer & Sheeran, 2006' },
-  { title:'אור שמש ומצב רוח', body:'חשיפה לאור יום, אפילו 10-15 דקות, קשורה לרמות סרוטונין גבוהות יותר ולמצב רוח יציב יותר. יציאה לאוויר הפתוח יכולה לתמוך גם בתחושת "כאן ועכשיו".', src:'Journal of Affective Disorders — מחקרים על אור יום ורמות סרוטונין' },
-  { title:'שינה ועיבוד רגשי', body:'בשינה, המוח ממשיך לעבד חוויות רגשיות — זהו תהליך ביולוגי ממשי. מחקרים מצביעים על כך ששינה מספקת יכולה לתמוך בוויסות הרגשי, גם בלי מאמץ מודע מצידך.', src:'Walker, Why We Sleep (2017)' },
-  { title:'נשימה — שנייה אחת שמשנה', body:'נשימה עמוקה ומודעת מפעילה את המערכת הפאראסימפטטית — זו שאחראית על מנוחה. אפילו נשימה עמוקה אחת ביום עשויה לתמוך בוויסות מערכת העצבים לאורך זמן.', src:'Siegel, The Mindful Brain (2007)' },
-  { title:'גם הפסקה קצרה נחשבת', body:'ניתוח משולב של 22 מחקרים מצא שמיקרו־הפסקות של עד עשר דקות נקשרו ליותר מרץ ולפחות עייפות. (לא נמצא שיפור עקבי בביצוע המשימה עצמה.)', src:'Albulescu et al., 2022' },
-  { title:'הקשר בין מזון למצב הרוח', body:'ירידה חדה ברמת הסוכר בדם קשורה לעלייה בקורטיזול ואדרנלין — הורמוני לחץ שיכולים להגביר עצבנות. ארוחות סדירות עשויות לתמוך ביציבות רגשית לאורך היום.', src:'ספרות מחקרית בנושא רמת סוכר בדם, קורטיזול ומצב רוח' },
-  { title:'תנועה עדינה ומערכת העצבים', body:'הליכה קלה, גם למשך זמן קצר, קשורה לעלייה ב-BDNF — חלבון שתומך בבריאות תאי העצב. תנועה עדינה היא אחת הדרכים הנגישות לתמוך במערכת העצבים.', src:'ספרות מחקרית בנושא תנועה קלה ו-BDNF' },
-  { title:'שינה ועיבוד זיכרון רגשי', body:'בשנת REM המוח "מנקה" זיכרונות רגשיים טעונים ומפחית את עוצמתם. זו הסיבה שאחרי שינה טובה אירועים קשים מרגישים לפעמים פחות מכריעים. שינה איכותית עשויה לתמוך בוויסות הרגשי.', src:'Walker, Why We Sleep (2017)' },
-  { title:'נשימה עמוקה ועצב הוואגוס', body:'עצב הוואגוס מחבר את המוח לכל האיברים הפנימיים ומשפיע על ויסות רגשי. נשימה איטית ועמוקה מפעילה אותו ישירות — ומורידה תגובת לחץ תוך שניות. זה לא מיתוס, זה פיזיולוגיה.', src:'Porges, Polyvagal Theory (2011)' },
-  { title:'הקשר בין מים לאנרגיה', body:'אפילו ירידה של 1-2% ברמת הידרציה גורמת לעייפות, קושי בריכוז ועצבנות. הגוף לא תמיד מרגיש "צמאון" ברמה זו — לכן חשוב לשתות גם בלי תחושת צמא.', src:'Armstrong et al., Journal of Nutrition, 2012' },
-  { title:'רגשות בגוף — לא רק בראש', body:'רגשות אינם רק מחשבות — הם תחושות גופניות: לחץ בחזה, כיווץ בבטן, כבדות בכתפיים. הכרה בתחושה הגופנית של הרגש היא הצעד הראשון לוויסות שלו.', src:'Damasio, Descartes Error (1994)' },
-  { title:'יום אחד לא מוחק את הדרך', body:'מחקר שעקב אחר יצירת הרגלים לאורך זמן מצא שיום אחד בלי הפעולה לא פגע באופן משמעותי בתהליך בניית האוטומטיות. (הממצא מתייחס לאירוע בודד, לא לדפוס קבוע.)', src:'Lally et al., 2010' },
-  { title:'חזרה הופכת פעולה למוכרת יותר', body:'מחקר שעקב אחר פעולות יומיומיות מצא שחזרה על פעולה באותו הקשר יכולה להפוך אותה למוכרת ואוטומטית יותר בהדרגה. (הקצב השתנה מאוד מאדם לאדם.)', src:'Lally et al., 2010' },
-  { title:'מגע עצמי ורגיעה', body:'הנחת יד על הלב ונשימה עמוקה מפעילה מסלולי רגיעה במוח דומים למגע חברתי. זה לא "טיפול עצמי" — זה ביולוגיה: המוח מגיב למגע חם גם כשהוא עצמי.', src:'Neff, Self-Compassion (2011)' },
-  { title:'בטחון ולמידה', body:'המוח מתקשה ללמוד, לצמוח או להשתנות כאשר הוא במצב של לחץ גבוה. לכן תחושת ביטחון — בגוף, בסביבה, ביחסים — יכולה לתמוך בכל שינוי עמוק.', src:'Porges, Polyvagal Theory (2011)' },
-  { title:'גמישות נוירלית לכל החיים', body:'פעם חשבו שהמוח מפסיק להתפתח בגיל מסוים. היום ידוע שנוירופלסטיות — יכולת המוח להשתנות — נשמרת לכל החיים. תמיד אפשר לבנות נתיבים חדשים.', src:'Doidge, The Brain That Changes Itself (2007)' },
-  { title:'חמלה עצמית ועמידות נפשית', body:'מחקרים מראים שחמלה עצמית — לדבר לעצמך כמו שתדברי לחברה טובה — קשורה ישירות לעמידות טובה יותר, פחות דיכאון וחרדה. זה לא פינוק — זה כלי מחקרי.', src:'Neff & Germer, Mindful Self-Compassion (2018)' },
-  { title:'ריח ותחושה כקרקוע', body:'חוש הריח מחובר ישירות לאמיגדלה ולהיפוקמפוס — אזורי הרגש והזיכרון. ריח מוכר ונעים יכול לעגן אותך ב"כאן ועכשיו" ולהפחית מתח תוך שניות.', src:'Bear et al., Neuroscience (2006)' },
-  { title:'ממש עכשיו — הרגע הזה', body:'מחקרי מיינדפולנס מראים שהבאת תשומת לב לרגע הנוכחי — גם לרגע קצר — יכולה לצמצם מחשבות חוזרות ומייגעות. רגע אחד של "כאן" עשוי לתמוך בוויסות.', src:'Kabat-Zinn, Full Catastrophe Living (1990); מחקרי מיינדפולנס עדכניים יותר על קשב ורומינציה' },
+// ============================================================
+// APPROVED KNOWLEDGE CONTENT — three canonical sources.
+// Each card: {id, family, title, body, sourceLabel, sourceId}.
+// id is stable and position-independent — never reorder-dependent.
+// No other copy of this text exists anywhere else in the file.
+// ============================================================
+
+const TORI_METHOD_FACTS = [
+  { id:'method_01', family:'method', title:'כשיש לצעד זמן ומקום', body:'ניתוח של 94 בדיקות מחקריות מצא שתכנון מראש של מתי ואיך לבצע פעולה תמך בהפיכת כוונות למעשים.\nלפעמים צעד קטן נעשה נגיש יותר כשברור מתי או באיזה רגע אפשר לפגוש אותו.', sourceLabel:'Gollwitzer & Sheeran, 2006', sourceId:'DOI 10.1016/S0065-2601(06)38002-1' },
+  { id:'method_02', family:'method', title:'בחירה היא חלק מהמוטיבציה', body:'ניתוח של 73 מחקרים מצא שתמיכה בבחירה ובמוטיבציה שמגיעה מתוך האדם נקשרה לשינויים חיוביים בהתנהגויות בריאות.\nהאפשרות לבחור את הקצב, הפעולה וגודל הצעד אינה רק התאמה נוחה. היא יכולה להיות חלק מהדרך שבה מוטיבציה מתחזקת.', sourceLabel:'Ntoumanis et al., 2021', sourceId:'PMID 31983293' },
+  { id:'method_03', family:'method', title:'חזרה יכולה להפוך פעולה למוכרת', body:'במחקר שעקב אחר פעולות יומיומיות, החזרה על פעולה בהקשר דומה הפכה אותה בהדרגה לאוטומטית יותר. הזמן שנדרש לכך היה שונה מאוד מאדם לאדם.\nאין קצב אחד שבו פעולה אמורה להפוך להרגל. כל חזרה יכולה להוסיף עוד מעט היכרות בדרך שמתאימה לך.', sourceLabel:'Lally et al., 2010', sourceId:'DOI 10.1002/ejsp.674' },
+  { id:'method_04', family:'method', title:'יום אחד לא מוחק את הדרך', body:'במחקר על יצירת הרגלים, פעם אחת שבה הפעולה לא בוצעה לא פגעה באופן משמעותי בתהליך שהלך ונבנה.\nאין צורך להשלים את מה שלא קרה או להתחיל הכול מחדש. אפשר פשוט לבחור מה מתאים ביום הבא.', sourceLabel:'Lally et al., 2010', sourceId:'DOI 10.1002/ejsp.674' },
+  { id:'method_05', family:'method', title:'גם תמיכה דרך מסך יכולה לעזור', body:'בניסוי אקראי עם 403 סטודנטים, תוכנית אינטרנטית מונחית בת ארבעה שבועות הפחיתה דחיינות יותר מהמתנה ללא התוכנית. בקבוצת ההתערבות, השיפור נשמר גם במעקב שנערך לאחר שישה חודשים.\nהמחקר בדק תוכנית אחרת ולא את תורי, אבל הוא מצביע על האפשרות שגם כלי דיגיטלי נגיש יכול לתמוך במעבר מכוונה להתחלה.', sourceLabel:'Amarnath et al., 2025', sourceId:'PMID 41080972; DOI 10.1016/j.invent.2025.100878' },
 ];
+
+const TORI_ACTION_FACTS = [
+  { id:'water_01', family:'water', title:'כמה מים כבר משנים משהו', body:'במחקר אקראי, שתייה של כ־200 מ״ל מים לאחר תקופה ללא שתייה הספיקה להפחית את תחושת הצמא ונקשרה גם לפחות עייפות.', sourceLabel:'Zhang et al., 2020', sourceId:'PMID 33114364' },
+  { id:'water_02', family:'water', title:'מים ותשומת לב', body:'במחקר אקראי עם צעירות וצעירים, שתיית מים לאחר הגבלת שתייה נקשרה לשיפור במהירות העיבוד, בזיכרון העבודה ובכמה מדדים של מצב הרוח.', sourceLabel:'Zhang et al., 2021', sourceId:'PMID 34684650' },
+  { id:'food_01', family:'food', title:'ארוחת בוקר, שובע וריכוז', body:'במחקר מבוקר עם נשים צעירות, ארוחת בוקר עשירה בחלבון נקשרה ליותר שובע ולריכוז טוב יותר בשעות שלפני ארוחת הצהריים, בהשוואה לדילוג על הארוחה.', sourceLabel:'Dalgaard et al., 2024', sourceId:'PMID 38135050' },
+  { id:'food_02', family:'food', title:'לפגוש את הארוחה', body:'במחקר שבו אותם משתתפים אכלו בתנאים שונים, הארוחה שנאכלה ללא הסחת דעת נשמרה בזיכרון באופן ברור יותר.', sourceLabel:'Liguori et al., 2020', sourceId:'PMID 32060552' },
+  { id:'movement_01', family:'movement', title:'עשר דקות של הליכה', body:'במחקר מבוקר, הליכה מהירה של עשר דקות נקשרה לשיפור במדדים של מצב הרוח בהשוואה לישיבה ללא פעילות.', sourceLabel:'Edwards & Loprinzi, 2018', sourceId:'PMID 30087839' },
+  { id:'movement_02', family:'movement', title:'גם תנועה קצרה משפיעה', body:'בניסוי שבדק משכי פעילות שונים, לפעילות חד־פעמית של 10 עד 60 דקות הייתה השפעה חיובית על מדדים שונים של מצב הרוח במגוון המשכים.', sourceLabel:'Crush, Frith & Loprinzi, 2018', sourceId:'PMID 29329061' },
+  { id:'rest_01', family:'rest', title:'מה יכולה לתת מיקרו־הפסקה', body:'ניתוח של 22 מחקרים מצא שהפסקות קצרות של עד עשר דקות נקשרו ליותר מרץ ולפחות עייפות.', sourceLabel:'Albulescu et al., 2022', sourceId:'PMID 36044424' },
+  { id:'rest_02', family:'rest', title:'תנומה קצרה והמשך היום', body:'במחקר עם צעירות וצעירים, תנומות של 10 עד 60 דקות נקשרו לפחות ישנוניות וליותר מצב רוח חיובי למשך כמה שעות.', sourceLabel:'Leong et al., 2023', sourceId:'PMID 36775965' },
+  { id:'hygiene_01', family:'hygiene', title:'פלואוריד מוסיף שכבת הגנה', body:'סקירה רחבה של מחקרים מצאה שמשחת שיניים עם פלואוריד מסייעת להגן על השיניים מפני עששת.', sourceLabel:'Walsh et al., 2019', sourceId:'PMID 30829399' },
+  { id:'hygiene_02', family:'hygiene', title:'מקלחת חמימה כהכנה לשינה', body:'סקירה שיטתית ומטה־אנליזה מצאה שמקלחת או אמבטיה חמימה, כשנעשו כשעה עד שעתיים לפני השינה, נקשרו להירדמות מהירה יותר ולאיכות שינה טובה יותר. בחלק מהמחקרים גם כעשר דקות הספיקו.', sourceLabel:'Haghayegh et al., 2019', sourceId:'PMID 31102877; DOI 10.1016/j.smrv.2019.04.008' },
+];
+
+const TORI_COMPASSION_FACTS = [
+  { id:'compassion_01', family:'compassion', title:'גם חמלה יכולה להניע', body:'בארבעה ניסויים, אנשים שהתבקשו להגיב לעצמם בחמלה אחרי קושי או תוצאה מאכזבת הראו יותר מוטיבציה להשתפר.\nחמלה לא חייבת לעצור את הדרך. היא יכולה לאפשר לנסות שוב.', sourceLabel:'Breines & Chen, 2012', sourceId:'PMID 22645164; DOI 10.1177/0146167212445599' },
+  { id:'compassion_02', family:'compassion', title:'יחס טוב לעצמך משאיר מקום להמשך', body:'באחד הניסויים, משתתפים שהתבקשו להגיב לעצמם בחמלה אחרי תוצאה מאכזבת במבחן הקדישו יותר זמן ללמידה לקראת ניסיון נוסף.\nלפעמים רגע של רוך לא מרחיק מהצעד הבא. הוא פשוט מאפשר לגשת אליו ממקום קצת יותר נעים.', sourceLabel:'Breines & Chen, 2012', sourceId:'PMID 22645164; DOI 10.1177/0146167212445599' },
+  { id:'compassion_03', family:'compassion', title:'פחות ביקורת, יותר מרחב', body:'סקירה של 20 ניסויים מבוקרים מצאה שתרגולים של חמלה עצמית נקשרו להפחתה בביקורת העצמית.\nאפשר לרצות שמשהו ישתנה, ובאותו זמן לדבר לעצמך ברכות בדרך.', sourceLabel:'Wakelin, Perman & Simonds, 2022', sourceId:'PMID 33749936' },
+  { id:'compassion_04', family:'compassion', title:'חמלה וטיפול עצמי יכולות ללכת יחד', body:'ניתוח של 15 מדגמים מצא קשר קטן אך עקבי בין חמלה עצמית לבין פעולות מקדמות בריאות, ובהן תנועה, שינה, אכילה וניהול לחץ.\nהמחקר אינו מוכיח שחמלה לבדה יוצרת הרגלים, אבל הוא מצביע על כך שיחס טוב לעצמך וטיפול בעצמך יכולים לצמוח יחד.\nגם בחירה קטנה יכולה להיות דרך להיות בצד שלך היום.', sourceLabel:'Sirois, Kitner & Hirsch, 2015', sourceId:'PMID 25243717' },
+  { id:'compassion_05', family:'compassion', title:'שינוי יכול להתחיל בעדינות', body:'סקירה רחבה מצאה קשר בין חמלה עצמית לבין פעולות מקדמות בריאות, וגם קשר קטן לבריאות גופנית טובה יותר.\nזהו קשר מחקרי, לא הבטחה לתוצאה. הוא כן מזכיר ששינוי לא חייב להתחיל ממאמץ גדול.\nאפשר להתחיל ממשהו קטן שמתאים להיום.', sourceLabel:'Phillips & Hine, 2021', sourceId:'PMID 31842689; DOI 10.1080/17437199.2019.1705872' },
+];
+
+// Which approved action-fact id(s) are eligible for each real action identifier
+// in the app (TASK_IDS value, exercise option id, or library task id).
+// If an action key has no entry here, it simply shows no knowledge card —
+// nothing is invented to fill the gap.
+const ACTION_KNOWLEDGE_MAP = {
+  water: ['water_01', 'water_02'],
+  breakfast: ['food_01'],
+  lunch: ['food_02'],
+  dinner: ['food_02'],
+  breathing: ['rest_01'],
+  walk10: ['movement_01'],
+  walk30: ['movement_01'],
+  stretch: ['movement_02'],
+  breathmove: ['movement_02'],
+  yoga: ['movement_02'],
+  dance: ['movement_02'],
+  shower: ['hygiene_02'],
+  'body-nice-shower': ['hygiene_02'],
+  'body-short-shower': ['hygiene_02'],
+  'teeth-brush': ['hygiene_01'],
+  'teeth-brush-wash-face': ['hygiene_01'],
+  'teeth-short-brush': ['hygiene_01'],
+  'teeth-few-seconds': ['hygiene_01'],
+};
+
+// Approved card ids that pre-date this content lock (old library completionNote
+// mechanism). Never generated going forward — kept only so any such record a
+// user already has saved can be hidden (not deleted) from "נעים לדעת" display.
+const OLD_SYSTEM_NIIM_IDS = [
+  'quiet-one-deep-breath', 'quiet-longer-exhale', 'quiet-double-breath-release',
+  'quiet-short-hum', 'quiet-release-jaw', 'quiet-drop-shoulders',
+  'quiet-feet-on-floor', 'quiet-orient-room',
+];
+
+const NIIM_FAMILY_LABELS = {
+  method: 'איך תורי עובדת',
+  compassion: 'חמלה עצמית',
+  water: 'מים',
+  food: 'אוכל',
+  movement: 'תנועה',
+  rest: 'מנוחה',
+  hygiene: 'היגיינה וטיפול בגוף',
+};
+
+// Pick an unseen card from the pool if one exists; otherwise rotate through
+// the pool again without immediately repeating the single most-recently-seen
+// card from that same pool. "Seen" = already present in _niimNotes by id.
+// In-memory only (not persisted): tracks the last id picked per pool within
+// this page session, so two picks back-to-back never tie on Date.now()'s
+// millisecond resolution. Resetting on reload is fine — "immediate repeat"
+// only matters within one sitting; lastSeenAt in tori_niim_v1 still orders
+// "most recently seen" correctly across separate sessions.
+var _lastPickedIdByPool = {};
+function pickUnseenOrRotate(pool) {
+  if (!pool || !pool.length) return null;
+  var poolKey = pool.map(function(c) { return c.id; }).sort().join(',');
+  var seenById = {};
+  (_niimNotes || []).forEach(function(n) { seenById[n.id] = n; });
+  var unseen = pool.filter(function(c) { return !seenById[c.id]; });
+  var picked;
+  if (unseen.length) {
+    picked = unseen[Math.floor(Math.random() * unseen.length)];
+  } else {
+    var lastId = _lastPickedIdByPool[poolKey];
+    var candidates = pool.filter(function(c) { return c.id !== lastId; });
+    if (!candidates.length) candidates = pool;
+    picked = candidates[Math.floor(Math.random() * candidates.length)];
+  }
+  _lastPickedIdByPool[poolKey] = picked.id;
+  return picked;
+}
+
+// Display + save a knowledge card. Uses the existing persistent completion-note
+// card (separate from showToast) and the existing saveNiimNote() persistence —
+// no new UI surface, no new storage key.
+function showKnowledgeCard(card) {
+  if (!card) return;
+  showCompletionNote(card.body);
+  saveNiimNote({
+    id: card.id, label: card.title, completionNote: card.body,
+    family: card.family, plantFamily: null, icon: '🌿',
+  });
+}
+
+// Show (and save) the approved action-fact card for a given real action
+// identifier, if one is mapped. No-op if none is mapped — never invents.
+function showActionKnowledgeCard(actionKey) {
+  var ids = ACTION_KNOWLEDGE_MAP[actionKey];
+  if (!ids || !ids.length) return;
+  var pool = TORI_ACTION_FACTS.filter(function(c) { return ids.indexOf(c.id) > -1; });
+  showKnowledgeCard(pickUnseenOrRotate(pool));
+}
 
 const HABIT_SCIENCE = [
   { title:'🧠 יום ראשון — הניצן מתעורר', body:'כל יום שבו טיפלת בעצמך, המוח מתחיל לסלול מסלול עצבי חדש. בהתחלה המאמץ מורגש — כי הנתיב עדיין צר וחדש. אבל הוא נבנה. בכל יום, לאט לאט.' },
@@ -3125,7 +3246,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'legacy-content-cleanup-2026-07-29d';
+const TORI_BUILD = 'approved-knowledge-content-2026-07-29e';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -3143,7 +3264,6 @@ function pad(n) { return String(n).padStart(2,'0'); }
 function getDateKey(off) { const d=new Date(); d.setDate(d.getDate()+off); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function isExerciseDay() { const d=new Date(); return Math.floor((d-new Date(d.getFullYear(),0,0))/86400000)%2===0; }
 function getHebrewDate() { const wk=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'],mo=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'],d=new Date(); return `יום ${wk[d.getDay()]}, ${d.getDate()} ${mo[d.getMonth()]}`; }
-function getDOY() { const d=new Date(); return Math.floor((d-new Date(d.getFullYear(),0,0))/86400000); }
 function pickRandom(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
 function countDone() { let n=TASK_IDS.filter(t=>s.tasks[t]).length; if(waterStepDone())n++; if(s.exChosen.easy||s.exChosen.hard)n++; return n; }
 function totalTasks() { return TASK_IDS.length+2; }
@@ -3160,6 +3280,7 @@ function toggleTask(id) {
   }
   if(s.tasks[id]) {
     showToast(pickRandom(TASK_MSGS[id]||ENCOURAGEMENTS));
+    showActionKnowledgeCard(id); // separate approved knowledge card, if one is mapped
     const TASK_PTS={breakfast:10,lunch:10,dinner:10,shower:10,breathing:8,sleep:8,outside:8};
     if(TASK_PTS[id]) awardPoints(TASK_PTS[id]);
     else awardPoints(10);
@@ -3299,6 +3420,7 @@ function tapWaterSip(e) {
   updateProgress();
   if (s.water === step.taps && prev < step.taps) {
     showToast(step.toast);
+    showActionKnowledgeCard('water'); // separate approved knowledge card
     awardPoints(5);
   }
   addGardenAction('water');
@@ -3591,7 +3713,7 @@ function toggleExBox() { s.exBoxOpen=!s.exBoxOpen; document.getElementById('ex-b
 function chooseEx(id,mode) {
   // Toggle off if already chosen
   if(s.exChosen[mode]===id){ s.exChosen[mode]=null; document.getElementById('eopt-'+id).classList.remove('chosen'); }
-  else { s.exChosen[mode]=id; document.querySelectorAll('#ex-opts-'+mode+' .ex-opt').forEach(el=>el.classList.remove('chosen')); document.getElementById('eopt-'+id).classList.add('chosen'); showToast('💃 כן!! הגוף שלך הרגיש שזז. הנוירונים חוגגים עכשיו 🎊'); awardPoints(12); }
+  else { s.exChosen[mode]=id; document.querySelectorAll('#ex-opts-'+mode+' .ex-opt').forEach(el=>el.classList.remove('chosen')); document.getElementById('eopt-'+id).classList.add('chosen'); showToast('💃 כן!! הגוף שלך הרגיש שזז. הנוירונים חוגגים עכשיו 🎊'); showActionKnowledgeCard(id); awardPoints(12); }
   const anyDone=s.exChosen.easy||s.exChosen.hard;
   const bothDone=s.exChosen.easy&&s.exChosen.hard;
   document.getElementById('exercise-card').classList.toggle('done',!!anyDone);
@@ -5993,71 +6115,63 @@ const SELF_CARE_TASK_LIBRARY = [
 
   // ── רגע שקט (quietMoment) ────────────────────────────────────────────────
   // מיקרו־פעולות של ויסות גופני — נשימה, עיגון, שחרור מתח.
-  // completionNote: שדה לשימוש עתידי בהצגת הסבר פיזיולוגי קצר לאחר השלמה.
-  // אינו מוצג כרגע — ממתין למנגנון completionNote מאושר.
+  // completionNote (תוכן מחקרי ישן, לא מאושר) הוסר במפורש — פעולות אלו
+  // ממשיכות לפעול בלי כרטיס ידע עד שתוכן מתאים ומאושר יתווסף.
   {
     id: 'quiet-one-deep-breath',
     label: 'נשימה אחת עמוקה ואז לשחרר',
     family: 'quietMoment', plantFamily: 'quietMoment',
     level: 'micro',
-    icon: '🫧', type: 'task',
-    completionNote: 'נשימה עמוקה ואז שחרור נותנים לגוף אות קטן של האטה. זה יכול לתמוך בוויסות פנימי, גם אם לא מרגישים שינוי גדול מיד.'
+    icon: '🫧', type: 'task'
   },
   {
     id: 'quiet-longer-exhale',
     label: 'נשיפה ארוכה יותר מהשאיפה',
     family: 'quietMoment', plantFamily: 'quietMoment',
     level: 'micro',
-    icon: '〰️', type: 'task',
-    completionNote: 'נשיפה ארוכה יכולה לעודד את הגוף לעבור למצב פחות דרוך, בין היתר דרך מערכות שקשורות לעצב הואגוס. זה סימן קטן של ביטחון מבפנים.'
+    icon: '〰️', type: 'task'
   },
   {
     id: 'quiet-double-breath-release',
     label: 'שאיפה קטנה נוספת ואז לשחרר',
     family: 'quietMoment', plantFamily: 'quietMoment',
     level: 'micro',
-    icon: '🌬️', type: 'task',
-    completionNote: 'הוספת שאיפה קטנה לפני השחרור יכולה לעזור לגוף לפרוק מעט עומס דרך הנשיפה. מיקרו־רגע של אוויר, בלי לעשות מזה פרויקט.'
+    icon: '🌬️', type: 'task'
   },
   {
     id: 'quiet-short-hum',
     label: 'המהום קצר',
     family: 'quietMoment', plantFamily: 'quietMoment',
     level: 'micro',
-    icon: '🎵', type: 'task',
-    completionNote: 'המהום יוצר רטט עדין באזור הגרון והחזה, ויכול לתמוך במערכת הרגיעה של הגוף. הקפיברה מאשרת: לפעמים \'מממ\' קטן הוא פעולה עם מדע מאחוריה.'
+    icon: '🎵', type: 'task'
   },
   {
     id: 'quiet-release-jaw',
     label: 'לשחרר לסת',
     family: 'quietMoment', plantFamily: 'quietMoment',
     level: 'micro',
-    icon: '🌿', type: 'task',
-    completionNote: 'הלסת מחזיקה הרבה מתח בלי לבקש רשות. שחרור קטן שם יכול לשלוח לגוף מסר של ריכוך ולהוריד מעט עומס.'
+    icon: '🌿', type: 'task'
   },
   {
     id: 'quiet-drop-shoulders',
     label: 'להוריד כתפיים',
     family: 'quietMoment', plantFamily: 'quietMoment',
     level: 'micro',
-    icon: '🍃', type: 'task',
-    completionNote: 'הכתפיים לא חייבות להחזיק את כל היקום כרגע. הורדה קטנה שלהן יכולה לעזור לגוף להבין שיש קצת יותר מקום.'
+    icon: '🍃', type: 'task'
   },
   {
     id: 'quiet-feet-on-floor',
     label: 'שתי רגליים על הרצפה',
     family: 'quietMoment', plantFamily: 'quietMoment',
     level: 'micro',
-    icon: '🪨', type: 'task',
-    completionNote: 'מגע יציב עם הרצפה נותן למערכת העצבים נקודת עוגן בכאן ועכשיו. זה לא צריך לפתור הכול — רק להזכיר לגוף איפה הוא נמצא.'
+    icon: '🪨', type: 'task'
   },
   {
     id: 'quiet-orient-room',
     label: 'להסתכל סביב ולמצוא דבר בטוח',
     family: 'quietMoment', plantFamily: 'quietMoment',
     level: 'micro',
-    icon: '👀', type: 'task',
-    completionNote: 'כשמסתכלים סביב ומזהים משהו בטוח, המוח מקבל מידע עדכני מהסביבה. זה יכול לעזור לגוף להבין שעכשיו הוא כאן, ברגע הזה.'
+    icon: '👀', type: 'task'
   },
 ];
 
@@ -6972,11 +7086,16 @@ function renderAchievements() {
 
 // FACT OVERLAY
 function openFact() {
-  const idx=getDOY()%FACTS.length, f=FACTS[idx];
+  const f = pickUnseenOrRotate(TORI_METHOD_FACTS);
+  if (!f) return;
   document.getElementById('fn-title').textContent=f.title;
   document.getElementById('fn-body').textContent=f.body;
-  document.getElementById('fn-src').textContent='מקור: '+f.src;
-  document.getElementById('fn-day').textContent=`עובדה ${idx+1}/${FACTS.length}`;
+  document.getElementById('fn-src').textContent='מקור: '+f.sourceLabel;
+  saveNiimNote({ id:f.id, label:f.title, completionNote:f.body, family:f.family, plantFamily:null, icon:'💡' });
+  const seenCount = TORI_METHOD_FACTS.filter(function(c){
+    return (_niimNotes||[]).some(function(n){ return n.id===c.id; });
+  }).length;
+  document.getElementById('fn-day').textContent=`עובדה ${seenCount}/${TORI_METHOD_FACTS.length}`;
   document.getElementById('fact-overlay').classList.add('open');
 
 }
@@ -8360,6 +8479,12 @@ async function returnCustomCompassionWin(id) {
   renderCompassionDay();
 }
 
+// "נעים לדעת על חמלה עצמית" — opens (and saves) an unseen-first compassion
+// knowledge card. Same pick/save mechanism as the other two layers.
+function showCompassionKnowledgeCard() {
+  showKnowledgeCard(pickUnseenOrRotate(TORI_COMPASSION_FACTS));
+}
+
 function renderCompassionDay() {
   var panel = document.getElementById('compassion-day-panel');
   if (!panel) return;
@@ -8464,6 +8589,11 @@ function renderCompassionDay() {
     + (!_cdCustomInput ? '<button class="compassion-add-btn" onclick="openAddCustomWin()">+ להוסיף ניצחון קטן משלי</button>' : '')
     + inputHTML
     + '<div class="cd-custom-helper">כל ניצחון קטן מתקבל פה בכבוד מוגזם.</div>'
+    + '<div class="cd-knowledge-teaser">'
+    + '  <div class="cd-knowledge-title">גם חמלה יכולה להניע</div>'
+    + '  <div class="cd-knowledge-text">בארבעה ניסויים, אנשים שהתבקשו להגיב לעצמם בחמלה אחרי קושי או תוצאה מאכזבת הראו יותר מוטיבציה להשתפר.<br>יום חמלה מציע דרך להישאר עם מה שחשוב לך ולנסות שוב בעדינות.</div>'
+    + '  <button class="cd-knowledge-btn" onclick="showCompassionKnowledgeCard()">נעים לדעת על חמלה עצמית</button>'
+    + '</div>'
     + exitHTML;
 }
 // AUTH
@@ -10205,7 +10335,13 @@ function renderNiimSection() {
   var el = document.getElementById('scroll-niim-section');
   if (!el) return;
 
-  if (!_niimNotes || _niimNotes.length === 0) {
+  // Hide (never delete) old-system records from the pre-approval content
+  // lock — the stored data stays in tori_niim_v1 untouched.
+  var visible = (_niimNotes || []).filter(function(n) {
+    return OLD_SYSTEM_NIIM_IDS.indexOf(n.id) === -1;
+  });
+
+  if (visible.length === 0) {
     el.innerHTML = '<div class="niim-section-title">נעים לדעת</div>'
       + '<div class="niim-empty">'
       + 'כשתפגשי הסברים קטנים אחרי פעולות, הם יישמרו כאן —'
@@ -10215,7 +10351,7 @@ function renderNiimSection() {
   }
 
   // Sort: most recently seen first
-  var sorted = _niimNotes.slice().sort(function(a, b) {
+  var sorted = visible.slice().sort(function(a, b) {
     return (b.lastSeenAt || 0) - (a.lastSeenAt || 0);
   });
 
@@ -10226,11 +10362,16 @@ function renderNiimSection() {
     var seenLine = (card.seenCount && card.seenCount > 1)
       ? '<div class="niim-card-seen">פגשת את זה ' + card.seenCount + ' פעמים</div>'
       : '';
+    var familyLabel = NIIM_FAMILY_LABELS[card.family];
+    var familyLine = familyLabel
+      ? '<div class="niim-card-family">' + _escH(familyLabel) + '</div>'
+      : '';
     html += '<div class="niim-card">'
       + '<div class="niim-card-header">'
       + '<span class="niim-card-icon">' + _escH(card.icon || '🌱') + '</span>'
       + '<span class="niim-card-label">' + _escH(card.label || '') + '</span>'
       + '</div>'
+      + familyLine
       + '<div class="niim-card-note">' + _escH(card.note || '') + '</div>'
       + seenLine
       + '</div>';
@@ -10299,13 +10440,8 @@ function toggleLibraryTask(libraryId) {
       if (_activeLibraryTasks[i].libraryId === libraryId) { label = _activeLibraryTasks[i].label; break; }
     }
     showToast('✨ ' + label + ' — כל הכבוד! 💙');
-    // Show persistent completion note if the task definition has one.
-    // Uses showCompletionNote (no auto-dismiss) — not showToast — for accessibility.
-    var libDef = getSelfCareTaskById(libraryId);
-    if (libDef && libDef.completionNote) {
-      showCompletionNote(libDef.completionNote); // UI — show persistent card
-      saveNiimNote(libDef);                      // storage — collect for "נעים לדעת"
-    }
+    // Separate approved knowledge card, if this specific library action is mapped.
+    showActionKnowledgeCard(libraryId);
   } else {
     // Task un-checked — hide any open completion note.
     hideCompletionNote();
