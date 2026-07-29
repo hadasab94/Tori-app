@@ -7121,6 +7121,16 @@ function switchView(v) {
   if (v === 'bot') v = 'journey'; // bot tab removed — redirect to journey
   if (_editMode && v !== 'today') exitEditMode(); // leave edit mode when switching tabs
   hideCompletionNote(); // close persistent note card on any tab switch
+  // Leaving the Journey tab while a companion switch was opened but never
+  // confirmed (switchJourneyCompanion() sets cs._switching=true; only
+  // doConfirmJourneyCompanion() clears it — there is no cancel path)
+  // must not leave it stuck: otherwise every later Journey render — even
+  // one triggered by an unrelated action like changing today's pace —
+  // shows the companion picker again instead of the normal journey screen.
+  if (_lastMainTab === 'journey' && v !== 'journey' && typeof cs !== 'undefined' && cs._switching) {
+    cs._switching = false;
+    cs._pendingId = null;
+  }
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   var viewEl = document.getElementById('view-'+v);

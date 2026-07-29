@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v78'; // fix: _jcsSyncVisuals used getElementById, which only updated the first of two duplicate-id companion-picker renders (Journey tab + onboarding tour), leaving the onboarding one visually stuck on an unselected/disabled state
+const CACHE = 'body-soul-v79'; // fix: switchJourneyCompanion() sets cs._switching=true with no cancel path — leaving the Journey tab mid-switch left it stuck, so any later Journey render (even from changing today's pace) re-showed the companion picker instead of the real companion
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
