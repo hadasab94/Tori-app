@@ -7778,6 +7778,26 @@ async function selectTodayPace(pace) {
   _applyPaceDefaults(pace);
   await saveGardenState();
 
+  // Pace and companion are a team: picking an active pace (blanket/enough/
+  // curiosity — not compassion, which has no paired companion) also switches
+  // to that pace's companion. PACE_META[pace].companionId is the single
+  // canonical pace→companion mapping (already used to pick each pace-card's
+  // icon in _buildPaceCard). This coupling is one-directional — manually
+  // switching companion via switchJourneyCompanion()/doConfirmJourneyCompanion()
+  // never touches pace.
+  if (pace !== 'compassion') {
+    var _paceMeta = PACE_META[pace];
+    var _pairedCompanionId = _paceMeta && _paceMeta.companionId;
+    if (_pairedCompanionId && COMPANIONS[_pairedCompanionId] && cs.companionId !== _pairedCompanionId) {
+      cs.companionId = _pairedCompanionId;
+      cs.selectedAt = new Date().toISOString();
+      cs._pendingId = null;
+      cs._switching = false;
+      await saveCompanionState();
+      try { renderJourneyTab(); } catch(e) {}
+    }
+  }
+
   // Deactivate compassion day when switching away from it
   if (pace !== 'compassion' && cd.active) {
     cd.active = false;

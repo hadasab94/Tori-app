@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v79'; // fix: switchJourneyCompanion() sets cs._switching=true with no cancel path — leaving the Journey tab mid-switch left it stuck, so any later Journey render (even from changing today's pace) re-showed the companion picker instead of the real companion
+const CACHE = 'body-soul-v80'; // feature: pace selection now sets its paired companion (blanket->capy, enough->kipoda, curiosity->forest) via PACE_META.companionId; manual companion switch still never touches pace
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
