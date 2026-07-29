@@ -1,4 +1,4 @@
-<!-- Tori version: identity-pass-2026-07-29b -->
+<!-- Tori version: pace-companion-decouple-2026-07-29c -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -3197,7 +3197,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'identity-pass-2026-07-29b';
+const TORI_BUILD = 'pace-companion-decouple-2026-07-29c';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -7824,17 +7824,6 @@ async function selectTodayPace(pace) {
     saveBotData();
   }
 
-  // Connect pace to companion — set companionId to the matching active companion
-  var meta = PACE_META[pace];
-  if (meta && meta.companionId) {
-    var comp = COMPANIONS[meta.companionId];
-    if (comp && comp.active !== false) {
-      cs.companionId = meta.companionId;
-      cs.selectedAt  = cs.selectedAt || new Date().toISOString();
-      await saveCompanionState();
-    }
-  }
-
   // Bridge יום חמלה to the existing compassion day system
   if (pace === 'compassion' && !cd.active) {
     await activateCompassionDay();
@@ -11079,6 +11068,14 @@ function buildCompanionHeroHTML(c, marks, mood) {
     lineText = (typeof COMPASSION_DAY_COMPANION_LINES !== 'undefined' && COMPASSION_DAY_COMPANION_LINES[c.id]) || '';
   } else {
     lineText = (JOURNEY_COMPANION_LINES[c.id] || {})[mood] || '';
+    // Temporary fallback: if this companion has no JOURNEY_COMPANION_LINES
+    // entry at all (e.g. kipoda), use one of its own 24 approved general
+    // lines instead of showing an empty speech bubble. Not a per-mood
+    // replacement — same approved sentence regardless of mood until real
+    // context-specific lines are written and approved.
+    if (!lineText && !JOURNEY_COMPANION_LINES[c.id]) {
+      lineText = getApprovedGeneralCompanionLines(c.id)[0] || '';
+    }
   }
   var bubbleHTML = '<div class="j-bubble" style="margin:0">'
     + '<div class="j-bubble-who">'

@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v73'; // identity pass: onboarding screen 1 + About Tori rewritten off C-PTSD framing, FACTS re-audited (9 removed), dead bot/chat module fully deleted, streak counter unchanged
+const CACHE = 'body-soul-v74'; // pace no longer changes companionId; kipoda journey-bubble empty-text fallback to one of her 24 approved lines
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
