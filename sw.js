@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v76'; // approved knowledge content live: TORI_METHOD_FACTS/TORI_ACTION_FACTS/TORI_COMPASSION_FACTS wired into "הידעת?", per-action cards, and new יום חמלה knowledge button; old FACTS + quietMoment completionNote disconnected
+const CACHE = 'body-soul-v77'; // character content lock for testers build: JOURNEY_COMPANION_LINES (incl. new kipoda entries), COMPASSION_DAY_COMPANION_LINES, GENTLE_HABIT_COMPANION_LINES, and both active pamper afterLines replaced with approved final texts
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
