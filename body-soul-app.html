@@ -1,4 +1,4 @@
-<!-- Tori version: pace-companion-decouple-2026-07-29c -->
+<!-- Tori version: legacy-content-cleanup-2026-07-29d -->
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -96,7 +96,6 @@ body.tori-font-large .settings-card-sub { font-size: 14px; }
 body.tori-font-large .niim-card-label { font-size: 16px; }
 body.tori-font-large .niim-card-note { font-size: 15px; }
 body.tori-font-large .t-name { font-size: 15px; }
-body.tori-font-large .cf-line { font-size: 15px; }
 body.tori-font-large .foods-input, body.tori-font-large .foods-save-btn { font-size: 17px; }
 body.tori-font-large .disp-group-title { font-size: 15px; }
 body.tori-font-large .disp-group-sub { font-size: 13px; }
@@ -113,7 +112,6 @@ body.tori-font-xlarge .settings-card-sub { font-size: 16px; }
 body.tori-font-xlarge .niim-card-label { font-size: 18px; }
 body.tori-font-xlarge .niim-card-note { font-size: 17px; }
 body.tori-font-xlarge .t-name { font-size: 17px; }
-body.tori-font-xlarge .cf-line { font-size: 17px; }
 body.tori-font-xlarge .foods-input, body.tori-font-xlarge .foods-save-btn { font-size: 19px; }
 body.tori-font-xlarge .disp-group-title { font-size: 17px; }
 body.tori-font-xlarge .disp-group-sub { font-size: 15px; }
@@ -124,7 +122,6 @@ body.tori-clear-text .about-section-text,
 body.tori-clear-text .feed-card-text,
 body.tori-clear-text .niim-card-note,
 body.tori-clear-text .settings-card-sub,
-body.tori-clear-text .cf-line,
 body.tori-clear-text .foods-input { font-weight: 500; }
 
 /* Reduce motion: kill non-essential animations and transitions */
@@ -1323,7 +1320,6 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 /* ===== COMPASSION DAY ACTIVE — hide regular Today content ===== */
 #view-today.today-compassion-active { background: #FFF8EA; }
 #view-today.today-compassion-active > .today-companion-path,
-#view-today.today-compassion-active > .companion-feedback,
 #view-today.today-compassion-active > .spark-row,
 #view-today.today-compassion-active > .celebration,
 #view-today.today-compassion-active > .sec,
@@ -2006,14 +2002,6 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
   border-radius:14px; padding:11px 14px;
   font-size:13px; color:var(--text); line-height:1.65; font-style:italic;
 }
-.companion-feedback {
-  display:flex; align-items:flex-start; gap:9px;
-  background:var(--card); border:1px solid var(--border);
-  border-radius:14px; padding:11px 13px; margin-bottom:10px;
-}
-.cf-icon { width:26px; height:26px; border-radius:50%; object-fit:cover; flex-shrink:0; margin-top:1px; }
-.cf-line { font-size:13px; color:var(--text2); line-height:1.65; }
-
 /* Categories header */
 .today-cats-header {
   font-size:14px; font-weight:700; color:var(--text);
@@ -2475,12 +2463,6 @@ if('serviceWorker' in navigator){
       <span id="spark-btn-label">✨ הברקה קטנה</span>
     </button>
     <div class="spark-line" id="spark-line-display" style="display:none"></div>
-  </div>
-
-  <!-- ── Companion feedback line (secondary, below spark button) ── -->
-  <div class="companion-feedback" id="companion-feedback" style="display:none">
-    <img class="cf-icon" id="cf-icon" src="" alt="">
-    <div class="cf-line" id="cf-line"></div>
   </div>
 
   <!-- ── Daily pace selector — rendered by renderPaceSection() ── -->
@@ -3032,60 +3014,6 @@ const PLANT_STAGE_ICONS = {
   full:   'assets/plants/growth-stages/plant-full.webp',
 };
 
-// ── Today sparkle lines — shown only on user request, never automatically ──
-// Companion ID key; forest = internal alias for חפשושית
-// Active companions only (capy, kipoda, hafshushit/forest). Dead characters
-// (bear, cat, fox) removed per docs/CHARACTER-CONTENT-COMPASS.md.
-const TODAY_SPARK_LINES = {
-  // חפשושית — gentle, forest-flavored, curious, small-step magic. 12 lines.
-  hafshushit: [
-    'אפשר רק להציץ. הצצה היא פעולה שלמה בפני עצמה, וזה מרגיע אותי.',
-    'משהו קטן יכול להיות ממש קטן. אני בדקתי, זה חוקי.',
-    'לפעמים היום פחות קוצני אחרי פעולה אחת בגודל של עלה.',
-    'אפשר להיות קצת מוכנות. זה מספיק, ובכלל זה כבר יפה.',
-    'אני בעד התחלה שקטה. כזאת שרק אנחנו יודעות שהיתה.',
-    'הכול מרגיש הרבה? גרגר אחד מהערימה זה תחילה.',
-    'גם להתחיל ואז לעצור — זה מידע. מידע עם נעליים קטנות.',
-    'מספיק למצוא אבן אחת יציבה. מרגל לאחר מרגל, השביל מתארגן.',
-    'דבר אחד קטן עכשיו. קטן כמו עלה, אבל עלים יודעים להתחיל יער.',
-    'אם היום קשה, אפשר ללכת מסביב. גם מסביב זו דרך, לפעמים יותר חמודה.',
-    'אפשר להשתמש בסקרנות במקום מוטיבציה. היא קטנה יותר ויודעת לפתוח דלתות.',
-    'חפשושית יודעת: פינה קטנה של הדבר היא לגמרי כל הדבר.',
-  ],
-  // קיפודה — witty, elegant, boundaried, warm underneath. 12 lines.
-  kipoda: [
-    'כמה משימות בגודל הנכון. כל השאר מוזמנות לשלוח מייל מסודר.',
-    'היום נכניס רק מה שיש לו מקום. זה לא סינון, זו אדריכלות פנים.',
-    'היום נשאיר מקום גם לך. רעיון די אלגנטי, אם חושבות על זה.',
-    'לא כל דבר צריך להיכנס עכשיו. חלק מהדברים נראים מצוין מחוץ לדלת.',
-    'נבחר מה מתאים להיום, לא מה מנסה להיראות חשוב.',
-    'משימות גדולות יכולות לחכות רגע. הן כבר גדולות, יש להן סבלנות.',
-    'היום לא נמדוד הצלחה לפי עומס. כמה חדשני מצדנו.',
-    'נבחר צעד שאפשר להזמין פנימה בלי לפנות את כל הסלון.',
-    'תודה שבאתם. הזמנתם מקום מראש?',
-    'קוצים הם לא קירות. הם יודעים לשמור בחום.',
-    'אפשר להגיד ״לא עכשיו״ בנימוס. הנימוס לא חייב להיות ״כן אחר כך״.',
-    'היום נמדוד בגודל של מה שנכנס, לא מה שנשאר בחוץ.',
-  ],
-  // קפיברה — calm, horizontal, no drama, simple pleasures. 12 lines.
-  capy: [
-    'אני בעד לפתוח מה שמזמין. שאר הדברים מחכים בשקט.',
-    'גם כוס מים נחשבת. הגוף ביקש שלוק, וקיבל שלוק. יפה.',
-    'אפשר לעשות דבר קטן ואז לחזור להיות יצור אופקי.',
-    'פעולה קטנה יכולה להיות פשוט פעולה קטנה. תודה לאל שאפשר.',
-    'אם זה קטן מספיק, אולי אפילו אני בעד.',
-    'קפיברה עוברת את היום בקצב שלה, ועדיין כולם מתרשמים. אפשר.',
-    'לפעמים "עשיתי משהו" הוא משפט מאוד מפואר.',
-    'הכול הרבה? יחידה אחת. החיים אוהבים להגזים באריזה.',
-    'הגוף ביקש הפסקה. בקשה לגיטימית, מאושרת מיד.',
-    'פעולה קטנה עם פרצוף רגוע — זה מותג חזק.',
-    'פיג׳מה ופעולה קטנה. שילוב לגיטימי לחלוטין.',
-    'גם הגרסה הנוכחית שלך עושה את העבודה. פעולה מוכרת — גם היא נחשבת.',
-  ],
-};
-// Internal alias for forest companion ID
-TODAY_SPARK_LINES.forest = TODAY_SPARK_LINES.hafshushit;
-
 const TASK_MSGS = {
   breakfast: [
     'נעים לדעת: אוכל בבוקר נותן לגוף אנרגיה ראשונית. מחקרים קושרים בין ארוחת בוקר לתחושת עירנות ויציבות לאורך הבוקר. 🍳',
@@ -3197,7 +3125,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'pace-companion-decouple-2026-07-29c';
+const TORI_BUILD = 'legacy-content-cleanup-2026-07-29d';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -5173,16 +5101,6 @@ const PAMPER_CARDS = {
       },
     },
     afterLines: {
-      bear: {
-        alone:  ['הספא היה נהדר. עכשיו אני והחלוק שלי נכנסות לזוגיות יציבה.'],
-        friend: ['ישבנו, צחקנו, שתינו תה, ואף אחת לא ביקשה מאיתנו להיות יעילות. מרגש.'],
-        sister: ['ספא עם אחות זה מפגש פסגה של שתיים שיודעות בדיוק מי לקחה את המגבת השווה.'],
-      },
-      cat: {
-        alone:  ['הגעתי לספא כדי להירגע. המוח ביקש להצטרף, אז נתתי לו תה ושלחתי אותו לשבת יפה.'],
-        friend: ['צחקנו בשקט של נשים שמבינות אחת את השנייה גם בלי להסביר את כל העונה הקודמת.'],
-        sister: ['אחותי אמרה שאני נראית רגועה. בחרתי להאמין לה, כי הספא עלה נקודות חיבור.'],
-      },
       forest: {
         alone:  ['התיישבתי בספא, נשמתי, וגיליתי שהגוף שלי לא נגד הרעיון של להיות נחמדה אליו.'],
         friend: ['צחקנו על משהו קטן, ואז הלב עשה פוף כאילו מישהו סידר לו כרית.'],
@@ -5192,11 +5110,6 @@ const PAMPER_CARDS = {
         alone:  ['היה טוב. לא דיברתי עם אף אחד. חמש כוכבות, אשקול לצאת שוב בעוד שנתיים.'],
         friend: ['החברה הייתה נעימה, הספא היה נעים, ואני עדיין תומכת בזכותי לחזור הביתה בזמן.'],
         sister: ['אחותי אמרה \'בואי נישאר עוד קצת\'. אני אמרתי \'איזה יופי שיש גבולות\'.'],
-      },
-      fox: {
-        alone:  ['הגעתי לספא, הורדתי הילוך, והגוף שלי העמיד פנים שהוא לא חיכה לזה כל השבוע.'],
-        friend: ['שתינו תה, צחקנו, והיה רגע כזה שבו אפילו הגוף אמר: טוב, זה היה רעיון חכם.'],
-        sister: ['אחותי ואני נרגענו יחד. זה נקרא ניהול משאבים רגשי עם חלוקים יפים.'],
       },
       kipoda: {
         alone:  ['חלוק, מים חמימים וקצת שקט. העולם יכול לחכות בחוץ — גם לקוצים יש שעות קבלה.'],
@@ -5268,42 +5181,8 @@ const PAMPER_CARDS = {
       },
     },
     // afterLines: mode-keyed captions per companion.
-    // Companion keys: bear / cat / forest (חפשושית) / capy / fox (שועלה)
+    // Companion keys: forest (חפשושית) / capy / kipoda
     afterLines: {
-      bear: {
-        alone:  [
-          'קפה קטן, סיבוב קטן, ואני חוזרת הביתה כאישה שהשקיעה ביחסים שלה עם האוויר.',
-          'יצאתי רק לקפה. זה נחשב ספורט אם הלב עשה מתיחות.',
-          'לפעמים כל מה שצריך זה כוס חמה וידיעה שהשמיכה תחכה בלי לשפוט.',
-        ],
-        friend: [
-          'שתינו קפה, צחקנו על משהו קטן, ואף אחת לא ביקשה מאיתנו להיות יעילות. מרגש.',
-          'קפה עם חברה זה כמו שמיכה, רק עם עדכונים חיים.',
-          'עשינו סיבוב קטן, חזרנו עם לב קצת פחות מקומט. אני קוראת לזה תחזוקה שוטפת.',
-        ],
-        sister: [
-          'קפה עם אחות זה להבין אחת את השנייה לפי הרמת גבה וחצי לגימה.',
-          'יצאנו לסיבוב קטן, והיא ידעה לבד מתי להציע מאפה. משפחה עם כישורי שטח.',
-          'אחות טובה יודעת מתי לדבר, מתי לשתוק, ומתי להגיד: "קחי עוד שלוק לפני שאת עונה."',
-        ],
-      },
-      cat: {
-        alone:  [
-          'יצאתי לקפה קטן. המחשבות באו גם, אז הזמנתי להן שולחן צדדי ולא נתתי להן לנהל את המקום.',
-          'כוס ביד, שמש קטנה, ואני נזכרת שאפשר להיות מסתורית גם בסיבוב של עשר דקות.',
-          'הקפה היה חמים, האוויר היה סביר, ואני בחרתי לקרוא לזה טקס קטן של חזרה לעצמי.',
-        ],
-        friend: [
-          'קפה עם חברה טובה: שתי לגימות, מבט אחד, ופתאום העולם נראה קצת יותר רך בקצוות.',
-          'קפה, מבט אחד, ושלוש מסקנות מדויקות בלי שאף אחת הייתה צריכה להגיד הכול בקול.',
-          'יש חברות שיודעות להפוך סיבוב קטן לרגע שבו אפילו הרחוב נראה כאילו הוא בעדך.',
-        ],
-        sister: [
-          'אחותי אמרה שאני נראית רגועה. בחרתי להאמין לה, כי היא כבר ראתה אותי במצבים פחות פוטוגניים.',
-          'קפה עם אחות: חצי שיחה, חצי טלפתיה, וקצת קסם שלא מופיע בחשבונית.',
-          'היא ידעה בדיוק מתי לשאול ומתי פשוט להזיז אליי את העוגייה. זו אינטליגנציה רגשית עם קצפת.',
-        ],
-      },
       forest: {
         alone:  [
           'לקחתי קפה קטן לסיבוב, והלב שלי נזכר שיש גם דלתות שנפתחות בלי לדחוף.',
@@ -5336,23 +5215,6 @@ const PAMPER_CARDS = {
           'אחותי אמרה "נלך רק לסיבוב קטן". אני מעריכה נשים שמכבדות חוזים.',
           'יצאנו, שתינו, חזרנו. בלי סיבוכים, בלי הרחבות, בלי "רק עוד משהו קטן". עשר מעשר.',
           'אחותי מכירה אותי: קפה קצר, ספסל קרוב, וחזרה לפני שהסוללה עושה פרצוף.',
-        ],
-      },
-      fox: {
-        alone:  [
-          'יצאתי לקפה קטן וקראתי לזה מהלך אסטרטגי של אישה שיודעת להשקות את עצמה.',
-          'כוס ביד, סיבוב קצר, וחזרה הביתה עם תחושה שהיום קיבל ניהול טוב יותר.',
-          'לפעמים גם תכנית קטנה מפתיעה בכמה שהיא מוצלחת. במיוחד כשהיא כוללת קפה ולא דורשת הכנות מיוחדות.',
-        ],
-        friend: [
-          'שתינו קפה, צחקנו, והיה רגע כזה שבו אפילו הגוף אמר: טוב, זה היה רעיון חכם.',
-          'קפה עם חברה טובה: קצת צחוק, קצת אוויר, ואפס צורך להסביר את עצמך מההתחלה.',
-          'עשינו סיבוב קטן וחזרנו עם הוכחה עדינה שלפעמים חברה היא פשוט מזג אוויר טוב.',
-        ],
-        sister: [
-          'קפה עם אחות זה שילוב מוצלח: מספיק קרוב כדי להתחמם, מספיק פשוט כדי להישאר נעים.',
-          'אחותי ואני עשינו סיבוב קטן. היא הביאה נוכחות, אני הבאתי יציאה בזמן. שיתוף פעולה יפה.',
-          'יש משהו יעיל באחות שמבינה מתי לצחוק איתך ומתי להצביע על הקפה כאילו הוא הפתרון.',
         ],
       },
       kipoda: {
@@ -6735,7 +6597,6 @@ async function confirmCompanion() {
   if (overlay) overlay.classList.remove('open');
   renderCompanionSection();
   updateSparkBtn(); // sync Today tab sparkle button to new companion
-  renderCompanionFeedback(); // sync feedback line to new companion
   renderTodayCompanionPath(); // sync path icon to new companion
   if (cd && cd.active) renderCompassionDay(); // sync CD panel companion on switch
   updateStreakPillFrozenState(); // update frozen pill companion name on switch
@@ -7298,7 +7159,6 @@ async function saveDay() {
   await recalcStreak(); updateJourney();
   loadGentleHabitData(); // fire-and-forget — refreshes sprout panel after each save
   renderCollected();     // keep collected chips in sync
-  renderCompanionFeedback(); // update companion line
   renderTodayCompanionPath(); // update companion path position
 }
 async function loadDay() {
@@ -7359,7 +7219,6 @@ function renderFromState() {
   applyHiddenParentTasks(); // hide built-in cards moved to library
   renderCollected();    // update "מה כבר נאסף" chips
   updateSparkBtn();     // sync companion icon + label in sparkle button
-  renderCompanionFeedback(); // sync companion feedback line
   renderTodayCompanionPath(); // sync companion path position
   renderPaceSection();  // sync daily pace chip / selector
 }
@@ -8220,19 +8079,14 @@ function renderCollected() {
 }
 
 // Sparkle button — companion line shown only on click, never automatically
-var _sparkLastIdx = {};
-
 function showSparkLine() {
   var cId = cs && cs.companionId;
-  var lines = TODAY_SPARK_LINES[cId] || [];
-  if (!lines.length) return;
+  if (!cId) return;
   var display = document.getElementById('spark-line-display');
   if (!display) return;
-  var last = (_sparkLastIdx[cId] !== undefined) ? _sparkLastIdx[cId] : -1;
-  var idx  = Math.floor(Math.random() * lines.length);
-  if (lines.length > 1 && idx === last) idx = (idx + 1) % lines.length;
-  _sparkLastIdx[cId] = idx;
-  display.textContent = lines[idx];
+  var phrase = getNextCompanionPhrase(cId);
+  if (!phrase) return;
+  display.textContent = phrase;
   display.style.display = '';
 }
 
@@ -8291,33 +8145,6 @@ function renderTodayCompanionPath() {
   // right: 5% (0 tasks) → ~83% (8+ tasks); subtract half icon-width to center
   var rightPct = 5 + pct * 78;
   icon.style.right = 'calc(' + rightPct + '% - 16px)';
-}
-
-// ── Companion feedback line ──
-// Active companions only (capy, kipoda, hafshushit/forest). Dead characters
-// (bear, cat, fox) removed per docs/CHARACTER-CONTENT-COMPASS.md. This whole
-// bank is currently dormant (see renderCompanionFeedback below) but kept —
-// same real content gap as elsewhere: kipoda has no entry yet.
-var TODAY_COMPANION_FEEDBACK = {
-  hafshushit: {
-    none:    'אנחנו לא מודדים כאן. פשוט פה ביחד, בלי ציפיות.',
-    few:     'כבר יש כאן משהו. זה מספיק, ממש.',
-    several: 'אוי, כמה דברים יפים נאספו היום. חפשושית שמחה. ♥',
-  },
-  capy: {
-    none:    'קפיברה לא ממהרת. ישבי לידי, נהיה פה ביחד.',
-    few:     'קצת דברים כבר קרו היום. זה יפה מאוד.',
-    several: 'כמה טוב שהיום נראה ככה. קפיברה מרוצה.',
-  },
-};
-TODAY_COMPANION_FEEDBACK.forest = TODAY_COMPANION_FEEDBACK.hafshushit;
-
-function renderCompanionFeedback() {
-  // Companion feedback is intentionally silenced in Today mode.
-  // The companion speaks only when the user taps "הברקה קטנה".
-  // TODAY_COMPANION_FEEDBACK data and full logic are preserved for future use.
-  var el = document.getElementById('companion-feedback');
-  if (el) el.style.display = 'none';
 }
 
 // ============================================================

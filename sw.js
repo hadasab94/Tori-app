@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v74'; // pace no longer changes companionId; kipoda journey-bubble empty-text fallback to one of her 24 approved lines
+const CACHE = 'body-soul-v75'; // deleted TODAY_SPARK_LINES (sparkle button now uses APPROVED_GENERAL_COMPANION_LINES), deleted dormant TODAY_COMPANION_FEEDBACK, removed retired-character pamper text; pace<->companion tagline pairing kept as-is
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
