@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v71'; // approved-companion-lines-lock: single canonical 72-sentence source for general companion button
+const CACHE = 'body-soul-v72'; // pilot content pass: removed dead bot/system-prompt legacy code, softened absolute research claims, water push title, local-data disclosure, growth-corner wording
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
