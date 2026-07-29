@@ -11478,32 +11478,41 @@ function buildTodayStoneHTML() { return ''; /* removed — companion model repla
 // Reads cs._pendingId (the single source of truth) and updates every radio
 // dot + the CTA button. Called by renderJourneyTab guard and hitarea.onclick.
 function _jcsSyncVisuals() {
-  var list = document.getElementById('jcs-card-list');
-  if (!list) return;
+  // NOTE: renderCompanionSelectDOM can be mounted twice at once — once into
+  // #journey-inner (Journey tab, pre-rendered even while another tab is
+  // active) and once into #ob-card-inner (onboarding tour's companion-select
+  // screen). Both copies reuse the same jcs-card-list / jcs-cta-btn ids, so
+  // getElementById (which only ever returns the first match) would silently
+  // sync just one of them, leaving whichever copy the user is actually
+  // looking at visually stuck. querySelectorAll finds every copy sharing the
+  // id and keeps them all in sync with the shared cs._pendingId state.
+  var lists = document.querySelectorAll('#jcs-card-list');
+  if (!lists.length) return;
   var pending = cs._pendingId || null;
   console.log('[Tori] _jcsSyncVisuals, pending:', pending);
-  list.querySelectorAll('.jcc-radio-hitarea').forEach(function(ha) {
-    var hId  = ha.getAttribute('data-companion-id');
-    var comp = hId ? COMPANIONS[hId] : null;
-    var dot  = ha.querySelector('.jcc-radio');
-    var sel  = !!(hId && hId === pending);
-    if (dot) {
-      dot.classList.toggle('on', sel);
-      dot.style.border = (sel && comp)
-        ? '6px solid ' + comp.accent
-        : '1.5px solid rgba(45,42,38,0.25)';
-    }
-    ha.setAttribute('aria-checked', sel ? 'true' : 'false');
+  lists.forEach(function(list) {
+    list.querySelectorAll('.jcc-radio-hitarea').forEach(function(ha) {
+      var hId  = ha.getAttribute('data-companion-id');
+      var comp = hId ? COMPANIONS[hId] : null;
+      var dot  = ha.querySelector('.jcc-radio');
+      var sel  = !!(hId && hId === pending);
+      if (dot) {
+        dot.classList.toggle('on', sel);
+        dot.style.border = (sel && comp)
+          ? '6px solid ' + comp.accent
+          : '1.5px solid rgba(45,42,38,0.25)';
+      }
+      ha.setAttribute('aria-checked', sel ? 'true' : 'false');
+    });
   });
-  var ctaBtn = document.getElementById('jcs-cta-btn');
-  if (ctaBtn) {
+  document.querySelectorAll('#jcs-cta-btn').forEach(function(ctaBtn) {
     var selComp = pending ? COMPANIONS[pending] : null;
     ctaBtn.disabled   = !selComp;
     ctaBtn.className  = selComp ? 'jcs-cta active' : 'jcs-cta inactive';
     ctaBtn.textContent = selComp
       ? 'בחרתי את ' + selComp.name
       : 'בחרי דמות כדי להמשיך';
-  }
+  });
 }
 
 // ── Companion select screen — DOM approach (reliable on mobile) ──

@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v77'; // character content lock for testers build: JOURNEY_COMPANION_LINES (incl. new kipoda entries), COMPASSION_DAY_COMPANION_LINES, GENTLE_HABIT_COMPANION_LINES, and both active pamper afterLines replaced with approved final texts
+const CACHE = 'body-soul-v78'; // fix: _jcsSyncVisuals used getElementById, which only updated the first of two duplicate-id companion-picker renders (Journey tab + onboarding tour), leaving the onboarding one visually stuck on an unselected/disabled state
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
