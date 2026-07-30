@@ -418,6 +418,12 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .feed-like-btn.liked { color: var(--sky, #4a8ab0); background: var(--sky-l, #e8f4fb); border-radius: 20px; }
 .feed-like-icon { font-size: 16px; line-height: 1; transition: transform 0.15s; }
 .feed-like-btn:active .feed-like-icon { transform: scale(1.3); }
+/* Per-companion reaction — shows only the selected companion's line under the fact */
+.feed-card-reaction { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--border, #e8ddd0); }
+.feed-reaction-icon { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--bg); }
+.feed-reaction-body { min-width: 0; flex: 1; }
+.feed-reaction-name { font-size: 12px; font-weight: 800; color: var(--text1); margin-bottom: 3px; }
+.feed-reaction-text { font-size: 13.5px; color: var(--text2); line-height: 1.7; }
 
 /* COMPLETION NOTE — persistent card for knowledge/regulation notes (quietMoment etc.)
    Does NOT auto-dismiss. User closes with "נעים לדעת" button.
@@ -10028,95 +10034,113 @@ async function saveNiimNote(libDef) {
 }
 
 // ── SCROLL FEED — "תורי לגלול" static content ────────────────────────────────
-// V1: static array. Text-only cards ship without images.
+// Pilot-release feed: real facts about hope, joie de vivre and inspiration —
+// creation, discovery and repair can show up at any age, place or time.
+// Not a news feed, not "נעים לדעת", not therapeutic, not moralizing.
 //
-// IMAGE FIELDS — fill ALL before setting imageApproved: true:
-//   image              — relative or absolute URL
-//   imageAlt           — descriptive alt text (always required)
-//   imageApproved      — MUST be explicitly set to true to render
-//   imageApprovalStatus— 'approved' | 'rejected' | 'pending' | null
-//   imageTitle         — original image title if known
-//   imageCreator       — photographer / artist name
-//   imageSourceName    — display name of source site (e.g. "Wikimedia Commons")
-//   imageSourceUrl     — direct URL to image source page
-//   imageLicense       — license short name (e.g. "CC BY 2.0")
-//   imageLicenseUrl    — URL to full license text
-//   imageModified      — true if image was cropped / resized / altered
-//   imageModificationNote — required if imageModified: true
-//   attributionRequired— true if license requires crediting the creator
-//   imageAttribution   — plain-text description of credit (dev reference only;
-//                        rendered credit is built from structured fields above)
+// Each card carries THREE separate per-companion reactions (keyed by the
+// real companion ids used across the app — see COMPANIONS: capy, kipoda,
+// forest). Only the reaction matching cs.companionId is ever rendered — see
+// _buildFeedReactionHtml(). Never mix reactions, never fall back to another
+// companion's line, never invent a generic line.
 //
-// Accepted licenses: CC0, Public Domain, Unsplash License, Pexels License,
-//   Pixabay License, CC-BY (any version) with attribution.
-//   Avoid NC, ND, or unclear sources.
+// `source` is verification-only reference data (label + url when known) —
+// there is no source UI element in this feed, so it is not rendered.
 //
-// Beta feed for "גלילה בקצב אחר". 7 approved posts, ordered as specified.
-// image: path to original asset inside repo. attributionRequired: false for all V1 items.
-// Images degrade gracefully — card shown text-only if file is missing.
-// Do NOT add external images, Wikimedia/stock images, or source links in the UI.
+// IMAGE FIELDS — fill ALL before setting imageApproved: true (unchanged from
+// before; reused as-is by the existing _buildFeedMediaHtml renderer):
+//   image, imageAlt, imageApproved, imageCreator, imageSourceName,
+//   imageSourceUrl, imageLicense, imageLicenseUrl, imageModified,
+//   imageModificationNote, attributionRequired
 const SCROLL_FEED_ITEMS = [
   {
-    id: 'bamboo-roots',
-    category: 'טבע',
-    title: 'הבמבוק שעבד על תשתיות',
-    text: 'במבוק מוסו יכול לצמוח בקצב כמעט לא הגיוני: במחקר על אוכלוסיות במבוק בסין נמדדה צמיחה של עד 114.5 ס״מ ביום.\nאבל הצמיחה המהירה הזאת נשענת על משהו הרבה פחות דרמטי לעין: קני שורש, אזורי חלוקת תאים, אזורי התארכות, ותשתית שכבר הייתה שם לפני שהגובה התחיל לעשות רושם.\nמבחוץ: "וואו, פתאום."\nמתחת לפני השטח: "סליחה, עבדנו פה על מערכת."',
-    image: 'assets/gentle-scroll/bamboo-roots.webp',
-    imageAlt: 'שורשי במבוק מתחת לפני הקרקע',
-    imageApproved: true, attributionRequired: false, gentle: true,
+    id: 'scatman-52',
+    category: 'השראה',
+    title: 'כוכב פופ בגיל 52',
+    text: 'סקטמן ג׳ון היה מוזיקאי במשך שנים, אבל הפריצה הבינלאומית שלו הגיעה בגיל 52. השיר "Scatman" הגיע למקום הראשון במדינות רבות ונמכר במיליוני עותקים.',
+    source: { label: 'Scatman John — Biography.', url: null },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'העולם גילה אותו בגיל 52. לא נורא, גם לאנושות לוקח לפעמים רגע למצוא את המשקפיים.',
+      kipoda: 'העולם גילה אותו בגיל 52. איחור לא אופנתי, פיצוי מצוין.',
+      forest: 'רגע, הוא הסתובב 52 שנה עם להיט בינלאומי בכיס? זה בטח עשה רעש בכל פעם שהתיישב.',
+    },
   },
   {
-    id: 'otter-pocket',
-    category: 'חיות',
-    title: 'ללוטרות ים יש כיסים',
-    text: 'ללוטרות ים יש קפלי עור רפויים מתחת לכל אמה. NOAA מתארים את זה כמו כיסים: הן שומרות שם מזון, ולפעמים גם אבנים שהן משתמשות בהן כדי לפצח צדפות ורכיכות.\nכיסים.\nשל לוטרה.\nבשביל חטיפים וכלים.\nיש יצורים בעולם שמגיעים מוכנים יותר מאיתנו ליום סידורים.',
-    image: 'assets/gentle-scroll/otter-pocket.webp',
-    imageAlt: 'לוטרת ים צפה על המים',
-    imageApproved: true, attributionRequired: false, gentle: true,
+    id: 'ozone-fixed',
+    category: 'השראה',
+    title: 'האנושות תיקנה משהו',
+    text: 'מדינות ברחבי העולם הפסיקו בהדרגה להשתמש בחומרים שפגעו בשכבת האוזון. בזכות שיתוף הפעולה הזה היא נמצאת במסלול התאוששות, וברוב העולם היא עשויה לחזור לרמות של 1980 בסביבות שנת 2040.',
+    source: { label: 'UN Environment Programme — Ozone layer recovery is on track.', url: null },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'לקח לאנושות רגע להבין שלא כדאי לעשות חור בשמיים. לזכותה ייאמר שהיא גם הביאה סולם ותיקנה.',
+      kipoda: 'האנושות תיקנה חור בשמיים. אני חושבת שמותר לה להכניס את זה לקורות החיים.',
+      forest: 'רגע, תיקנו משהו עשרות קילומטרים מעלינו בלי שאף אחד טיפס לשם? יש למדע ידיים ארוכות מאוד.',
+    },
   },
   {
-    id: 'octopus-sleep',
-    category: 'חיות',
-    title: 'תמנונים ישנים עם אפקטים',
-    text: 'במחקר שפורסם ב־Nature נמצא שתמנונים עוברים בין שינה שקטה לבין שלב שינה פעיל. בזמן השלב הפעיל יכולים להופיע שינויי צבע ודוגמאות מהירים על העור.\nכלומר, יש יצור שבזמן שינה נראה כאילו הוא מריץ מצגת פנימית.\nתמנון: ישן.\nגם תמנון: "רגע, אני מחליף רקע."',
-    image: 'assets/gentle-scroll/octopus-sleep.webp',
-    imageAlt: 'תמנון מתחת למים',
-    imageApproved: true, attributionRequired: false, gentle: true,
+    id: 'degree-96',
+    category: 'השראה',
+    title: 'תואר ראשון בגיל 96',
+    text: 'שיגמי היראטה מיפן סיים תואר ראשון באמנות ועיצוב בגיל 96 ו־200 ימים, וקבע שיא עולמי.',
+    source: { label: 'Guinness World Records — Oldest graduate.', url: null },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'בגיל 96 הוא קיבל תואר. אני מניחה שעכשיו אפשר סוף־סוף לשאול אותו מה הוא רוצה לעשות כשיהיה גדול.',
+      kipoda: 'בגיל 96 הוא סיים תואר ראשון. מי שאמר "פרק אחרון" כנראה לא בדק את הסילבוס.',
+      forest: 'בגיל 96 הוא סיים תואר. אני מוכרחה לדעת אם גם אז קונים מחברת חדשה ומפחדים לכתוב בעמוד הראשון.',
+    },
   },
   {
-    id: 'waking-rest',
-    category: 'מחקר',
-    title: 'מנוחה ערה',
-    text: 'יש תחום מחקר שנקרא waking rest — מנוחה ערה ושקטה אחרי למידה. סקירות בתחום מתארות מחקרים שמצאו שמנוחה כזאת יכולה לעזור לקיבוע זיכרונות חדשים.\nלא שינה. לא פעולה גדולה. כמה דקות בלי להכניס עוד קלט.\nהמוח, מתברר, יודע לעבוד גם במצב שנראה מבחוץ כמו: "היא פשוט יושבת שם."',
-    image: 'assets/gentle-scroll/waking-rest.webp',
-    imageAlt: 'פינה שקטה ונינוחה',
-    imageApproved: true, attributionRequired: false, gentle: true,
+    id: 'solo-show-80',
+    category: 'השראה',
+    title: 'תערוכת יחיד בגיל 80',
+    text: 'אנה מרי רוברטסון מוזס התחילה לצייר ברצינות בסוף שנות השבעים לחייה. בגיל 80 נפתחה לה תערוכת היחיד הראשונה.',
+    source: { label: 'Smithsonian American Art Museum — Grandma Moses: A Good Day’s Work.', url: null },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'בגיל 80 היא פתחה תערוכת יחיד. כנראה שהציורים כבר התחילו לשאול מתי יוצאים.',
+      kipoda: 'בגיל 80 נפתחה לה תערוכת יחיד. היא דילגה באלגנטיות על שלב "אמנית מבטיחה".',
+      forest: 'בגיל 80 היא פתחה תערוכת יחיד. כנראה שהציורים התרבו מהר יותר מהקירות.',
+    },
   },
   {
-    id: 'seed-dormancy',
-    category: 'טבע',
-    title: 'זרעים לא מתחילים רק כי אפשר',
-    text: 'תרדמת זרעים היא מצב שבו זרעים לא נובטים מיד, גם כשנדמה שיש חלק מהתנאים. בספרות המקצועית מתארים את התרדמת כתכונה שמגדירה אילו תנאים נדרשים לנביטה — למשל טמפרטורה, מים, אור או שינוי עונתי.\nהזרע לא מחפש מוטיבציה.\nהוא מחפש תנאים.\nיש בזה משהו מאוד מסודר מצידו.',
-    image: null, imageAlt: null,
-    imageApproved: false, attributionRequired: false, gentle: true,
+    id: 'cornea-stem-cells',
+    category: 'השראה',
+    title: 'כשהמדע בדק שוב',
+    text: 'בניסוי קטן, חוקרות וחוקרים גידלו תאי גזע מעין בריאה של כל משתתף והשתמשו בהם לשיקום עין שנפגעה. אצל רוב המשתתפים פני הקרנית שוקמו במהלך המעקב. הטיפול עדיין ניסיוני.',
+    source: { label: 'Mass General Brigham — Novel Stem Cell Therapy Repairs Irreversible Corneal Damage.', url: null },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'אמרו שאין הרבה מה לעשות. החוקרות כנראה לא שמעו.',
+      kipoda: 'המצב הוגדר כ"בלתי הפיך". המדע ביקש לראות את האותיות הקטנות.',
+      forest: 'תאים מעין בריאה עזרו לתקן עין פגועה. הגוף, מתברר, מחביא חלקי חילוף במקומות מפתיעים.',
+    },
   },
   {
-    id: 'ozone-recovery',
-    category: 'עולם',
-    title: 'שכבת האוזון עושה קאמבק איטי',
-    text: 'לפי UNEP, אם המדיניות הנוכחית תישמר, שכבת האוזון צפויה לחזור לרמות של 1980 בערך עד 2040 ברוב העולם, עד 2045 באזור הארקטי, ועד 2066 מעל אנטארקטיקה.\nזה לא סיפור של "תיקנו הכול מהר".\nזה סיפור של הסכמים, מדע, רגולציה, שנים, ומולקולות שמפנות את הבמה בקצב שלהן.\nלפעמים חדשות טובות נראות כמו גרף קצת משעמם. וזה חלק מהקסם.',
-    image: null, imageAlt: null,
-    imageApproved: false, attributionRequired: false, gentle: true,
-  },
-  {
-    id: 'pigeon-art',
-    category: 'חיות',
-    title: 'יונים יכולות להבדיל בין פיקאסו למונה',
-    text: 'במחקר שפורסם ב־1995, אימנו חוקרים יונים להבחין בין ציורים של פיקאסו לבין ציורים של מונה.\nאחרי האימון, היונים הכירו ציורים חדשים של אותם אמנים — כאלה שמעולם לא ראו בתהליך הלמידה.\nזה לא טריק. זה קיטלוג ויזואלי.\nיונה ברחוב שלא הסתכלת עליה פעמיים אולי מחלקת את העולם לקטגוריות שאת לא חשבת שמישהו פרט אליך מבחין בהן.',
-    // internal source note: Watanabe, Sakamoto & Wakita (1995), Pigeons' discrimination of paintings by Monet and Picasso, J. Exp. Analysis of Behavior.
-    image: 'assets/gentle-scroll/pigeon-art.webp',
-    imageAlt: 'יונה בוחנת ציורים',
-    imageApproved: true, attributionRequired: false, gentle: true,
+    id: 'facteur-cheval-palace',
+    category: 'השראה',
+    title: 'מאבן אחת לארמון',
+    text: 'בגיל 43, הדוור הצרפתי פרדינן שבל מצא אבן בעלת צורה משונה. במשך 33 השנים הבאות הוא אסף אבנים ובנה לבדו ארמון דמיוני בגינה שלו.',
+    source: { label: 'Le Palais Idéal du Facteur Cheval — The Story.', url: null },
+    image: 'assets/gentle-scroll/facteur-cheval-palace.webp',
+    imageAlt: 'הארמון האידיאלי שבנה פרדינן שבל מאבנים',
+    imageApproved: true,
+    attributionRequired: true,
+    imageCreator: 'Marine69',
+    imageSourceName: 'Wikimedia Commons',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Palais_Id%C3%A9al_du_Facteur_Cheval.jpg',
+    imageLicense: 'CC BY-SA 3.0',
+    imageLicenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+    imageModified: true,
+    imageModificationNote: 'הוקטנה והומרה ל-WebP',
+    imageAttribution: 'צילום: Marine69, Wikimedia Commons, CC BY-SA 3.0',
+    reactions: {
+      capy: 'הוא מצא אבן מוזרה ובנה ארמון. טוב, לפחות היה לו איפה לשים אותה.',
+      kipoda: 'הוא מצא אבן מוזרה ובנה ארמון. סוף־סוף מישהו לקח את "נסחפתי קצת" לרמה אדריכלית.',
+      forest: 'הוא מצא אבן מוזרה, ושלושים ושלוש שנים אחר כך היה שם ארמון. זו יציאה משליטה שאני מוכנה לעודד.',
+    },
   },
 ];
 
@@ -10271,9 +10295,35 @@ function _buildFeedMediaHtml(item, isFirst) {
   return mediaHtml;
 }
 
+// Build the single-companion reaction block for a feed card.
+// Shows ONLY cs.companionId's reaction — never another companion's line,
+// never a generic fallback line. If the current companion has no reaction
+// on this card (should not happen in the current content set), the whole
+// reaction block is simply omitted — no error, no cross-companion leak.
+function _buildFeedReactionHtml(item) {
+  var companionId = (typeof cs !== 'undefined' && cs) ? cs.companionId : null;
+  if (!companionId) return '';
+  var reactionText = item.reactions && item.reactions[companionId];
+  if (!reactionText) return '';
+  var comp = (typeof COMPANIONS !== 'undefined') ? COMPANIONS[companionId] : null;
+  if (!comp) return '';
+  var iconSrc = (typeof COMPANION_UI_ICONS !== 'undefined') ? COMPANION_UI_ICONS[companionId] : '';
+  var iconHtml = iconSrc
+    ? '<img class="feed-reaction-icon" src="' + _escH(iconSrc) + '" alt="' + _escH(comp.name) + '" width="34" height="34" decoding="async">'
+    : '';
+  return '<div class="feed-card-reaction">'
+    + iconHtml
+    + '<div class="feed-reaction-body">'
+    + '<div class="feed-reaction-name">' + _escH(comp.name) + '</div>'
+    + '<div class="feed-reaction-text">' + _escH(reactionText) + '</div>'
+    + '</div>'
+    + '</div>';
+}
+
 // Render feed cards from SCROLL_FEED_ITEMS into #scroll-feed-section.
 // No async — reads _feedLikes cache (must be loaded before first render).
 // Image + attribution built via _buildFeedImageHtml (validates attribution fields).
+// Reaction block built via _buildFeedReactionHtml (single-companion, never mixed).
 // Sets up IntersectionObserver for impression tracking after render.
 function renderScrollFeed() {
   var el = document.getElementById('scroll-feed-section');
@@ -10301,11 +10351,13 @@ function renderScrollFeed() {
   }
   items.forEach(function(item, idx) {
     var imgHtml = _buildFeedMediaHtml(item, idx === 0);
+    var reactionHtml = _buildFeedReactionHtml(item);
     html += '<div class="feed-card" data-card-id="' + _escH(item.id) + '">'
       + '<div class="feed-card-category">' + _escH(item.category) + '</div>'
       + imgHtml
       + '<div class="feed-card-title">' + _escH(item.title) + '</div>'
       + '<div class="feed-card-text">'  + _escH(item.text)  + '</div>'
+      + reactionHtml
       + '</div>';
   });
   el.innerHTML = html;
