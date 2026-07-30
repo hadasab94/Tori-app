@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v81'; // feature: replaced "תורי לגלול" content entirely with a new hope/inspiration fact feed (6 cards, per-companion reactions); added assets/gentle-scroll/facteur-cheval-palace.webp
+const CACHE = 'body-soul-v82'; // text fix: two forest reactions in "תורי לגלול" (ozone card, age-80 exhibit card) rewritten per approved copy
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
