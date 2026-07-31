@@ -3257,7 +3257,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'onboarding-confirm-zindex-fix-2026-07-31a';
+const TORI_BUILD = 'onboarding-screen-reorder-content-2026-07-31b';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
@@ -7421,16 +7421,16 @@ var OB_GENTLE_ACTIONS = {
 function renderObScreen() {
   var inner = document.getElementById('ob-card-inner');
   if (!inner) return;
-  // Screen order: 1 Welcome, 2 How, 3 Journey, 4 Personalize, 5 Companion select (last).
-  // Screen 5 (index 4) — companion selection. Reuses the live Journey-tab
+  // Screen order: 1 Welcome, 2 How, 3 Companion select, 4 Journey, 5 Personalize (last).
+  // Screen 3 (index 2) — companion selection. Reuses the live Journey-tab
   // selection component (same cards, same cs._pendingId / save logic, same
   // dynamic "בחרתי את X" button) instead of a separate onboarding-only build.
-  if (_obScreen === 4) {
+  if (_obScreen === 2) {
     cs._pendingId = cs.companionId || null;
     renderCompanionSelectDOM(inner);
     return;
   }
-  var renderers = [_obRenderWelcome, _obRenderHow, _obRenderJourney, _obRenderPersonalize, null];
+  var renderers = [_obRenderWelcome, _obRenderHow, null, _obRenderJourney, _obRenderPersonalize];
   var fn = renderers[_obScreen];
   if (fn) inner.innerHTML = fn();
 }
@@ -7438,25 +7438,26 @@ function renderObScreen() {
 function _obRenderWelcome() {
   return '<div style="font-size:36px;margin-bottom:10px">🌱</div>'
     + '<div class="ob-title">עכשיו תורי</div>'
-    + '<div class="ob-sub">תורי נקראת כך כי עכשיו גם תורך לטפל בך — לא על חשבון אף אחת אחרת, אלא מתוך מקום שיש בו מקום גם לך.'
-    + '<br><br>תורי נועדה לעזור לצמצם בעדינות את הפער בין הדברים שאת רוצה לעשות למען עצמך לבין מה שמתאפשר לך כרגע.'
-    + '<br><br>היא מפרקת טיפול עצמי לצעדים קטנים שמתאימים לקצב שלך. ב״נעים לדעת״ מחכה ידע קצר ומבוסס מחקר, שעוזר להבין למה גם צעד קטן עשוי להיות משמעותי. והדמות שתבחרי תלווה אותך כמו חברה טובה — עם חום, הומור, ניסיון חיים ומבט מפוכח, ולא באמצעות עוד עובדות.</div>'
+    + '<div class="ob-sub">תורי נוצרה כדי לנסות לעזור לך לתת לעצמך מקום בתוך היום — לצד כל מה שכבר חשוב לך.'
+    + '<br><br>לפעמים יש פער בין הדברים שאת רוצה לעשות למען עצמך לבין מה שמתאפשר לך בפועל. תורי מנסה לעזור לצמצם את הפער הזה בעדינות, באמצעות צעדים קטנים של טיפול עצמי שאפשר להתאים לקצב שלך ולמה שאפשרי היום.'
+    + '<br><br>מאחורי תורי עומד רעיון פשוט: לפעמים קל יותר לדאוג לעצמך כשיש לצדך קול חם שנשאר בעדך, וכשאת מבינה טוב יותר איך פעולות יומיומיות קטנות עשויות להיות קשורות לגוף ולהרגשה.'
+    + '<br><br>לכן תורי מציעה שני סוגים של מוטיבציה: ב״נעים לדעת״ מחכה ידע קצר ומבוסס מחקר, והדמות שתבחרי מביאה חום, הומור ומבט משלה על החיים.</div>'
     + '<button class="ob-nxt" onclick="_obAdvance()">בואי נראה איך זה עובד</button>';
 }
 
 function _obRenderHow() {
   return '<div style="font-size:32px;margin-bottom:10px">📋</div>'
     + '<div class="ob-title">מתחילות בצעד ברור</div>'
-    + '<div class="ob-sub">במסך היום תמצאי כפתורים ממגוון תחומים. בכל יום תוכלי לבחור קצב ולהתאים את גודל הצעדים למה שמתאים היום.'
-    + '<br><br>בתחילת הדרך תורי מתמקדת בצעדים יומיומיים כמו אוכל, שתייה, תנועה, מנוחה והיגיינה. בקרוב היא תכלול גם אזור צמיחה, שבו אותה שיטה תעזור לפרק למידה ומטרות אישיות למיקרו־צעדים.'
-    + '<br><br>ב״נעים לדעת״ תוכלי להבין את המשמעות של כל צעד, לקרוא על המחקר שמאחוריו ולהבין לעומק למה חזרה עליו עשויה לתרום לאורך זמן.'
-    + '<br><br>תורי מציעה נקודת התחלה ברורה ועוזרת להפוך מטרה שחשובה לך לצעד קטן שאפשר להתחיל ממנו היום.</div>'
-    + '<button class="ob-nxt" onclick="_obAdvance()">להכיר את המסע</button>';
+    + '<div class="ob-sub">במסך היום תמצאי כפתורים ממגוון תחומים. בכל יום תוכלי לבחור קצב ולהתאים את גודל הצעדים למה שמתאים לך היום.'
+    + '<br><br>בתחילת הדרך תורי מתמקדת בצעדים יומיומיים כמו אוכל, שתייה, תנועה, מנוחה והיגיינה. בהמשך יתווסף גם אזור צמיחה, שבו יהיה אפשר לפרק למידה ומטרות אישיות למיקרו־צעדים.'
+    + '<br><br>ב״נעים לדעת״ תוכלי להבין מהו הערך מאחורי כל צעד, להכיר את המחקר שמאחוריו ולגלות למה חזרה עליו עשויה להיות משמעותית לאורך זמן.'
+    + '<br><br>תורי מציעה נקודת התחלה ברורה ומנסה לעזור להפוך דבר שחשוב לך לצעד קטן שאפשר להתחיל ממנו היום.</div>'
+    + '<button class="ob-nxt" onclick="_obAdvance()">לבחור מי תלווה אותי</button>';
 }
 
 function _obRenderJourney() {
-  return '<div class="ob-title">כל התקדמות שלך נספרת בלשונית המסע</div>'
-    + '<div class="ob-sub" style="margin-bottom:14px">בכל פעם שאת מסמנת פעולה, ההתקדמות נשמרת במסע ומתחברת למה שכבר עשית.</div>'
+  return '<div class="ob-title">המסע</div>'
+    + '<div class="ob-sub" style="margin-bottom:14px">כל צעד שסימנת מקבל מקום במסע ומצטרף למה שכבר עשית.</div>'
     + '<div class="ob-info-card">'
     + '<div class="ob-info-title">💛 נקודות חיבור</div>'
     + '<div class="ob-info-text">הפעולות שסימנת מוסיפות נקודות חיבור. בעזרתן תוכלי לבחור פינוקים לדמות שתלווה אותך.</div>'
@@ -7468,8 +7469,8 @@ function _obRenderJourney() {
     + '<div class="ob-info-card">'
     + '<div class="ob-info-title">🌱 מה מתחזק אצלי</div>'
     + '<div class="ob-info-text">פעולה שאת בוחרת לחזק מקבלת עציץ משלה.'
-    + '<br><br>אין צורך לעשות דבר נוסף: כשאת מסמנת את הפעולה, השקית את העציץ. בכל פעם שאת חוזרת אליה הוא ממשיך לגדול, ובימים אחרים הוא מחכה לך בסבלנות.'
-    + '<br><br>בעתיד, אחרי תקופת התמדה, תוכלי להעביר את העציץ למאורת הדמות, ולתת לה אותו במתנה — על הדרך שעשיתן וכדי לחגוג יחד את הטמעת ההרגל.</div>'
+    + '<br><br>בכל פעם שאת מסמנת את הפעולה, השקית את העציץ. כשאת חוזרת אליה הוא ממשיך לגדול, ובימים אחרים הוא מחכה לך בסבלנות.'
+    + '<br><br>בעתיד, כשהעציץ יתחזק, תוכלי להעביר אותו למאורת הדמות ולתת לה אותו במתנה — כדי לציין יחד את הדרך שעשיתן.</div>'
     + '</div>'
     + '<button class="ob-nxt" onclick="_obAdvance()">להתאים את תורי אליי</button>';
 }
@@ -7477,19 +7478,19 @@ function _obRenderJourney() {
 function _obRenderPersonalize() {
   var canContinue = _obPersonalization === 'start_all'
     || (_obPersonalization === 'custom' && _obGentleAreas.length > 0);
-  var h = '<div class="ob-title">איך תרצי להתחיל?</div>'
-    + '<div class="ob-sub">תורי תציג לך צעדים ממגוון תחומים. אפשר להתחיל בגודל הרגיל של הצעדים, או לבחור תחומים שבהם תרצי להתחיל ממיקרו־צעד.'
-    + '<br><br>תורי תתחיל מהגודל שבחרת, ואם תבחיני שצעד מסוים לא מסתדר כמה ימים ברציפות, היא עשויה להציע גרסה קטנה יותר עבורו.</div>'
+  var h = '<div class="ob-title">איך מתאים לך להתחיל?</div>'
+    + '<div class="ob-sub">אפשר להתחיל עם הצעות הפתיחה של תורי, או לבחור תחומים שבהם מתאים לך להתחיל ממיקרו־צעד.'
+    + '<br><br>שתי האפשרויות הן דרכים טובות להתחיל, ובהמשך תוכלי להגדיל, להקטין, להוסיף או להסיר צעדים לפי מה שמתאים לך.</div>'
     + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
-    + _obPersOpt('start_all', 'להתחיל עם הצעדים הרגילים של תורי',
-        'תורי תתחיל בגודל הרגיל של הצעדים בכל התחומים.')
-    + _obPersOpt('custom', 'להתחיל בעדינות בתחומים שאבחר',
-        'תוכלי לבחור תחום אחד או יותר שבהם תורי תתחיל מראש ממיקרו־צעד.')
+    + _obPersOpt('start_all', 'להתחיל עם הצעות הפתיחה של תורי',
+        'תורי תציע צעדים קטנים ממגוון תחומים, ותוכלי להתאים אותם בהמשך.')
+    + _obPersOpt('custom', 'לבחור תחומים להתחלה עדינה במיוחד',
+        'בתחומים שתבחרי, תורי תציג מיקרו־צעדים כבר מההתחלה.')
     + '</div>'
     + (_obPersonalization === 'custom' ? _obRenderCategoryChips() : '')
-    + '<div style="font-size:12px;color:var(--text3,#9e8e7e);line-height:1.5;margin-bottom:10px">בהמשך תוכלי להשתמש ב״לסדר את היום״ כדי להוסיף, להסיר, להגדיל או להקטין צעדים בכל שלב.</div>'
+    + '<div style="font-size:12px;color:var(--text3,#9e8e7e);line-height:1.5;margin-bottom:10px">תוכלי לשנות את הבחירה בכל שלב דרך „לסדר את היום”.</div>'
     + '<button class="ob-nxt" onclick="_obPersonalizeFinish()"'
-    + (canContinue ? '' : ' disabled') + '>לבחור מי תלווה אותי</button>';
+    + (canContinue ? '' : ' disabled') + '>להתחיל את הדרך</button>';
   return h;
 }
 
@@ -7502,15 +7503,13 @@ function _obPersOpt(val, title, desc) {
 }
 
 function _obRenderCategoryChips() {
-  var skipOn = _obGentleAreas.indexOf('__skip__') > -1;
-  var h = '<div style="margin:4px 0 4px;font-size:13.5px;font-weight:700;color:var(--text1,#333)">באילו תחומים תרצי להתחיל בעדינות במיוחד?</div>'
-    + '<div style="margin:0 0 8px;font-size:12.5px;color:var(--text2,#7a6a5a)">אפשר לבחור תחום אחד או יותר, ותורי תציג בהם מיקרו־צעדים כבר מההתחלה.</div>'
+  var h = '<div style="margin:4px 0 4px;font-size:13.5px;font-weight:700;color:var(--text1,#333)">באילו תחומים מתאים לך להתחיל ממיקרו־צעד?</div>'
+    + '<div style="margin:0 0 8px;font-size:12.5px;color:var(--text2,#7a6a5a)">אפשר לבחור תחום אחד או יותר.</div>'
     + '<div class="ob-opts" style="margin-bottom:10px">';
   OB_GENTLE_CATEGORIES.forEach(function(cat) {
-    var on = !skipOn && _obGentleAreas.indexOf(cat.id) > -1;
+    var on = _obGentleAreas.indexOf(cat.id) > -1;
     h += '<button class="ob-opt' + (on ? ' on' : '') + '" onclick="_obToggleGentleArea(\'' + cat.id + '\')">' + cat.label + '</button>';
   });
-  h += '<button class="ob-opt' + (skipOn ? ' on' : '') + '" onclick="_obToggleGentleArea(\'__skip__\')">לא צריך כרגע</button>';
   h += '</div>';
   return h;
 }
@@ -7540,10 +7539,11 @@ function _obPersonalizeFinish() {
   var canContinue = _obPersonalization === 'start_all'
     || (_obPersonalization === 'custom' && _obGentleAreas.length > 0);
   if (!canContinue) return;
-  // Personalize is no longer the last screen — advance to companion select.
-  // Onboarding now finishes when a companion is confirmed (see the
-  // doConfirmJourneyCompanion onboarding-aware hook below).
-  _obAdvance();
+  // Personalize is now the last screen — finish onboarding directly.
+  // Companion selection already happened earlier (screen 3); confirming a
+  // companion there advances to Journey, not straight to finish anymore
+  // (see the doConfirmJourneyCompanion onboarding-aware hook below).
+  _obFinish();
 }
 
 function _obFinish() {
@@ -11617,9 +11617,9 @@ function renderCompanionSelectDOM(inner) {
   // ── Header ──
   var hdr = document.createElement('div');
   hdr.className = 'jcs-header';
-  hdr.innerHTML = '<div style="font-size:11.5px;letter-spacing:0.4px;color:var(--g-ink-3);margin-bottom:6px">רגע לפני שמתחילים</div>'
+  hdr.innerHTML = '<div style="font-size:11.5px;letter-spacing:0.4px;color:var(--g-ink-3);margin-bottom:6px">רגע לפני שמתחילות</div>'
     + '<div class="jcs-title">מי תלווה אותך בדרך?</div>'
-    + '<div class="jcs-sub">לכל אחת דרך אחרת לעזור לך לזוז — ברוך, בשנינות או בסקרנות. בחרי את החברה שמתאימה לך עכשיו.</div>';
+    + '<div class="jcs-sub">כל אחת מזוהה עם קצב אחר ומביאה איתה דרך משלה ללוות אותך — ברוך, בשנינות או בסקרנות. בחרי את החברה שמתאימה לך עכשיו.</div>';
   inner.appendChild(hdr);
 
   // ── Card list ──
@@ -11703,7 +11703,7 @@ function renderCompanionSelectDOM(inner) {
   // Footnote
   var note = document.createElement('div');
   note.style.cssText = 'font-size:12px;color:var(--g-ink-3);text-align:center;line-height:1.5;margin:8px 0 4px';
-  note.textContent = 'אפשר להחליף בכל זמן. חברות טובות מבינות שגם הקצב משתנה.';
+  note.textContent = 'אפשר להחליף דמות או קצב בכל זמן.';
   inner.appendChild(note);
 
   // CTA bar — reads cs._pendingId directly (no local selectedId variable)
@@ -11831,13 +11831,14 @@ function doConfirmJourneyCompanion() {
   cs._switching = false; // clear switch mode
   saveCompanionState();
   cancelJourneyConfirm();
-  // If this confirm happened during onboarding screen 5 (companion select,
-  // now the LAST screen), finish onboarding instead of only refreshing the
-  // Journey tab, which isn't visible yet at this point. Choosing a companion
-  // here does not select a daily pace — that stays a separate, later choice.
+  // If this confirm happened during onboarding screen 3 (companion select,
+  // no longer the last screen), advance to the next onboarding screen
+  // (Journey) instead of only refreshing the Journey tab, which isn't
+  // visible yet at this point. Choosing a companion here does not select a
+  // daily pace — that stays a separate, later choice.
   var _obOv = document.getElementById('ob-ov');
-  if (_obOv && _obOv.classList.contains('open') && _obScreen === 4) {
-    _obFinish();
+  if (_obOv && _obOv.classList.contains('open') && _obScreen === 2) {
+    _obAdvance();
     return;
   }
   try {

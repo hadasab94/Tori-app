@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v83'; // fix: onboarding companion-confirm modal (#j-confirm-overlay, z-index 200) rendered behind the still-open onboarding overlay (#ob-ov, z-index 850), swallowing every click and blocking onboarding entirely — bumped confirm modal to z-index 950
+const CACHE = 'body-soul-v84'; // content: onboarding screens reordered (Welcome, How, Companion select, Journey, Personalize-last) and re-copied per approved final wording; removed the "לא צריך כרגע" skip chip
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {
