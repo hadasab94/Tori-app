@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v82'; // text fix: two forest reactions in "תורי לגלול" (ozone card, age-80 exhibit card) rewritten per approved copy
+const CACHE = 'body-soul-v83'; // fix: onboarding companion-confirm modal (#j-confirm-overlay, z-index 200) rendered behind the still-open onboarding overlay (#ob-ov, z-index 850), swallowing every click and blocking onboarding entirely — bumped confirm modal to z-index 950
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

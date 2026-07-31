@@ -887,9 +887,14 @@ body.tori-clear-text .guide-intro { font-weight: 500; }
 .jcs-cta.inactive { background:rgba(45,42,38,0.20); color:rgba(255,255,255,0.7); cursor:default; }
 .jcs-cta.active { background:#2D2A26; color:#FBF6EC; }
 
-/* Confirm modal */
+/* Confirm modal — z-index 950: must render above .ob-ov (850), since this
+   same confirm modal (confirmJourneyCompanion/doConfirmJourneyCompanion) is
+   also triggered from the onboarding tour's companion-select screen while
+   .ob-ov is still open. At the old z-index:200, the still-open onboarding
+   overlay painted over this modal and swallowed every click to it — tapping
+   "בחרתי את X" looked like it did nothing, blocking onboarding entirely. */
 .j-confirm-overlay {
-  position:fixed; inset:0; z-index:200;
+  position:fixed; inset:0; z-index:950;
   background:rgba(45,42,38,0.40); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
   display:flex; align-items:center; justify-content:center; padding:18px;
 }
@@ -3252,7 +3257,7 @@ const ACHIEVEMENTS = [
 ];
 
 // BUILD VERSION — visible in DevTools console; bump on every deploy
-const TORI_BUILD = 'character-content-lock-testers-2026-07-29f';
+const TORI_BUILD = 'onboarding-confirm-zindex-fix-2026-07-31a';
 console.log('[Tori] build:', TORI_BUILD);
 
 // STATE
