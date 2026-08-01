@@ -1,4 +1,4 @@
-const CACHE = 'body-soul-v84'; // content: onboarding screens reordered (Welcome, How, Companion select, Journey, Personalize-last) and re-copied per approved final wording; removed the "לא צריך כרגע" skip chip
+const CACHE = 'body-soul-v85'; // content: "תורי לגלול" feed — added 10 new cards, added source.label/source.url to the 6 existing cards, added the clickable "מקור:" source line (rendered between fact text and companion reaction)
 const STATIC = ['./logo.png', './manifest.json'];
 
 self.addEventListener('install', e => {

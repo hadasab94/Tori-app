@@ -10049,8 +10049,10 @@ async function saveNiimNote(libDef) {
 // _buildFeedReactionHtml(). Never mix reactions, never fall back to another
 // companion's line, never invent a generic line.
 //
-// `source` is verification-only reference data (label + url when known) —
-// there is no source UI element in this feed, so it is not rendered.
+// `source` is rendered as a small clickable "מקור: [label]" line below the
+// fact text (see _buildFeedSourceHtml) — target="_blank" rel="noopener
+// noreferrer", reusing the existing .feed-img-attribution/.feed-attrib-link
+// styling already used for image credit lines in this same feed.
 //
 // IMAGE FIELDS — fill ALL before setting imageApproved: true (unchanged from
 // before; reused as-is by the existing _buildFeedMediaHtml renderer):
@@ -10063,7 +10065,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'השראה',
     title: 'כוכב פופ בגיל 52',
     text: 'סקטמן ג׳ון היה מוזיקאי במשך שנים, אבל הפריצה הבינלאומית שלו הגיעה בגיל 52. השיר "Scatman" הגיע למקום הראשון במדינות רבות ונמכר במיליוני עותקים.',
-    source: { label: 'Scatman John — Biography.', url: null },
+    source: { label: 'Scatman John — Biography', url: 'https://scatmanjohn.com/biography/' },
     image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
     reactions: {
       capy: 'העולם גילה אותו בגיל 52. לא נורא, גם לאנושות לוקח לפעמים רגע למצוא את המשקפיים.',
@@ -10076,7 +10078,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'השראה',
     title: 'האנושות תיקנה משהו',
     text: 'מדינות ברחבי העולם הפסיקו בהדרגה להשתמש בחומרים שפגעו בשכבת האוזון. בזכות שיתוף הפעולה הזה היא נמצאת במסלול התאוששות, וברוב העולם היא עשויה לחזור לרמות של 1980 בסביבות שנת 2040.',
-    source: { label: 'UN Environment Programme — Ozone layer recovery is on track.', url: null },
+    source: { label: 'UN Environment Programme', url: 'https://www.unep.org/news-and-stories/press-release/ozone-layer-recovery-track-helping-avoid-global-warming-05degc' },
     image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
     reactions: {
       capy: 'לקח לאנושות רגע להבין שלא כדאי לעשות חור בשמיים. לזכותה ייאמר שהיא גם הביאה סולם ותיקנה.',
@@ -10089,7 +10091,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'השראה',
     title: 'תואר ראשון בגיל 96',
     text: 'שיגמי היראטה מיפן סיים תואר ראשון באמנות ועיצוב בגיל 96 ו־200 ימים, וקבע שיא עולמי.',
-    source: { label: 'Guinness World Records — Oldest graduate.', url: null },
+    source: { label: 'Guinness World Records', url: 'https://www.guinnessworldrecords.com/world-records/oldest-graduate' },
     image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
     reactions: {
       capy: 'בגיל 96 הוא קיבל תואר. אני מניחה שעכשיו אפשר סוף־סוף לשאול אותו מה הוא רוצה לעשות כשיהיה גדול.',
@@ -10102,7 +10104,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'השראה',
     title: 'תערוכת יחיד בגיל 80',
     text: 'אנה מרי רוברטסון מוזס התחילה לצייר ברצינות בסוף שנות השבעים לחייה. בגיל 80 נפתחה לה תערוכת היחיד הראשונה.',
-    source: { label: 'Smithsonian American Art Museum — Grandma Moses: A Good Day’s Work.', url: null },
+    source: { label: 'Smithsonian American Art Museum', url: 'https://americanart.si.edu/exhibitions/grandma-moses' },
     image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
     reactions: {
       capy: 'בגיל 80 היא פתחה תערוכת יחיד. כנראה שהציורים כבר התחילו לשאול מתי יוצאים.',
@@ -10115,7 +10117,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'השראה',
     title: 'כשהמדע בדק שוב',
     text: 'בניסוי קטן, חוקרות וחוקרים גידלו תאי גזע מעין בריאה של כל משתתף והשתמשו בהם לשיקום עין שנפגעה. אצל רוב המשתתפים פני הקרנית שוקמו במהלך המעקב. הטיפול עדיין ניסיוני.',
-    source: { label: 'Mass General Brigham — Novel Stem Cell Therapy Repairs Irreversible Corneal Damage.', url: null },
+    source: { label: 'Mass General Brigham', url: 'https://www.massgeneralbrigham.org/en/about/newsroom/press-releases/calec-stem-cell-therapy-clinical-trial-repairs-corneal-damage' },
     image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
     reactions: {
       capy: 'אמרו שאין הרבה מה לעשות. החוקרות כנראה לא שמעו.',
@@ -10128,7 +10130,7 @@ const SCROLL_FEED_ITEMS = [
     category: 'השראה',
     title: 'מאבן אחת לארמון',
     text: 'בגיל 43, הדוור הצרפתי פרדינן שבל מצא אבן בעלת צורה משונה. במשך 33 השנים הבאות הוא אסף אבנים ובנה לבדו ארמון דמיוני בגינה שלו.',
-    source: { label: 'Le Palais Idéal du Facteur Cheval — The Story.', url: null },
+    source: { label: 'Le Palais Idéal du Facteur Cheval', url: 'https://www.facteurcheval.com/en/history/' },
     image: 'assets/gentle-scroll/facteur-cheval-palace.webp',
     imageAlt: 'הארמון האידיאלי שבנה פרדינן שבל מאבנים',
     imageApproved: true,
@@ -10145,6 +10147,136 @@ const SCROLL_FEED_ITEMS = [
       capy: 'הוא מצא אבן מוזרה ובנה ארמון. טוב, לפחות היה לו איפה לשים אותה.',
       kipoda: 'הוא מצא אבן מוזרה ובנה ארמון. סוף־סוף מישהו לקח את "נסחפתי קצת" לרמה אדריכלית.',
       forest: 'הוא מצא אבן מוזרה, ושלושים ושלוש שנים אחר כך היה שם ארמון. זו יציאה משליטה שאני מוכנה לעודד.',
+    },
+  },
+  {
+    id: 'app-82',
+    category: 'השראה',
+    title: 'היא פיתחה אפליקציה בגיל 82',
+    text: 'מסאקו וקמיה למדה לתכנת אחרי גיל 82 ופיתחה את Hinadan, משחק לאייפון המבוסס על חג הבובות היפני. במשחק מסדרים בובות מסורתיות, ובהן הקיסר והקיסרית, במקומות הנכונים על במת החג.',
+    source: { label: 'Apple Newsroom', url: 'https://www.apple.com/newsroom/2018/07/app-store-turns-10/' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'בגיל 82 היא פיתחה אפליקציה. יפה, גם לטלפון הגיע ללמוד משהו ממישהי מבוגרת ממנו.',
+      kipoda: 'בגיל 82 היא פיתחה אפליקציה. סוף־סוף מישהי עם 82 שנות ניסיון משתמש נכנסה לצוות הפיתוח.',
+      forest: 'רגע, היא הכניסה קיסר, קיסרית ופסטיבל בובות שלם לתוך אייפון? זה הרבה טקסיות למסך אחד.',
+    },
+  },
+  {
+    id: 'first-book-65',
+    category: 'השראה',
+    title: 'הספר הראשון שלה פורסם בגיל 65',
+    text: 'לאורה אינגלס ויילדר פרסמה בגיל 65 את הספר הראשון בסדרת „בית קטן בערבה”. הספר התבסס על זיכרונות ילדותה ופתח סדרה שנקראה ואהובה במשך דורות.',
+    source: { label: 'Laura Ingalls Wilder Historic Home & Museum', url: 'https://lauraingallswilderhome.com/lauras-homes-on-rocky-ridge/' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'בגיל 65 היא פרסמה ספר ראשון. כנראה שלוקח רגע לארוז בית שלם בתוך כריכה.',
+      kipoda: 'ספר ראשון בגיל 65. דדליין: כשהסיפור מוכן, תודה.',
+      forest: 'רגע, בית קטן שלם הסתובב איתה 65 שנה עד שמצא כריכה?',
+    },
+  },
+  {
+    id: 'mccourt-pulitzer',
+    category: 'השראה',
+    title: 'הספר הראשון שלו הגיע אחרי הפנסיה',
+    text: 'פרנק מק׳קורט פרסם בגיל 66, אחרי שפרש מקריירה ארוכה כמורה, את ספרו הראשון: Angela’s Ashes — „האפר של אנג׳לה”. הספר סיפר על ילדותו ומשפחתו בלימריק שבאירלנד, הפך לרב־מכר וזכה בפרס פוליצר.',
+    source: { label: 'Academy of Achievement', url: 'https://achievement.org/achiever/frank-mccourt/' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'הוא פרש מהוראה, כתב ספר ראשון וזכה בפוליצר. טוב, לפחות מצא משהו קטן לעשות בפנסיה.',
+      kipoda: 'ספר ראשון בגיל 66, פוליצר אחריו. בתור פרק ב׳, הוא לא בדיוק נכנס על קצות האצבעות.',
+      forest: 'הקול שלו ישב 66 שנה במחברות ואז יצא ישר לטקס פרסים. כנראה שהוא התאמן שם.',
+    },
+  },
+  {
+    id: 'julia-child-49',
+    category: 'השראה',
+    title: 'ספר הבישול שהגיע בגיל 49',
+    text: 'בגיל 49 פרסמה ג׳וליה צ׳יילד, יחד עם סימון בק ולואיזט ברתול, את Mastering the Art of French Cooking. הספר פירק טכניקות מהמטבח הצרפתי להוראות ברורות שהתאימו לבישול במטבחים אמריקאיים. בהמשך היא הפכה גם לכוכבת טלוויזיה.',
+    source: { label: 'Smithsonian National Museum of American History', url: 'https://americanhistory.si.edu/collections/nmah_1420359' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'בגיל 49 היא הוציאה ספר בישול, ואז הטלוויזיה רצתה גם. קשה להאשים אותה.',
+      kipoda: 'בגיל 49 היא פרסמה ספר בישול, ואז הטלוויזיה ביקשה טעימה.',
+      forest: 'רגע, היא הפכה מטבח צרפתי שלם להוראות שאפשר לקחת הביתה? מתכונים הם סוג די מתוחכם של טלפורטציה.',
+    },
+  },
+  {
+    id: 'herrera-89',
+    category: 'השראה',
+    title: 'הציור הראשון שלה נמכר בגיל 89',
+    text: 'כרמן הררה ציירה במשך עשרות שנים כמעט בלי הכרה ציבורית. בגיל 89 היא מכרה את הציור הראשון שלה, ובהמשך עבודותיה נכנסו לאוספים של מוזיאונים מרכזיים, ובהם המומה, הטייט מודרן ומוזיאון הירשהורן.',
+    source: { label: 'Walker Art Center', url: 'https://www.walkerart.org/reader/new-to-the-collection-carmen-herrera/' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'היא מכרה ציור ראשון בגיל 89. כנראה שהקונים היו עסוקים כל השנים בבחירת מסגרת.',
+      kipoda: 'ציור ראשון נמכר בגיל 89. שוק האמנות הגיע באיחור ניכר, אבל לפחות הביא ארנק.',
+      forest: 'בגיל 89 ציור שלה עבר בפעם הראשונה לגור אצל מישהו אחר. אני מקווה שהוא כתב הביתה.',
+    },
+  },
+  {
+    id: 'wally-funk-space',
+    category: 'השראה',
+    title: 'היא הגיעה לחלל בגיל 82',
+    text: 'וולי פאנק הייתה בין הנשים שעברו בשנות השישים מבחני התאמה לטיסות חלל, אבל לא קיבלה אז אפשרות לטוס. בשנת 2021, יותר מחמישה עשורים לאחר מכן, היא המריאה לחלל בגיל 82.',
+    source: { label: 'Smithsonian National Air and Space Museum', url: 'https://airandspace.si.edu/stories/editorial/remembering-aviator-and-commercial-astronaut-wally-funk' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'בגיל 82 היא טסה לחלל. כנראה שכדור הארץ כבר הרגיש לה קצת צפוף.',
+      kipoda: 'בגיל 82 היא הגיעה לחלל. המתנה ארוכה, מושב מצוין.',
+      forest: 'רגע, חלום חיכה לה יותר מחמישים שנה ואז המריא איתה לחלל? יש חלומות עם סבלנות אסטרונומית.',
+    },
+  },
+  {
+    id: 'goodenough-nobel',
+    category: 'השראה',
+    title: 'פרס נובל בגיל 97',
+    text: 'ג׳ון גודאינף זכה בפרס נובל בכימיה בגיל 97 על חלקו בפיתוח סוללות ליתיום־יון — הסוללות הנטענות שמשמשות בין היתר בטלפונים, במחשבים ניידים ובכלי רכב חשמליים. הוא היה האדם המבוגר ביותר שקיבל פרס נובל.',
+    source: { label: 'Nobel Prize', url: 'https://www.nobelprize.org/prizes/chemistry/2019/goodenough/facts/' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'בגיל 97 הוא קיבל נובל על סוללות. לקח לפרס קצת זמן להיטען.',
+      kipoda: 'נובל בגיל 97. בתחום הסוללות, מותר לקרוא לזה ביצועים לטווח ארוך.',
+      forest: 'רגע, הוא חקר איך לגרום לסוללות להחזיק יותר זמן וקיבל נובל בגיל 97? המחקר התחיל לחקות אותו.',
+    },
+  },
+  {
+    id: 'delany-paper-flowers',
+    category: 'השראה',
+    title: 'היא התחילה ליצור פרחים מנייר בגיל 72',
+    text: 'בגיל 72 החלה מרי דילייני ליצור „פסיפסי נייר” — קולאז׳ים בוטניים מפורטים מחתיכות נייר צבעוני. היא יצרה 985 איורים של צמחים ופרחים.',
+    source: { label: 'British Museum', url: 'https://www.britishmuseum.org/blog/late-bloomer-exquisite-craft-mary-delany' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'בגיל 72 היא התחילה לגזור פרחים מנייר. 985 פרחים אחר כך, כנראה שכבר היה מאוחר לקרוא לזה תחביב קטן.',
+      kipoda: 'בגיל 72 היא התחילה ליצור פרחים מנייר. 985 פרחים אחר כך, האביב קיבל תחרות רצינית.',
+      forest: 'רגע, היא הפכה חתיכות נייר ל־985 פרחים מדויקים? זה הרבה מאוד גינה בלי גרגר אדמה אחד.',
+    },
+  },
+  {
+    id: 'bald-eagle-recovery',
+    category: 'השראה',
+    title: 'השמיים התמלאו שוב בעיטים',
+    text: 'בשנת 1963 נותרו ב־48 המדינות הרציפות של ארצות הברית רק 417 זוגות מקננים של עיטם לבן־ראש. לאחר עשרות שנים של הגנה ושיקום, האוכלוסייה הגיעה ליותר מ־71,400 זוגות מקננים.',
+    source: { label: 'U.S. Fish and Wildlife Service', url: 'https://www.fws.gov/press-release/2021-03/americas-bald-eagle-population-continues-soar' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'מ־417 זוגות ליותר מ־71 אלף. מסתבר שכשהם אומרים „נחזור”, הם מביאים את כל המשפחה.',
+      kipoda: '417 זוגות הפכו ליותר מ־71 אלף. זו כבר נוכחות עם מוטת כנפיים.',
+      forest: 'עשרות אלפי קינים הופיעו במקום שבו נשארו רק 417 זוגות. זה הרבה מאוד ענפים שקיבלו פתאום תפקיד.',
+    },
+  },
+  {
+    id: 'kakapo-recovery',
+    category: 'השראה',
+    title: 'התוכי שלא עף חזר',
+    text: 'אוכלוסיית הקקאפו — תוכי לילי מניו זילנד שאינו מסוגל לעוף — ירדה ל־51 פרטים בשנת 1995. תוכנית שימור העלתה אותה לשיא של 252 בשנת 2022. כל קקאפו שחי כיום נושא משדר קטן דמוי תיק גב, שעוזר לצוותי השימור לעקוב אחר מיקומו ופעילותו.',
+    source: { label: 'New Zealand Department of Conservation', url: 'https://www.doc.govt.nz/our-work/kakapo-recovery/what-we-do/history/' },
+    image: null, imageAlt: null, imageApproved: false, attributionRequired: false,
+    reactions: {
+      capy: 'הם התחילו מ־51 והגיעו ל־252. לא מיהרו, גם ככה הם תוכים שהולכים ברגל.',
+      kipoda: 'תוכי שלא עף, פעיל בלילה ונושא תיק גב. באמת שלא היה צריך להתאמץ כדי להיות אייקון.',
+      forest: 'לכל קקאפו יש תיק גב קטן כדי שהמדענים יידעו איפה הוא. זו כבר כיתה בטיול שנתי.',
     },
   },
 ];
@@ -10325,9 +10457,21 @@ function _buildFeedReactionHtml(item) {
     + '</div>';
 }
 
+// Build the visible, clickable "מקור: [label]" line for a feed card.
+// Reuses the existing .feed-img-attribution/.feed-attrib-link styling
+// already used for image credit lines in this same feed — no new CSS.
+// Returns '' (no error) if the card has no source url.
+function _buildFeedSourceHtml(item) {
+  if (!item.source || !item.source.url || !item.source.label) return '';
+  return '<div class="feed-img-attribution">מקור: '
+    + '<a href="' + _escH(item.source.url) + '" target="_blank" rel="noopener noreferrer" class="feed-attrib-link">'
+    + _escH(item.source.label) + '</a></div>';
+}
+
 // Render feed cards from SCROLL_FEED_ITEMS into #scroll-feed-section.
 // No async — reads _feedLikes cache (must be loaded before first render).
 // Image + attribution built via _buildFeedImageHtml (validates attribution fields).
+// Source line built via _buildFeedSourceHtml (below the fact text, before the reaction).
 // Reaction block built via _buildFeedReactionHtml (single-companion, never mixed).
 // Sets up IntersectionObserver for impression tracking after render.
 function renderScrollFeed() {
@@ -10356,12 +10500,14 @@ function renderScrollFeed() {
   }
   items.forEach(function(item, idx) {
     var imgHtml = _buildFeedMediaHtml(item, idx === 0);
+    var sourceHtml = _buildFeedSourceHtml(item);
     var reactionHtml = _buildFeedReactionHtml(item);
     html += '<div class="feed-card" data-card-id="' + _escH(item.id) + '">'
       + '<div class="feed-card-category">' + _escH(item.category) + '</div>'
       + imgHtml
       + '<div class="feed-card-title">' + _escH(item.title) + '</div>'
       + '<div class="feed-card-text">'  + _escH(item.text)  + '</div>'
+      + sourceHtml
       + reactionHtml
       + '</div>';
   });
