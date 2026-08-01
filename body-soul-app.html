@@ -2453,7 +2453,6 @@ if('serviceWorker' in navigator){
 
 <!-- TODAY VIEW -->
 <div class="view active" id="view-today" style="position:relative;">
-  <button class="more-btn" onclick="switchView('settings')" aria-label="הגדרות ועוד בתורי">⚙️</button>
   <div class="celebration" id="celebration">
     <span class="celeb-emoji">🎉</span>
     <div class="celeb-title">יום מדהים! השלמת את כל המשימות!</div>
@@ -2920,8 +2919,8 @@ if('serviceWorker' in navigator){
 <!-- BOTTOM NAV
      RTL visual order (right → left): היום | המסע | ╎ לגלול | הגדרות
      nav-scroll has border-inline-start separator to signal it's a secondary area;
-     nav-settings joins it in that secondary group (switchView('settings') — same
-     helper screen already opened via the ⚙️ button on the Today view, not duplicated) -->
+     nav-settings joins it in that secondary group (switchView('settings') — reuses
+     the existing view-settings screen, not duplicated) -->
 <nav class="bottom-nav" aria-label="ניווט ראשי">
   <div class="nav-item active" id="nav-today" onclick="switchView('today')">
     <div class="nav-icon">📋</div><div class="nav-label">היום</div>
