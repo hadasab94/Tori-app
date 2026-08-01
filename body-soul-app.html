@@ -2918,8 +2918,10 @@ if('serviceWorker' in navigator){
 <div id="ob-tour" class="ob-tour" style="display:none" role="dialog" aria-label="סיור קצר בתורי" aria-live="polite"></div>
 
 <!-- BOTTOM NAV
-     RTL visual order (right → left): היום | המסע | ╎ לגלול
-     nav-scroll has border-inline-start separator to signal it's a secondary area -->
+     RTL visual order (right → left): היום | המסע | ╎ לגלול | הגדרות
+     nav-scroll has border-inline-start separator to signal it's a secondary area;
+     nav-settings joins it in that secondary group (switchView('settings') — same
+     helper screen already opened via the ⚙️ button on the Today view, not duplicated) -->
 <nav class="bottom-nav" aria-label="ניווט ראשי">
   <div class="nav-item active" id="nav-today" onclick="switchView('today')">
     <div class="nav-icon">📋</div><div class="nav-label">היום</div>
@@ -2929,6 +2931,9 @@ if('serviceWorker' in navigator){
   </div>
   <div class="nav-item nav-item--secondary" id="nav-scroll" onclick="switchView('scroll')">
     <div class="nav-icon">🫧</div><div class="nav-label">לגלול</div>
+  </div>
+  <div class="nav-item" id="nav-settings" onclick="switchView('settings')">
+    <div class="nav-icon">⚙️</div><div class="nav-label">הגדרות</div>
   </div>
 </nav>
 
